@@ -1,5 +1,6 @@
 [ignore]
 <PROJECT_ROOT>/node_modules/*
+<PROJECT_ROOT>/app/node_modules/*
 <PROJECT_ROOT>/app/main.prod.js
 <PROJECT_ROOT>/app/main.prod.js.map
 <PROJECT_ROOT>/app/dist/.*
@@ -10,6 +11,7 @@
 <PROJECT_ROOT>/git/.*
 
 [include]
+flow-typed
 
 [libs]
 
@@ -24,3 +26,22 @@ module.name_mapper.extension='png' -> '<PROJECT_ROOT>/internals/flow/WebpackAsse
 module.name_mapper.extension='jpg' -> '<PROJECT_ROOT>/internals/flow/WebpackAsset.js.flow'
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe
 suppress_comment=\\(.\\|\n\\)*\\$FlowIssue
+
+module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/app/components/\1'
+module.name_mapper='^components$' -> '<PROJECT_ROOT>/app/components'
+
+module.name_mapper='^containers\/\(.*\)$' -> '<PROJECT_ROOT>/app/containers/\1'
+module.name_mapper='^containers$' -> '<PROJECT_ROOT>/app/containers'
+
+module.name_mapper='^reducers\/\(.*\)$' -> '<PROJECT_ROOT>/app/reducers/\1'
+module.name_mapper='^reducers$' -> '<PROJECT_ROOT>/app/reducers'
+
+module.name_mapper='^types\/\(.*\)$' -> '<PROJECT_ROOT>/app/types/\1'
+module.name_mapper='^types$' -> '<PROJECT_ROOT>/app/types'
+
+module.name_mapper='^services/\(.*\)$' -> '<PROJECT_ROOT>/app/services/\1'
+module.name_mapper='^services$' -> '<PROJECT_ROOT>/appconstans/services'
+
+module.name_mapper='^utils/\(.*\)$' -> '<PROJECT_ROOT>/app/utils/\1'
+
+module.name_mapper='^styles/\(.*\)$' -> '<PROJECT_ROOT>/app/styles/\1'
