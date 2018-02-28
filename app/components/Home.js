@@ -1,10 +1,15 @@
 // @flow
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import Typography from 'material-ui/Typography';
+import Card, { CardHeader, CardContent } from 'material-ui/Card';
 import MenuAppBar from './AppBar/';
 
+import LoginForm from '../containers/Login';
+
 type Props = {};
+
+const styles = {
+  width: '400px'
+};
 
 export default class Home extends Component<Props> {
   props: Props;
@@ -13,10 +18,15 @@ export default class Home extends Component<Props> {
     return (
       <div>
         <MenuAppBar />
-        <Typography variant="display3">Home</Typography>
-        <Typography variant="body1">
-          <Link to="/counter">to Counter</Link>
-        </Typography>
+        <Card style={styles}>
+          <CardContent>
+            <CardHeader
+              title="寄騎　Version5"
+              subheader="登録メールアドレスとパスワードでログインすると、データを同期します。"
+            />
+            <LoginForm />
+          </CardContent>
+        </Card>
       </div>
     );
   }
