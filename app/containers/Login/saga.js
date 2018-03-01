@@ -2,7 +2,6 @@
 import type { Saga } from 'redux-saga';
 import { put, call, takeEvery, select } from 'redux-saga/effects';
 import {
-  setAuthInfo,
   loginRequest,
   loginSuccess,
   loginFailure,
@@ -10,79 +9,72 @@ import {
   logoutSuccess,
   logoutFailure
 } from './actions';
-import { Actions, LOGIN_REQUEST } from './actionTypes';
+import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
 import type { FirebaseUserType, FirebaseErrorType } from '../../types/firebase';
 import { firebase } from '../../database/db';
 
-function login(authInfo) {
-  firebase
-    .auth()
-    .signInWithEmailAndPassword(authInfo.mailAddress, authInfo.password)
-    .then(user => {
-      return { ...authInfo, userId: user.uid };
-    })
-    .catch(error => {
-      const { code, message } = error;
-      return { ...authInfo, errorMessage: code + '-' + message };
-    });
-}
-
-function getErrorMessage(error: FirebaseErrorType) {
-  let errorMsg = '';
+function getErrorMessage(error: FirebaseErrorType): string {
   if (error) {
     switch (error.code) {
       case 'auth/invalid-email':
-        return (errorMsg = '有効なメールアドレスではありません。');
+        return '有効なメールアドレスではありません。';
       case 'anth/user-disabled':
-        return (errorMsg = '有効なユーザーではありません。');
-      case 'auth/user-not':
-        return (errorMsg = 'メールアドレスが登録されていません。');
+        return '有効なユーザーではありません。';
       case 'auth/wrong-password':
-        return (errorMsg = 'パスワードが一致しません。');
+        return 'パスワードが一致しません。';
+      case 'auth/user-not-found':
+        return 'このメールアドレスでのユーザーは見つかりません。';
       default:
-        return (errorMsg = error.message);
+        return error.message;
     }
   } else {
-    return errorMsg;
+    return '';
   }
 }
 
 /*
-function* logout(authInfo: AuthType): Saga<void> {
-  try {
-    yield put(logoutRequest(authInfo));
-    yield put(logoutSuccess());
-  } catch (err) {
-    yield put(logoutFailure(authInfo));
-  }
+
+ */
+function* requestLogout(): Saga<void> {
+    yield put(logoutRequest());
+
+    try {
+      const firebaseAuth = () => firebase.auth().signOut()
+      yield call(firebaseAuth)
+      yield put(logoutSuccess());
+    } catch (err) {
+      const authInfo: AuthType = yield select(state => state.Login);
+      yield put(logoutFailure({...authInfo, errorMessage: err});
+   }
 }
-*/
 
 function* requestLogin() {
   yield put(loginRequest());
-  const authInfo = yield select(state => state.Login);
-  console.log(authInfo);
+  const authInfo: AuthType = yield select(state => state.Login);
 
-  firebase
-    .auth()
-    .signInWithEmailAndPassword(authInfo.mailAddress, authInfo.password)
-    .then(user => {
-      put(loginSuccess(authInfo));
-    })
-    .catch(error => {
-      const { code, message } = error;
+  try {
+    const firebaseAuth = ({ email, password }) =>
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .catch(error => {
+          throw error;
+        });
+
+    const user: FirebaseUserType = yield call(firebaseAuth, {
+      email: authInfo.mailAddress,
+      password: authInfo.password
     });
-
-  console.log('-----user------');
-  console.log(authInfo);
-
-  console.log('called requestLogin');
+    yield put(loginSuccess({ ...authInfo, userId: user.uid }));
+  } catch (error) {
+    yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
+  }
 }
 
 function* rootSaga() {
   yield takeEvery(Actions.SET_AUTH_INFO, requestLogin);
-  /* yield takeEvery(Actions.LOGOUT_REQUEST, logout); */
+  yield takeEvery(Actions.LOGOUT_REQUEST, requestLogout);
 }
 
 export default rootSaga;
