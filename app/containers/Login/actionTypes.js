@@ -32,11 +32,11 @@ export type LoginRequest = {
 };
 export type LoginSuccess = {
   type: typeof LOGIN_SUCCESS,
-  payload: UserAccountType
+  payload: AuthType
 };
 export type LoginFailure = {
   type: typeof LOGIN_FAILURE,
-  payload: UserAccountType
+  payload: AuthType
 };
 export type LogoutRequest = {
   type: typeof LOGOUT_REQUEST
@@ -46,7 +46,7 @@ export type LogoutSuccess = {
 };
 export type LogoutFailure = {
   type: typeof LOGOUT_FAILURE,
-  payload: UserAccountType
+  payload: AuthType
 };
 export type ClearAuthInfo = {
   type: typeof CLEAR_AUTH_INFO

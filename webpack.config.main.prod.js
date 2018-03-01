@@ -16,7 +16,7 @@ export default merge.smart(baseConfig, {
 
   target: 'electron-main',
 
-  entry: './app/main.dev',
+  entry: ['babel-polyfill', './app/main.dev'],
 
   output: {
     path: __dirname,
@@ -57,5 +57,5 @@ export default merge.smart(baseConfig, {
   node: {
     __dirname: false,
     __filename: false
-  },
+  }
 });

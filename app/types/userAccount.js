@@ -12,7 +12,7 @@ export type UserAccountType = {
   userId: string,
   mailAddress: string,
   password: string,
-  expireDate: number,
+  expireDate: ?number,
   paymentMethod: string,
-  registoredMailAddress: string
+  registeredMailAddress: string
 };

@@ -51,6 +51,7 @@ const configureStore = (initialState: Object = {}): StoreType => {
 
   // Create Store
   const store = createStore(rootReducer, initialState, enhancer);
+  sagaMiddleware.run(mySaga);
 
   if (module.hot) {
     module.hot.accept(

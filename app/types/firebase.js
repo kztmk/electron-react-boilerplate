@@ -18,6 +18,6 @@ export type FirebaseUserType = {|
 |};
 
 export type FirebaseErrorType = {
-  code: string,
-  message: string
+  code: ?string,
+  message: ?string
 };
