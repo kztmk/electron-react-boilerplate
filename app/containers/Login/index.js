@@ -2,19 +2,24 @@
 import { connect } from 'react-redux';
 import type Connector from 'react-redux';
 import LoginForm, { type Props } from '../../components/Login';
-import type { DispatchType } from '../../types';
-import { setAuthInfo } from './actions';
+import type { StateType, DispatchType } from '../../types';
+import { setAuthInfo, logoutRequest } from './actions';
 
-const mapStateToProps = state => ({
-  userAuth: state.Login
-});
+const mapStateToProps = (state: StateType) => {
+  return {
+    userAuth: state.Login
+  };
+};
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
-  onClick(userAuth) {
+  loginStart(userAuth) {
     dispatch(setAuthInfo(userAuth));
+  },
+  logoutStart() {
+    dispatch(logoutRequest());
   }
 });
 
-const connector: Connector<{}, Props> = connect(mapStateToProps, mapDispatchToProps);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
 
-export default connector(LoginForm);
+//export default connector(LoginForm);

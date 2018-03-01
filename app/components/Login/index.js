@@ -6,7 +6,8 @@ import type { AuthType } from '../../types/auth';
 
 export type Props = {
   userAuth: AuthType,
-  onClick: (userAuth: AuthType) => void
+  loginStart: (userAuth: AuthType) => void,
+  logoutStart: () => void
 };
 
 type State = {
@@ -22,7 +23,7 @@ const style = {
   height: 48,
   padding: '0 30px',
   boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .30)',
-  marginTop: '40px'
+  margin: '40px 20px'
 };
 
 class LoginForm extends Component<Props, State> {
@@ -34,7 +35,8 @@ class LoginForm extends Component<Props, State> {
     };
     this.handleChangeMailAddress = this.handleChangeMailAddress.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleStartLogin = this.handleStartLogin.bind(this);
+    this.handleStartLogout = this.handleStartLogout.bind(this);
   }
 
   handleChangeMailAddress = event => {
@@ -61,13 +63,17 @@ class LoginForm extends Component<Props, State> {
     }
   }
 
-  handleSubmit() {
-    this.props.onClick(this.state.userAuth);
+  handleStartLogin() {
+    this.props.loginStart(this.state.userAuth);
+  }
+
+  handleStartLogout() {
+    this.props.logoutStart();
   }
 
   render() {
     return (
-      <ValidatorForm onSubmit={this.handleSubmit}>
+      <ValidatorForm onSubmit={this.handleStartLogin}>
         <TextValidator
           label="メールアドレス"
           onChange={this.handleChangeMailAddress}
@@ -89,8 +95,11 @@ class LoginForm extends Component<Props, State> {
         />
         <br />
 
-        <Button type="submit" style={style}>
+        <Button type="submit" style={style} onClick={this.handleStartLogin}>
           ログイン
+        </Button>
+        <Button style={style} onClick={this.handleStartLogout}>
+          ログアウト
         </Button>
       </ValidatorForm>
     );

@@ -1,6 +1,5 @@
 // @flow
 import type { AuthType } from '../../types/auth';
-import type { UserAccountType } from '../../types/userAccount';
 
 export const SET_AUTH_INFO: 'Login/SET_AUTH_INFO' = 'Login/SET_AUTH_INFO';
 export const LOGIN_REQUEST: 'Login/LOGIN_REQUEST' = 'Login/LOGIN_REQUEST';

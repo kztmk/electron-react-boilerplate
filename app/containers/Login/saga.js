@@ -1,20 +1,13 @@
 // @flow
 import type { Saga } from 'redux-saga';
 import { put, call, takeEvery, select } from 'redux-saga/effects';
-import {
-  loginRequest,
-  loginSuccess,
-  loginFailure,
-  logoutRequest,
-  logoutSuccess,
-  logoutFailure
-} from './actions';
+import { loginRequest, loginSuccess, loginFailure, logoutSuccess, logoutFailure } from './actions';
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
 import type { FirebaseUserType, FirebaseErrorType } from '../../types/firebase';
 import { firebase } from '../../database/db';
 
-function getErrorMessage(error: FirebaseErrorType): string {
+function getErrorMessage(error): string {
   if (error) {
     switch (error.code) {
       case 'auth/invalid-email':
@@ -36,17 +29,20 @@ function getErrorMessage(error: FirebaseErrorType): string {
 /*
 
  */
-function* requestLogout(): Saga<void> {
-    yield put(logoutRequest());
+function* requestLogout() {
+  try {
+    firebase
+      .auth()
+      .signOut()
+      .catch(error => {
+        throw error;
+      });
 
-    try {
-      const firebaseAuth = () => firebase.auth().signOut()
-      yield call(firebaseAuth)
-      yield put(logoutSuccess());
-    } catch (err) {
-      const authInfo: AuthType = yield select(state => state.Login);
-      yield put(logoutFailure({...authInfo, errorMessage: err});
-   }
+    yield put(logoutSuccess());
+  } catch (err) {
+    const authInfo: AuthType = yield select(state => state.Login);
+    yield put(logoutFailure({ ...authInfo, errorMessage: err }));
+  }
 }
 
 function* requestLogin() {
@@ -62,7 +58,7 @@ function* requestLogin() {
           throw error;
         });
 
-    const user: FirebaseUserType = yield call(firebaseAuth, {
+    const user = yield call(firebaseAuth, {
       email: authInfo.mailAddress,
       password: authInfo.password
     });

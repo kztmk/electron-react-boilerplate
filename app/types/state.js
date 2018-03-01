@@ -1,6 +1,6 @@
 // @flow
-import type { AuthType as Login } from './auth';
+import type { State as Login } from '../containers/Login/reducer';
 
-export type StateType = {
+export type State = {
   Login: Login
 };
