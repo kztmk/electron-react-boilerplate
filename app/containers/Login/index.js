@@ -2,10 +2,11 @@
 import { connect } from 'react-redux';
 import type Connector from 'react-redux';
 import LoginForm, { type Props } from '../../components/Login';
-import type { StateType, DispatchType } from '../../types';
+import type { DispatchType } from '../../types';
+import type { State } from '../../types/state';
 import { setAuthInfo, logoutRequest } from './actions';
 
-const mapStateToProps = (state: StateType) => {
+const mapStateToProps = (state: State) => {
   return {
     userAuth: state.Login
   };

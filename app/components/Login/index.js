@@ -4,6 +4,11 @@ import Button from 'material-ui/Button';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import type { AuthType } from '../../types/auth';
 
+//TODO: userAuth.uid.length > 0 の場合は、ログインボタン disableed
+//TODO: ログアウトボタンでCLEARE_LOGININFOをdispatch
+//TODO: errorMessageがある場合には、noticeを表示
+//TODO: ログイン成功でredirect
+//TODO: https://github.com/sotojuan/saga-login-flow sample
 export type Props = {
   userAuth: AuthType,
   loginStart: (userAuth: AuthType) => void,
@@ -30,14 +35,23 @@ class LoginForm extends Component<Props, State> {
   constructor(props) {
     super(props);
 
-    this.state = {
-      userAuth: this.props.userAuth
-    };
     this.handleChangeMailAddress = this.handleChangeMailAddress.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleStartLogin = this.handleStartLogin.bind(this);
     this.handleStartLogout = this.handleStartLogout.bind(this);
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      userAuth: {
+        ...nextProps.userAuth
+      }
+    });
+  }
+
+  state = {
+    userAuth: this.props.userAuth
+  };
 
   handleChangeMailAddress = event => {
     if (event.target instanceof HTMLInputElement) {
