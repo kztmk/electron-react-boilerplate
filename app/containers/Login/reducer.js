@@ -64,7 +64,7 @@ export default function(state: AuthType = initialState, action: Action): AuthTyp
 
     case Actions.CLEAR_AUTH_INFO:
       return {
-        initialState
+        ...initialState
       };
 
     default:

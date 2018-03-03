@@ -1,12 +1,25 @@
 // @flow
 import type { Saga } from 'redux-saga';
+import { push } from 'react-router-redux';
 import { put, call, takeEvery, select } from 'redux-saga/effects';
-import { loginRequest, loginSuccess, loginFailure, logoutSuccess, logoutFailure } from './actions';
+import {
+  loginRequest,
+  loginSuccess,
+  loginFailure,
+  logoutSuccess,
+  logoutFailure,
+  clearAuthInfo
+} from './actions';
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
 import type { FirebaseUserType, FirebaseErrorType } from '../../types/firebase';
 import { firebase } from '../../database/db';
 
+/**
+ * firebae error.codeからerror内容を日本語化する
+ * @param error
+ * @returns 日本語に翻訳したエラーメッセージ
+ */
 function getErrorMessage(error): string {
   if (error) {
     switch (error.code) {
@@ -26,8 +39,13 @@ function getErrorMessage(error): string {
   }
 }
 
-/*
-
+/**
+ *   firebaseからログアウトする
+ *
+ *   firebase API signOutを呼び、logoutSuccessアクションをdispatch
+ *   errorの場合は、logoutFailureアクションをdispatch.
+ *
+ *   firebase API signOUtは、voidを返すので完了を待たない。
  */
 function* requestLogout() {
   try {
@@ -39,12 +57,19 @@ function* requestLogout() {
       });
 
     yield put(logoutSuccess());
+    yield put(clearAuthInfo());
   } catch (err) {
     const authInfo: AuthType = yield select(state => state.Login);
     yield put(logoutFailure({ ...authInfo, errorMessage: err }));
   }
 }
 
+/**
+ *   1. loginRequestアクションをdispatch(ローディングをONにする)、
+ *   2. firebase API signInWithEmailAndPasswordを実行
+ *        success=> loginSuccessをdispatch
+ *        error=>loginFailureをdispatch
+ */
 function* requestLogin() {
   yield put(loginRequest());
   const authInfo: AuthType = yield select(state => state.Login);
@@ -62,12 +87,18 @@ function* requestLogin() {
       email: authInfo.mailAddress,
       password: authInfo.password
     });
+
     yield put(loginSuccess({ ...authInfo, userId: user.uid }));
+    yield put(push('/main'));
   } catch (error) {
     yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
   }
 }
 
+/**
+ *  login SetAuthInfoアクションを待機
+ *  logout logoutRequestアクションを待機
+ */
 function* rootSaga() {
   yield takeEvery(Actions.SET_AUTH_INFO, requestLogin);
   yield takeEvery(Actions.LOGOUT_REQUEST, requestLogout);

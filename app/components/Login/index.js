@@ -2,13 +2,12 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/Button';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
+import Snackbar from 'material-ui/Snackbar';
+import Slide from 'material-ui/transitions/Slide';
 import type { AuthType } from '../../types/auth';
 
-//TODO: userAuth.uid.length > 0 の場合は、ログインボタン disableed
-//TODO: ログアウトボタンでCLEARE_LOGININFOをdispatch
-//TODO: errorMessageがある場合には、noticeを表示
 //TODO: ログイン成功でredirect
-//TODO: https://github.com/sotojuan/saga-login-flow sample
+
 export type Props = {
   userAuth: AuthType,
   loginStart: (userAuth: AuthType) => void,
@@ -31,26 +30,46 @@ const style = {
   margin: '40px 20px'
 };
 
+function ErrorSnackbarTransition() {
+  return <Slide direction="down" />;
+}
+
 class LoginForm extends Component<Props, State> {
   constructor(props) {
     super(props);
 
-    this.handleChangeMailAddress = this.handleChangeMailAddress.bind(this);
-    this.handleChangePassword = this.handleChangePassword.bind(this);
-    this.handleStartLogin = this.handleStartLogin.bind(this);
-    this.handleStartLogout = this.handleStartLogout.bind(this);
+    this.state = {
+      userAuth: this.props.userAuth,
+      isOpenErrorSnackbar: false,
+      transition: ErrorSnackbarTransition,
+      isLogin: this.props.userAuth.userId.length > 0,
+      isPasswordReset: false
+    };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      userAuth: {
-        ...nextProps.userAuth
-      }
-    });
-  }
+  componentWillReceiveProps = nextProps => {
+    let isError = nextProps.userAuth.isLoginFailure;
+    const isLoginSuccess = nextProps.userAuth.userId.length > 0;
 
-  state = {
-    userAuth: this.props.userAuth
+    //ログアウト
+    if (this.state.isLogin && nextProps.userAuth.userId.length === 0) {
+      this.setState({
+        userAuth: {
+          ...nextProps.userAuth,
+          errorMessage: 'ログアウトしました。'
+        },
+        isOpenErrorSnackbar: true,
+        isLogin: false
+      });
+    } else {
+      this.setState({
+        userAuth: {
+          ...nextProps.userAuth
+        },
+        isOpenErrorSnackbar: isError,
+        isLogin: isLoginSuccess
+      });
+    }
   };
 
   handleChangeMailAddress = event => {
@@ -65,7 +84,7 @@ class LoginForm extends Component<Props, State> {
     }
   };
 
-  handleChangePassword(event) {
+  handleChangePassword = event => {
     if (event.target instanceof HTMLInputElement) {
       const val = event.target.value;
       this.setState(prevState => ({
@@ -75,19 +94,25 @@ class LoginForm extends Component<Props, State> {
         }
       }));
     }
-  }
+  };
 
-  handleStartLogin() {
+  handleStartLogin = () => {
     this.props.loginStart(this.state.userAuth);
-  }
+  };
 
-  handleStartLogout() {
+  handleStartLogout = () => {
     this.props.logoutStart();
-  }
+  };
+
+  handleSubmit = () => {};
+
+  handleErrorSnackbarClose = () => {
+    this.setState({ isOpenErrorSnackbar: false });
+  };
 
   render() {
     return (
-      <ValidatorForm onSubmit={this.handleStartLogin}>
+      <ValidatorForm onSubmit={this.handleSubmit}>
         <TextValidator
           label="メールアドレス"
           onChange={this.handleChangeMailAddress}
@@ -108,13 +133,29 @@ class LoginForm extends Component<Props, State> {
           errorMessages={['必須項目です。', '最低8文字が必要です。']}
         />
         <br />
-
-        <Button type="submit" style={style} onClick={this.handleStartLogin}>
+        <Button
+          type="submit"
+          style={style}
+          onClick={this.handleStartLogin}
+          disabled={this.state.isLogin}
+        >
           ログイン
         </Button>
-        <Button style={style} onClick={this.handleStartLogout}>
+        <Button style={style} onClick={this.handleStartLogout} disabled={!this.state.isLogin}>
           ログアウト
         </Button>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+          }}
+          open={this.state.isOpenErrorSnackbar}
+          onClose={this.handleErrorSnackbarClose}
+          SnackbarContentProps={{
+            'aria-describedby': 'message-id'
+          }}
+          message={<span id="login_error">{this.state.userAuth.errorMessage}</span>}
+        />
       </ValidatorForm>
     );
   }

@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Affiliate super tool The Yoriki version5",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
