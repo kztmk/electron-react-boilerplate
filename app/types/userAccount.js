@@ -16,3 +16,5 @@ export type UserAccountType = {
   paymentMethod: string,
   registeredMailAddress: string
 };
+
+//TODO: メールアドレス、ブログ開設時の既定情報は、ここに持つべきか？

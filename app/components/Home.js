@@ -1,33 +1,41 @@
 // @flow
 import React, { Component } from 'react';
-import Card, { CardHeader, CardContent } from 'material-ui/Card';
+import { withStyles, Grid } from 'material-ui';
+import { CardHeader, CardContent } from 'material-ui/Card';
+import RegularCard from '../ui/Cards/RegularCard';
 import MenuAppBar from './AppBar/';
 
+import { ItemGrid } from '../ui';
 import LoginForm from '../containers/Login';
+import VerticalNavi from './VerticalNav';
+import { primaryColor } from '../variables/styles';
 
+import appStyle from '../variables/styles/appStyle';
 type Props = {};
 
-const styles = {
-  width: '400px'
-};
-
-export default class Home extends Component<Props> {
+class Home extends Component<Props> {
   props: Props;
 
   render() {
+    const { classes, ...rest } = this.props;
     return (
-      <div>
-        <MenuAppBar />
-        <Card style={styles}>
-          <CardContent>
-            <CardHeader
-              title="寄騎　Version5"
-              subheader="登録メールアドレスとパスワードでログインすると、データを同期します。"
-            />
-            <LoginForm />
-          </CardContent>
-        </Card>
+      <div className={classes.wrapper}>
+        <VerticalNavi className="verticalNavi" />
+        <div className={classes.mainPanel} ref="mainPanel">
+          <Grid container>
+            <ItemGrid md={4}>
+              <RegularCard
+                headerColor="orange"
+                cardTitle="Employees Stats"
+                cardSubtitle="New employees on 15th September, 2016"
+                content={<LoginForm />}
+              />
+            </ItemGrid>
+          </Grid>
+        </div>
       </div>
     );
   }
 }
+
+export default withStyles(appStyle)(Home);

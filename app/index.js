@@ -7,7 +7,7 @@ import Root from './containers/Root';
 import { configureStore, history } from './store/configureStore';
 
 // import './styles/global-styles'; // eslint-disable-line
-
+import './asets/css/material-dashboard-react.css';
 const store = configureStore();
 
 render(
