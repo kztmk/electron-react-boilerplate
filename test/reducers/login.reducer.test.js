@@ -1,8 +1,8 @@
 /* eslint-disable function-paren-newline */
 // @flow
-import reducer, { initialState } from '../reducer';
-import * as actions from '../actions';
-import type { AuthType } from '../../../types/auth';
+import reducer, { initialState } from '../../app/containers/Login/reducer';
+import * as actions from '../../app/containers/Login/actions';
+import type { AuthType } from '../../app/types/auth';
 
 test('provide the initial state', () => {
   expect(reducer(undefined, { type: '@@INIT' })).toEqual(initialState);
@@ -14,9 +14,7 @@ test('handle SET_AUTH_INFO', () => {
     mailAddress: 'example@example.com',
     password: 'abc123'
   };
-  expect(
-    reducer(initialState, actions.setAuthInfo(logInInfo))
-  ).toMatchSnapshot();
+  expect(reducer(initialState, actions.setAuthInfo(logInInfo))).toMatchSnapshot();
 });
 
 test('handle LOGIN_REQUEST', () => {

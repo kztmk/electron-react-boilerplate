@@ -1,7 +1,7 @@
 // @flow
 import { connect } from 'react-redux';
 import type Connector from 'react-redux';
-import LoginForm, { type Props } from '../../components/LoginPage';
+import LoginForm, { type Props } from '../../components/FormLogin';
 import type { DispatchType } from '../../types';
 import type { State } from '../../types/state';
 import { setAuthInfo, logoutRequest } from './actions';

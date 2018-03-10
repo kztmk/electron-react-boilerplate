@@ -89,7 +89,7 @@ function* requestLogin() {
     });
 
     yield put(loginSuccess({ ...authInfo, userId: user.uid }));
-    yield put(push('/main'));
+    yield put(push('/home'));
   } catch (error) {
     yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
   }

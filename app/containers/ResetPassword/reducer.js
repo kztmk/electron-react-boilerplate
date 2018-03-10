@@ -3,8 +3,6 @@ import type { Action } from './actionTypes';
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
 
-export type State = AuthType;
-
 export const initialState: AuthType = {
   userId: '',
   mailAddress: '',
@@ -14,61 +12,46 @@ export const initialState: AuthType = {
   errorMessage: ''
 };
 
-// eslint-disable-next-line space-before-function-paren
+export type State = AuthType;
+
 export default function(state: AuthType = initialState, action: Action): AuthType {
   switch (action.type) {
+    case Actions.CLEAR_FIELDS:
+      return {
+        ...state
+      };
+
     case Actions.SET_AUTH_INFO:
       return {
         ...state,
-        mailAddress: action.payload.mailAddress,
-        password: action.payload.password
+        mailAddress: action.payload.mailAddress
       };
-    case Actions.LOGIN_REQUEST:
-      return {
-        ...state,
-        isLoadingIcon: true,
-        errorMessage: ''
-      };
-
-    case Actions.LOGIN_SUCCESS:
-      return {
-        ...state,
-        userId: action.payload.userId,
-        isLoginFailure: false,
-        isLoadingIcon: false
-      };
-
-    case Actions.LOGIN_FAILURE:
-      return {
-        ...state,
-        isLoginFailure: true,
-        isLoadingIcon: false,
-        errorMessage: action.payload.errorMessage
-      };
-
-    case Actions.LOGOUT_REQUEST:
+    case Actions.RESET_PASSWORD_REQUEST:
       return {
         ...state,
         isLoadingIcon: true
       };
-
-    case Actions.LOGOUT_SUCCESS:
+    case Actions.RESET_PASSWORD_SUCCESS:
       return {
-        ...initialState
+        ...state,
+        isLoadingIcon: false
       };
-
-    case Actions.LOGOUT_FAILURE:
+    case Actions.RESET_PASSWORD_FAILURE:
       return {
         ...state,
         isLoadingIcon: false,
+        isLoginFailure: true,
         errorMessage: action.payload.errorMessage
       };
-
-    case Actions.CLEAR_AUTH_INFO:
+    case Actions.CLEAR_FIELDS:
       return {
-        ...initialState
+        ...state,
+        isLoginFailure: false,
+        isLoadingIcon: false,
+        errorMessage: '',
+        password: '',
+        userId: ''
       };
-
     default:
       return state;
   }

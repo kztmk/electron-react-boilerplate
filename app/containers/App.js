@@ -25,7 +25,7 @@ class App extends React.Component<Props> {
     const { classes, ...rest } = this.props;
     return (
       <div className={classes.wrapper}>
-        <VerticalNavi routes={appRoutes} logo={logo} color="blue" {...rest} />
+        <VerticalNavi routes={appRoutes} logo={logo} color="purple" {...rest} />
         <div className={classes.mainPanel} ref="mainPanel">
           <div className={classes.content}>
             <div className={classes.container}>{switchRoutes}</div>
