@@ -16,11 +16,6 @@ export type State = AuthType;
 
 export default function(state: AuthType = initialState, action: Action): AuthType {
   switch (action.type) {
-    case Actions.CLEAR_FIELDS:
-      return {
-        ...state
-      };
-
     case Actions.SET_AUTH_INFO:
       return {
         ...state,
@@ -45,12 +40,7 @@ export default function(state: AuthType = initialState, action: Action): AuthTyp
       };
     case Actions.CLEAR_FIELDS:
       return {
-        ...state,
-        isLoginFailure: false,
-        isLoadingIcon: false,
-        errorMessage: '',
-        password: '',
-        userId: ''
+        ...initialState
       };
     default:
       return state;

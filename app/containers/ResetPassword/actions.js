@@ -38,9 +38,8 @@ export function resetPasswordFailure(payload: AuthType): ResetPasswordFailure {
     payload
   };
 }
-export function clearFields(payload: AuthType): ClearFields {
+export function clearFields(): ClearFields {
   return {
-    type: CLEAR_FIELDS,
-    payload
+    type: CLEAR_FIELDS
   };
 }

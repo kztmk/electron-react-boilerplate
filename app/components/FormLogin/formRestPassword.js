@@ -41,16 +41,15 @@ class FormResetPassword extends Component<Props, State> {
     };
   }
 
-  //TODO: successの場合、リセットボタンをdisable
-  //TODO: キャンセルボタンを「閉じる」ボタンへ
+
 
   /**
    * Firebaseへパスワードリセット要求完了後の更新されたpropsでstateを更新
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
-    let isError = nextProps.userAuth.isLoginFailure;
-    let isResetRequestSuccess =
+    const isError = nextProps.userAuth.isLoginFailure;
+    const isResetRequestSuccess =
       !nextProps.userAuth.isLoginFailure && nextProps.userAuth.errorMessage.length === 0;
 
     console.log(isResetRequestSuccess ? 'yes' : 'no');
@@ -100,7 +99,8 @@ class FormResetPassword extends Component<Props, State> {
    * 成功通知用snackbarを非表示にする
    */
   handleSuccessSnackbarClose = () => {
-    this.setState({ isRequestPassword: false });
+    this.setState({ isPasswordReset: false });
+    this.props.cancelRequestPasswordReset();
   };
 
   render() {

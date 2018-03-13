@@ -11,6 +11,11 @@ import type { AuthType } from '../../types/auth';
 import { firebase } from '../../database/db';
 import { push } from 'react-router-redux';
 
+/**
+ * Firebaseからのエラーを日本語化
+ * @param error
+ * @returns {*}
+ */
 const getErrorMessage = error => {
   if (error) {
     switch (error.code) {
@@ -26,9 +31,15 @@ const getErrorMessage = error => {
   }
 };
 
+/**
+ * パスワードのリセットをFirebaseへ要求
+ * PasswordReset stateから値を取得後、stateを初期化
+ * エラーなしの場合resetPasswordSuccessをdispatch
+ * エラーの場合resetPasswordFailureをdispatch
+ */
 function* passwordReset() {
   const authInfo: AuthType = yield select(state => state.ResetPassword);
-  yield put(clearFields(authInfo));
+  yield put(clearFields());
   yield put(resetPasswordRequest());
 
   try {
@@ -39,8 +50,6 @@ function* passwordReset() {
         .catch(error => {
           throw error;
         });
-
-    console.log(authInfo.mailAddress);
     yield call(firebaseResetPassword, authInfo.mailAddress);
 
     yield put(resetPasswordSuccess());
