@@ -1,6 +1,7 @@
 // @flow
-import { Actions } from './actionTypes';
 import { call, select, takeEvery, put } from 'redux-saga/effects';
+import { Actions } from './actionTypes';
+
 import {
   resetPasswordRequest,
   resetPasswordSuccess,
@@ -8,8 +9,7 @@ import {
   clearFields
 } from './actions';
 import type { AuthType } from '../../types/auth';
-import { firebase } from '../../database/db';
-import { push } from 'react-router-redux';
+import rsf from '../../database/db';
 
 /**
  * Firebaseからのエラーを日本語化
@@ -43,14 +43,7 @@ function* passwordReset() {
   yield put(resetPasswordRequest());
 
   try {
-    const firebaseResetPassword = email =>
-      firebase
-        .auth()
-        .sendPasswordResetEmail(email)
-        .catch(error => {
-          throw error;
-        });
-    yield call(firebaseResetPassword, authInfo.mailAddress);
+    yield call(rsf.auth.sendPasswordResetEmail, authInfo.mailAddress);
 
     yield put(resetPasswordSuccess());
   } catch (error) {
@@ -58,9 +51,9 @@ function* passwordReset() {
   }
 }
 
+// eslint-disable
 /**
- *  ResetPassword SetAuthInfoアクションを待機
- *
+ * ResetPassword SetAuthInfoアクションを待機
  */
 function* rootSaga() {
   yield takeEvery(Actions.SET_AUTH_INFO, passwordReset);

@@ -6761,6 +6761,13 @@ material-ui-icons@^1.0.0-beta.35:
   dependencies:
     recompose "^0.26.0"
 
+material-ui-pickers@^1.0.0-rc.2:
+  version "1.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/material-ui-pickers/-/material-ui-pickers-1.0.0-rc.2.tgz#36ebe3f1811f159177cdd5bea6315a76a1a88216"
+  dependencies:
+    babel-runtime "^6.26.0"
+    react-text-mask "^5.1.0"
+
 material-ui@^1.0.0-beta.35:
   version "1.0.0-beta.35"
   resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-1.0.0-beta.35.tgz#eeac6be307c0469943c7686e5c6bd4eaa6b1b563"
@@ -7071,6 +7078,10 @@ mkdirp@0.5.0:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.0.tgz#1d73076a6df986cd9344e15e71fcc05a4c9abf12"
   dependencies:
     minimist "0.0.8"
+
+moment@^2.21.0:
+  version "2.21.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.21.0.tgz#2a114b51d2a6ec9e6d83cf803f838a878d8a023a"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -8355,6 +8366,14 @@ prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.8, prop-types@^15.6.0:
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
+prop-types@^15.5.6:
+  version "15.6.1"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.1.tgz#36644453564255ddda391191fb3a125cbdf654ca"
+  dependencies:
+    fbjs "^0.8.16"
+    loose-envify "^1.3.1"
+    object-assign "^4.1.1"
+
 proxy-addr@~2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/proxy-addr/-/proxy-addr-2.0.2.tgz#6571504f47bb988ec8180253f85dd7e14952bdec"
@@ -8670,6 +8689,12 @@ react-test-renderer@^16.0.0-0, react-test-renderer@^16.2.0:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
+react-text-mask@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/react-text-mask/-/react-text-mask-5.1.0.tgz#490aa519aae73398d491edd675c821dc947b764b"
+  dependencies:
+    prop-types "^15.5.6"
+
 react-transform-catch-errors@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-transform-catch-errors/-/react-transform-catch-errors-1.0.2.tgz#1b4d4a76e97271896fc16fe3086c793ec88a9eeb"
@@ -8862,6 +8887,12 @@ redux-logger@^3.0.6:
   resolved "https://registry.yarnpkg.com/redux-logger/-/redux-logger-3.0.6.tgz#f7555966f3098f3c88604c449cf0baf5778274bf"
   dependencies:
     deep-diff "^0.3.5"
+
+redux-saga-firebase@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/redux-saga-firebase/-/redux-saga-firebase-0.12.0.tgz#2af7bd2d45f2e75436d8239813a759e83480aa7d"
+  dependencies:
+    redux-saga "^0.16.0"
 
 redux-saga@^0.16.0:
   version "0.16.0"

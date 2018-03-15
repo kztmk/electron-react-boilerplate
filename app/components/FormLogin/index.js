@@ -51,7 +51,7 @@ class LoginForm extends Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
-    let isError = nextProps.userAuth.isLoginFailure;
+    const isError = nextProps.userAuth.isLoginFailure;
     const isLoginSuccess = nextProps.userAuth.userId.length > 0;
 
     this.setState({
@@ -128,7 +128,7 @@ class LoginForm extends Component<Props, State> {
             cardTitle="寄騎 version5　ログイン"
             cardSubtitle="登録済みのメールアドレス、パスワードでログイン"
             content={
-              <ValidatorForm onSubmit={this.handleSubmit}>
+              <ValidatorForm onSubmit={this.handleSubmit} onError={errors => console.log(errors)}>
                 <TextValidator
                   label="メールアドレス"
                   onChange={this.handleChangeMailAddress}
@@ -165,7 +165,7 @@ class LoginForm extends Component<Props, State> {
                 <Button onClick={this.props.requestPasswordReset}>パスワードを忘れた場合</Button>
                 <Snackbar
                   color="warning"
-                  place={'bc'}
+                  place="bc"
                   icon={AddAlert}
                   open={this.state.isOpenErrorSnackbar}
                   closeNotification={this.handleErrorSnackbarClose}

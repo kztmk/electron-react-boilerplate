@@ -1,13 +1,10 @@
 // @flow
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { withStyles } from 'material-ui';
-import Slide from 'material-ui/transitions/Slide';
-import type { AuthType } from '../../types/auth';
 import Grid from 'material-ui/Grid';
-import { RegularCard, ItemGrid, Button, Snackbar } from '../../ui';
 import { AddAlert } from 'material-ui-icons/AddAlert';
+import type { AuthType } from '../../types/auth';
+import { RegularCard, ItemGrid, Button, Snackbar } from '../../ui';
 import { PasswordResetIcon } from '../../asets/icons';
 
 export type Props = {
@@ -20,15 +17,6 @@ type State = {
   userAuth: AuthType
 };
 
-/**
- * エラーメッセージ用のsnackbarを表示
- * @returns {*}
- * @constructor
- */
-function ErrorSnackbarTransition() {
-  return <Slide direction="down" />;
-}
-
 class FormResetPassword extends Component<Props, State> {
   constructor(props) {
     super(props);
@@ -36,12 +24,9 @@ class FormResetPassword extends Component<Props, State> {
     this.state = {
       userAuth: this.props.userAuth,
       isOpenErrorSnackbar: false,
-      transition: ErrorSnackbarTransition,
       isPasswordReset: false
     };
   }
-
-
 
   /**
    * Firebaseへパスワードリセット要求完了後の更新されたpropsでstateを更新
@@ -131,7 +116,7 @@ class FormResetPassword extends Component<Props, State> {
 
                 <Snackbar
                   color="warning"
-                  place={'bc'}
+                  place="bc"
                   icon={AddAlert}
                   open={this.state.isOpenErrorSnackbar}
                   closeNotification={this.handleErrorSnackbarClose}
@@ -142,7 +127,7 @@ class FormResetPassword extends Component<Props, State> {
                 />
                 <Snackbar
                   color="success"
-                  place={'bc'}
+                  place="bc"
                   icon={AddAlert}
                   open={this.state.isPasswordReset}
                   closeNotification={this.handleSuccessSnackbarClose}

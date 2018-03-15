@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+import ReduxSagaFirebase from 'redux-saga-firebase';
 
 // Initialize Firebase
 const config = {
@@ -9,8 +10,10 @@ const config = {
   storageBucket: 'yoriki5-prod.appspot.com',
   messagingSenderId: '971790993081'
 };
-firebase.initializeApp(config);
-console.log('db initialized');
-const database = firebase.database();
+const firebaseApp = firebase.initializeApp(config);
+// const database = firebase.database();
 
-export { firebase, database as default };
+const rsf = new ReduxSagaFirebase(firebaseApp);
+
+export default rsf;
+// export { firebase, database as default };

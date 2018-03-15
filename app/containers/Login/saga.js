@@ -13,7 +13,9 @@ import {
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
 import type { FirebaseUserType, FirebaseErrorType } from '../../types/firebase';
-import { firebase } from '../../database/db';
+import rsf from '../../database/db';
+import { getProfileRequest } from '../Profile/actions';
+import type { UserAccountType } from '../../types/userAccount';
 
 /**
  * firebae error.codeからerror内容を日本語化する
@@ -49,13 +51,14 @@ function getErrorMessage(error): string {
  */
 function* requestLogout() {
   try {
-    firebase
+    /*    firebase
       .auth()
       .signOut()
       .catch(error => {
         throw error;
-      });
+      });*/
 
+    yield call(rsf.signOut);
     yield put(logoutSuccess());
     yield put(clearAuthInfo());
   } catch (err) {
@@ -75,7 +78,7 @@ function* requestLogin() {
   const authInfo: AuthType = yield select(state => state.Login);
 
   try {
-    const firebaseAuth = ({ email, password }) =>
+    /*    const firebaseAuth = ({ email, password }) =>
       firebase
         .auth()
         .signInWithEmailAndPassword(email, password)
@@ -88,7 +91,19 @@ function* requestLogin() {
       password: authInfo.password
     });
 
+*/
+    const user = yield call(
+      rsf.auth.signInWithEmailAndPassword,
+      authInfo.mailAddress,
+      authInfo.password
+    );
+
     yield put(loginSuccess({ ...authInfo, userId: user.uid }));
+
+    // ログインに成功した場合、profileを取得する。
+    yield put(getProfileRequest());
+    const profile: UserAccountType = yield select(state => state.Profile);
+    if (!profile.expireDate) console.log('expireDate not set');
   } catch (error) {
     yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
   }

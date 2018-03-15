@@ -4,7 +4,7 @@ import createSagaMiddleware from 'redux-saga';
 import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
-import rootReducer from '../reducers';
+import rootReducer from '../reducer';
 import mySaga from '../sagas';
 import type { StoreType } from '../types';
 
@@ -55,8 +55,8 @@ const configureStore = (initialState: Object = {}): StoreType => {
 
   if (module.hot) {
     module.hot.accept(
-      '../reducers',
-      () => store.replaceReducer(require('../reducers')) // eslint-disable-line global-require
+      '../reducer',
+      () => store.replaceReducer(require('../reducer')) // eslint-disable-line global-require
     ); // eslint-disable-line global-require
   }
 

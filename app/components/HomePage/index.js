@@ -49,6 +49,7 @@ class HomePage extends React.Component {
   };
 
   render() {
+    // eslint-disable-next-line
     const isLogin = this.props.userAuth.userId.length > 0;
     return (
       <div>

@@ -9,12 +9,14 @@
  *   registoredMailAddress: 決済時のメールアドレス(mailAddress, passwordの両方紛失時のKey)
  */
 export type UserAccountType = {
+  key: string,
   userId: string,
   mailAddress: string,
   password: string,
   expireDate: ?number,
   paymentMethod: string,
-  registeredMailAddress: string
+  registeredMailAddress: string,
+  isLoadingIcon: boolean,
+  isFailure: boolean,
+  errorMessage: string
 };
-
-//TODO: メールアドレス、ブログ開設時の既定情報は、ここに持つべきか？
