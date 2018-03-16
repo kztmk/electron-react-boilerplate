@@ -4,8 +4,7 @@ import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 import { withStyles, List, ListItem, ListItemIcon, Tooltip } from 'material-ui';
 import VerticalNavStyle from '../../variables/styles/verticalNavi';
-import IconButton from 'material-ui/IconButton';
-import { LogoutIcon } from '../../asets/icons';
+import LogoutButton from '../../containers/Logout';
 
 const VerticalNav = ({ ...props }) => {
   // verifies if routeName is the one active
@@ -51,25 +50,12 @@ const VerticalNav = ({ ...props }) => {
       </a>
     </div>
   );
-  //TODO: Login成功後にUserInfo dataを取得
-  //TODO: verticalNavibarを作成
-  //TODO: password reset
 
-  //TODO: userProfile page
   return (
     <div className={classes.verticalNavi}>
       {brand}
       {links}
-      <Tooltip
-        className={classes.toolTip}
-        id="nav-icon-logout"
-        title="ログアウト"
-        placement="bottom"
-      >
-        <IconButton className={classes.iconButton} aria-label="ログアウト">
-          <LogoutIcon className={classes.logoutIcon} />
-        </IconButton>
-      </Tooltip>
+      <LogoutButton />
     </div>
   );
 };

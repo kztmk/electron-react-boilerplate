@@ -83,23 +83,6 @@ const verticalNaviStyle = {
           "0 12px 20px -10px rgba(156, 39, 176, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(156, 39, 176, 0.2)"
       }
     },
-  toolTip: {
-    whiteSpace: "nowrap",
-  },
-  iconButton: {
-    position: 'absolute',
-    bottom: '5px',
-    width: "32px",
-    height: "38px",
-    margin: "5px 12px 20px 18px",
-    textAlign: "center",
-    verticalAlign: "middle",
-    color: "rgba(255, 255, 255, 0.8)"
-  },
-  logoutIcon: {
-    width: '32px',
-    height: '38px'
-  }
 }
 
 export default  verticalNaviStyle
