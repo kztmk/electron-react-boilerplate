@@ -1,5 +1,4 @@
 import firebase from 'firebase';
-import ReduxSagaFirebase from 'redux-saga-firebase';
 
 // Initialize Firebase
 const config = {
@@ -10,10 +9,118 @@ const config = {
   storageBucket: 'yoriki5-prod.appspot.com',
   messagingSenderId: '971790993081'
 };
-const firebaseApp = firebase.initializeApp(config);
-// const database = firebase.database();
 
-const rsf = new ReduxSagaFirebase(firebaseApp);
+firebase.initializeApp(config);
 
-export default rsf;
-// export { firebase, database as default };
+// ------------------------------------
+// Database method
+// ------------------------------------
+
+// ------------------------------------
+// Auth
+//------------------------------------
+/**
+ * Email, passwordでLogin
+ * @param email
+ * @param password
+ * @returns {Promise<any>}
+ */
+const firebaseSignInWithEmailAndPassword = ({ email, password }) =>
+  firebase
+    .auth()
+    .signInWithEmailAndPassword(email, password)
+    .catch(error => {
+      throw error;
+    });
+
+/**
+ * passwordリセット用URLリクエスト
+ * @param email
+ * @returns {Promise<any>}
+ */
+const firebaseSendPasswordResetEmail = email =>
+  firebase
+    .auth()
+    .sendPasswordResetEmail(email)
+    .catch(error => {
+      throw error;
+    });
+
+/**
+ * ログアウト
+ * @returns {Promise<any>}
+ */
+const firebaseSignOut = () =>
+  firebase
+    .auth()
+    .signOut()
+    .catch(error => {
+      throw error;
+    });
+
+/**
+ * User object の email変更
+ * @param newEmail
+ * @returns {Promise<T>}
+ */
+const firebaseUpdateEmail = newEmail =>
+  firebase
+    .auth()
+    .currentUser.updateEmail(newEmail)
+    .catch(error => {
+      throw error;
+    });
+
+/**
+ * User password の変更
+ * @param newPassword
+ * @returns {Promise<T>}
+ */
+const firebaseUpdatePassword = newPassword =>
+  firebase
+    .auth()
+    .currentUser.updatePassword(newPassword)
+    .catch(error => {
+      throw error;
+    });
+// ------------------------------------
+// CRUD
+//------------------------------------
+
+const firebaseDbInsert = ({ path, value }) =>
+  firebase
+    .database()
+    .ref(path)
+    .push({ value })
+    .catch(error => {
+      throw error;
+    });
+
+/**
+ * Database fetch data
+ * @param path
+ * @returns {Promise<any>}
+ */
+const firebaseDbRead = path =>
+  firebase
+    .database()
+    .ref(path)
+    .once('value')
+    .catch(error => {
+      throw error;
+    });
+
+// ------------------------------------
+// Export
+//------------------------------------
+
+export {
+  firebase,
+  firebaseSignInWithEmailAndPassword,
+  firebaseSendPasswordResetEmail,
+  firebaseSignOut,
+  firebaseUpdateEmail,
+  firebaseUpdatePassword,
+  firebaseDbInsert,
+  firebaseDbRead
+};

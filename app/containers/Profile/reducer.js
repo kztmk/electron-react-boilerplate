@@ -15,7 +15,8 @@ export const initialState: State = {
   registeredMailAddress: '',
   isLoadingIcon: false,
   isFailure: false,
-  errorMessage: ''
+  errorMessage: '',
+  isFirstProfile: true
 };
 
 export default function(state: State = initialState, action: Action): UserAccountType {
@@ -23,12 +24,16 @@ export default function(state: State = initialState, action: Action): UserAccoun
     case Actions.SET_PROFILE:
       return {
         ...state,
+        key: action.payload.key,
         userId: action.payload.userId,
         mailAddress: action.payload.mailAddress,
         password: action.payload.password,
         expireDate: action.payload.expireDate,
         paymentMethod: action.payload.paymentMethod,
-        registeredMailAddress: action.payload.registeredMailAddress
+        registeredMailAddress: action.payload.registeredMailAddress,
+        errorMessage: '',
+        isFailure: false,
+        isFirstProfile: action.payload.isFirstProfile
       };
     case Actions.CREATE_PROFILE_REQUEST:
       return {
@@ -61,8 +66,12 @@ export default function(state: State = initialState, action: Action): UserAccoun
         mailAddress: action.payload.mailAddress,
         password: action.payload.password,
         expireDate: action.payload.expireDate,
+        paymentMethod: action.payload.paymentMethod,
         registeredMailAddress: action.payload.registeredMailAddress,
-        isLoadingIcon: false
+        isLoadingIcon: false,
+        isFirstProfile: action.payload.isFirstProfile,
+        isFailure: false,
+        errorMessage: ''
       };
     case Actions.GET_PROFILE_FAILURE:
       return {

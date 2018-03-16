@@ -1,17 +1,11 @@
 // @flow
 import { combineReducers } from 'redux';
-import { routerReducer as router } from 'react-router-redux';
 import Login from './containers/Login/reducer';
-import ResetPassword from './containers/ResetPassword/reducer';
 import Profile from './containers/Profile/reducer';
-import counter from './reducers/counter';
+import ResetPassword from './containers/ResetPassword/reducer';
 
-const rootReducer = combineReducers({
-  Profile,
-  ResetPassword,
+export default combineReducers({
   Login,
-  counter,
-  router
+  Profile,
+  ResetPassword
 });
-
-export default rootReducer;

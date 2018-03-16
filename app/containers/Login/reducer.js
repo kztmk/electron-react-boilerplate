@@ -17,6 +17,13 @@ export const initialState: AuthType = {
 // eslint-disable-next-line space-before-function-paren
 export default function(state: AuthType = initialState, action: Action): AuthType {
   switch (action.type) {
+    case Actions.UPDATE_AUTH_INFO:
+      return {
+        ...state,
+        mailAddress: action.payload.mailAddress,
+        password: action.payload.password
+      };
+
     case Actions.SET_AUTH_INFO:
       return {
         ...state,

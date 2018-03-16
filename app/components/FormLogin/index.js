@@ -18,7 +18,9 @@ export type Props = {
 };
 
 type State = {
-  userAuth: AuthType
+  userAuth: AuthType,
+  isOpenErrorSnackbar: boolean,
+  isLogin: boolean
 };
 
 /**
@@ -40,9 +42,7 @@ class LoginForm extends Component<Props, State> {
     this.state = {
       userAuth: this.props.userAuth,
       isOpenErrorSnackbar: false,
-      transition: ErrorSnackbarTransition,
-      isLogin: this.props.userAuth.userId.length > 0,
-      isPasswordReset: false
+      isLogin: this.props.userAuth.userId.length > 0
     };
   }
 

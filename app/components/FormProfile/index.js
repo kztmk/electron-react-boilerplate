@@ -3,7 +3,8 @@ import React from 'react';
 import { Grid, Select, MenuItem } from 'material-ui';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import moment from 'moment';
-import { RegularCard, Button, CustomInput, ItemGrid } from '../../ui';
+import AddAlert from 'material-ui-icons/AddAlert';
+import { RegularCard, Button, CustomInput, ItemGrid, Snackbar } from '../../ui';
 import type { UserAccountType } from '../../types/userAccount';
 
 export type Props = {
@@ -17,7 +18,9 @@ type State = {
   formatPaymentMethod: string,
   mailAddressError: boolean,
   passwordError: boolean,
-  disabled: boolean
+  disabled: boolean,
+  isOpenErrorSnackbar: boolean,
+  isOpenSuccessSnackbar: boolean
 };
 
 /**
@@ -54,9 +57,11 @@ class FormProfile extends React.Component<Props, State> {
       userInfo: this.props.userInfo,
       expireDateString: moment(this.props.userInfo.expireDate).format('YYYY-MM-DD'),
       formatPaymentMethod: convertStringToPaymentMethod(this.props.userInfo.paymentMethod),
-      mailAddressError: true,
-      passwordError: true,
-      disabled: true
+      mailAddressError: false,
+      passwordError: false,
+      disabled: true,
+      isOpenErrorSnackbar: false,
+      isOpenSuccessSnackbar: false
     };
   }
 
@@ -64,13 +69,30 @@ class FormProfile extends React.Component<Props, State> {
    * ValidatorFormにパスワードチェック用のバリデーションを追加する
    */
   componentWillMount() {
+    const reg = /^[a-zA-Z0-9!-/:-@¥[-`{-~]+$/;
     ValidatorForm.addValidationRule('isPassword', value => {
-      if (/^[a-zA-Z0-9!-/:-@¥[-`{-~]+$/.test(value)) {
-        return true;
+      if (!reg.test(value)) {
+        return false;
       }
-      return false;
+      return true;
     });
   }
+
+  /**
+   * Props更新後にstateを更新
+   * @param nextProps
+   */
+  componentWillReceiveProps = nextProps => {
+    const isError = nextProps.userInfo.isFailure;
+
+    this.setState({
+      userInfo: {
+        ...nextProps.userInfo
+      },
+      isOpenErrorSnackbar: isError,
+      isOpenSuccessSnackbar: !isError
+    });
+  };
 
   /**
    * プロファイル更新ボタンのクリック
@@ -94,7 +116,8 @@ class FormProfile extends React.Component<Props, State> {
           expireDate: dateNumber
         },
         expireDateString: moment(dateNumber).format('YYYY-MM-DD'),
-        expireDateObj: new Date(val)
+        expireDateObj: new Date(val),
+        disabled: false
       }));
     }
   };
@@ -156,10 +179,11 @@ class FormProfile extends React.Component<Props, State> {
    * @param result
    */
   validatorListenerMailAddress = result => {
-    console.log(result);
     this.setState({ mailAddressError: !result });
-    if (!result && !this.state.passwordError) {
+    if (result && !this.state.passwordError) {
       this.setState({ disabled: false });
+    } else {
+      this.setState({ disabled: true });
     }
   };
 
@@ -170,20 +194,32 @@ class FormProfile extends React.Component<Props, State> {
    */
   validatorListenerPassword = result => {
     this.setState({ passwordError: !result });
-    if (!this.state.mailAddressError && !result) {
+    if (!this.state.mailAddressError && result) {
       this.setState({ disabled: false });
+    } else {
+      this.setState({ disabled: true });
     }
+  };
+
+  /**
+   * エラー通知を消す際にstateを更新
+   */
+  handleErrorSnackbarClose = () => {
+    this.setState({ isOpenErrorSnackbar: false });
+  };
+
+  /**
+   * 正常更新通知を消す際にstateを更新
+   */
+  handleSuccessSnackbarClose = () => {
+    this.setState({ isOpenSuccessSnackbar: false });
   };
 
   render() {
     return (
       <Grid container justify="center">
         <ItemGrid xs={12} sm={12} md={8}>
-          <ValidatorForm
-            ref="form"
-            onSubmit={this.handleSubmit}
-            onError={errors => console.log(errors)}
-          >
+          <ValidatorForm onSubmit={this.handleSubmit} onError={errors => this.validateForm(errors)}>
             <RegularCard
               cardTitle="ユーザー情報"
               cardSubtitle=""
@@ -313,6 +349,24 @@ class FormProfile extends React.Component<Props, State> {
               }
             />
           </ValidatorForm>
+          <Snackbar
+            color="warning"
+            place="bc"
+            icon={AddAlert}
+            open={this.state.isOpenErrorSnackbar}
+            closeNotification={this.handleErrorSnackbarClose}
+            close
+            message={<span id="login_error">{this.state.userInfo.errorMessage}</span>}
+          />
+          <Snackbar
+            color="success"
+            place="bc"
+            icon={AddAlert}
+            open={this.state.isOpenSuccessSnackbar}
+            closeNotification={this.handleSuccessSnackbarClose}
+            close
+            message={<span id="login_error">ユーザー情報を更新しました。</span>}
+          />
         </ItemGrid>
       </Grid>
     );

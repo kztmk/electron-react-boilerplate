@@ -9,7 +9,7 @@ import {
   clearFields
 } from './actions';
 import type { AuthType } from '../../types/auth';
-import rsf from '../../database/db';
+import { firebaseSendPasswordResetEmail } from '../../database/db';
 
 /**
  * Firebaseからのエラーを日本語化
@@ -43,7 +43,7 @@ function* passwordReset() {
   yield put(resetPasswordRequest());
 
   try {
-    yield call(rsf.auth.sendPasswordResetEmail, authInfo.mailAddress);
+    yield call(firebaseSendPasswordResetEmail, authInfo.mailAddress);
 
     yield put(resetPasswordSuccess());
   } catch (error) {

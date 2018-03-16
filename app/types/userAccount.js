@@ -18,5 +18,6 @@ export type UserAccountType = {
   registeredMailAddress: string,
   isLoadingIcon: boolean,
   isFailure: boolean,
-  errorMessage: string
+  errorMessage: string,
+  isFirstProfile: boolean
 };

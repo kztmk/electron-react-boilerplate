@@ -9,6 +9,7 @@ export const LOGOUT_REQUEST: 'Login/LOGOUT_REQUEST' = 'Login/LOGOUT_REQUEST';
 export const LOGOUT_SUCCESS: 'Login/LOGOUT_SUCCESS' = 'Login/LOGOUT_SUCCESS';
 export const LOGOUT_FAILURE: 'Login/LOGOUT_FAILURE' = 'Login/LOGOUT_FAILURE';
 export const CLEAR_AUTH_INFO: 'Login/CLEAR_AUTH_INFO' = 'Login/CLEAR_AUTH_INFO';
+export const UPDATE_AUTH_INFO: 'Login/UPDATE_AUTH_INFO' = 'Login/UPDATE_AUTH_INFO';
 
 export const Actions = {
   SET_AUTH_INFO,
@@ -18,7 +19,8 @@ export const Actions = {
   LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
   LOGOUT_FAILURE,
-  CLEAR_AUTH_INFO
+  CLEAR_AUTH_INFO,
+  UPDATE_AUTH_INFO
 };
 
 export type SetAuthInfo = {
@@ -51,6 +53,11 @@ export type ClearAuthInfo = {
   type: typeof CLEAR_AUTH_INFO
 };
 
+export type UpdateAuthInfo = {
+  type: typeof UPDATE_AUTH_INFO,
+  payload: AuthType
+};
+
 export type Action =
   | SetAuthInfo
   | LoginRequest
@@ -59,4 +66,5 @@ export type Action =
   | LogoutRequest
   | LogoutSuccess
   | LogoutFailure
-  | ClearAuthInfo;
+  | ClearAuthInfo
+  | UpdateAuthInfo;
