@@ -28,6 +28,10 @@ class LogoutButton extends React.Component<Props> {
     this.setState({ modalOpen: false });
   };
 
+  handleClickLogout = () => {
+    this.setState({ modalOpen: false });
+    this.props.logoutStart();
+  };
   render() {
     const { classes } = this.props;
     return (
@@ -58,7 +62,7 @@ class LogoutButton extends React.Component<Props> {
                     <Button onClick={this.handleCloseModal}>
                       <Cancel />キャンセル
                     </Button>
-                    <Button color="primary" onClick={this.props.logoutStart}>
+                    <Button color="primary" onClick={this.handleClickLogout}>
                       <LogoutIcon />ログアウト
                     </Button>
                   </ItemGrid>

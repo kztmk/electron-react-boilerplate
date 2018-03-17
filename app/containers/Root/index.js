@@ -29,15 +29,17 @@ export default class Root extends Component<Props> {
   render() {
     return (
       <Provider store={this.props.store}>
-        <MuiThemeProvider theme={theme}>
-          <Router history={this.props.history}>
-            <Switch>
-              {defRoute.map((prop, key) => {
-                return <Route path={prop.path} component={prop.component} key={key} />;
-              })}
-            </Switch>
-          </Router>
-        </MuiThemeProvider>
+        <ConnectedRouter history={this.props.history}>
+          <MuiThemeProvider theme={theme}>
+            <Router history={this.props.history}>
+              <Switch>
+                {defRoute.map((prop, key) => {
+                  return <Route path={prop.path} component={prop.component} key={key} />;
+                })}
+              </Switch>
+            </Router>
+          </MuiThemeProvider>
+        </ConnectedRouter>
       </Provider>
     );
   }
