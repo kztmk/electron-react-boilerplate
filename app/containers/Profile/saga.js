@@ -50,17 +50,17 @@ function convertErrorMessage(errorCode) {
  */
 function* createProfile() {
   yield put(createProfileRequest());
-  console.log('call create.profile');
+  // console.log('call create.profile');
   const profile: UserAccountType = yield select(state => state.Profile);
   const userAuth = yield select(state => state.Login);
-  console.log('get profile');
+  // console.log('get profile');
   // ------validate fields----------
   // mailAddress
   const mailAddressRegx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const checkAddress = profile.mailAddress;
-  console.log(`check:${checkAddress}`);
+  // console.log(`check:${checkAddress}`);
   if (checkAddress.match(mailAddressRegx) === null) {
-    console.log('fail mailaddress check');
+    // console.log('fail mailaddress check');
     yield put(
       createProfileFailure({
         ...profile,
@@ -69,13 +69,13 @@ function* createProfile() {
     );
     return;
   }
-  console.log('pass mailaddress');
+  // console.log('pass mailaddress');
 
-  console.log(`first profile:${profile.isFirstProfile}`);
+  // console.log(`first profile:${profile.isFirstProfile}`);
   // Profile data を作成
   if (profile.key.length === 0) {
     try {
-      console.log('this is first time save profile');
+      // console.log('this is first time save profile');
 
       const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/profile`, {
         expireDate: profile.expireDate,
@@ -90,16 +90,16 @@ function* createProfile() {
 
   // profile update
   if (profile.key.length > 0) {
-    console.log('this. is update profile');
+    // console.log('this. is update profile');
 
-    console.log('chck mailAddress:' + userAuth.mailAddress === profile.mailAddress);
-    console.log('old:' + userAuth.mailAddress);
-    console.log('new:' + profile.mailAddress);
+    // console.log('chck mailAddress:' + userAuth.mailAddress === profile.mailAddress);
+    // console.log('old:' + userAuth.mailAddress);
+    // console.log('new:' + profile.mailAddress);
 
     // mailAddress
     if (userAuth.mailAddress !== profile.mailAddress) {
       try {
-        console.log('try mailAddress update');
+        // console.log('try mailAddress update');
         yield call(firebaseUpdateEmail, profile.mailAddress);
         yield put(updateProfileSuccess());
         // user Auth mailAddress update
@@ -110,19 +110,19 @@ function* createProfile() {
     }
 
     const latestAuthInfo = yield select(state => state.Login);
-    console.log('chck password:' + latestAuthInfo.password === profile.password);
-    console.log('old:' + latestAuthInfo.password);
-    console.log('new:' + profile.password);
+    // console.log('chck password:' + latestAuthInfo.password === profile.password);
+    // console.log('old:' + latestAuthInfo.password);
+    // console.log('new:' + profile.password);
     // password
     if (latestAuthInfo.password !== profile.password) {
       try {
-        console.log('try password update');
+        // console.log('try password update');
         yield call(firebaseUpdatePassword, profile.password);
         yield put(updateProfileSuccess());
         // userAuth password update
         yield put(updateAuthInfo({ ...latestAuthInfo, password: profile.password }));
       } catch (error) {
-        console.log('pw error:' + error);
+        // console.log('pw error:' + error);
         yield put(updateProfileFailure({ ...profile, errorMessage: convertErrorMessage(error) }));
       }
     }
@@ -149,7 +149,7 @@ function* getProfile() {
     // --beta モニターメンバー用プロファイル作成
     // ログイン完了
     if (profiles.length === 0) {
-      console.log('profile zero');
+      // console.log('profile zero');
       /*      yield put(
         getProfileSuccess({
           ...userInfo,
@@ -182,7 +182,7 @@ function* getProfile() {
     // Profile登録が複数ある場合
     // 最初のDataを使用後、エラーメッセージを追加し、結果は失敗とする。
     if (profiles.length > 1) {
-      console.log('num of profile' + profiles.length);
+      // console.log('num of profile' + profiles.length);
       yield put(
         getProfileSuccess({
           ...userInfo,
@@ -207,7 +207,7 @@ function* getProfile() {
 
     // Profaile数が1つで正常終了
     if (profiles.length === 1) {
-      console.log('correct profile');
+      // console.log('correct profile');
       yield put(
         getProfileSuccess({
           ...userInfo,
