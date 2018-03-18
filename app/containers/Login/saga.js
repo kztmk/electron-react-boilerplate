@@ -1,20 +1,19 @@
 // @flow
 import type { Saga } from 'redux-saga';
-import { push } from 'react-router-redux';
 import { put, call, takeEvery, select } from 'redux-saga/effects';
 import {
   loginRequest,
   loginSuccess,
   loginFailure,
+  loginDone,
   logoutSuccess,
   logoutFailure,
   clearAuthInfo
 } from './actions';
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
-import type { FirebaseUserType, FirebaseErrorType } from '../../types/firebase';
 import { firebaseSignInWithEmailAndPassword, firebaseSignOut } from '../../database/db';
-import { getProfileRequest } from '../Profile/actions';
+import { getProfileRequest, setProfile } from '../Profile/actions';
 import type { UserAccountType } from '../../types/userAccount';
 
 /**
@@ -77,12 +76,9 @@ function* requestLogin() {
     });
 
     yield put(loginSuccess({ ...authInfo, userId: user.uid }));
-
     // ログインに成功した場合、profileを取得する。
+    // TODO: dataを取得
     yield put(getProfileRequest());
-    const profile: UserAccountType = yield select(state => state.Profile);
-    if (profile.expireDate) {
-    }
   } catch (error) {
     yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
   }

@@ -2,11 +2,10 @@
 import React, { Component } from 'react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { withStyles } from 'material-ui';
-import Slide from 'material-ui/transitions/Slide';
 import type { AuthType } from '../../types/auth';
 import Grid from 'material-ui/Grid';
-import { RegularCard, ItemGrid, Button, Snackbar, P } from '../../ui';
-import { AddAlert } from 'material-ui-icons';
+import { RegularCard, ItemGrid, Button, Snackbar } from '../../ui';
+import AddAlert from 'material-ui-icons/AddAlert';
 import { LoginIcon } from '../../asets/icons';
 
 import customInputStyle from '../../variables/styles/customInputStyle';
@@ -22,15 +21,6 @@ type State = {
   isOpenErrorSnackbar: boolean,
   isLogin: boolean
 };
-
-/**
- * エラーメッセージ用のsnackbarを表示
- * @returns {*}
- * @constructor
- */
-function ErrorSnackbarTransition() {
-  return <Slide direction="down" />;
-}
 
 /**
  *   ログイン用フォーム
@@ -53,7 +43,6 @@ class LoginForm extends Component<Props, State> {
   componentWillReceiveProps = nextProps => {
     const isError = nextProps.userAuth.isLoginFailure;
     const isLoginSuccess = nextProps.userAuth.userId.length > 0;
-
     this.setState({
       userAuth: {
         ...nextProps.userAuth

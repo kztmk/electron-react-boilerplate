@@ -2,6 +2,7 @@
 import type { UserAccountType } from '../../types/userAccount';
 
 export const SET_PROFILE: 'Profile/SET_PROFILE' = 'Profile/SET_PROFILE';
+export const UPDATE_PROFILE_INFO: 'Profile/UPDATE_PROFILE' = 'Profile/UPDATE_PROFILE';
 export const CREATE_PROFILE_REQUEST: 'Profile/CREATE_PROFILE_REQUEST' =
   'Profile/CREATE_PROFILE_REQUEST';
 export const CREATE_PROFILE_SUCCESS: 'Profile/CREATE_PROFILE_SUCCESS' =
@@ -26,6 +27,7 @@ export const DELETE_PROFILE_FAILURE: 'Profile/DELETE_PROFILE_FAILURE' =
 
 export const Actions = {
   SET_PROFILE,
+  UPDATE_PROFILE_INFO,
   CREATE_PROFILE_REQUEST,
   CREATE_PROFILE_SUCCESS,
   CREATE_PROFILE_FAILURE,
@@ -44,7 +46,10 @@ export type SetProfile = {
   type: typeof SET_PROFILE,
   payload: UserAccountType
 };
-
+export type UpdateProfileInfo = {
+  type: typeof UPDATE_PROFILE_INFO,
+  payload: UserAccountType
+};
 export type CreateProfileRequest = {
   type: typeof CREATE_PROFILE_REQUEST
 };
@@ -60,7 +65,8 @@ export type GetProfileRequest = {
   type: typeof GET_PROFILE_REQUEST
 };
 export type GetProfileSuccess = {
-  type: typeof GET_PROFILE_SUCCESS
+  type: typeof GET_PROFILE_SUCCESS,
+  payload: UserAccountType
 };
 export type GetProfileFailure = {
   type: typeof GET_PROFILE_FAILURE,
@@ -89,6 +95,7 @@ export type DeleteProfileFailure = {
 
 export type Action =
   | SetProfile
+  | UpdateProfileInfo
   | CreateProfileRequest
   | CreateProfileSuccess
   | CreateProfileFailure

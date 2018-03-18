@@ -5,6 +5,7 @@ export const SET_AUTH_INFO: 'Login/SET_AUTH_INFO' = 'Login/SET_AUTH_INFO';
 export const LOGIN_REQUEST: 'Login/LOGIN_REQUEST' = 'Login/LOGIN_REQUEST';
 export const LOGIN_SUCCESS: 'Login/LOGIN_SUCCESS' = 'Login/LOGIN_SUCCESS';
 export const LOGIN_FAILURE: 'Login/LOGIN_FAILURE' = 'Login/LOGIN_FAILURE';
+export const LOGIN_DONE: 'Login/LOGIN_DONE' = 'Login/LOGIN_DONE';
 export const LOGOUT_REQUEST: 'Login/LOGOUT_REQUEST' = 'Login/LOGOUT_REQUEST';
 export const LOGOUT_SUCCESS: 'Login/LOGOUT_SUCCESS' = 'Login/LOGOUT_SUCCESS';
 export const LOGOUT_FAILURE: 'Login/LOGOUT_FAILURE' = 'Login/LOGOUT_FAILURE';
@@ -16,6 +17,7 @@ export const Actions = {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
+  LOGIN_DONE,
   LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
   LOGOUT_FAILURE,
@@ -38,6 +40,9 @@ export type LoginSuccess = {
 export type LoginFailure = {
   type: typeof LOGIN_FAILURE,
   payload: AuthType
+};
+export type LoginDone = {
+  type: typeof LOGIN_DONE
 };
 export type LogoutRequest = {
   type: typeof LOGOUT_REQUEST
@@ -63,6 +68,7 @@ export type Action =
   | LoginRequest
   | LoginSuccess
   | LoginFailure
+  | LoginDone
   | LogoutRequest
   | LogoutSuccess
   | LogoutFailure

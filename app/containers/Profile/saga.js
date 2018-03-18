@@ -2,6 +2,7 @@
 import type { Saga } from 'redux-saga';
 import { put, call, takeEvery, select } from 'redux-saga/effects';
 import {
+  updateProfileInfo,
   createProfileRequest,
   createProfileSuccess,
   createProfileFailure,
@@ -13,7 +14,8 @@ import {
   updateProfileFailure,
   deleteProfileRequest,
   deleteProfileSuccess,
-  deleteProfileFailure
+  deleteProfileFailure,
+  setProfile
 } from './actions';
 import type { UserAccountType } from '../../types/userAccount';
 import { Actions } from './actionTypes';
@@ -24,7 +26,8 @@ import {
   firebaseUpdatePassword
 } from '../../database/db';
 import type { AuthType } from '../../types/auth';
-import { updateAuthInfo } from '../Login/actions';
+import { updateAuthInfo, loginDone } from '../Login/actions';
+import { initialState } from './reducer';
 
 function convertErrorMessage(errorCode) {
   switch (errorCode) {
@@ -70,23 +73,23 @@ function* createProfile() {
 
   console.log(`first profile:${profile.isFirstProfile}`);
   // Profile data を作成
-  if (profile.isFirstProfile) {
+  if (profile.key.length === 0) {
     try {
       console.log('this is first time save profile');
 
-      const key = yield call(firebaseDbInsert, `/users/${userAuth.userId}/profile`, {
+      const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/profile`, {
         expireDate: profile.expireDate,
         paymentMethod: profile.paymentMethod,
         registeredMailAddress: profile.registeredMailAddress
       });
-      yield put(createProfileSuccess({ ...profile, key, isFailure: false }));
+      yield put(createProfileSuccess({ ...profile, key: ref.key, isFailure: false }));
     } catch (error) {
-      yield put(createProfileFailure({ ...profile, errorMessage: error }));
+      yield put(createProfileFailure({ ...profile, errorMessage: error.toString() }));
     }
   }
 
   // profile update
-  if (!profile.isFirstProfile) {
+  if (profile.key.length > 0) {
     console.log('this. is update profile');
 
     console.log('chck mailAddress:' + userAuth.mailAddress === profile.mailAddress);
@@ -142,12 +145,69 @@ function* getProfile() {
       });
     });
 
-    if (profiles.length > 1) {
-      throw '複数のユーザープロフィールが作成されています。';
+    // Profile登録がない場合
+    // --beta モニターメンバー用プロファイル作成
+    // ログイン完了
+    if (profiles.length === 0) {
+      console.log('profile zero');
+      /*      yield put(
+        getProfileSuccess({
+          ...userInfo,
+          userId: userAuth.userId,
+          mailAddress: userAuth.mailAddress,
+          password: userAuth.password,
+          registeredMailAddress: userAuth.mailAddress,
+          errorMessage: 'プロフィール登録がありません。',
+          isFirstProfile: true
+        })
+      );*/
+      yield put(
+        updateProfileInfo({
+          ...userInfo,
+          userId: userAuth.userId,
+          mailAddress: userAuth.mailAddress,
+          password: userAuth.password,
+          registeredMailAddress: userAuth.mailAddress,
+          expireDate: 1590969600000,
+          paymentMethod: 'py'
+        })
+      );
+
+      yield call(createProfile);
+      yield put(loginDone());
+
+      return;
     }
 
-    console.log(profiles[0]);
+    // Profile登録が複数ある場合
+    // 最初のDataを使用後、エラーメッセージを追加し、結果は失敗とする。
+    if (profiles.length > 1) {
+      console.log('num of profile' + profiles.length);
+      yield put(
+        getProfileSuccess({
+          ...userInfo,
+          key: profiles[0].key,
+          userId: userAuth.userId,
+          mailAddress: userAuth.mailAddress,
+          password: userAuth.password,
+          expireDate: profiles[0].expireDate,
+          paymentMethod: profiles[0].paymentMethod,
+          registeredMailAddress: profiles[0].registeredMailAddress,
+          isFirstProfile: false
+        })
+      );
+      yield put(
+        getProfileFailure({
+          ...initialState,
+          errorMessage: '複数のプロファイルが作成されています。'
+        })
+      );
+      return;
+    }
+
+    // Profaile数が1つで正常終了
     if (profiles.length === 1) {
+      console.log('correct profile');
       yield put(
         getProfileSuccess({
           ...userInfo,
@@ -161,15 +221,7 @@ function* getProfile() {
           key: profiles[0].key
         })
       );
-    } else {
-      yield put(
-        getProfileSuccess({
-          ...userInfo,
-          userId: userAuth.userId,
-          mailAddress: userAuth.mailAddress,
-          password: userAuth.password
-        })
-      );
+      yield put(loginDone());
     }
   } catch (error) {
     yield put(getProfileFailure({ ...userInfo, errorMessage: error.message }));

@@ -87,11 +87,11 @@ const firebaseUpdatePassword = newPassword =>
 // CRUD
 //------------------------------------
 
-const firebaseDbInsert = ({ path, value }) =>
+const firebaseDbInsert = (path, value) =>
   firebase
     .database()
     .ref(path)
-    .push({ value })
+    .push(value)
     .catch(error => {
       throw error;
     });

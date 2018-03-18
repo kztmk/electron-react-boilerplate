@@ -23,7 +23,6 @@ export default function(state: AuthType = initialState, action: Action): AuthTyp
         mailAddress: action.payload.mailAddress,
         password: action.payload.password
       };
-
     case Actions.SET_AUTH_INFO:
       return {
         ...state,
@@ -36,15 +35,17 @@ export default function(state: AuthType = initialState, action: Action): AuthTyp
         isLoadingIcon: true,
         errorMessage: ''
       };
-
     case Actions.LOGIN_SUCCESS:
       return {
         ...state,
         userId: action.payload.userId,
-        isLoginFailure: false,
+        isLoginFailure: false
+      };
+    case Actions.LOGIN_DONE:
+      return {
+        ...state,
         isLoadingIcon: false
       };
-
     case Actions.LOGIN_FAILURE:
       return {
         ...state,

@@ -3,6 +3,7 @@ import type { UserAccountType } from '../../types/userAccount';
 
 import {
   SET_PROFILE,
+  UPDATE_PROFILE_INFO,
   CREATE_PROFILE_REQUEST,
   CREATE_PROFILE_SUCCESS,
   CREATE_PROFILE_FAILURE,
@@ -18,6 +19,7 @@ import {
 } from './actionTypes';
 import type {
   SetProfile,
+  UpdateProfileInfo,
   CreateProfileRequest,
   CreateProfileSuccess,
   CreateProfileFailure,
@@ -35,6 +37,12 @@ import type {
 export function setProfile(payload: UserAccountType): SetProfile {
   return {
     type: SET_PROFILE,
+    payload
+  };
+}
+export function updateProfileInfo(payload: UserAccountType): UpdateProfileInfo {
+  return {
+    type: UPDATE_PROFILE_INFO,
     payload
   };
 }

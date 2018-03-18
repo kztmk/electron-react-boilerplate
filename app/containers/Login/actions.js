@@ -6,6 +6,7 @@ import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
+  LOGIN_DONE,
   LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
   LOGOUT_FAILURE,
@@ -17,6 +18,7 @@ import type {
   LoginRequest,
   LoginSuccess,
   LoginFailure,
+  LoginDone,
   LogoutRequest,
   LogoutSuccess,
   LogoutFailure,
@@ -45,6 +47,11 @@ export function loginFailure(payload: AuthType): LoginFailure {
   return {
     type: LOGIN_FAILURE,
     payload
+  };
+}
+export function loginDone(): LoginDone {
+  return {
+    type: LOGIN_DONE
   };
 }
 export function logoutRequest(): LogoutRequest {

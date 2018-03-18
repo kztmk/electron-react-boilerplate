@@ -35,6 +35,21 @@ export default function(state: State = initialState, action: Action): UserAccoun
         isFailure: false,
         isFirstProfile: action.payload.isFirstProfile
       };
+    case Actions.UPDATE_PROFILE_INFO:
+      return {
+        ...state,
+        ...state,
+        key: action.payload.key,
+        userId: action.payload.userId,
+        mailAddress: action.payload.mailAddress,
+        password: action.payload.password,
+        expireDate: action.payload.expireDate,
+        paymentMethod: action.payload.paymentMethod,
+        registeredMailAddress: action.payload.registeredMailAddress,
+        errorMessage: '',
+        isFailure: false,
+        isFirstProfile: action.payload.isFirstProfile
+      };
     case Actions.CREATE_PROFILE_REQUEST:
       return {
         ...state,
@@ -71,7 +86,7 @@ export default function(state: State = initialState, action: Action): UserAccoun
         isLoadingIcon: false,
         isFirstProfile: action.payload.isFirstProfile,
         isFailure: false,
-        errorMessage: ''
+        errorMessage: action.payload.errorMessage
       };
     case Actions.GET_PROFILE_FAILURE:
       return {
