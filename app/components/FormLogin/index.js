@@ -2,13 +2,13 @@
 import React, { Component } from 'react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import { withStyles } from 'material-ui';
-import type { AuthType } from '../../types/auth';
 import Grid from 'material-ui/Grid';
-import { RegularCard, ItemGrid, Button, Snackbar } from '../../ui';
 import AddAlert from 'material-ui-icons/AddAlert';
-import { LoginIcon } from '../../asets/icons';
 
-import customInputStyle from '../../variables/styles/customInputStyle';
+import type { AuthType } from '../../types/auth';
+import { FullHeaderCard, ItemGrid, Button, Snackbar } from '../../ui';
+import { LoginIcon } from '../../asets/icons';
+import customInputStyle from '../../asets/jss/material-dashboard-pro-react/components/customInputStyle';
 
 export type Props = {
   userAuth: AuthType,
@@ -113,7 +113,7 @@ class LoginForm extends Component<Props, State> {
     return (
       <Grid container justify="center">
         <ItemGrid xs={12} sm={8} md={6}>
-          <RegularCard
+          <FullHeaderCard
             cardTitle="寄騎 version5　ログイン"
             cardSubtitle="登録済みのメールアドレス、パスワードでログイン"
             content={

@@ -19,7 +19,7 @@ const appRoutes = [
   },
   {
     id: 'nav-icon-mailaddresses',
-    path: '/mailaddresses',
+    path: '/mailaccounts_views',
     navName: 'メールアドレス一覧',
     icon: MailOutline,
     component: MailAddressListPage,
@@ -27,7 +27,7 @@ const appRoutes = [
   },
   {
     id: 'nav-icon-blogs',
-    path: '/blogs',
+    path: '/blogs_views',
     navName: 'ブログ一覧',
     icon: Web,
     component: BlogsListPage,

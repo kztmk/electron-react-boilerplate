@@ -1,16 +1,18 @@
-/* @flow */
-import React from "react";
-import {
-  withStyles,
-  Card,
-  CardContent,
-  CardHeader,
-  CardActions,
-  Typography
-} from "material-ui";
+// @flow
+import React from 'react';
 
-import statsCardStyle from "../../variables/styles/statsCardStyle";
+// material-ui components
+import withStyles from 'material-ui/styles/withStyles';
+import Card from 'material-ui/Card';
+import CardContent from 'material-ui/Card/CardContent';
+import CardHeader from 'material-ui/Card/CardHeader';
+import CardActions from 'material-ui/Card/CardActions';
+import Typography from 'material-ui/Typography';
 
+import statsCardStyle from '../../asets/jss/material-dashboard-pro-react/components/statsCardStyle';
+
+// react/require-default-props
+/* eslint-disable */
 export type Props = {
   classes: Object,
   icon: Function,
@@ -21,8 +23,9 @@ export type Props = {
   statIcon: Function,
   statIconColor?: 'warning' | 'primary' | 'danger' | 'success' | 'info' | 'rose' | 'gray',
   statLink?: Object,
-  statText?: number | string | React.Element | Array<any>,
+  statText?: number | string | React.Element | Array<any>
 };
+/* eslint-enable */
 
 function StatsCard(props: Props) {
   const {
@@ -39,7 +42,7 @@ function StatsCard(props: Props) {
     <Card className={classes.card}>
       <CardHeader
         classes={{
-          root: classes.cardHeader + " " + classes[iconColor + "CardHeader"],
+          root: `${classes.cardHeader} ${classes[`${iconColor}CardHeader`]}`,
           avatar: classes.cardAvatar
         }}
         avatar={<props.icon className={classes.cardIcon} />}
@@ -53,7 +56,7 @@ function StatsCard(props: Props) {
           component="h2"
           className={classes.cardTitle}
         >
-          {description}{" "}
+          {description}{' '}
           {small !== undefined ? (
             <small className={classes.cardTitleSmall}>{small}</small>
           ) : null}
@@ -63,11 +66,11 @@ function StatsCard(props: Props) {
         <div className={classes.cardStats}>
           <props.statIcon
             className={
-              classes.cardStatsIcon +
-              " " +
-              classes[statIconColor + "CardStatsIcon"]
+              `${classes.cardStatsIcon
+              } ${
+              classes[`${statIconColor}CardStatsIcon`]}`
             }
-          />{" "}
+          />{' '}
           {statLink !== undefined ? (
             <a href={statLink.href} className={classes.cardStatsLink}>
               {statLink.text}
@@ -82,8 +85,8 @@ function StatsCard(props: Props) {
 }
 
 StatsCard.defaultProps = {
-  iconColor: "purple",
-  statIconColor: "gray"
+  iconColor: 'purple',
+  statIconColor: 'gray'
 };
 
 export default withStyles(statsCardStyle)(StatsCard);

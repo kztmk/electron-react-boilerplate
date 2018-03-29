@@ -1,43 +1,85 @@
-/* @flow */
-import React from "react";
-import { Menu } from "material-ui-icons";
-import {
-  withStyles,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Hidden,
-  Button
-} from "material-ui";
-import cx from "classnames";
+// @flow
+import React from 'react';
+import cx from 'classnames';
 
-import headerStyle from "../../variables/styles/headerStyle.jsx";
+// material-ui components
+import withStyles from 'material-ui/styles/withStyles';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import IconButton from 'material-ui/IconButton';
+import Button from 'material-ui/Button';
+import Hidden from 'material-ui/Hidden';
 
-import HeaderLinks from "./HeaderLinks";
+// material-ui icons
+import Menu from 'material-ui-icons/Menu';
+import MoreVert from 'material-ui-icons/MoreVert';
+import ViewList from 'material-ui-icons/ViewList';
 
+// core components
+import HeaderLinks from './HeaderLinks';
+import CustomIconButton from '../CustomButtons/IconButton';
+
+import headerStyle from '../../asets/jss/material-dashboard-pro-react/components/headerStyle';
+import type { RouteType } from '../../types/route';
+
+// react/require-default-props
+/* eslint-disable */
 export type Props = {
-  classes: Object,
+  classes?: Object,
   color?: 'primary' | 'info' | 'success' | 'warning' | 'danger',
+  rtlActive?: boolean,
+  routes?: RouteType,
+  miniActive: boolean,
+  sidebarMinimize: Function,
+  handleDrawerToggle: Function
 };
+/* eslint-enable */
 
 function Header(props: Props) {
   function makeBrand() {
-    var name;
+    let name;
     props.routes.map((prop, key) => {
+      if (prop.collapse) {
+        prop.views.map((prop, key) => {
+          if (prop.path === props.location.pathname) {
+            name = prop.name;
+          }
+          return null;
+        });
+      }
       if (prop.path === props.location.pathname) {
-        name = prop.navbarName;
+        name = prop.name;
       }
       return null;
     });
     return name;
   }
-  const { classes, color } = props;
+  const { classes, color, rtlActive } = props;
   const appBarClasses = cx({
-    [" " + classes[color]]: color
+    [` ${classes[color]}`]: color
   });
+  const sidebarMinimize =
+    `${classes.sidebarMinimize
+    } ${
+      cx({
+        [classes.sidebarMinimizeRTL]: rtlActive
+      })}`;
   return (
     <AppBar className={classes.appBar + appBarClasses}>
       <Toolbar className={classes.container}>
+        <Hidden smDown>
+          <div className={sidebarMinimize}>
+            {props.miniActive ? (
+              <CustomIconButton color="white" onClick={props.sidebarMinimize}>
+                <ViewList className={classes.sidebarMiniIcon} />
+              </CustomIconButton>
+            ) : (
+              <CustomIconButton color="white" onClick={props.sidebarMinimize}>
+                <MoreVert className={classes.sidebarMiniIcon} />
+              </CustomIconButton>
+            )}
+          </div>
+        </Hidden>
         <div className={classes.flex}>
           {/* Here we create navbar brand, based on route name */}
           <Button href="#" className={classes.title}>
@@ -45,7 +87,7 @@ function Header(props: Props) {
           </Button>
         </div>
         <Hidden smDown implementation="css">
-          <HeaderLinks />
+          <HeaderLinks rtlActive={rtlActive} />
         </Hidden>
         <Hidden mdUp>
           <IconButton

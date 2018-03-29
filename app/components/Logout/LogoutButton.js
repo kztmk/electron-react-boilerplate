@@ -5,9 +5,9 @@ import Modal from 'material-ui/Modal';
 import IconButton from 'material-ui/IconButton';
 import Cancel from 'material-ui-icons/Cancel';
 import { LogoutIcon } from '../../asets/icons';
-import { ItemGrid, RegularCard, Button } from '../../ui';
+import { ItemGrid, FullHeaderCard, Button } from '../../ui';
 
-import LogoutButtonStyle from '../../variables/styles/logout';
+import LogoutButtonStyle from '../../asets/jss/material-dashboard-pro-react/components/logout';
 
 type Props = {
   classes: object,
@@ -53,7 +53,7 @@ class LogoutButton extends React.Component<Props> {
         <Modal open={this.state.modalOpen} onClose={this.handleCloseModal}>
           <Grid container justify="center">
             <ItemGrid xs={12} sm={10} md={6}>
-              <RegularCard
+              <FullHeaderCard
                 headColor="primary"
                 cardTitle="ログアウト"
                 cardSubtitle="ログアウトしますか？"

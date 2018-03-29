@@ -1,15 +1,21 @@
-/* @flow */
-import React from "react";
-import { withStyles } from "material-ui";
+// @flow
+import React from 'react';
 
-import typographyStyle from "../../variables/styles/typographyStyle.jsx";
+// material-ui components
+import withStyles from 'material-ui/styles/withStyles';
 
-export type Props = { classes: Object };
+import typographyStyle from '../../asets/jss/material-dashboard-pro-react/components/typographyStyle';
+
+/* eslint-disable react/require-default-props */
+export type Props = {
+  classes: Object,
+  children: React.Node
+};
 
 function Info(props: Props) {
   const { classes, children } = props;
   return (
-    <div className={classes.defaultFontStyle + " " + classes.infoText}>
+    <div className={`${classes.defaultFontStyle} ${classes.infoText}`}>
       {children}
     </div>
   );

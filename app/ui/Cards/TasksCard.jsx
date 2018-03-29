@@ -1,23 +1,37 @@
-/* @flow */
-import React from "react";
-import {
-  withStyles,
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-  Tabs,
-  Tab
-} from "material-ui";
-import { BugReport, Code, Cloud } from "material-ui-icons";
+// @flow
+import React from 'react';
+import cx from 'classnames';
 
-import { Tasks } from "../../ui";
+// material-ui components
+import withStyles from 'material-ui/styles/withStyles';
+import Card from 'material-ui/Card';
+import CardContent from 'material-ui/Card/CardContent';
+import CardHeader from 'material-ui/Card/CardHeader';
+import Typography from 'material-ui/Typography';
+import Tabs from 'material-ui/Tabs';
+import Tab from 'material-ui/Tabs/Tab';
 
-import { bugs, website, server } from "../../variables/general";
+// core components
+import Tasks from '../Tasks/Tasks';
 
-import tasksCardStyle from "../../variables/styles/tasksCardStyle";
+import tasksCardStyle from '../../asets/jss/material-dashboard-pro-react/components/tasksCardStyle';
 
-export type Props = { classes: Object };
+// react/require-default-props
+/* eslint-disable */
+export type Props = {
+  classes: Object,
+  headerColor?: 'orange' | 'green' | 'red' | 'blue' | 'purple' | 'rose',
+  title?: string,
+  tabs?: Array<{
+    tabName: string,
+    tabIcon: Function,
+    tabTasks: Array<string>,
+    tabTasksIndexes: Array<number>,
+    tabTasksCheckedIndexes: Array<number>
+  }>,
+  rtlActive?: boolean
+};
+/* eslint-disable */
 
 class TasksCard extends React.Component {
   props: Props;
@@ -28,91 +42,108 @@ class TasksCard extends React.Component {
     this.setState({ value });
   };
   render() {
-    const { classes } = this.props;
+    const {
+      classes, headerColor, title, tabs, rtlActive
+    } = this.props;
+    const cardHeader =
+      `${classes.cardHeader
+      } ${
+        classes[`${headerColor}CardHeader`]
+      } ${
+        cx({
+          [classes.cardHeaderRTL]: rtlActive
+        })}`;
+    const cardTitle =
+      `${classes.cardTitle
+      } ${
+        cx({
+          [classes.cardTitleRTL]: rtlActive
+        })}`;
+    const tabsContainer =
+      `${classes.tabsContainer
+      } ${
+        cx({
+          [classes.tabsContainerRTL]: rtlActive
+        })}`;
+    const tabWrapper =
+      `${classes.tabWrapper
+      } ${
+        cx({
+          [classes.tabWrapperRTL]: rtlActive
+        })}`;
+    const tabIcon =
+      `${classes.tabIcon
+      } ${
+        cx({
+          [classes.tabIconRTL]: rtlActive
+        })}`;
+    const labelContainer = cx({ [classes.labelContainerRTL]: rtlActive });
+    const labelIcon =
+      `${classes.labelIcon
+      } ${
+        cx({
+          [classes.labelIconRTL]: rtlActive
+        })}`;
     return (
       <Card className={classes.card}>
         <CardHeader
           classes={{
-            root: classes.cardHeader,
-            title: classes.cardTitle,
+            root: cardHeader,
+            title: cardTitle,
             content: classes.cardHeaderContent
           }}
-          title="Tasks:"
+          title={title}
           action={
             <Tabs
               classes={{
-                flexContainer: classes.tabsContainer
+                flexContainer: tabsContainer
               }}
               value={this.state.value}
               onChange={this.handleChange}
               indicatorClassName={classes.displayNone}
               textColor="inherit"
             >
-              <Tab
-                classes={{
-                  wrapper: classes.tabWrapper,
-                  rootLabelIcon: classes.labelIcon,
-                  label: classes.label,
-                  rootInheritSelected: classes.rootInheritSelected
-                }}
-                icon={<BugReport className={classes.tabIcon} />}
-                label={"Bugs"}
-              />
-              <Tab
-                classes={{
-                  wrapper: classes.tabWrapper,
-                  rootLabelIcon: classes.labelIcon,
-                  label: classes.label,
-                  rootInheritSelected: classes.rootInheritSelected
-                }}
-                icon={<Code className={classes.tabIcon} />}
-                label={"Website"}
-              />
-              <Tab
-                classes={{
-                  wrapper: classes.tabWrapper,
-                  rootLabelIcon: classes.labelIcon,
-                  label: classes.label,
-                  rootInheritSelected: classes.rootInheritSelected
-                }}
-                icon={<Cloud className={classes.tabIcon} />}
-                label={"Server"}
-              />
+              {tabs.map((prop, key) => (
+                <Tab
+                  key={key}
+                  classes={{
+                      wrapper: tabWrapper,
+                      rootLabelIcon: labelIcon,
+                      label: classes.label,
+                      rootInheritSelected: classes.rootInheritSelected,
+                      labelContainer
+                    }}
+                  icon={<prop.tabIcon className={tabIcon} />}
+                  label={prop.tabName}
+                />
+                ))}
             </Tabs>
           }
         />
         <CardContent>
-          {this.state.value === 0 && (
-            <Typography component="div">
-              <Tasks
-                checkedIndexes={[0, 3]}
-                tasksIndexes={[0, 1, 2, 3]}
-                tasks={bugs}
-              />
-            </Typography>
-          )}
-          {this.state.value === 1 && (
-            <Typography component="div">
-              <Tasks
-                checkedIndexes={[0]}
-                tasksIndexes={[0, 1]}
-                tasks={website}
-              />
-            </Typography>
-          )}
-          {this.state.value === 2 && (
-            <Typography component="div">
-              <Tasks
-                checkedIndexes={[1]}
-                tasksIndexes={[0, 1, 2]}
-                tasks={server}
-              />
-            </Typography>
-          )}
+          {tabs.map((prop, key) => {
+            if (key === this.state.value) {
+              return (
+                <Typography component="div" key={key}>
+                  <Tasks
+                    rtlActive={rtlActive}
+                    checkedIndexes={prop.tabTasksCheckedIndexes}
+                    tasksIndexes={prop.tabTasksIndexes}
+                    tasks={prop.tabTasks}
+                  />
+                </Typography>
+              );
+            }
+            return null;
+          })}
         </CardContent>
       </Card>
     );
   }
 }
+
+TasksCard.defaultProps = {
+  headerColor: 'purple'
+};
 
 export default withStyles(tasksCardStyle)(TasksCard);

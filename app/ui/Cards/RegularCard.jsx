@@ -1,68 +1,70 @@
-/* @flow */
-import React from "react";
-import {
-  withStyles,
-  Card,
-  CardContent,
-  CardHeader,
-  CardActions
-} from "material-ui";
-import cx from "classnames";
+// @flow
+import React from 'react';
+import cx from 'classnames';
 
-import regularCardStyle from "../../variables/styles/regularCardStyle";
+// material-ui components
+import withStyles from 'material-ui/styles/withStyles';
+import Card from 'material-ui/Card';
+import CardContent from 'material-ui/Card/CardContent';
+import CardHeader from 'material-ui/Card/CardHeader';
 
+import regularCardStyle from '../../asets/jss/material-dashboard-pro-react/components/regularCardStyle';
+
+// react/require-default-props
+/* eslint-disable */
 export type Props = {
-  plainCard?: boolean,
   classes: Object,
-  headerColor?: 'orange' | 'green' | 'red' | 'blue' | 'purple',
+  customCardClasses?: string,
+  customCardTitleClasses?: string,
+  plainCard?: boolean,
   cardTitle?: number | string | React.Element | Array<any>,
   cardSubtitle?: number | string | React.Element | Array<any>,
   content?: number | string | React.Element | Array<any>,
-  footer?: number | string | React.Element | Array<any>,
+  titleAlign?: 'right' | 'left' | 'center',
+  contentAlign?: 'right' | 'left' | 'center',
+  subtitleAlign?: 'right' | 'left' | 'center'
 };
+/* eslint-enable */
 
 function RegularCard(props: Props) {
-  //const { ...props } = props;
   const {
     classes,
-    headerColor,
     plainCard,
     cardTitle,
     cardSubtitle,
     content,
-    footer
+    titleAlign,
+    customCardClasses,
+    contentAlign,
+    subtitleAlign,
+    customCardTitleClasses
   } = props;
-  const plainCardClasses = cx({
-    [" " + classes.cardPlain]: plainCard
-  });
-  const cardPlainHeaderClasses = cx({
-    [" " + classes.cardPlainHeader]: plainCard
-  });
+  const cardClasses =
+    classes.card +
+    cx({
+      [` ${classes.cardPlain}`]: plainCard,
+      [` ${customCardClasses}`]: customCardClasses !== undefined
+    });
   return (
-    <Card className={classes.card + plainCardClasses}>
-      <CardHeader
-        classes={{
-          root:
-            classes.cardHeader +
-            " " +
-            classes[headerColor + "CardHeader"] +
-            cardPlainHeaderClasses,
-          title: classes.cardTitle,
-          subheader: classes.cardSubtitle
-        }}
-        title={cardTitle}
-        subheader={cardSubtitle}
-      />
-      <CardContent>{content}</CardContent>
-      {footer !== undefined ? (
-        <CardActions className={classes.cardActions}>{footer}</CardActions>
+    <Card className={cardClasses}>
+      {cardTitle !== undefined || cardSubtitle !== undefined ? (
+        <CardHeader
+          classes={{
+            root: classes.cardHeader,
+            title: `${classes.cardTitle} ${classes[titleAlign]} ${customCardTitleClasses}`,
+            subheader: `${classes.cardSubtitle} ${classes[subtitleAlign]}`
+          }}
+          title={cardTitle}
+          subheader={cardSubtitle}
+        />
       ) : null}
+      <CardContent
+        className={`${classes.cardContent} ${classes[contentAlign]}`}
+      >
+        {content}
+      </CardContent>
     </Card>
   );
 }
-
-RegularCard.defaultProps = {
-  headerColor: "purple"
-};
 
 export default withStyles(regularCardStyle)(RegularCard);

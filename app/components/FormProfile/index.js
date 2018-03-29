@@ -1,15 +1,16 @@
 // @flow
 import React from 'react';
-import { Grid, Select, MenuItem } from 'material-ui';
+import { Grid, Select, MenuItem, withStyles } from 'material-ui';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import moment from 'moment';
 import AddAlert from 'material-ui-icons/AddAlert';
-import { RegularCard, Button, CustomInput, ItemGrid, Snackbar } from '../../ui';
+import { FullHeaderCard, Button, CustomInput, ItemGrid, Snackbar } from '../../ui';
 import type { UserAccountType } from '../../types/userAccount';
-
+import validateTextField from '../../asets/jss/material-dashboard-pro-react/components/validateTextField';
 export type Props = {
   userInfo: UserAccountType,
-  addProfile: () => void
+  addProfile: () => void,
+  classes: Object
 };
 
 type State = {
@@ -216,11 +217,12 @@ class FormProfile extends React.Component<Props, State> {
   };
 
   render() {
+    const { classes } = this.props;
     return (
       <Grid container justify="center">
         <ItemGrid xs={12} sm={12} md={8}>
           <ValidatorForm onSubmit={this.handleSubmit} onError={errors => this.validateForm(errors)}>
-            <RegularCard
+            <FullHeaderCard
               cardTitle="ユーザー情報"
               cardSubtitle=""
               content={
@@ -228,6 +230,7 @@ class FormProfile extends React.Component<Props, State> {
                   <Grid container>
                     <ItemGrid xs={12} sm={12} md={10}>
                       <TextValidator
+                        className={classes.validatedField}
                         fullWidth
                         label="登録メールアドレス"
                         name="mailAddress"
@@ -246,6 +249,7 @@ class FormProfile extends React.Component<Props, State> {
                   <Grid container>
                     <ItemGrid xs={12} sm={12} md={10}>
                       <TextValidator
+                        className={classes.validatedField}
                         label="パスワード"
                         onChange={this.handleChangePassword}
                         name="password"
@@ -373,4 +377,4 @@ class FormProfile extends React.Component<Props, State> {
   }
 }
 
-export default FormProfile;
+export default withStyles(validateTextField)(FormProfile);

@@ -1,11 +1,22 @@
-/* @flow */
-import React from "react";
-import { withStyles, FormControl, InputLabel, Input } from "material-ui";
-import { Clear, Check } from "material-ui-icons";
-import cx from "classnames";
+// @flow
+import React from 'react';
+import cx from 'classnames';
 
-import customInputStyle from "../../variables/styles/customInputStyle";
+// material-ui components
+import withStyles from 'material-ui/styles/withStyles';
+import FormControl from 'material-ui/Form/FormControl';
+import FormHelperText from 'material-ui/Form/FormHelperText';
+import Input from 'material-ui/Input';
+import InputLabel from 'material-ui/Input/InputLabel';
 
+// material-ui-icons
+import Clear from 'material-ui-icons/Clear';
+import Check from 'material-ui-icons/Check';
+
+import customInputStyle from '../../asets/jss/material-dashboard-pro-react/components/customInputStyle';
+
+// react/require-default-props
+/* eslint-disable */
 export type Props = {
   classes: Object,
   labelText?: number | string | React.Element | Array<any>,
@@ -15,7 +26,10 @@ export type Props = {
   formControlProps?: Object,
   error?: boolean,
   success?: boolean,
+  helpText?: string,
+  rtlActive?: boolean
 };
+/* eslint-enable */
 
 function CustomInput(props: Props) {
   const {
@@ -26,25 +40,80 @@ function CustomInput(props: Props) {
     labelProps,
     inputProps,
     error,
-    success
+    success,
+    helpText,
+    rtlActive
   } = props;
 
-  const labelClasses = cx({
-    [" " + classes.labelRootError]: error,
-    [" " + classes.labelRootSuccess]: success && !error
+  let labelClasses = cx({
+    [` ${classes.labelRootError}`]: error,
+    [` ${classes.labelRootSuccess}`]: success && !error
   });
+
   const inkbarClasses = cx({
     [classes.inkbarError]: error,
     [classes.inkbarSuccess]: success && !error,
     [classes.inkbar]: !success && !error
   });
-  const marginTop = cx({
-    [classes.marginTop]: labelText === undefined
-  });
+  let formControlClasses = classes.formControl;
+  if (formControlProps !== undefined) {
+    formControlClasses += ` ${formControlProps.className}`;
+  }
+  let underlineClasses = classes.underline;
+  if (inputProps !== undefined) {
+    formControlClasses =
+      `${formControlClasses
+      } ${
+        cx({
+          [classes.inputWithAdornment]:
+          (inputProps.startAdornment !== undefined ||
+            inputProps.endAdornment !== undefined) &&
+          labelText === undefined
+        })}`;
+    underlineClasses = cx({
+      [classes.underline]: inputProps.disabled !== true
+    });
+  }
+  if (inputProps !== undefined) {
+    labelClasses =
+      `${labelClasses
+      } ${
+        cx({
+          [classes.labelWithAdornment]: inputProps.endAdornment !== undefined
+        })}`;
+  }
+  const successClasses =
+    `${classes.feedback
+    } ${
+      classes.labelRootSuccess
+    } ${
+      cx({
+        [classes.feedbackNoLabel]: labelText === undefined,
+        [classes.feedbackAdorment]:
+        inputProps !== undefined && inputProps.endAdornment !== undefined
+      })}`;
+  const errorClasses =
+    `${classes.feedback
+    } ${
+      classes.labelRootError
+    } ${
+      cx({
+        [classes.feedbackNoLabel]: labelText === undefined,
+        [classes.feedbackAdorment]:
+        inputProps !== undefined && inputProps.endAdornment !== undefined
+      })}`;
+  const input =
+    `${classes.input
+    } ${
+      cx({
+        [classes.inputRTL]: rtlActive,
+        [classes.inputNoLabel]: labelText === undefined
+      })}`;
   return (
     <FormControl
       {...formControlProps}
-      className={formControlProps.className + " " + classes.formControl}
+      className={formControlClasses}
+      aria-describedby={`${id}-text`}
     >
       {labelText !== undefined ? (
         <InputLabel
@@ -57,18 +126,21 @@ function CustomInput(props: Props) {
       ) : null}
       <Input
         classes={{
-          root: marginTop,
+          input,
           disabled: classes.disabled,
-          underline: classes.underline,
+          underline: underlineClasses,
           inkbar: inkbarClasses
         }}
         id={id}
         {...inputProps}
       />
       {error ? (
-        <Clear className={classes.feedback + " " + classes.labelRootError} />
+        <Clear className={errorClasses} />
       ) : success ? (
-        <Check className={classes.feedback + " " + classes.labelRootSuccess} />
+        <Check className={successClasses} />
+      ) : null}
+      {helpText !== undefined ? (
+        <FormHelperText id={`${id}-text`}>{helpText}</FormHelperText>
       ) : null}
     </FormControl>
   );

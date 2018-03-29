@@ -4,7 +4,7 @@ import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import Grid from 'material-ui/Grid';
 import { AddAlert } from 'material-ui-icons/AddAlert';
 import type { AuthType } from '../../types/auth';
-import { RegularCard, ItemGrid, Button, Snackbar } from '../../ui';
+import { FullHeaderCard, ItemGrid, Button, Snackbar } from '../../ui';
 import { PasswordResetIcon } from '../../asets/icons';
 
 export type Props = {
@@ -92,7 +92,7 @@ class FormResetPassword extends Component<Props, State> {
     return (
       <Grid container justify="center">
         <ItemGrid xs={12} sm={8} md={6}>
-          <RegularCard
+          <FullHeaderCard
             cardTitle="パスワードリセット"
             cardSubtitle="登録済みのメールアドレスを入力してください。折り返しパスワードリセット用URLを送ります。"
             content={

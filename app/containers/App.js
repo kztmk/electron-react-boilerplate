@@ -3,10 +3,10 @@ import * as React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { withStyles } from 'material-ui';
-import appRoutes from '../routes/app.js';
+import appRoutes from '../routes/app';
 import VerticalNavi from '../components/VerticalNav';
 import Footer from '../components/Footer';
-import appStyle from '../variables/styles/appStyle';
+import appStyle from '../asets/jss/material-dashboard-pro-react/layouts/dashboardStyle';
 
 import logo from '../asets/img/yoriki5.png';
 
@@ -26,6 +26,10 @@ const switchRoutes = auth => (
 class App extends React.Component<Props> {
   props: Props;
 
+  getRoute() {
+    return this.props.location.pathname.includes('views');
+  }
+
   render() {
     const { auth, classes, ...rest } = this.props;
     // const isLoggedIn = this.props.userAuth.userId.length > 0;
@@ -33,10 +37,14 @@ class App extends React.Component<Props> {
       <div className={classes.wrapper}>
         <VerticalNavi routes={appRoutes} logo={logo} color="purple" {...rest} />
         <div className={classes.mainPanel} ref="mainPanel">
-          <div className={classes.content}>
-            <div className={classes.container}>{switchRoutes(auth)}</div>
+          {this.getRoute() ? (
+            <div className={classes.mainContent}>{switchRoutes(auth)}</div>
+          ) : (
+            <div className={classes.content}>
+              <div className={classes.container}>{switchRoutes(auth)}</div>
+            </div>
+            )}
             <Footer />
-          </div>
         </div>
       </div>
     );

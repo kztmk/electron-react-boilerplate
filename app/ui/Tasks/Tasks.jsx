@@ -1,23 +1,29 @@
-/* @flow */
-import React from "react";
-import {
-  withStyles,
-  Checkbox,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  Tooltip
-} from "material-ui";
-import { Edit, Close, Check } from "material-ui-icons";
+// @flow
+import React from 'react';
 
-import tasksStyle from "../../variables/styles/tasksStyle.jsx";
+// material-ui components
+import withStyles from 'material-ui/styles/withStyles';
+import Table from 'material-ui/Table';
+import TableBody from 'material-ui/Table/TableBody';
+import TableCell from 'material-ui/Table/TableCell';
+import TableRow from 'material-ui/Table/TableRow';
+import IconButton from 'material-ui/IconButton';
+import Checkbox from 'material-ui/Checkbox';
+import Tooltip from 'material-ui/Tooltip';
 
+// material-ui-icons
+import Edit from 'material-ui-icons/Edit';
+import Close from 'material-ui-icons/Close';
+import Check from 'material-ui-icons/Check';
+
+import tasksStyle from '../../asets/jss/material-dashboard-pro-react/components/tasksStyle';
+
+/* eslint-disable react/require-default-props */
 export type Props = {
   classes: Object,
   tasksIndexes?: Array<number>,
-  tasks?: Array<number | string | React.Element | Array<any>>,
+  checkedIndexes?: Array<number>,
+  tasks?: Array<number | string | React.Element | Array<any>>
 };
 
 class Tasks extends React.Component {
@@ -75,7 +81,7 @@ class Tasks extends React.Component {
                   >
                     <Edit
                       className={
-                        classes.tableActionButtonIcon + " " + classes.edit
+                        `${classes.tableActionButtonIcon} ${classes.edit}`
                       }
                     />
                   </IconButton>
@@ -92,7 +98,7 @@ class Tasks extends React.Component {
                   >
                     <Close
                       className={
-                        classes.tableActionButtonIcon + " " + classes.close
+                        `${classes.tableActionButtonIcon} ${classes.close}`
                       }
                     />
                   </IconButton>

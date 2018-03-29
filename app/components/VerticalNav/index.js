@@ -1,12 +1,23 @@
 // @flow
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import NavLink from 'react-router-dom/NavLink';
 import cx from 'classnames';
 import { withStyles, List, ListItem, ListItemIcon, Tooltip } from 'material-ui';
-import VerticalNavStyle from '../../variables/styles/verticalNavi';
+import VerticalNavStyle from '../../asets/jss/material-dashboard-pro-react/components/verticalNavi';
 import LogoutButton from '../../containers/Logout';
 
-const VerticalNav = ({ ...props }) => {
+/* eslint-disable react/require-default-props */
+type Props ={
+  classes: Objectj,
+  color?: 'primary' | 'info' | 'success' | 'warning' | 'danger' | 'rose' | 'purple',
+  logo?: string,
+  image?: string,
+  logoText?: string,
+  routes: Object
+}
+
+
+const VerticalNav = (props: Props) => {
   // verifies if routeName is the one active
   function activeRoute(routeName) {
     return props.location.pathname.indexOf(routeName) > -1;
