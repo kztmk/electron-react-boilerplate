@@ -89,6 +89,7 @@ class LoginForm extends Component<Props, State> {
    * container/Login で propsとして受け取ったactionをdispatch
    */
   handleStartLogin = () => {
+    this.setState({ isOpenErrorSnackbar: false });
     this.props.loginStart(this.state.userAuth);
   };
 

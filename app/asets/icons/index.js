@@ -1,11 +1,11 @@
 import React from 'react';
 import SvgIcon from 'material-ui/SvgIcon';
 
-//mail outline
-//<i class="material-icons">web</i>
-//<i class="material-icons">mail_outline</i>
-//<i class="material-icons">settings</i>
-//<i class="material-icons">account_box</i>
+// mail outline
+// <i class="material-icons">web</i>
+// <i class="material-icons">mail_outline</i>
+// <i class="material-icons">settings</i>
+// <i class="material-icons">account_box</i>
 
 export function LoginIcon(props) {
   return (

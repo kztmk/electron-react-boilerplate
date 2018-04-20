@@ -1,11 +1,10 @@
 // @flow
-import type { Saga } from 'redux-saga';
+import type Saga from 'redux-saga';
 import { put, call, takeEvery, select } from 'redux-saga/effects';
 import {
   loginRequest,
   loginSuccess,
   loginFailure,
-  loginDone,
   logoutSuccess,
   logoutFailure,
   clearAuthInfo
@@ -13,8 +12,9 @@ import {
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
 import { firebaseSignInWithEmailAndPassword, firebaseSignOut } from '../../database/db';
-import { getProfileRequest, setProfile } from '../Profile/actions';
-import type { UserAccountType } from '../../types/userAccount';
+import { getProfileRequest } from '../Profile/actions';
+import { getMailAddressRequest } from '../MailAddressList/actions';
+import { getBlogsRequest } from '../BlogList/actions';
 
 /**
  * firebae error.codeからerror内容を日本語化する
@@ -77,8 +77,12 @@ function* requestLogin() {
 
     yield put(loginSuccess({ ...authInfo, userId: user.uid }));
     // ログインに成功した場合、profileを取得する。
-    // TODO: dataを取得
     yield put(getProfileRequest());
+    // TODO: settingsを取得
+    // mailAccountsを取得
+    yield put(getMailAddressRequest());
+    // blogAccountsを取得
+    yield put(getBlogsRequest());
   } catch (error) {
     yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
   }
@@ -88,7 +92,7 @@ function* requestLogin() {
  *  login SetAuthInfoアクションを待機
  *  logout logoutRequestアクションを待機
  */
-function* rootSaga() {
+function* rootSaga(): Saga {
   yield takeEvery(Actions.SET_AUTH_INFO, requestLogin);
   yield takeEvery(Actions.LOGOUT_REQUEST, requestLogout);
 }

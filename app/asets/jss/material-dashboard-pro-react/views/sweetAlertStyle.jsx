@@ -3,8 +3,12 @@
 // #############################
 
 import buttonStyle from '../../material-dashboard-pro-react/components/buttonStyle';
+import modalStyle from '../modalStyle';
 
 const sweetAlertStyle = {
+  toolTip: {
+    whiteSpace: 'nowrap'
+  },
   cardTitle: {
     marginTop: '0',
     marginBottom: '3px',
@@ -20,7 +24,8 @@ const sweetAlertStyle = {
   left: {
     textAlign: 'left'
   },
-  ...buttonStyle
+  ...buttonStyle,
+  ...modalStyle
 };
 
 export default sweetAlertStyle;

@@ -3,6 +3,7 @@
 // #############################
 
 import customCheckboxRadioSwitch from '../../material-dashboard-pro-react/customCheckboxRadioSwitch';
+import sweetAlertStyle from './sweetAlertStyle';
 
 const regularFormsStyle = {
   ...customCheckboxRadioSwitch,
@@ -26,6 +27,7 @@ const regularFormsStyle = {
     paddingBottom: '8px',
     minHeight: '34px'
   },
+  ...sweetAlertStyle
 };
 
 export default regularFormsStyle;

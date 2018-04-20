@@ -1,6 +1,6 @@
 // @flow
 import type { Store as ReduxStoreType, Dispatch as ReduxDispatchType } from 'redux';
-import type { ActionType as NextActionType } from '../action';
+import type { ActionType as NextActionType } from './action';
 import type { StateType as BaseStateType } from './state';
 
 export type StateType = BaseStateType;

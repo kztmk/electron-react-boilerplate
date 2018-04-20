@@ -5,17 +5,18 @@ import cx from 'classnames';
 import { withStyles, List, ListItem, ListItemIcon, Tooltip } from 'material-ui';
 import VerticalNavStyle from '../../asets/jss/material-dashboard-pro-react/components/verticalNavi';
 import LogoutButton from '../../containers/Logout';
+import type { RouteType } from '../../types/route';
 
 /* eslint-disable react/require-default-props */
-type Props ={
-  classes: Objectj,
+type Props = {
+  classes: Object,
   color?: 'primary' | 'info' | 'success' | 'warning' | 'danger' | 'rose' | 'purple',
   logo?: string,
   image?: string,
   logoText?: string,
-  routes: Object
-}
-
+  routes: Object,
+  location: Object
+};
 
 const VerticalNav = (props: Props) => {
   // verifies if routeName is the one active

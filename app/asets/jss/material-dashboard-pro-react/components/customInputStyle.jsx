@@ -87,8 +87,25 @@ const customInputStyle = {
       height: 'auto'
     }
   },
+  inputLessUpperSpace: {
+    padding: '2px 0 0',
+    fontWeight: '400',
+    height: '28px',
+    fontSize: '14px',
+    lineHeight: '1.428571429',
+    color: '#555',
+    '&[rows]': {
+      height: 'auto'
+    }
+  },
   inputNoLabel: {
     paddingTop: '18px'
+  },
+  inputNoLabelLessUpperSpace: {
+    paddingTop: '12px'
+  },
+  inputNoLabelLeastUpperSpace: {
+    paddingTop: '8px'
   },
   inputRTL: {
     textAlign: 'right'

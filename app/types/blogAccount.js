@@ -2,7 +2,8 @@
 /**
  *  blog account型
  */
-export type BlogAccountType = {
+type BlogAccountType = {
+  key: string,
   accountId: string,
   password: string,
   mailAddress: string,
@@ -11,5 +12,14 @@ export type BlogAccountType = {
   description: string,
   url: string,
   remark: string,
-  createDate: number
+  createDate: number,
+  detailInfo: Array<string>,
+  apiId: string,
+  apiPass: string,
+  blogId: string,
+  endPoint: string,
+  groupTags: string,
+  affiliateTags: Array<string>
 };
+
+export default BlogAccountType;

@@ -2,14 +2,16 @@
 /**
  *  Mail Account型
  */
-export type MailAccountType = {
+type MailAccountType = {
+  key: string,
   accountId: string,
   password: string,
   mailAddress: string,
   provider: string,
-  baseMailAddress: string,
   createDate: number,
-  lastLogin?: number,
+  lastLogin: ?number,
   tags: string,
-  remark: string
+  detailInfo: ?Array<string>
 };
+
+export default MailAccountType;

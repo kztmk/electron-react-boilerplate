@@ -1,21 +1,18 @@
+/* eslint-disable function-paren-newline */
 // @flow
-import type { Saga } from 'redux-saga';
+import type Saga from 'redux-saga';
 import { put, call, takeEvery, select } from 'redux-saga/effects';
 import {
   updateProfileInfo,
   createProfileRequest,
   createProfileSuccess,
   createProfileFailure,
-  getProfileRequest,
   getProfileSuccess,
   getProfileFailure,
-  updateProfileRequest,
   updateProfileSuccess,
-  updateProfileFailure,
-  deleteProfileRequest,
-  deleteProfileSuccess,
-  deleteProfileFailure,
-  setProfile
+  updateProfileFailure
+  // deleteProfileSuccess,
+  // deleteProfileFailure
 } from './actions';
 import type { UserAccountType } from '../../types/userAccount';
 import { Actions } from './actionTypes';
@@ -56,6 +53,7 @@ function* createProfile() {
   // console.log('get profile');
   // ------validate fields----------
   // mailAddress
+  // eslint-disable-next-line
   const mailAddressRegx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const checkAddress = profile.mailAddress;
   // console.log(`check:${checkAddress}`);
@@ -131,7 +129,7 @@ function* createProfile() {
 
 function* getProfile() {
   const userAuth: AuthType = yield select(state => state.Login);
-  if (userAuth.userId.length === 0) throw 'ログインが完了していません。';
+  if (userAuth.userId.length === 0) throw new Error('ログインが完了していません。');
   const userInfo: UserAccountType = yield select(state => state.Profile);
 
   try {
@@ -150,17 +148,6 @@ function* getProfile() {
     // ログイン完了
     if (profiles.length === 0) {
       // console.log('profile zero');
-      /*      yield put(
-        getProfileSuccess({
-          ...userInfo,
-          userId: userAuth.userId,
-          mailAddress: userAuth.mailAddress,
-          password: userAuth.password,
-          registeredMailAddress: userAuth.mailAddress,
-          errorMessage: 'プロフィール登録がありません。',
-          isFirstProfile: true
-        })
-      );*/
       yield put(
         updateProfileInfo({
           ...userInfo,
@@ -217,7 +204,7 @@ function* getProfile() {
           registeredMailAddress: profiles[0].registeredMailAddress,
           expireDate: profiles[0].expireDate,
           paymentMethod: profiles[0].paymentMethod,
-          isFirstProfile: !!!profiles[0].key,
+          isFirstProfile: !profiles[0].key,
           key: profiles[0].key
         })
       );
@@ -228,7 +215,7 @@ function* getProfile() {
   }
 }
 
-function* updateProfile() {
+/* function* updateProfile() {
   const userInfo: UserAccountType = yield select(state => state.Profile);
   yield put(updateProfileSuccess({ ...userInfo }));
   yield put(updateProfileFailure({ ...userInfo }));
@@ -238,13 +225,13 @@ function* deleteProfile() {
   const userInfo: UserAccountType = yield select(state => state.Profile);
   yield put(deleteProfileSuccess());
   yield put(deleteProfileFailure());
-}
+} */
 
 function* rootSaga(): Saga {
   yield takeEvery(Actions.SET_PROFILE, createProfile);
   yield takeEvery(Actions.GET_PROFILE_REQUEST, getProfile);
-  yield takeEvery(Actions.UPDATE_PROFILE_REQUEST, updateProfile);
-  yield takeEvery(Actions.DELETE_PROFILE_REQUEST, deleteProfile);
+  // yield takeEvery(Actions.UPDATE_PROFILE_REQUEST, updateProfile);
+  // yield takeEvery(Actions.DELETE_PROFILE_REQUEST, deleteProfile);
 }
 
 export default rootSaga;

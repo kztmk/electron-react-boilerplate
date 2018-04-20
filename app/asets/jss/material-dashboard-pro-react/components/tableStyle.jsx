@@ -52,16 +52,22 @@ const tableStyle = theme => ({
     textTransform: 'uppercase !important'
   },
   tableHeadFontSize: {
-    fontSize: '1.25em !important'
+    fontSize: '1.10em !important'
   },
   tableHeadCell: {
     color: 'rgba(0, 0, 0, 0.87)',
     border: 'none !important',
   },
+  tableRows: {
+    color: 'inherit',
+    height: '36px',
+    display: 'table-row',
+    verticalAlign: 'middle'
+  },
   tableCell: {
     ...defaultFont,
     lineHeight: '1.42857143',
-    padding: '12px 8px!important',
+    padding: '6px 8px!important',
     verticalAlign: 'middle',
     fontSize: '1em',
     borderBottom: 'none',

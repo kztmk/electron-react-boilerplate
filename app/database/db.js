@@ -110,6 +110,34 @@ const firebaseDbRead = path =>
       throw error;
     });
 
+/**
+ * Database update data
+ * @param path
+ * @param value
+ * @returns {Promise<any>}
+ */
+const firebaseDbUpdate = (path, value) =>
+  firebase
+    .database()
+    .ref(path)
+    .update(value)
+    .catch(error => {
+      throw error;
+    });
+
+/**
+ * Databse delete data
+ * @param path
+ * @returns {Promise<any>}
+ */
+const firebaseDbDelete = path =>
+  firebase
+    .database()
+    .ref(path)
+    .remove()
+    .catch(error => {
+      throw error;
+    });
 // ------------------------------------
 // Export
 //------------------------------------
@@ -122,5 +150,7 @@ export {
   firebaseUpdateEmail,
   firebaseUpdatePassword,
   firebaseDbInsert,
-  firebaseDbRead
+  firebaseDbRead,
+  firebaseDbUpdate,
+  firebaseDbDelete
 };

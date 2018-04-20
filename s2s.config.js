@@ -3,11 +3,9 @@ const path = require('path');
 
 const actionTypesPlugin = require('babel-plugin-s2s-action-types').default;
 const actionCreaterPlugin = require('babel-plugin-s2s-action-creater').default;
-const reducerCaseCreaterPlugin = require('babel-plugin-s2s-reducer-case-creater')
-  .default;
+const reducerCaseCreaterPlugin = require('babel-plugin-s2s-reducer-case-creater').default;
 const actionRootPlugin = require('babel-plugin-s2s-action-root').default;
-const reducerTestCasePlugin = require('babel-plugin-s2s-reducer-test-case')
-  .default;
+const reducerTestCasePlugin = require('babel-plugin-s2s-reducer-test-case').default;
 // const initilaStetePlugin = require('babel-plugin-s2s-initial-state-creater').default
 const stateRootPlugin = require('babel-plugin-s2s-state-root').default;
 const reducerRootPlugin = require('babel-plugin-s2s-reducer-root').default;
@@ -41,10 +39,7 @@ const plugins = [
     test: /actionTypes.js$/,
     input: rootActionPath,
     output: rootActionPath,
-    plugin: [
-      actionRootPlugin,
-      { input: 'app/**/actionTypes.js', output: rootActionPath }
-    ]
+    plugin: [actionRootPlugin, { input: 'app/**/actionTypes.js', output: rootActionPath }]
   },
   // {
   // test: /containers\/.+^(?!Container)\/reducer.js/,
@@ -60,10 +55,7 @@ const plugins = [
     test: /containers\/.+reducer.js/,
     input: rootStatePath,
     output: rootStatePath,
-    plugin: [
-      stateRootPlugin,
-      { input: 'app/containers/**/reducer.js', output: rootStatePath }
-    ]
+    plugin: [stateRootPlugin, { input: 'app/containers/**/reducer.js', output: rootStatePath }]
   },
   {
     test: /containers\/.+reducer.js/,
@@ -74,7 +66,7 @@ const plugins = [
       {
         input: 'app/containers/**/reducer.js',
         output: rootReducerPath,
-        combineReducers: './config'
+        combineReducers: 'redux'
       }
     ]
   }

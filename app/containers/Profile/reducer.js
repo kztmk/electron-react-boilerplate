@@ -19,6 +19,7 @@ export const initialState: State = {
   isFirstProfile: true
 };
 
+// eslint-disable-next-line space-before-function-paren
 export default function(state: State = initialState, action: Action): UserAccountType {
   switch (action.type) {
     case Actions.SET_PROFILE:

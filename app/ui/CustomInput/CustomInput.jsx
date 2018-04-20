@@ -27,7 +27,8 @@ export type Props = {
   error?: boolean,
   success?: boolean,
   helpText?: string,
-  rtlActive?: boolean
+  rtlActive?: boolean,
+  lessSpace?: boolean
 };
 /* eslint-enable */
 
@@ -42,7 +43,8 @@ function CustomInput(props: Props) {
     error,
     success,
     helpText,
-    rtlActive
+    rtlActive,
+    lessSpace
   } = props;
 
   let labelClasses = cx({
@@ -107,7 +109,8 @@ function CustomInput(props: Props) {
     } ${
       cx({
         [classes.inputRTL]: rtlActive,
-        [classes.inputNoLabel]: labelText === undefined
+        [classes.inputNoLabel]: labelText === undefined && lessSpace === undefined,
+        [classes.inputNoLabelLessUpperSpace]: lessSpace
       })}`;
   return (
     <FormControl

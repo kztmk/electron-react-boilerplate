@@ -66,6 +66,12 @@ const modalStyle = {
   modalSmallBody: {
     paddingTop: '0'
   },
+  modalLarge: {
+    width: '720px'
+  },
+  modalLargeBody: {
+    paddingTop: '0'
+  },
   modalSmallFooterFirstButton: {
     margin: '0',
     paddingLeft: '16px',

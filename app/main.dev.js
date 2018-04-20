@@ -10,10 +10,20 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
-import MenuBuilder from './menu';
+import { app, ipcMain, Menu } from 'electron';
+import createMainWindow from './createMainWindow';
+// import MenuBuilder from './menu';
+import createFileManager from './utils/fileManager/createFileManager';
+import showOpenFileDialog from './utils/dialogs/showOpenFileDialog';
+import showSaveAsNewFileDialog from './utils/dialogs/showSaveAsNewFileDialog';
+import setAppMenu from './menu';
 
 let mainWindow = null;
+let fileManager = null;
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -37,6 +47,52 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
+const setupDevelopmentEnvironment = async () => {
+  mainWindow.openDevTools();
+  mainWindow.webContents.on('context-menu', (e, props) => {
+    const { x, y } = props;
+
+    Menu.buildFromTemplate([
+      {
+        label: 'Inspect element',
+        click: () => {
+          mainWindow.inspectElement(x, y);
+        }
+      }
+    ]).popup(mainWindow);
+  });
+};
+
+const openImportMailAccountFile = () => {
+  showOpenFileDialog()
+    .then(filePath => fileManager.readFile(filePath))
+    .then(text => mainWindow.sendImportedMailAccount(text))
+    .catch(error => mainWindow.sendImportedMailAccount(error.toString()));
+};
+
+const saveAsNewFileToErrorMailAccount = () => {
+  return Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorMailJsonFile()])
+    .then(([filePath, text]) => fileManager.saveFile(filePath, text))
+    .catch(error => {
+      console.log(error);
+    });
+};
+
+const openImportBlogAccountFile = () => {
+  showOpenFileDialog()
+    .then(filePath => fileManager.readFile(filePath))
+    .then(text => mainWindow.sendImportedBlogAccount(text))
+    .catch(error => mainWindow.sendImportedMailAccount(error.toString()));
+};
+
+const saveAsNewFileToErrorBlogAccount = () => {
+  return Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorBlogJsonFile()])
+    .then(([filePath, text]) => fileManager.saveFile(filePath, text))
+    .catch(error => {
+      console.log(error);
+    });
+};
+
 /**
  * Add event listeners...
  */
@@ -44,6 +100,7 @@ app.commandLine.appendSwitch('remote-debugging-port', '9222');
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+  mainWindow = null;
   if (process.platform !== 'darwin') {
     app.quit();
   }
@@ -54,29 +111,38 @@ app.on('ready', async () => {
     await installExtensions();
   }
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728,
-    minWidth: 465
+  mainWindow = createMainWindow();
+  fileManager = createFileManager();
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
+  setAppMenu();
+  // if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+  //  await setupDevelopmentEnvironment();
+  // }
+  /**
+   * accountList pageのインポートボタンで呼ばれるメイン側のメソッド
+   */
+  ipcMain.on('request-importMailAccount-action', (event, arg) => {
+    openImportMailAccountFile();
   });
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
-
-  // @TODO: Use 'ready-to-show' event
-  //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on('did-finish-load', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    mainWindow.show();
-    mainWindow.focus();
+  ipcMain.on('request-errorMailAccount-export-action', (event, arg) => {
+    console.log('call from render - open saveDialog');
+    saveAsNewFileToErrorMailAccount();
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  ipcMain.on('request-importBlogAccount-action', (event, arg) => {
+    openImportBlogAccountFile();
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
+  ipcMain.on('request-errorBlogAccount-export-action', (event, arg) => {
+    console.log('call from render - open saveDialog');
+    saveAsNewFileToErrorBlogAccount();
+  });
+});
+
+app.on('activate', (_e, hasVisibleWindows) => {
+  if (!hasVisibleWindows) {
+    mainWindow = createMainWindow();
+  }
 });

@@ -936,9 +936,9 @@ babel-plugin-s2s-action-root@^0.4.2:
     s2s-utils "^0.6.1"
     uppercamelcase "^3.0.0"
 
-babel-plugin-s2s-action-types@^0.4.9:
-  version "0.4.9"
-  resolved "https://registry.yarnpkg.com/babel-plugin-s2s-action-types/-/babel-plugin-s2s-action-types-0.4.9.tgz#8c02788f0b236c4cdc6f0c20e4facfdbaa0e0e64"
+babel-plugin-s2s-action-types@^0.4.10:
+  version "0.4.10"
+  resolved "https://registry.yarnpkg.com/babel-plugin-s2s-action-types/-/babel-plugin-s2s-action-types-0.4.10.tgz#4cbe3185798ecaa8d6ddfdbba0f9b6d0c7ca994a"
   dependencies:
     babel-add-flow-comments "^0.3.0"
     babel-plugin-syntax-flow "^6.18.0"
@@ -958,9 +958,9 @@ babel-plugin-s2s-initial-state-creater@^0.3.3:
     s2s-utils "^0.6.1"
     typed-assign "^0.1.1"
 
-babel-plugin-s2s-reducer-case-creater@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/babel-plugin-s2s-reducer-case-creater/-/babel-plugin-s2s-reducer-case-creater-0.1.8.tgz#4858afd7cacd69ce8a4484885a9c034a4c5d6360"
+babel-plugin-s2s-reducer-case-creater@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/babel-plugin-s2s-reducer-case-creater/-/babel-plugin-s2s-reducer-case-creater-0.1.9.tgz#a589a521249a9bf1f4d2f010d463dd563682011e"
   dependencies:
     babel-types "^6.26.0"
     s2s-helper-get-action-obj "^0.1.5"
@@ -3115,6 +3115,10 @@ devtron@^1.4.0:
     accessibility-developer-tools "^2.11.0"
     highlight.js "^9.3.0"
     humanize-plus "^1.8.1"
+
+diacritic@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/diacritic/-/diacritic-0.0.2.tgz#fc2a887b5a5bc0a0a854fb614c7c2f209061ee04"
 
 diff@^3.1.0, diff@^3.2.0:
   version "3.4.0"
@@ -6759,6 +6763,12 @@ markdown-escapes@^1.0.0:
 markdown-table@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/markdown-table/-/markdown-table-1.1.1.tgz#4b3dd3a133d1518b8ef0dbc709bf2a1b4824bc8c"
+
+match-sorter@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-2.2.1.tgz#899a5b900f4855204bc2d3aa8cb23ba16fc528dc"
+  dependencies:
+    diacritic "0.0.2"
 
 "match-stream@>= 0.0.2 < 1":
   version "0.0.2"

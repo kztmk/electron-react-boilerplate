@@ -4,8 +4,8 @@ import Web from 'material-ui-icons/Web';
 import AccountBox from 'material-ui-icons/AccountBox';
 import Settings from 'material-ui-icons/Settings';
 import HomePage from '../containers/HomePage';
-import BlogsListPage from '../components/BlogsListPage';
-import MailAddressListPage from '../components/MailAddressListPage';
+import BlogsListPage from '../containers/BlogList';
+import MailAddressListPage from '../containers/MailAddressList';
 import ProfilePage from '../components/ProfilePage';
 import SettingsPage from '../components/SettingsPage';
 

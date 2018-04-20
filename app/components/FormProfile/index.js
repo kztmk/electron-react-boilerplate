@@ -7,6 +7,7 @@ import AddAlert from 'material-ui-icons/AddAlert';
 import { FullHeaderCard, Button, CustomInput, ItemGrid, Snackbar } from '../../ui';
 import type { UserAccountType } from '../../types/userAccount';
 import validateTextField from '../../asets/jss/material-dashboard-pro-react/components/validateTextField';
+
 export type Props = {
   userInfo: UserAccountType,
   addProfile: () => void,
@@ -290,10 +291,12 @@ class FormProfile extends React.Component<Props, State> {
                           fullWidth: true
                         }}
                         inputProps={{
-                          value: this.state.expireDateString
+                          value: this.state.expireDateString,
+                          disabled: true
                         }}
                       />
                     </ItemGrid>
+                    {/* 管理者用
                     <ItemGrid>
                       <CustomInput
                         labelText="有効期限設定"
@@ -307,7 +310,7 @@ class FormProfile extends React.Component<Props, State> {
                           onChange: this.handleChangeExpire
                         }}
                       />
-                    </ItemGrid>
+                    </ItemGrid> */}
                   </Grid>
                   <Grid container>
                     <ItemGrid xs={12} sm={12} md={6}>
@@ -318,10 +321,12 @@ class FormProfile extends React.Component<Props, State> {
                           fullWidth: true
                         }}
                         inputProps={{
-                          value: this.state.formatPaymentMethod
+                          value: this.state.formatPaymentMethod,
+                          disabled: true
                         }}
                       />
                     </ItemGrid>
+                    {/* 管理者用
                     <ItemGrid xs={12} sm={12} md={6}>
                       <Select
                         value={this.state.userInfo.paymentMethod}
@@ -337,7 +342,7 @@ class FormProfile extends React.Component<Props, State> {
                         <MenuItem value="by">銀行振込年間支払い</MenuItem>
                         <MenuItem value="bm">銀行振込3ヶ月支払い</MenuItem>
                       </Select>
-                    </ItemGrid>
+                    </ItemGrid> */}
                   </Grid>
                 </div>
               }

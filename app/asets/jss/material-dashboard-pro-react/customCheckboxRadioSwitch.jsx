@@ -64,7 +64,46 @@ const customCheckboxRadioSwitch = {
     fontSize: '14px',
     lineHeight: '1.428571429',
     fontWeight: '400',
-    paddingTop: '39px',
+    paddingTop: '36px',
+    marginRight: '0',
+    '@media (min-width: 992px)': {
+      float: 'right'
+    }
+  },
+  labelHorizontalLessUpperSpace: {
+    color: 'rgba(0, 0, 0, 0.26)',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    fontSize: '14px',
+    lineHeight: '1.428571429',
+    fontWeight: '400',
+    paddingTop: '22px',
+    marginRight: '0',
+    '@media (min-width: 992px)': {
+      float: 'right'
+    }
+  },
+  labelHorizontalLeastUpperSpace: {
+    color: 'rgba(0, 0, 0, 0.26)',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    fontSize: '14px',
+    lineHeight: '1.1em',
+    fontWeight: '400',
+    paddingTop: '12px',
+    marginRight: '0',
+    '@media (min-width: 992px)': {
+      float: 'right'
+    }
+  },
+  buttonGroupHorizontal: {
+    color: 'rgba(0, 0, 0, 0.26)',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    fontSize: '14px',
+    lineHeight: '1.428571429',
+    fontWeight: '400',
+    paddingTop: '-65px',
     marginRight: '0',
     '@media (min-width: 992px)': {
       float: 'right'
@@ -173,6 +212,9 @@ const customCheckboxRadioSwitch = {
   switchUnchecked: {
     color: '#FFFFFF',
     transform: 'translateX(-5px)'
+  },
+  buttonGroupStyle: {
+    marginTop: '-65px'
   },
 };
 
