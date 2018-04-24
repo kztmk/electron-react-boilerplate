@@ -350,7 +350,7 @@ class BlogListPage extends React.Component<Props, State> {
     if (req === 'needSave') {
       // main processへファイル保存ダイアログ表示の要求
       ipcRenderer.send('request-errorBlogAccount-export-action');
-      this.setState({ isLoading: false });
+      this.setState({ isLoading: false, errorMessage: '' });
     } else {
       // 保存しない場合には、ダイアログを閉じる
       this.setState({

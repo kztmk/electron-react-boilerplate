@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "Affiliate super tool The Yoriki version5",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
@@ -34,6 +34,11 @@
   "browserslist": "electron 1.6",
   "build": {
     "productName": "Yorikiv5",
+    "publish": [{
+      "provider": "github",
+      "owner" : "kztmk",
+      "repo" : "yoriki5"
+    }],
     "appId": "com.tmksolutions.*",
     "files": [
       "dist/",
@@ -205,6 +210,8 @@
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
     "electron-debug": "^1.5.0",
+    "electron-log": "^2.2.14",
+    "electron-updater": "^2.21.8",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "match-sorter": "^2.2.1",

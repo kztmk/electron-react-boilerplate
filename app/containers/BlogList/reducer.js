@@ -47,7 +47,8 @@ export default function(state: State = initialState, action: Action): State {
     case Actions.GET_BLOGS_REQUEST:
       return {
         ...initialState,
-        isLoading: true
+        isLoading: true,
+        errorMessage: ''
       };
 
     case Actions.GET_BLOGS_SUCCESS:
@@ -69,7 +70,8 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         targetAccount: action.payload,
-        isLoading: true
+        isLoading: true,
+        errorMessage: ''
       };
 
     case Actions.CREATE_BLOG_SUCCESS:
@@ -92,7 +94,8 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         targetAccount: action.payload,
-        isLoading: true
+        isLoading: true,
+        errorMessage: ''
       };
 
     case Actions.UPDATE_BLOG_SUCCESS:
@@ -115,7 +118,8 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         targetAccount: action.payload,
-        isLoading: true
+        isLoading: true,
+        errorMessage: ''
       };
 
     case Actions.DELETE_BLOG_SUCCESS:
@@ -138,6 +142,7 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         isLoading: true,
+        errorMessage: '',
         errorAccounts: action.payload
       };
 

@@ -9,15 +9,23 @@ const config = {
   // projectId: 'yoriki5-dev',
   // storageBucket: 'yoriki5-dev.appspot.com',
   // messagingSenderId: '732832144609'
-  apiKey: 'AIzaSyAcS_ssguOdKN_rN45SkmGM_OkZhyWElNI',
-  authDomain: 'yoriki5-prod.firebaseapp.com',
-  databaseURL: 'https://yoriki5-prod.firebaseio.com',
-  projectId: 'yoriki5-prod',
-  storageBucket: 'yoriki5-prod.appspot.com',
-  messagingSenderId: '971790993081'
+  // apiKey: 'AIzaSyAcS_ssguOdKN_rN45SkmGM_OkZhyWElNI',
+  // authDomain: 'yoriki5-prod.firebaseapp.com',
+  // databaseURL: 'https://yoriki5-prod.firebaseio.com',
+  // projectId: 'yoriki5-prod',
+  // storageBucket: 'yoriki5-prod.appspot.com',
+  // messagingSenderId: '971790993081'
+  // ja
+  apiKey: 'AIzaSyDiTEdWyom-AnrGC8-WhdTIm-G8-LJsfyw',
+  authDomain: 'yoriki5-ja.firebaseapp.com',
+  databaseURL: 'https://yoriki5-ja.firebaseio.com',
+  projectId: 'yoriki5-ja',
+  storageBucket: 'yoriki5-ja.appspot.com',
+  messagingSenderId: '523115901223'
 };
 
 firebase.initializeApp(config);
+const database = firebase.database();
 
 // ------------------------------------
 // Database method
@@ -95,8 +103,7 @@ const firebaseUpdatePassword = newPassword =>
 //------------------------------------
 
 const firebaseDbInsert = (path, value) =>
-  firebase
-    .database()
+  database
     .ref(path)
     .push(value)
     .catch(error => {
@@ -109,8 +116,7 @@ const firebaseDbInsert = (path, value) =>
  * @returns {Promise<any>}
  */
 const firebaseDbRead = path =>
-  firebase
-    .database()
+  database
     .ref(path)
     .once('value')
     .catch(error => {
@@ -124,8 +130,7 @@ const firebaseDbRead = path =>
  * @returns {Promise<any>}
  */
 const firebaseDbUpdate = (path, value) =>
-  firebase
-    .database()
+  database
     .ref(path)
     .update(value)
     .catch(error => {
@@ -138,8 +143,7 @@ const firebaseDbUpdate = (path, value) =>
  * @returns {Promise<any>}
  */
 const firebaseDbDelete = path =>
-  firebase
-    .database()
+  database
     .ref(path)
     .remove()
     .catch(error => {

@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "Affiliate super tool",
   "main": "./main.prod.js",
   "author": {
@@ -15,6 +15,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "firebase": "^4.10.1"
+    "firebase": "^4.13.1"
   }
 }
