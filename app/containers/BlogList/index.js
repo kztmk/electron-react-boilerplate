@@ -6,7 +6,8 @@ import {
   importBlogsRequest,
   createBlogRequest,
   updateBlogRequest,
-  deleteBlogRequest
+  deleteBlogRequest,
+  getBlogsRequest
 } from './actions';
 
 import BlogListPage from '../../components/BlogsListPage';
@@ -21,6 +22,9 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
+  startGetBlogAccounts() {
+    dispatch(getBlogsRequest());
+  },
   startImportBlogAccounts(blogAccounts) {
     dispatch(importBlogsRequest(blogAccounts));
   },

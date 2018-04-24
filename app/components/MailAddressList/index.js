@@ -4,6 +4,7 @@ import React from 'react';
 import { withStyles } from 'material-ui/styles';
 import Slide from 'material-ui/transitions/Slide';
 import MailOutline from 'material-ui-icons/MailOutline';
+import Loadable from 'react-loading-overlay';
 
 // import Button from 'material-ui/Button';
 import Dialog from 'material-ui/Dialog';
@@ -25,6 +26,7 @@ import accountListPageStyles from '../../asets/jss/material-dashboard-pro-react/
 
 type State = {
   isFailure: boolean,
+  isLoading: boolean,
   errorMessage: string,
   msg: string,
   errorAccounts: Array<MailAccountType>,
@@ -35,14 +37,15 @@ type State = {
 };
 type Props = {
   classes: Object,
+  startGetMailAccounts: () => void,
   startImportMailAccounts: (mailAccounts: Array<MailAccountType>) => void,
   startCreateMailAccount: (mailAccount: MailAccountType) => void,
   startUpdateMailAccount: (mailAccount: MailAccountType) => void,
   startDeleteMailAccount: (mailAccount: MailAccountType) => void,
   mailAccounts: Array<MailAccountType>,
-  targetAccount: MailAccountType,
   isLoading: boolean,
   isFailure: boolean,
+  isRefreshDone: boolean,
   errorMessage: string,
   errorAccounts: Array<MailAccountType>
 };
@@ -81,7 +84,8 @@ class MailAddressListPage extends React.Component<Props, State> {
       openSuccessNotification: false,
       openErrorNotification: false,
       openModalSaveErrorAccounts: false,
-      mode: 'none'
+      mode: 'none',
+      isLoading: false
     };
   }
 
@@ -99,20 +103,35 @@ class MailAddressListPage extends React.Component<Props, State> {
         const errorMsg = jsonFile.replace('error:-:', '');
         this.setState({
           openErrorNotification: true,
-          errorMessage: errorMsg
+          errorMessage: errorMsg,
+          isLoading: false
         });
         return;
       }
 
       // 受信したjsonデータをobjectへ変換
       const mAccounts = JSON.parse(jsonFile);
+
+      // mailAccountのjsonかをチェック
+      if (!this.checkMailAccountObject(mAccounts[0])) {
+        this.setState({
+          errorMessage: '寄騎メールアドレスデータではありません。ファイルを確認してください。',
+          openErrorNotification: true,
+          isLoading: false
+        });
+        return;
+      }
+
       // インポート用MainAccountType配列
       const mailAccounts: Array<MailAccountType> = [];
       // 受信object[key, createDate, lastLogin]をMailAccountTypeの型に変換
       mAccounts.forEach(ac => {
         const numberCreateDate: number = moment(ac.createDate).valueOf();
-        const numberLastLogin: ?number =
-          ac.lastLogin.length > 0 ? moment(ac.lastLogin).valueOf() : null;
+        let numberLastLogin: ?number =
+          ac.lastLogin === undefined || ac.length === null ? 0 : moment(ac.lastLogin).valueOf();
+        if (Number.isNaN(numberLastLogin)) {
+          numberLastLogin = 0;
+        }
         const checkedProviderName = convertProviderName(ac.provider);
         const acNum = {
           ...ac,
@@ -128,6 +147,7 @@ class MailAddressListPage extends React.Component<Props, State> {
         mailAccounts.push(ma);
       });
       // インポートアクションをdispatch
+      this.setState({ isLoading: true });
       this.props.startImportMailAccounts(mailAccounts);
     });
 
@@ -172,29 +192,41 @@ class MailAddressListPage extends React.Component<Props, State> {
     let notificationMsg = '';
 
     if (!nextProps.isLoading) {
-      if (this.state.mode === 'import') {
-        if (!nextProps.isFailure) {
-          notificationMsg = nextProps.errorMessage;
-          if (nextProps.errorAccounts.length > 0) {
-            isSuccessButDup = true;
+      switch (this.state.mode) {
+        case 'import':
+          if (!nextProps.isFailure) {
+            notificationMsg = nextProps.errorMessage;
+            if (nextProps.errorAccounts.length > 0) {
+              isSuccessButDup = true;
+            } else {
+              isSuccess = true;
+            }
           } else {
-            isSuccess = true;
+            isFailure = true;
+            notificationMsg = `インポートエラー：${nextProps.errorMessage}`;
           }
-        } else {
-          isFailure = true;
-          notificationMsg = `インポートエラー：${nextProps.errorMessage}`;
-        }
-        this.setState({
-          errorAccounts: nextProps.errorAccounts,
-          openSuccessNotification: isSuccess,
-          openErrorNotification: isFailure,
-          errorMessage: notificationMsg,
-          openModalSaveErrorAccounts: isSuccessButDup,
-          mode: 'none'
-        });
+          this.setState({
+            errorAccounts: nextProps.errorAccounts,
+            openSuccessNotification: isSuccess,
+            openErrorNotification: isFailure,
+            errorMessage: notificationMsg,
+            openModalSaveErrorAccounts: isSuccessButDup,
+            mode: 'none',
+            isLoading: nextProps.isLoading
+          });
+          break;
+        case 'refresh':
+          if (nextProps.isRefreshDone && !nextProps.isFailure) {
+            // refresh完了後にファイルダイアログのリクエスト
+            ipcRenderer.send('request-importMailAccount-action');
+            this.setState({
+              mode: 'import'
+            });
+          }
+          break;
+        default:
+          break;
       }
-    } else {
-      // loading
     }
   };
 
@@ -205,16 +237,51 @@ class MailAddressListPage extends React.Component<Props, State> {
     ipcRenderer.removeAllListeners('REQUEST_ERROR_ACCOUNT_JSON');
   }
 
+  checkMailAccountObject = account => {
+    if (account.accountId === undefined) {
+      return false;
+    }
+
+    if (account.password === undefined) {
+      return false;
+    }
+
+    if (account.mailAddress === undefined) {
+      return false;
+    }
+
+    if (account.provider === undefined) {
+      return false;
+    }
+
+    if (account.createDate === undefined) {
+      return false;
+    }
+
+    if (account.lastLogin === undefined) {
+      return false;
+    }
+
+    if (account.tags === undefined) {
+      return false;
+    }
+
+    return true;
+  };
+
   /**
    * メールアカウントインポートボタン・クリック
    * main processの「request-importMailAccount-action」を呼び出し
    * ファイル選択用ダイアログを表示させる
    */
   handleClickButton = () => {
-    ipcRenderer.send('request-importMailAccount-action');
+    // import前に最新のmailAccounts情報を取得
     this.setState({
-      mode: 'import'
+      mode: 'refresh',
+      isLoading: true
     });
+
+    this.props.startGetMailAccounts();
   };
 
   /**
@@ -262,105 +329,107 @@ class MailAddressListPage extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <GridContainer>
-        <ItemGrid xs={12} sm={12} md={12}>
-          <IconCard
-            icon={MailOutline}
-            title="メールアドレス一覧"
-            content={
-              <div>
-                <GridContainer justify="flex-end" className={classes.cardContentRight}>
-                  <div className={classes.buttonGroupStyle}>
-                    <Button color="primary" customClass={classes.firstButton}>
-                      新規作成
-                    </Button>
-                    <Button color="primary" customClass={classes.middleButton}>
-                      追加
-                    </Button>
-                    <Button
-                      color="primary"
-                      customClass={classes.lastButton}
-                      onClick={this.handleClickButton}
-                    >
-                      ファイルからインポート
-                    </Button>
-                  </div>
-                </GridContainer>
-                <MailAddressList
-                  isLoading={this.props.isLoading}
-                  isFailure={this.props.isFailure}
-                  errorMessage={this.props.errorMessage}
-                  mailAccounts={this.props.mailAccounts}
-                  deleteAccount={this.props.startDeleteMailAccount}
-                  editAccount={this.props.startUpdateMailAccount}
-                />
-              </div>
-            }
-          />
-          <Snackbar
-            color="warning"
-            place="bc"
-            icon={AddAlert}
-            open={this.state.openErrorNotification}
-            closeNotification={this.handleErrorNotificationClose}
-            close
-            message={<span id="login_error">{this.state.errorMessage}</span>}
-          />
-          <Snackbar
-            color="success"
-            place="bc"
-            icon={AddAlert}
-            open={this.state.openSuccessNotification}
-            closeNotification={this.handleSuccessNotificationClose}
-            close
-            message={<span id="login_error">{this.state.errorMessage}</span>}
-          />
-          <Dialog
-            classes={{
-              root: classes.center,
-              paper: `${classes.modal} ${classes.modalSmall}`
-            }}
-            open={this.state.openModalSaveErrorAccounts}
-            transition={Transition}
-            keepMounted
-            onClose={() => this.handleClose('noticeModal')}
-            aria-labelledby="small-modal-slide-title"
-            aria-describedby="small-modal-slide-description"
-          >
-            <DialogTitle
-              id="small-modal-slide-title"
-              disableTypography
-              className={classes.modalHeader}
+      <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・・">
+        <GridContainer>
+          <ItemGrid xs={12} sm={12} md={12}>
+            <IconCard
+              icon={MailOutline}
+              title="メールアドレス一覧"
+              content={
+                <div>
+                  <GridContainer justify="flex-end" className={classes.cardContentRight}>
+                    <div className={classes.buttonGroupStyle}>
+                      <Button color="primary" customClass={classes.firstButton}>
+                        新規作成
+                      </Button>
+                      <Button color="primary" customClass={classes.middleButton}>
+                        追加
+                      </Button>
+                      <Button
+                        color="primary"
+                        customClass={classes.lastButton}
+                        onClick={this.handleClickButton}
+                      >
+                        ファイルからインポート
+                      </Button>
+                    </div>
+                  </GridContainer>
+                  <MailAddressList
+                    isLoading={this.props.isLoading}
+                    isFailure={this.props.isFailure}
+                    errorMessage={this.props.errorMessage}
+                    mailAccounts={this.props.mailAccounts}
+                    deleteAccount={this.props.startDeleteMailAccount}
+                    editAccount={this.props.startUpdateMailAccount}
+                  />
+                </div>
+              }
+            />
+            <Snackbar
+              color="warning"
+              place="bc"
+              icon={AddAlert}
+              open={this.state.openErrorNotification}
+              closeNotification={this.handleErrorNotificationClose}
+              close
+              message={<span id="login_error">{this.state.errorMessage}</span>}
+            />
+            <Snackbar
+              color="success"
+              place="bc"
+              icon={AddAlert}
+              open={this.state.openSuccessNotification}
+              closeNotification={this.handleSuccessNotificationClose}
+              close
+              message={<span id="login_error">{this.state.errorMessage}</span>}
+            />
+            <Dialog
+              classes={{
+                root: classes.center,
+                paper: `${classes.modal} ${classes.modalSmall}`
+              }}
+              open={this.state.openModalSaveErrorAccounts}
+              transition={Transition}
+              keepMounted
+              onClose={() => this.handleClose('noticeModal')}
+              aria-labelledby="small-modal-slide-title"
+              aria-describedby="small-modal-slide-description"
             >
-              {this.state.errorMessage}
-            </DialogTitle>
-            <DialogContent
-              id="small-modal-slide-description"
-              className={`${classes.modalBody} ${classes.modalSmallBody}`}
-            >
-              <h5>重複のためインポートされなかったメールアカウントをファイルに書出しますか？</h5>
-            </DialogContent>
-            <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
-              <Button
-                onClick={() => this.handleCloseModal('doNotNeedSave')}
-                color="simple"
-                customClass={classes.modalSmallFooterFirstButton}
+              <DialogTitle
+                id="small-modal-slide-title"
+                disableTypography
+                className={classes.modalHeader}
               >
-                いいえ
-              </Button>
-              <Button
-                onClick={() => this.handleCloseModal('needSave')}
-                color="successNoBackground"
-                customClass={`${classes.modalSmallFooterFirstButton} ${
-                  classes.modalSmallFooterSecondButton
-                }`}
+                {this.state.errorMessage}
+              </DialogTitle>
+              <DialogContent
+                id="small-modal-slide-description"
+                className={`${classes.modalBody} ${classes.modalSmallBody}`}
               >
-                はい
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </ItemGrid>
-      </GridContainer>
+                <h5>重複のためインポートされなかったメールアカウントをファイルに書出しますか？</h5>
+              </DialogContent>
+              <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
+                <Button
+                  onClick={() => this.handleCloseModal('doNotNeedSave')}
+                  color="simple"
+                  customClass={classes.modalSmallFooterFirstButton}
+                >
+                  いいえ
+                </Button>
+                <Button
+                  onClick={() => this.handleCloseModal('needSave')}
+                  color="successNoBackground"
+                  customClass={`${classes.modalSmallFooterFirstButton} ${
+                    classes.modalSmallFooterSecondButton
+                  }`}
+                >
+                  はい
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </ItemGrid>
+        </GridContainer>
+      </Loadable>
     );
   }
 }

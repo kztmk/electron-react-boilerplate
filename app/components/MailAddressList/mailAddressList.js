@@ -183,7 +183,7 @@ class MailAddressList extends React.Component<Props, State> {
       provider: prop.provider,
       mailAddress: prop.mailAddress,
       createDate: moment(prop.createDate).format('YYYY/MM/DD HH:mm'),
-      lastLogin: moment(prop.lastLogin).format('YYYY/MM/DD HH:mm'),
+      lastLogin: prop.lastLogin === 0 ? '' : moment(prop.lastLogin).format('YYYY/MM/DD HH:mm'),
       tags: prop.tags.split(','),
       detailInfo: prop.detailInfo,
       title: `${prop.mailAddress}/作成日：${moment(prop.createDate).format('YYYY/MM/DD HH:mm')}`,
@@ -206,11 +206,13 @@ class MailAddressList extends React.Component<Props, State> {
                 const account = this.state.data.find(o => o.key === prop.key);
                 if (account) {
                   const restoredTags = account.tags.join(',');
+                  const restoredLastLogin =
+                    account.lastLogin.length > 0 ? moment(account.lastLogin).valueOf() : 0;
                   const target = {
                     ...account,
                     tags: restoredTags,
                     createDate: moment(account.createDate).valueOf(),
-                    lastLogin: moment(account.lastLogin).valueOf()
+                    lastLogin: restoredLastLogin
                   };
                   this.showEditForm(target);
                 } else {
@@ -386,7 +388,7 @@ class MailAddressList extends React.Component<Props, State> {
                 Filter: ({ filter, onChange }) => (
                   <select
                     onChange={event => onChange(event.target.value)}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', fontSize: '12px' }}
                     value={filter ? filter.value : ''}
                   >
                     <option value="">全て</option>

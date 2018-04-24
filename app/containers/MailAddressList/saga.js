@@ -48,6 +48,7 @@ function* importMailAccounts(action) {
   try {
     // import用に受け取ったmailAddressが既に存在するかをチェック
     const mailAccounts: Array<MailAccountType> = action.payload;
+    console.log('1. start import');
     if (mailAccounts.length > 0) {
       // stateから現在のmailAccoutsを取得
       const existsMailAccounts = yield select(state => state.MailAddressList.mailAccounts);
@@ -59,6 +60,7 @@ function* importMailAccounts(action) {
         );
         return notDupAccounts.length === existsMailAccounts.length;
       });
+      console.log('2. dup check done');
       // 現在のmailAccountsに存在するmailAccounts
       const errorAccounts = mailAccounts.filter(importAccount => {
         const notDupAccounts = existsMailAccounts.filter(
@@ -66,7 +68,7 @@ function* importMailAccounts(action) {
         );
         return notDupAccounts.length !== existsMailAccounts.length;
       });
-
+      console.log('3. write out error accounts');
       const checkedAccounts = [];
       importAccounts.forEach(m => {
         if (m.provider !== 'unknown') {
@@ -75,10 +77,11 @@ function* importMailAccounts(action) {
           errorAccounts.push(m);
         }
       });
-
+      console.log('4. done error acct.');
       // importAccountsをfirebaseへ登録
       // userID用
       const userAuth = yield select(state => state.Login);
+      console.log('start to insert');
       yield all(
         checkedAccounts.map(m =>
           call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, {
@@ -97,6 +100,7 @@ function* importMailAccounts(action) {
         )
       );
 
+      console.log(`done insert to db`);
       // firebaseから現在のmailAccountsを取得
       const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/mailAccount`);
       const latestMailAccounts: Array<MailAccountType> = [];
@@ -107,7 +111,6 @@ function* importMailAccounts(action) {
           ...childSnapshot.val()
         });
       });
-
       latestMailAccounts.sort(mailAccountSort);
 
       // import出来なかったerrorAccountsを、state.importAccountsへ

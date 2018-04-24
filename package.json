@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Affiliate super tool The Yoriki version5",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
@@ -200,6 +200,7 @@
     "webpack-merge": "^4.1.2"
   },
   "dependencies": {
+    "about-window": "^1.11.0",
     "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
@@ -217,6 +218,7 @@
     "react-datetime": "^2.14.0",
     "react-dom": "^16.2.0",
     "react-hot-loader": "^4.0.0-beta.13",
+    "react-loading-overlay": "^0.3.0",
     "react-material-ui-form-validator": "^2.0.0-beta.4",
     "react-popper": "^0.8.3",
     "react-redux": "^5.0.6",

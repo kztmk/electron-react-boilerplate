@@ -2,6 +2,13 @@ import firebase from 'firebase';
 
 // Initialize Firebase
 const config = {
+  // dev
+  // apiKey: 'AIzaSyAFM-Po4j1BLUuvWKNq6duDoVZrkhcVoUA',
+  // authDomain: 'yoriki5-dev.firebaseapp.com',
+  // databaseURL: 'https://yoriki5-dev.firebaseio.com',
+  // projectId: 'yoriki5-dev',
+  // storageBucket: 'yoriki5-dev.appspot.com',
+  // messagingSenderId: '732832144609'
   apiKey: 'AIzaSyAcS_ssguOdKN_rN45SkmGM_OkZhyWElNI',
   authDomain: 'yoriki5-prod.firebaseapp.com',
   databaseURL: 'https://yoriki5-prod.firebaseio.com',

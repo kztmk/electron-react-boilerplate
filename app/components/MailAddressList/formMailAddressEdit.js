@@ -315,9 +315,12 @@ class FormMailAddressEdit extends Component<Props, State> {
                         inputProps={{
                           placeholder: 'Disabled',
                           disabled: true,
-                          value: moment(this.props.targetAccount.lastLogin).format(
-                            'YYYY/MM/DD HH:mm'
-                          )
+                          value:
+                            this.props.targetAccount.lastLogin === 0
+                              ? 'ログインなし'
+                              : moment(this.props.targetAccount.lastLogin).format(
+                                  'YYYY/MM/DD HH:mm'
+                                )
                         }}
                       />
                     </ItemGrid>

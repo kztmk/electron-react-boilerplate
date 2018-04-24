@@ -29,6 +29,7 @@ export const initialState: State = {
   targetAccount: initialMailAccount,
   isLoading: false,
   isFailure: false,
+  isRefreshDone: true,
   errorMessage: '',
   errorAccounts: []
 };
@@ -44,14 +45,18 @@ export default function(state: State = initialState, action: Action): State {
     case Actions.GET_MAIL_ADDRESS_REQUEST:
       return {
         ...state,
-        isLoading: true
+        isLoading: true,
+        isFailure: false,
+        isRefreshDone: false,
+        errorMessage: ''
       };
 
     case Actions.GET_MAIL_ADDRESS_SUCCESS:
       return {
         ...state,
         mailAccounts: action.payload,
-        isLoading: false
+        isLoading: false,
+        isRefreshDone: true
       };
 
     case Actions.GET_MAIL_ADDRESS_FAILURE:
@@ -59,6 +64,7 @@ export default function(state: State = initialState, action: Action): State {
         ...state,
         isLoading: false,
         isFailure: true,
+        isRefreshDone: true,
         errorMessage: action.payload
       };
 
@@ -66,7 +72,10 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         targetAccount: action.payload,
-        isLoading: true
+        errorMessage: '',
+        isLoading: true,
+        isFailure: false,
+        isRefreshDone: true
       };
 
     case Actions.CREATE_MAIL_ADDRESS_SUCCESS:
@@ -89,7 +98,9 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         targetAccount: action.payload,
-        isLoading: true
+        errorMessage: '',
+        isLoading: true,
+        isRefreshDone: true
       };
 
     case Actions.UPDATE_MAIL_ADDRESS_SUCCESS:
@@ -112,6 +123,8 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         targetAccount: action.payload,
+        errorMessae: '',
+        isFailure: false,
         isLoading: true
       };
 
@@ -135,6 +148,9 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         isLoading: true,
+        isRefreshDone: true,
+        isFailure: false,
+        errorMessage: '',
         errorAccounts: action.payload
       };
 

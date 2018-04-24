@@ -6,7 +6,8 @@ import {
   importMailAddressRequest,
   createMailAddressRequest,
   updateMailAddressRequest,
-  deleteMailAddressRequest
+  deleteMailAddressRequest,
+  getMailAddressRequest
 } from './actions';
 
 import MailAddressListPage from '../../components/MailAddressList';
@@ -16,11 +17,15 @@ const mapStateToProps = (state: State) => ({
   targetAccount: state.MailAddressList.targetAccount,
   isLoading: state.MailAddressList.isLoading,
   isFailure: state.MailAddressList.isFailure,
+  isRefreshDone: state.MailAddressList.isRefreshDone,
   errorMessage: state.MailAddressList.errorMessage,
   errorAccounts: state.MailAddressList.errorAccounts
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
+  startGetMailAccounts() {
+    dispatch(getMailAddressRequest());
+  },
   startImportMailAccounts(mailAccounts) {
     dispatch(importMailAddressRequest(mailAccounts));
   },

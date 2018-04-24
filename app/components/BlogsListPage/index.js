@@ -4,6 +4,7 @@ import React from 'react';
 import { withStyles } from 'material-ui/styles';
 import Slide from 'material-ui/transitions/Slide';
 import Web from 'material-ui-icons/Web';
+import Loadable from 'react-loading-overlay';
 
 // import Button from 'material-ui/Button';
 import Dialog from 'material-ui/Dialog';
@@ -30,16 +31,17 @@ type State = {
   openSuccessNotification: boolean,
   openErrorNotification: boolean,
   openModalSaveErrorAccounts: boolean,
-  mode: string
+  mode: string,
+  isLoading: boolean
 };
 type Props = {
   classes: Object,
+  startGetBlogAccounts: () => void,
   startImportBlogAccounts: (blogAccounts: Array<BlogAccountType>) => void,
   startCreateBlogAccount: (blogAccount: BlogAccountType) => void,
   startUpdateBlogAccount: (blogAccount: BlogAccountType) => void,
   startDeleteBlogAccount: (blogAccount: BlogAccountType) => void,
   blogAccounts: Array<BlogAccountType>,
-  targetAccount: BlogAccountType,
   isLoading: boolean,
   isFailure: boolean,
   errorMessage: string,
@@ -61,7 +63,8 @@ class BlogListPage extends React.Component<Props, State> {
       openSuccessNotification: false,
       openErrorNotification: false,
       openModalSaveErrorAccounts: false,
-      mode: 'none'
+      mode: 'none',
+      isLoading: this.props.isLoading
     };
   }
 
@@ -75,17 +78,29 @@ class BlogListPage extends React.Component<Props, State> {
      */
     ipcRenderer.on('SEND_IMPORTED_BLOG_ACCOUNT', (_e, jsonFile) => {
       // エラー(ユーザーキャンセル含む)の場合、受信テキストに「error:-:」を含む
+      console.log(`receive:${jsonFile}`);
       if (jsonFile.indexOf('error:-:') > -1) {
         const errorMsg = jsonFile.replace('error:-:', '');
         this.setState({
           openErrorNotification: true,
-          errorMessage: errorMsg
+          errorMessage: errorMsg,
+          isLoading: false
         });
         return;
       }
 
       // 受信したjsonデータをobjectへ変換
       const mAccounts = JSON.parse(jsonFile);
+
+      // check data
+      if (!this.checkBlogDataObject(mAccounts[0])) {
+        this.setState({
+          openErrorNotification: true,
+          errorMessage: '寄騎V5用のブログデータファイルではありません。ファイルを確認してください。'
+        });
+        return;
+      }
+
       // インポート用BlogAccountType配列
       const blogAccounts: Array<BlogAccountType> = [];
       // 受信object[key, createDate]をBlogAccountTypeの型に変換
@@ -161,29 +176,38 @@ class BlogListPage extends React.Component<Props, State> {
     let notificationMsg = '';
 
     if (!nextProps.isLoading) {
-      if (this.state.mode === 'import') {
-        if (!nextProps.isFailure) {
-          notificationMsg = nextProps.errorMessage;
-          if (nextProps.errorAccounts.length > 0) {
-            isSuccessButDup = true;
+      switch (this.state.mode) {
+        case 'import':
+          if (!nextProps.isFailure) {
+            notificationMsg = nextProps.errorMessage;
+            if (nextProps.errorAccounts.length > 0) {
+              isSuccessButDup = true;
+            } else {
+              isSuccess = true;
+            }
           } else {
-            isSuccess = true;
+            isFailure = true;
+            notificationMsg = `インポートエラー：${nextProps.errorMessage}`;
           }
-        } else {
-          isFailure = true;
-          notificationMsg = `インポートエラー：${nextProps.errorMessage}`;
-        }
-        this.setState({
-          errorAccounts: nextProps.errorAccounts,
-          openSuccessNotification: isSuccess,
-          openErrorNotification: isFailure,
-          errorMessage: notificationMsg,
-          openModalSaveErrorAccounts: isSuccessButDup,
-          mode: 'none'
-        });
+          this.setState({
+            errorAccounts: nextProps.errorAccounts,
+            openSuccessNotification: isSuccess,
+            openErrorNotification: isFailure,
+            errorMessage: notificationMsg,
+            openModalSaveErrorAccounts: isSuccessButDup,
+            mode: 'none'
+          });
+          break;
+        case 'refresh':
+          console.log('refreshed');
+          ipcRenderer.send('request-importBlogAccount-action');
+          this.setState({
+            mode: 'import'
+          });
+          break;
       }
     } else {
-      // loading
+      console.log('isLoading true');
     }
   };
 
@@ -193,6 +217,37 @@ class BlogListPage extends React.Component<Props, State> {
   componentWillUnmount() {
     ipcRenderer.removeAllListeners('REQUEST_ERROR_BLOG_ACCOUNT_JSON');
   }
+
+  checkBlogDataObject = account => {
+    if (account.accountId === undefined) {
+      return false;
+    }
+    if (account.password === undefined) {
+      return false;
+    }
+    if (account.mailAddress === undefined) {
+      return false;
+    }
+    if (account.provider === undefined) {
+      return false;
+    }
+    if (account.title === undefined) {
+      return false;
+    }
+    if (account.description === undefined) {
+      return false;
+    }
+    if (account.url === undefined) {
+      return false;
+    }
+    if (account.remark === undefined) {
+      return false;
+    }
+    if (account.createDate === undefined) {
+      return false;
+    }
+    return true;
+  };
 
   convertProviderName = providerNameV4 => {
     let providerNameV5 = '';
@@ -253,10 +308,12 @@ class BlogListPage extends React.Component<Props, State> {
    * ファイル選択用ダイアログを表示させる
    */
   handleClickButton = () => {
-    ipcRenderer.send('request-importBlogAccount-action');
+    // import前にfirebaseと同期
     this.setState({
-      mode: 'import'
+      mode: 'refresh',
+      isLoading: true
     });
+    this.props.startGetBlogAccounts();
   };
 
   /**
@@ -265,7 +322,8 @@ class BlogListPage extends React.Component<Props, State> {
   handleErrorNotificationClose = () => {
     this.setState({
       openErrorNotification: false,
-      errorMessage: ''
+      errorMessage: '',
+      isLoading: false
     });
   };
 
@@ -275,7 +333,8 @@ class BlogListPage extends React.Component<Props, State> {
   handleSuccessNotificationClose = () => {
     this.setState({
       openSuccessNotification: false,
-      errorMessage: ''
+      errorMessage: '',
+      isLoading: false
     });
   };
 
@@ -291,11 +350,13 @@ class BlogListPage extends React.Component<Props, State> {
     if (req === 'needSave') {
       // main processへファイル保存ダイアログ表示の要求
       ipcRenderer.send('request-errorBlogAccount-export-action');
+      this.setState({ isLoading: false });
     } else {
       // 保存しない場合には、ダイアログを閉じる
       this.setState({
         openModalSaveErrorAccounts: false,
-        errorMessage: ''
+        errorMessage: '',
+        isLoading: false
       });
     }
   };
@@ -304,102 +365,104 @@ class BlogListPage extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <GridContainer>
-        <ItemGrid xs={12} sm={12} md={12}>
-          <IconCard
-            icon={Web}
-            title="ブログ一覧"
-            content={
-              <div>
-                <GridContainer justify="flex-end" className={classes.cardContentRight}>
-                  <div className={classes.buttonGroupStyle}>
-                    <Button color="primary" customClass={classes.firstButton}>
-                      追加
-                    </Button>
-                    <Button
-                      color="primary"
-                      customClass={classes.lastButton}
-                      onClick={this.handleClickButton}
-                    >
-                      ファイルからインポート
-                    </Button>
-                  </div>
-                </GridContainer>
-                <BlogList
-                  isLoading={this.props.isLoading}
-                  isFailure={this.props.isFailure}
-                  errorMessage={this.props.errorMessage}
-                  blogAccounts={this.props.blogAccounts}
-                  deleteAccount={this.props.startDeleteBlogAccount}
-                  editAccount={this.props.startUpdateBlogAccount}
-                />
-              </div>
-            }
-          />
-          <Snackbar
-            color="warning"
-            place="bc"
-            icon={AddAlert}
-            open={this.state.openErrorNotification}
-            closeNotification={this.handleErrorNotificationClose}
-            close
-            message={<span id="login_error">{this.state.errorMessage}</span>}
-          />
-          <Snackbar
-            color="success"
-            place="bc"
-            icon={AddAlert}
-            open={this.state.openSuccessNotification}
-            closeNotification={this.handleSuccessNotificationClose}
-            close
-            message={<span id="login_error">{this.state.errorMessage}</span>}
-          />
-          <Dialog
-            classes={{
-              root: classes.center,
-              paper: `${classes.modal} ${classes.modalSmall}`
-            }}
-            open={this.state.openModalSaveErrorAccounts}
-            transition={Transition}
-            keepMounted
-            onClose={() => this.handleClose('noticeModal')}
-            aria-labelledby="small-modal-slide-title"
-            aria-describedby="small-modal-slide-description"
-          >
-            <DialogTitle
-              id="small-modal-slide-title"
-              disableTypography
-              className={classes.modalHeader}
+      <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・">
+        <GridContainer>
+          <ItemGrid xs={12} sm={12} md={12}>
+            <IconCard
+              icon={Web}
+              title="ブログ一覧"
+              content={
+                <div>
+                  <GridContainer justify="flex-end" className={classes.cardContentRight}>
+                    <div className={classes.buttonGroupStyle}>
+                      <Button color="primary" customClass={classes.firstButton}>
+                        追加
+                      </Button>
+                      <Button
+                        color="primary"
+                        customClass={classes.lastButton}
+                        onClick={this.handleClickButton}
+                      >
+                        ファイルからインポート
+                      </Button>
+                    </div>
+                  </GridContainer>
+                  <BlogList
+                    isLoading={this.props.isLoading}
+                    isFailure={this.props.isFailure}
+                    errorMessage={this.props.errorMessage}
+                    blogAccounts={this.props.blogAccounts}
+                    deleteAccount={this.props.startDeleteBlogAccount}
+                    editAccount={this.props.startUpdateBlogAccount}
+                  />
+                </div>
+              }
+            />
+            <Snackbar
+              color="warning"
+              place="bc"
+              icon={AddAlert}
+              open={this.state.openErrorNotification}
+              closeNotification={this.handleErrorNotificationClose}
+              close
+              message={<span id="login_error">{this.state.errorMessage}</span>}
+            />
+            <Snackbar
+              color="success"
+              place="bc"
+              icon={AddAlert}
+              open={this.state.openSuccessNotification}
+              closeNotification={this.handleSuccessNotificationClose}
+              close
+              message={<span id="login_error">{this.state.errorMessage}</span>}
+            />
+            <Dialog
+              classes={{
+                root: classes.center,
+                paper: `${classes.modal} ${classes.modalSmall}`
+              }}
+              open={this.state.openModalSaveErrorAccounts}
+              transition={Transition}
+              keepMounted
+              onClose={() => this.handleClose('noticeModal')}
+              aria-labelledby="small-modal-slide-title"
+              aria-describedby="small-modal-slide-description"
             >
-              {this.state.errorMessage}
-            </DialogTitle>
-            <DialogContent
-              id="small-modal-slide-description"
-              className={`${classes.modalBody} ${classes.modalSmallBody}`}
-            >
-              <h5>重複のためインポートされなかったブログアカウントをファイルに書出しますか？</h5>
-            </DialogContent>
-            <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
-              <Button
-                onClick={() => this.handleCloseModal('doNotNeedSave')}
-                color="simple"
-                customClass={classes.modalSmallFooterFirstButton}
+              <DialogTitle
+                id="small-modal-slide-title"
+                disableTypography
+                className={classes.modalHeader}
               >
-                いいえ
-              </Button>
-              <Button
-                onClick={() => this.handleCloseModal('needSave')}
-                color="successNoBackground"
-                customClass={`${classes.modalSmallFooterFirstButton} ${
-                  classes.modalSmallFooterSecondButton
-                }`}
+                {this.state.errorMessage}
+              </DialogTitle>
+              <DialogContent
+                id="small-modal-slide-description"
+                className={`${classes.modalBody} ${classes.modalSmallBody}`}
               >
-                はい
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </ItemGrid>
-      </GridContainer>
+                <h5>重複のためインポートされなかったブログアカウントをファイルに書出しますか？</h5>
+              </DialogContent>
+              <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
+                <Button
+                  onClick={() => this.handleCloseModal('doNotNeedSave')}
+                  color="simple"
+                  customClass={classes.modalSmallFooterFirstButton}
+                >
+                  いいえ
+                </Button>
+                <Button
+                  onClick={() => this.handleCloseModal('needSave')}
+                  color="successNoBackground"
+                  customClass={`${classes.modalSmallFooterFirstButton} ${
+                    classes.modalSmallFooterSecondButton
+                  }`}
+                >
+                  はい
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </ItemGrid>
+        </GridContainer>
+      </Loadable>
     );
   }
 }

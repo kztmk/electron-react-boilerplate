@@ -63,6 +63,11 @@ const setupDevelopmentEnvironment = async () => {
   });
 };
 
+/**
+ * FileOpenDialogの表示
+ * ファイルの読込
+ * 読み込んだtextをsendImportMailAccountでrendererWindowへ送信
+ */
 const openImportMailAccountFile = () => {
   showOpenFileDialog()
     .then(filePath => fileManager.readFile(filePath))
@@ -70,6 +75,10 @@ const openImportMailAccountFile = () => {
     .catch(error => mainWindow.sendImportedMailAccount(error.toString()));
 };
 
+/**
+ * saveFileDialogの表示
+ * 受取ったtextをfileManagerで書込
+ */
 const saveAsNewFileToErrorMailAccount = () => {
   return Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorMailJsonFile()])
     .then(([filePath, text]) => fileManager.saveFile(filePath, text))
@@ -78,13 +87,22 @@ const saveAsNewFileToErrorMailAccount = () => {
     });
 };
 
+/**
+ * FileOpenDialogの表示
+ * ファイルの読込
+ * 読み込んだtextをsendImportBlogAccountでrendererWindowへ送信
+ */
 const openImportBlogAccountFile = () => {
   showOpenFileDialog()
     .then(filePath => fileManager.readFile(filePath))
     .then(text => mainWindow.sendImportedBlogAccount(text))
-    .catch(error => mainWindow.sendImportedMailAccount(error.toString()));
+    .catch(error => mainWindow.sendImportedBlogAccount(error.toString()));
 };
 
+/**
+ * saveFileDialogの表示
+ * 受取ったtextをfileManagerで書込
+ */
 const saveAsNewFileToErrorBlogAccount = () => {
   return Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorBlogJsonFile()])
     .then(([filePath, text]) => fileManager.saveFile(filePath, text))
@@ -119,8 +137,9 @@ app.on('ready', async () => {
   // if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
   //  await setupDevelopmentEnvironment();
   // }
+
   /**
-   * accountList pageのインポートボタンで呼ばれるメイン側のメソッド
+   * rendererWindowsから呼ばれるリスナ
    */
   ipcMain.on('request-importMailAccount-action', (event, arg) => {
     openImportMailAccountFile();
@@ -140,6 +159,10 @@ app.on('ready', async () => {
     saveAsNewFileToErrorBlogAccount();
   });
 });
+
+/**
+ *   ここまでがリスナ
+ */
 
 app.on('activate', (_e, hasVisibleWindows) => {
   if (!hasVisibleWindows) {

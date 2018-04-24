@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 // @flow
 import { app, Menu, shell, BrowserWindow } from 'electron';
+import openAboutWindow from 'about-window';
 
 function setAppMenu() {
   /*
@@ -150,6 +151,17 @@ function buildDarwinTemplate() {
         label: 'Search Issues',
         click() {
           shell.openExternal('#');
+        }
+      },
+      {
+        label: '寄騎5について',
+        click() {
+          openAboutWindow({
+            icon_path: './asets/im/yoriki5.png',
+            copyright: 'Copyright (c) 2018 TMK Solutions, Inc.',
+            package_json_dir: __dirname,
+            open_devtools: process.env.NODE_ENV !== 'production'
+          });
         }
       }
     ]

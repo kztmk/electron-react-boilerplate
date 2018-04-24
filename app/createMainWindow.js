@@ -24,6 +24,10 @@ class MainWindow {
     this.window.webContents.openDevTools();
   }
 
+  /**
+   * rendererWindowへテキスト受け取り用意完了の通知と受取り
+   * @returns {Promise<any>}
+   */
   requestErrorMailJsonFile() {
     return new Promise(resolve => {
       this.window.webContents.send('REQUEST_ERROR_MAIL_ACCOUNT_JSON');
@@ -31,6 +35,10 @@ class MainWindow {
     });
   }
 
+  /**
+   * rendererWindowへテキスト受け取り用意完了の通知と受取り
+   * @returns {Promise<any>}
+   */
   requestErrorBlogJsonFile() {
     return new Promise(resolve => {
       this.window.webContents.send('REQUEST_ERROR_BLOG_ACCOUNT_JSON');
@@ -38,21 +46,28 @@ class MainWindow {
     });
   }
 
+  /**
+   * rendererWindowへtextを送る
+   * MailAddressListのリスナ向け
+   * @param text
+   */
   sendImportedMailAccount(text) {
-    // console.log(`send text:${text}`);
-    const jsonfile = text.replace(/\s/, '');
-    this.window.webContents.send('SEND_IMPORTED_MAIL_ACCOUNT', jsonfile);
+    // text内のspace、改行を削除
+    const jsonFile = text.replace(/\s/, '');
+    this.window.webContents.send('SEND_IMPORTED_MAIL_ACCOUNT', jsonFile);
   }
 
+  /**
+   * rendererWindowへtextを送る
+   * BlogListのリスナ向け
+   * @param text
+   */
   sendImportedBlogAccount(text) {
-    // console.log(`send text:${text}`);
-    const jsonfile = text.replace(/\s/, '');
-    this.window.webContents.send('SEND_IMPORTED_BLOG_ACCOUNT', jsonfile);
+    const jsonFile = text.replace(/\s/, '');
+    this.window.webContents.send('SEND_IMPORTED_BLOG_ACCOUNT', jsonFile);
   }
 }
 
-const createMainWindow = () => {
-  return new MainWindow();
-};
+const createMainWindow = () => new MainWindow();
 
 export default createMainWindow;

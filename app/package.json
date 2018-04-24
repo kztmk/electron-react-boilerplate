@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Affiliate super tool",
   "main": "./main.prod.js",
   "author": {
