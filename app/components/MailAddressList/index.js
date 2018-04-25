@@ -25,11 +25,10 @@ import Button from '../../ui/CustomButtons/Button';
 import accountListPageStyles from '../../asets/jss/material-dashboard-pro-react/views/accountListPageStyle';
 
 type State = {
-  isFailure: boolean,
   isLoading: boolean,
-  errorMessage: string,
-  msg: string,
-  errorAccounts: Array<MailAccountType>,
+  isFailure: boolean,
+  metaMessage: string,
+  transAccounts: Array<MailAccountType>,
   openSuccessNotification: boolean,
   openErrorNotification: boolean,
   openModalSaveErrorAccounts: boolean,
@@ -37,17 +36,20 @@ type State = {
 };
 type Props = {
   classes: Object,
-  startGetMailAccounts: () => void,
+  // startGetMailAccounts: () => void,
   startImportMailAccounts: (mailAccounts: Array<MailAccountType>) => void,
-  startCreateMailAccount: (mailAccount: MailAccountType) => void,
+  // startCreateMailAccount: (mailAccount: MailAccountType) => void,
   startUpdateMailAccount: (mailAccount: MailAccountType) => void,
   startDeleteMailAccount: (mailAccount: MailAccountType) => void,
   mailAccounts: Array<MailAccountType>,
-  isLoading: boolean,
+  isGetting: boolean,
+  isCreating: boolean,
+  isUpdating: boolean,
+  isDeleting: boolean,
+  isImporting: boolean,
   isFailure: boolean,
-  isRefreshDone: boolean,
-  errorMessage: string,
-  errorAccounts: Array<MailAccountType>
+  metaMessage: string,
+  transAccounts: Array<MailAccountType>
 };
 
 const convertProviderName = provider => {
@@ -79,13 +81,13 @@ class MailAddressListPage extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      errorMessage: this.props.errorMessage,
-      errorAccounts: this.props.errorAccounts,
+      isLoading: false,
+      metaMessage: this.props.metaMessage,
+      transAccounts: this.props.transAccounts,
       openSuccessNotification: false,
       openErrorNotification: false,
       openModalSaveErrorAccounts: false,
-      mode: 'none',
-      isLoading: false
+      mode: 'none'
     };
   }
 
@@ -103,8 +105,7 @@ class MailAddressListPage extends React.Component<Props, State> {
         const errorMsg = jsonFile.replace('error:-:', '');
         this.setState({
           openErrorNotification: true,
-          errorMessage: errorMsg,
-          isLoading: false
+          metaMessage: errorMsg
         });
         return;
       }
@@ -115,13 +116,13 @@ class MailAddressListPage extends React.Component<Props, State> {
       // mailAccountのjsonかをチェック
       if (!this.checkMailAccountObject(mAccounts[0])) {
         this.setState({
-          errorMessage: '寄騎メールアドレスデータではありません。ファイルを確認してください。',
-          openErrorNotification: true,
-          isLoading: false
+          metaMessage: '寄騎メールアドレスデータではありません。ファイルを確認してください。',
+          openErrorNotification: true
         });
         return;
       }
 
+      this.setState({ isLoading: true });
       // インポート用MainAccountType配列
       const mailAccounts: Array<MailAccountType> = [];
       // 受信object[key, createDate, lastLogin]をMailAccountTypeの型に変換
@@ -147,7 +148,6 @@ class MailAddressListPage extends React.Component<Props, State> {
         mailAccounts.push(ma);
       });
       // インポートアクションをdispatch
-      this.setState({ isLoading: true });
       this.props.startImportMailAccounts(mailAccounts);
     });
 
@@ -156,9 +156,9 @@ class MailAddressListPage extends React.Component<Props, State> {
      */
     ipcRenderer.on('REQUEST_ERROR_MAIL_ACCOUNT_JSON', () => {
       let jsonFile: string = '';
-      if (this.state.errorAccounts.length > 0) {
+      if (this.state.transAccounts.length > 0) {
         const mailAccounts = [];
-        this.state.errorAccounts.forEach(acc => {
+        this.state.transAccounts.forEach(acc => {
           const createDate = moment(acc.createDate).format();
           const lastLogin = acc.lastLogin ? moment(acc.lastLogin).format() : '';
           const accTimeToString = {
@@ -175,7 +175,7 @@ class MailAddressListPage extends React.Component<Props, State> {
 
       this.setState({
         openModalSaveErrorAccounts: false,
-        errorMessage: ''
+        metaMessage: ''
       });
     });
   }
@@ -190,42 +190,71 @@ class MailAddressListPage extends React.Component<Props, State> {
     let isFailure = false;
     let isSuccessButDup = false;
     let notificationMsg = '';
-
-    if (!nextProps.isLoading) {
+    console.log(
+      `imp:${nextProps.isImporting}--cre:${nextProps.isCreating}--Get:${nextProps.isGetting}--up:${
+        nextProps.isUpdating
+      }--del:${nextProps.isDeleting}`
+    );
+    console.log(`my-mode:${this.state.mode}`);
+    if (
+      !nextProps.isImporting &&
+      !nextProps.isCreating &&
+      !nextProps.isGetting &&
+      !nextProps.isUpdating &&
+      !nextProps.isDeleting
+    ) {
+      // request完了後に処理済みでのprops更新
       switch (this.state.mode) {
         case 'import':
+          console.log('got case import');
           if (!nextProps.isFailure) {
-            notificationMsg = nextProps.errorMessage;
-            if (nextProps.errorAccounts.length > 0) {
+            // import成功
+            notificationMsg = nextProps.metaMessage;
+            if (nextProps.transAccounts.length > 0) {
+              // import成功 dupあり
               isSuccessButDup = true;
             } else {
+              // import完全成功
               isSuccess = true;
             }
           } else {
             isFailure = true;
-            notificationMsg = `インポートエラー：${nextProps.errorMessage}`;
+            notificationMsg = `インポートエラー：${nextProps.metaMessage}`;
           }
+
           this.setState({
-            errorAccounts: nextProps.errorAccounts,
+            transAccounts: nextProps.transAccounts,
             openSuccessNotification: isSuccess,
             openErrorNotification: isFailure,
-            errorMessage: notificationMsg,
+            metaMessage: notificationMsg,
             openModalSaveErrorAccounts: isSuccessButDup,
-            mode: 'none',
-            isLoading: nextProps.isLoading
+            mode: 'none'
           });
           break;
-        case 'refresh':
-          if (nextProps.isRefreshDone && !nextProps.isFailure) {
-            // refresh完了後にファイルダイアログのリクエスト
-            ipcRenderer.send('request-importMailAccount-action');
-            this.setState({
-              mode: 'import'
-            });
-          }
-          break;
         default:
+          console.log(`default:${this.state.mode}`);
           break;
+      }
+    } else {
+      // Requestが飛んで、propsが更新される。
+      if (nextProps.isImporting) {
+        this.setState({ mode: 'import' });
+        return;
+      }
+      if (nextProps.isCreating) {
+        this.setState({ mode: 'create' });
+        return;
+      }
+      if (nextProps.isGetting) {
+        this.setState({ mode: 'get' });
+        return;
+      }
+      if (nextProps.isUpdating) {
+        this.setState({ mode: 'update' });
+        return;
+      }
+      if (nextProps.isDeleting) {
+        this.setState({ mode: 'delete' });
       }
     }
   };
@@ -262,11 +291,7 @@ class MailAddressListPage extends React.Component<Props, State> {
       return false;
     }
 
-    if (account.tags === undefined) {
-      return false;
-    }
-
-    return true;
+    return account.tags !== undefined;
   };
 
   /**
@@ -274,14 +299,9 @@ class MailAddressListPage extends React.Component<Props, State> {
    * main processの「request-importMailAccount-action」を呼び出し
    * ファイル選択用ダイアログを表示させる
    */
-  handleClickButton = () => {
-    // import前に最新のmailAccounts情報を取得
-    this.setState({
-      mode: 'refresh',
-      isLoading: true
-    });
-
-    this.props.startGetMailAccounts();
+  handleClickImportButton = () => {
+    // import用のダイアログ要求
+    ipcRenderer.send('request-importMailAccount-action');
   };
 
   /**
@@ -290,7 +310,8 @@ class MailAddressListPage extends React.Component<Props, State> {
   handleErrorNotificationClose = () => {
     this.setState({
       openErrorNotification: false,
-      errorMessage: ''
+      metaMessage: '',
+      isLoading: false
     });
   };
 
@@ -300,7 +321,8 @@ class MailAddressListPage extends React.Component<Props, State> {
   handleSuccessNotificationClose = () => {
     this.setState({
       openSuccessNotification: false,
-      errorMessage: ''
+      metaMessage: '',
+      isLoading: false
     });
   };
 
@@ -313,15 +335,14 @@ class MailAddressListPage extends React.Component<Props, State> {
    * @param req 保存時 needSave
    */
   handleCloseModal = req => {
+    this.setState({
+      openModalSaveErrorAccounts: false,
+      metaMessage: '',
+      isLoading: false
+    });
     if (req === 'needSave') {
       // main processへファイル保存ダイアログ表示の要求
       ipcRenderer.send('request-errorMailAccount-export-action');
-    } else {
-      // 保存しない場合には、ダイアログを閉じる
-      this.setState({
-        openModalSaveErrorAccounts: false,
-        errorMessage: ''
-      });
     }
   };
 
@@ -348,16 +369,16 @@ class MailAddressListPage extends React.Component<Props, State> {
                       <Button
                         color="primary"
                         customClass={classes.lastButton}
-                        onClick={this.handleClickButton}
+                        onClick={this.handleClickImportButton}
                       >
                         ファイルからインポート
                       </Button>
                     </div>
                   </GridContainer>
                   <MailAddressList
-                    isLoading={this.props.isLoading}
+                    mode={this.state.mode}
                     isFailure={this.props.isFailure}
-                    errorMessage={this.props.errorMessage}
+                    errorMessage={this.props.metaMessage}
                     mailAccounts={this.props.mailAccounts}
                     deleteAccount={this.props.startDeleteMailAccount}
                     editAccount={this.props.startUpdateMailAccount}
@@ -372,7 +393,7 @@ class MailAddressListPage extends React.Component<Props, State> {
               open={this.state.openErrorNotification}
               closeNotification={this.handleErrorNotificationClose}
               close
-              message={<span id="login_error">{this.state.errorMessage}</span>}
+              message={<span id="login_error">{this.state.metaMessage}</span>}
             />
             <Snackbar
               color="success"
@@ -381,7 +402,7 @@ class MailAddressListPage extends React.Component<Props, State> {
               open={this.state.openSuccessNotification}
               closeNotification={this.handleSuccessNotificationClose}
               close
-              message={<span id="login_error">{this.state.errorMessage}</span>}
+              message={<span id="login_error">{this.state.metaMessage}</span>}
             />
             <Dialog
               classes={{
@@ -400,7 +421,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                 disableTypography
                 className={classes.modalHeader}
               >
-                {this.state.errorMessage}
+                {this.state.metaMessage}
               </DialogTitle>
               <DialogContent
                 id="small-modal-slide-description"

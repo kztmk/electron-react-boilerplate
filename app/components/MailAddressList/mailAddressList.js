@@ -8,6 +8,7 @@ import Tooltip from 'material-ui/Tooltip';
 import Dialog from 'material-ui/Dialog';
 import DialogTitle from 'material-ui/Dialog/DialogTitle';
 import DialogContent from 'material-ui/Dialog/DialogContent';
+import Loadable from 'react-loading-overlay';
 
 import moment from 'moment';
 import TagsInput from 'react-tagsinput';
@@ -41,13 +42,14 @@ type State = {
   sweetAlert: ?Object,
   mode: string,
   targetAccount: ?MailAccountType,
-  openEditForm: boolean
+  openEditForm: boolean,
+  isUpdated: boolean
 };
 
 type Props = {
   classes: Object,
   mailAccounts: Array<MailAccountType>,
-  isLoading: boolean,
+  mode: string,
   isFailure: boolean,
   errorMessage: string,
   deleteAccount: () => void,
@@ -126,12 +128,12 @@ class MailAddressList extends React.Component<Props, State> {
    */
   componentWillReceiveProps = nextProps => {
     // 処理 deleteで更新されたのか？
-    if (this.state.mode === 'delete') {
+    console.log(`nextPros.mode:${nextProps.mode}`);
+    if (nextProps.mode === 'delete' && this.state.mode === 'delete') {
       if (!nextProps.isFailure) {
         // delete success
         this.setState({
           data: this.convertTableData(nextProps.mailAccounts),
-          mode: 'none',
           sweetAlert: (
             <SweetAlert
               success
@@ -148,7 +150,6 @@ class MailAddressList extends React.Component<Props, State> {
       } else {
         // delete fail
         this.setState({
-          mode: 'none',
           sweetAlert: (
             <SweetAlert
               error
@@ -282,6 +283,7 @@ class MailAddressList extends React.Component<Props, State> {
    */
   cancelDelete = () => {
     this.setState({
+      mode: '',
       sweetAlert: (
         <SweetAlert
           danger
@@ -302,6 +304,7 @@ class MailAddressList extends React.Component<Props, State> {
    */
   hideAlert = () => {
     this.setState({
+      mode: '',
       sweetAlert: null
     });
   };
@@ -358,193 +361,202 @@ class MailAddressList extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <GridContainer>
-        <ItemGrid xs={12} sm={12} md={12}>
-          <ReactTable
-            data={this.state.data}
-            resizable
-            columns={[
-              {
-                Header: 'provider',
-                accessor: 'provider',
-                filterable: true,
-                sortable: true,
-                show: false,
-                filterAll: true
-              },
-              {
-                Header: () => <span style={{ fontSize: 12 }} />,
-                accessor: 'provider',
-                Cell: row => (
-                  <div>
-                    <img height={24} src={getProviderImage(row.original.provider)} alt="" />
-                  </div>
-                ),
-                width: 60,
-                filterable: true,
-                sortable: true,
-                filterMethod: (filter, rows) =>
-                  matchSorter(rows, filter.value, { keys: ['provider'] }),
-                Filter: ({ filter, onChange }) => (
-                  <select
-                    onChange={event => onChange(event.target.value)}
-                    style={{ width: '100%', fontSize: '12px' }}
-                    value={filter ? filter.value : ''}
-                  >
-                    <option value="">全て</option>
-                    <option value="Yahoo">Yahoo!メール</option>
-                    <option value="Excite">Exciteメール</option>
-                    <option value="Outlook">Outlook</option>
-                  </select>
-                ),
-                filterAll: true
-              },
-              {
-                Header: () => <span style={{ fontSize: 12 }}>メールアドレス</span>,
-                Cell: row => (
-                  <Tooltip
-                    id={row.original.id}
-                    title={row.original.title}
-                    placement="right-start"
-                    className={classes.toolTip}
-                  >
-                    <div>{row.original.accountId}</div>
-                  </Tooltip>
-                ),
-                accessor: 'accountId',
-                minWidth: 100,
-                maxWidth: 140,
-                filterable: true,
-                sortable: true,
-                Filter: ({ filter, onChange }) => (
-                  <input
-                    type="text"
-                    placeholder="アカウントIDで絞込み"
-                    value={filter ? filter.value : ''}
-                    onChange={event => onChange(event.target.value)}
-                  />
-                ),
-                filterMethod: (filter, rows) =>
-                  matchSorter(rows, filter.value, { keys: ['accountId'] }),
-                filterAll: true
-              },
-              {
-                Header: () => <span style={{ fontSize: 12 }}>タグ</span>,
-                accessor: 'tags',
-                Cell: row => (
-                  <TagsInput
-                    value={row.original.tags}
-                    tagProps={{ className: 'react-tagsinput-tag info' }}
-                    disabled
-                    inputProps={{
-                      placeholder: ''
-                    }}
-                  />
-                ),
-                filterable: true,
-                sortable: true,
-                Filter: ({ filter, onChange }) => (
-                  <input
-                    type="text"
-                    placeholder="タグで絞込み"
-                    value={filter ? filter.value : ''}
-                    onChange={event => onChange(event.target.value)}
-                    style={{ fontSize: 12 }}
-                  />
-                ),
-                filterMethod: (filter, row) => {
-                  if (row.tags.length > 0) {
-                    let isMatch = false;
-                    row.tags.forEach(r => {
-                      if (r.indexOf(filter.value) > -1) {
-                        isMatch = true;
-                      }
-                    });
-                    return isMatch;
+      <Loadable active={this.state.mode === 'delete'} spinner text="サーバーと通信中・・・・">
+        <GridContainer>
+          <ItemGrid xs={12} sm={12} md={12}>
+            <ReactTable
+              data={this.state.data}
+              resizable
+              columns={[
+                {
+                  Header: 'provider',
+                  accessor: 'provider',
+                  filterable: true,
+                  sortable: true,
+                  show: false,
+                  filterAll: true
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }} />,
+                  accessor: 'provider',
+                  Cell: row => (
+                    <Tooltip
+                      id={row.original.id}
+                      title={row.original.provider}
+                      placement="right-start"
+                      className={classes.toolTip}
+                    >
+                      <div>
+                        <img height={24} src={getProviderImage(row.original.provider)} alt="" />
+                      </div>
+                    </Tooltip>
+                  ),
+                  width: 60,
+                  filterable: true,
+                  sortable: true,
+                  filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ['provider'] }),
+                  Filter: ({ filter, onChange }) => (
+                    <select
+                      onChange={event => onChange(event.target.value)}
+                      style={{ width: '100%', fontSize: '12px' }}
+                      value={filter ? filter.value : ''}
+                    >
+                      <option value="">全て</option>
+                      <option value="Yahoo">Yahoo!メール</option>
+                      <option value="Excite">Exciteメール</option>
+                      <option value="Outlook">Outlook</option>
+                    </select>
+                  ),
+                  filterAll: true
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }}>メールアドレス</span>,
+                  Cell: row => (
+                    <Tooltip
+                      id={row.original.id}
+                      title={row.original.title}
+                      placement="right-start"
+                      className={classes.toolTip}
+                    >
+                      <div>{row.original.accountId}</div>
+                    </Tooltip>
+                  ),
+                  accessor: 'accountId',
+                  minWidth: 100,
+                  maxWidth: 140,
+                  filterable: true,
+                  sortable: true,
+                  Filter: ({ filter, onChange }) => (
+                    <input
+                      type="text"
+                      placeholder="アカウントIDで絞込み"
+                      value={filter ? filter.value : ''}
+                      onChange={event => onChange(event.target.value)}
+                    />
+                  ),
+                  filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ['accountId'] }),
+                  filterAll: true
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }}>タグ</span>,
+                  accessor: 'tags',
+                  Cell: row => (
+                    <TagsInput
+                      value={row.original.tags}
+                      tagProps={{ className: 'react-tagsinput-tag info' }}
+                      disabled
+                      inputProps={{
+                        placeholder: ''
+                      }}
+                    />
+                  ),
+                  filterable: true,
+                  sortable: true,
+                  Filter: ({ filter, onChange }) => (
+                    <input
+                      type="text"
+                      placeholder="タグで絞込み"
+                      value={filter ? filter.value : ''}
+                      onChange={event => onChange(event.target.value)}
+                      style={{ fontSize: 12 }}
+                    />
+                  ),
+                  filterMethod: (filter, row) => {
+                    if (row.tags.length > 0) {
+                      let isMatch = false;
+                      row.tags.forEach(r => {
+                        if (r.indexOf(filter.value) > -1) {
+                          isMatch = true;
+                        }
+                      });
+                      return isMatch;
+                    }
                   }
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }}>最終ログイン</span>,
+                  accessor: 'lastLogin',
+                  width: 150,
+                  filterable: true,
+                  sortable: true,
+                  Filter: ({ filter, onChange }) => (
+                    <input
+                      type="text"
+                      placeholder="YYYY/MM/DDより以前"
+                      value={filter ? filter.value : ''}
+                      onChange={event => onChange(event.target.value)}
+                      style={{ fontSize: 12 }}
+                    />
+                  ),
+                  filterMethod: (filter, row) => {
+                    if (row[filter.id].length === 0) {
+                      return row[filter.id];
+                    } else if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                  }
+                },
+                {
+                  Header: '',
+                  accessor: 'actions',
+                  sortable: false,
+                  filterable: false
                 }
-              },
-              {
-                Header: () => <span style={{ fontSize: 12 }}>最終ログイン</span>,
-                accessor: 'lastLogin',
-                width: 150,
-                filterable: true,
-                sortable: true,
-                Filter: ({ filter, onChange }) => (
-                  <input
-                    type="text"
-                    placeholder="YYYY/MM/DDより以前"
-                    value={filter ? filter.value : ''}
-                    onChange={event => onChange(event.target.value)}
-                    style={{ fontSize: 12 }}
-                  />
-                ),
-                filterMethod: (filter, row) => {
-                  if (row[filter.id].length === 0) {
-                    return row[filter.id];
-                  } else if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
-                }
-              },
-              {
-                Header: '',
-                accessor: 'actions',
-                sortable: false,
-                filterable: false
-              }
-            ]}
-            defaultPageSize={10}
-            showPaginationTop
-            showPaginationBotoom={false}
-            className="-striped -highlight"
-            previousText="< 前"
-            nextText="次 >"
-            loadingText="読込中..."
-            noDataText="データがありません"
-            pageText=""
-            ofText="/"
-            rowsText="行"
-          />
-          {this.state.sweetAlert}
-          <Dialog
-            classes={{
-              paper: classes.modal
-            }}
-            maxWidth={false}
-            open={this.state.openEditForm}
-            transition={Transition}
-            keepMounted
-            onClose={() => this.handleCloseModal()}
-            aria-labelledby="notice-modal-slide-title"
-            aria-describedby="notice-modal-slide-description"
-            disableBackdropClick
-          >
-            <DialogTitle
-              id="notice-modal-slide-title"
-              disableTypography
-              className={classes.modalHeader}
+              ]}
+              defaultPageSize={10}
+              showPaginationTop
+              showPaginationBotoom={false}
+              className="-striped -highlight"
+              previousText="< 前"
+              nextText="次 >"
+              loadingText="読込中..."
+              noDataText="データがありません"
+              pageText=""
+              ofText="/"
+              rowsText="行"
+            />
+            {this.state.sweetAlert}
+            <Dialog
+              classes={{
+                paper: classes.modal
+              }}
+              maxWidth={false}
+              open={this.state.openEditForm}
+              transition={Transition}
+              keepMounted
+              onClose={() => this.handleCloseModal()}
+              aria-labelledby="notice-modal-slide-title"
+              aria-describedby="notice-modal-slide-description"
+              disableBackdropClick
             >
-              <IconButton
-                style={modalCloseButtonStyle}
-                key="close"
-                aria-label="Close"
-                color="defaultNoBackground"
-                onClick={() => this.handleCloseModal()}
+              <DialogTitle
+                id="notice-modal-slide-title"
+                disableTypography
+                className={classes.modalHeader}
               >
-                <Close className={classes.modalClose} />
-              </IconButton>
-            </DialogTitle>
-            <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
-              <FormMailAddressEdit
-                isLoading={this.props.isLoading}
-                errorMessage={this.props.errorMessage}
-                closeModal={this.handleCloseModal}
-                targetAccount={this.state.targetAccount}
-                updateAccount={this.props.editAccount}
-              />
-            </DialogContent>
-          </Dialog>
-        </ItemGrid>
-      </GridContainer>
+                <IconButton
+                  style={modalCloseButtonStyle}
+                  key="close"
+                  aria-label="Close"
+                  color="defaultNoBackground"
+                  onClick={() => this.handleCloseModal()}
+                >
+                  <Close className={classes.modalClose} />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
+                <FormMailAddressEdit
+                  mode={this.props.mode}
+                  errorMessage={this.props.errorMessage}
+                  closeModal={this.handleCloseModal}
+                  targetAccount={this.state.targetAccount}
+                  updateAccount={this.props.editAccount}
+                />
+              </DialogContent>
+            </Dialog>
+          </ItemGrid>
+        </GridContainer>
+      </Loadable>
     );
   }
 }

@@ -14,12 +14,14 @@ import MailAddressListPage from '../../components/MailAddressList';
 
 const mapStateToProps = (state: State) => ({
   mailAccounts: state.MailAddressList.mailAccounts,
-  targetAccount: state.MailAddressList.targetAccount,
-  isLoading: state.MailAddressList.isLoading,
+  isGetting: state.MailAddressList.isGetting,
+  isCreating: state.MailAddressList.isCreating,
+  isUpdating: state.MailAddressList.isUpdating,
+  isDeleting: state.MailAddressList.isDeleting,
+  isImporting: state.MailAddressList.isImporting,
   isFailure: state.MailAddressList.isFailure,
-  isRefreshDone: state.MailAddressList.isRefreshDone,
-  errorMessage: state.MailAddressList.errorMessage,
-  errorAccounts: state.MailAddressList.errorAccounts
+  metaMessage: state.MailAddressList.metaMessage,
+  transAccounts: state.MailAddressList.transAccounts
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({

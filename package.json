@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "0.0.7",
+  "version": "4.0.9",
   "description": "Affiliate super tool The Yoriki version5",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
@@ -19,9 +19,10 @@
     "package": "npm run build && build --publish never",
     "package-all": "npm run build && build -mwl",
     "package-linux": "npm run build && build --linux",
-    "package-win": "npm run build && build --win --x64",
+    "package-win": "npm run build && build --win --ia32",
     "postinstall": "node -r babel-register internals/scripts/CheckNativeDep.js && npm run flow-typed && npm run build-dll && electron-builder install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "prestart": "npm run build",
+    "release": "build",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "start-dev": "cross-env NODE_ENV=development electron ./app/",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./app/main.dev",
@@ -39,7 +40,7 @@
       "owner" : "kztmk",
       "repo" : "yoriki5"
     }],
-    "appId": "com.tmksolutions.*",
+    "appId": "com.tmksolutions.yorikiv5",
     "files": [
       "dist/",
       "node_modules/",
@@ -65,7 +66,8 @@
     "win": {
       "target": [
         "nsis"
-      ]
+      ],
+      "publish": ["github"]
     },
     "linux": {
       "target": [

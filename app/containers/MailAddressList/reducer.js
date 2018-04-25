@@ -3,35 +3,39 @@ import type { Action } from './actionTypes';
 import { Actions } from './actionTypes';
 import type MailAccountType from '../../types/mailAccount';
 
+/**
+ * mailAccounts: data accounts
+ * targetAccount: target account for creating , updating, deleting
+ * isGetting: status for get accounts process
+ * isCreating: status for creating
+ * isUpdating: status for updating
+ * isDeleting: status for deleting
+ * isFailure: success/fail
+ * metaMessage: error or notes
+ * trasAccounts: import accounts/error accounts
+ */
 export type State = {
   mailAccounts: Array<MailAccountType>,
-  targetAccount: MailAccountType,
-  isLoading: boolean,
+  isGetting: boolean,
+  isCreating: boolean,
+  isUpdating: boolean,
+  isDeleting: boolean,
+  isImporting: boolean,
   isFailure: boolean,
-  errorMessage: string,
-  errorAccounts: Array<MailAccountType>
-};
-
-const initialMailAccount = {
-  key: '',
-  accountId: '',
-  password: '',
-  mailAddress: '',
-  provider: '',
-  createDate: 0,
-  lastLogin: null,
-  tags: '',
-  detailInfo: []
+  metaMessage: string,
+  transAccounts: Array<MailAccountType>
 };
 
 export const initialState: State = {
   mailAccounts: [],
-  targetAccount: initialMailAccount,
-  isLoading: false,
+  isGetting: false,
+  isCreating: false,
+  isUpdating: false,
+  isDeleting: false,
+  isImporting: false,
   isFailure: false,
-  isRefreshDone: true,
-  errorMessage: '',
-  errorAccounts: []
+  metaMessage: '',
+  transAccounts: []
 };
 
 // eslint-disable-next-line space-before-function-paren
@@ -42,125 +46,146 @@ export default function(state: State = initialState, action: Action): State {
         ...state
       };
 
+    /**
+     * mailAccount全件取得
+     */
     case Actions.GET_MAIL_ADDRESS_REQUEST:
       return {
-        ...state,
-        isLoading: true,
-        isFailure: false,
-        isRefreshDone: false,
-        errorMessage: ''
+        ...initialState,
+        isGetting: true
       };
 
     case Actions.GET_MAIL_ADDRESS_SUCCESS:
       return {
         ...state,
         mailAccounts: action.payload,
-        isLoading: false,
-        isRefreshDone: true
+        isGetting: false
       };
 
     case Actions.GET_MAIL_ADDRESS_FAILURE:
       return {
         ...state,
-        isLoading: false,
+        isGetting: false,
         isFailure: true,
-        isRefreshDone: true,
-        errorMessage: action.payload
+        metaMessage: action.payload
       };
 
+    /**
+     * mailAccount新規追加
+     */
     case Actions.CREATE_MAIL_ADDRESS_REQUEST:
       return {
         ...state,
-        targetAccount: action.payload,
-        errorMessage: '',
-        isLoading: true,
+        isGetting: false,
+        isCreating: true,
+        isUpdating: false,
+        isDeleting: false,
+        isImporting: false,
         isFailure: false,
-        isRefreshDone: true
+        metaMessage: '',
+        transAccounts: []
       };
 
     case Actions.CREATE_MAIL_ADDRESS_SUCCESS:
       return {
         ...state,
         mailAccounts: action.payload,
-        targetAccount: initialMailAccount,
-        isLoading: false
+        isCreating: false
       };
 
     case Actions.CREATE_MAIL_ADDRESS_FAILURE:
       return {
         ...state,
-        isLoading: false,
+        isCreating: false,
         isFailure: true,
-        errorMessage: action.payload
+        metaMessage: action.payload
       };
 
+    /**
+     * mailAccount更新
+     */
     case Actions.UPDATE_MAIL_ADDRESS_REQUEST:
       return {
         ...state,
-        targetAccount: action.payload,
-        errorMessage: '',
-        isLoading: true,
-        isRefreshDone: true
+        isGetting: false,
+        isCreating: false,
+        isUpdating: true,
+        isDeleting: false,
+        isImporting: false,
+        isFailure: false,
+        metaMessage: '',
+        transAccounts: []
       };
 
     case Actions.UPDATE_MAIL_ADDRESS_SUCCESS:
       return {
         ...state,
         mailAccounts: action.payload,
-        targetAccount: initialMailAccount,
-        isLoading: false
+        isUpdating: false
       };
 
     case Actions.UPDATE_MAIL_ADDRESS_FAILURE:
       return {
         ...state,
-        isLoading: false,
+        isUpdating: false,
         isFailure: true,
-        errorMessage: action.payload
+        metaMessage: action.payload
       };
 
+    /**
+     * mailAccount削除
+     */
     case Actions.DELETE_MAIL_ADDRESS_REQUEST:
       return {
         ...state,
-        targetAccount: action.payload,
-        errorMessae: '',
+        isGetting: false,
+        isCreating: false,
+        isUpdating: false,
+        isDeleting: true,
+        isImporting: false,
         isFailure: false,
-        isLoading: true
+        metaMessage: '',
+        transAccounts: []
       };
 
     case Actions.DELETE_MAIL_ADDRESS_SUCCESS:
       return {
         ...state,
         mailAccounts: action.payload,
-        targetAccount: initialMailAccount,
-        isLoading: false
+        isDeleting: false
       };
 
     case Actions.DELETE_MAIL_ADDRESS_FAILURE:
       return {
         ...state,
-        isLoading: false,
+        isDeleting: false,
         isFailure: true,
-        errorMessage: action.payload
+        metaMessage: action.payload
       };
 
+    /**
+     * mailAccount import
+     */
     case Actions.IMPORT_MAIL_ADDRESS_REQUEST:
       return {
         ...state,
-        isLoading: true,
-        isRefreshDone: true,
+        isGetting: false,
+        isCreating: false,
+        isUpdating: false,
+        isDeleting: false,
+        isImporting: true,
         isFailure: false,
-        errorMessage: '',
-        errorAccounts: action.payload
+        metaMessage: '',
+        transAccounts: action.payload
       };
 
     case Actions.IMPORT_MAIL_ADDRESS_SUCCESS:
       return {
         ...state,
         mailAccounts: action.payload,
-        isLoading: false,
-        errorAccounts: action.meta.errorAccounts,
-        errorMessage: `リクエスト:${action.meta.req}件/インポート:${
+        isImporting: false,
+        transAccounts: action.meta.errorAccounts,
+        metaMessage: `リクエスト:${action.meta.req}件/インポート:${
           action.meta.in
         }件/エラー(重複含む):${action.meta.out}件`
       };
@@ -168,10 +193,10 @@ export default function(state: State = initialState, action: Action): State {
     case Actions.IMPORT_MAIL_ADDRESS_FAILURE:
       return {
         ...state,
-        isLoading: false,
+        isImporting: false,
         isFailure: true,
-        errorMessage: action.payload,
-        errorAccounts: []
+        metaMessage: action.payload,
+        transAccounts: []
       };
 
     default:
