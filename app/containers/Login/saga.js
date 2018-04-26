@@ -77,12 +77,12 @@ function* requestLogin() {
 
     yield put(loginSuccess({ ...authInfo, userId: user.uid }));
     // ログインに成功した場合、profileを取得する。
-    yield put(getProfileRequest());
+    // yield put(getProfileRequest());
     // TODO: settingsを取得
     // mailAccountsを取得
-    yield put(getMailAddressRequest());
+    // yield put(getMailAddressRequest());
     // blogAccountsを取得
-    yield put(getBlogsRequest());
+    // yield put(getBlogsRequest());
   } catch (error) {
     yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
   }

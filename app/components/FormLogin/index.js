@@ -9,17 +9,29 @@ import type { AuthType } from '../../types/auth';
 import { FullHeaderCard, ItemGrid, Button, Snackbar } from '../../ui';
 import { LoginIcon } from '../../asets/icons';
 import customInputStyle from '../../asets/jss/material-dashboard-pro-react/components/customInputStyle';
+import type { UserAccountType } from '../../types/userAccount';
+import type { State as MailAccountState } from '../../containers/MailAddressList/reducer';
+import type { State as BlogAccountState } from '../../containers/BlogList/reducer';
 
 export type Props = {
   userAuth: AuthType,
+  profile: UserAccountType,
+  mailAccountState: MailAccountState,
+  blogAccountState: BlogAccountState,
   loginStart: (userAuth: AuthType) => void,
-  requestPasswordReset: () => void
+  requestPasswordReset: () => void,
+  startGetProfile: () => void,
+  startGetMailAccounts: () => void,
+  startGetBlogAccounts: () => void,
+  isLoginDone: () => void
 };
 
 type State = {
   userAuth: AuthType,
   isOpenErrorSnackbar: boolean,
-  isLogin: boolean
+  isLogin: boolean,
+  errorMessage: string,
+  step: string
 };
 
 /**
@@ -31,8 +43,10 @@ class LoginForm extends Component<Props, State> {
 
     this.state = {
       userAuth: this.props.userAuth,
+      errorMessage: '',
       isOpenErrorSnackbar: false,
-      isLogin: this.props.userAuth.userId.length > 0
+      isLogin: this.props.userAuth.userId.length > 0,
+      step: ''
     };
   }
 
@@ -43,13 +57,74 @@ class LoginForm extends Component<Props, State> {
   componentWillReceiveProps = nextProps => {
     const isError = nextProps.userAuth.isLoginFailure;
     const isLoginSuccess = nextProps.userAuth.userId.length > 0;
-    this.setState({
-      userAuth: {
-        ...nextProps.userAuth
-      },
-      isOpenErrorSnackbar: isError,
-      isLogin: isLoginSuccess
-    });
+
+    // login success action
+    if (
+      this.state.step === 'getAuth' &&
+      !nextProps.userAuth.isLoadingIcon &&
+      isLoginSuccess &&
+      !isError
+    ) {
+      // profileの取得
+      this.setState({ step: 'getProfile' });
+      this.props.startGetProfile();
+    } else if (isError) {
+      // error表示
+      this.setState({
+        userAuth: {
+          ...nextProps.userAuth
+        },
+        errorMessage: nextProps.userAuth.errorMessage,
+        isOpenErrorSnackbar: isError
+      });
+      return;
+    }
+
+    if (
+      this.state.step === 'getProfile' &&
+      !nextProps.profile.isLoadingIcon &&
+      !nextProps.profile.isFailure
+    ) {
+      // getMailAccounts
+      this.setState({ step: 'getMailAccount' });
+      this.props.startGetMailAccounts();
+    } else if (this.state.step === 'getProfile' && nextProps.profile.isFailure) {
+      this.setState({
+        isOpenErrorSnackbar: nextProps.profile.isFailure,
+        errorMessage: nextProps.profile.errorMessage
+      });
+      return;
+    }
+
+    if (
+      this.state.step === 'getMailAccount' &&
+      !nextProps.mailAccountState.isGetting &&
+      !nextProps.mailAccountState.isFailure
+    ) {
+      // getBlogAccounts
+      this.setState({ step: 'getBlogAccount' });
+      this.props.startGetBlogAccounts();
+    } else if (this.state.step === 'getMailAccount' && nextProps.mailAccountState.isFailure) {
+      this.setState({
+        isOpenErrorSnackbar: nextProps.mailAccountState.isFailure,
+        errorMessage: nextProps.mailAccountState.metaMessage
+      });
+      return;
+    }
+
+    if (
+      this.state.step === 'getBlogAccount' &&
+      !nextProps.blogAccountState.isLoading &&
+      !nextProps.blogAccountState.isFailure
+    ) {
+      this.setState({ isLogin: true, step: '' });
+      this.props.isLoginDone(true);
+    } else if (this.state.step === 'getBlogAccount' && nextProps.blogAccountState.isFailure) {
+      this.setState({
+        isOpenErrorSnackbar: nextProps.blogAccountState.isFailure,
+        errorMessage: nextProps.blogAccountState.errorMessage
+      });
+    }
   };
 
   /**
@@ -89,7 +164,7 @@ class LoginForm extends Component<Props, State> {
    * container/Login で propsとして受け取ったactionをdispatch
    */
   handleStartLogin = () => {
-    this.setState({ isOpenErrorSnackbar: false });
+    this.setState({ isOpenErrorSnackbar: false, step: 'getAuth' });
     this.props.loginStart(this.state.userAuth);
   };
 
@@ -103,7 +178,10 @@ class LoginForm extends Component<Props, State> {
    * エラー用snackbarを非表示にする
    */
   handleErrorSnackbarClose = () => {
-    this.setState({ isOpenErrorSnackbar: false });
+    this.setState({
+      isOpenErrorSnackbar: false,
+      userAuth: { ...this.state.userAuth, errorMessage: '' }
+    });
   };
 
   /**
@@ -160,7 +238,7 @@ class LoginForm extends Component<Props, State> {
                   open={this.state.isOpenErrorSnackbar}
                   closeNotification={this.handleErrorSnackbarClose}
                   close
-                  message={<span id="login_error">{this.state.userAuth.errorMessage}</span>}
+                  message={<span id="login_error">{this.state.errorMessage}</span>}
                 />
               </ValidatorForm>
             }

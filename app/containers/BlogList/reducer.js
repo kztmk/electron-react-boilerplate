@@ -48,7 +48,9 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...initialState,
         isLoading: true,
-        errorMessage: ''
+        isFilure: false,
+        errorMessage: '',
+        errorAccounts: []
       };
 
     case Actions.GET_BLOGS_SUCCESS:

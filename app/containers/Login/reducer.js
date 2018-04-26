@@ -27,17 +27,21 @@ export default function(state: AuthType = initialState, action: Action): AuthTyp
       return {
         ...state,
         mailAddress: action.payload.mailAddress,
-        password: action.payload.password
+        password: action.payload.password,
+        errorMessage: '',
+        isLoginFailure: false
       };
     case Actions.LOGIN_REQUEST:
       return {
         ...state,
         isLoadingIcon: true,
-        errorMessage: ''
+        errorMessage: '',
+        isLoginFailure: false
       };
     case Actions.LOGIN_SUCCESS:
       return {
         ...state,
+        isLoadingIcon: false,
         userId: action.payload.userId,
         isLoginFailure: false
       };

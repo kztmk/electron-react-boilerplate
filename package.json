@@ -38,7 +38,9 @@
     "publish": [{
       "provider": "github",
       "owner" : "kztmk",
-      "repo" : "yoriki5"
+      "repo" : "yoriki5",
+      "host" : "github.com",
+      "releaseType" : "release"
     }],
     "appId": "com.tmksolutions.yorikiv5",
     "files": [

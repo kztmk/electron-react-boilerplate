@@ -46,11 +46,11 @@ class HomePage extends React.Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
-    const isOpenSuccessbar =
-      nextProps.userAuth.userId.length > 0 &&
-      !nextProps.userAuth.isLoginFailure &&
-      !nextProps.userAuth.isLoadingIcon;
-    this.setState({ isLoginDone: isOpenSuccessbar });
+    // const isOpenSuccessbar =
+    //   nextProps.userAuth.userId.length > 0 &&
+    //   !nextProps.userAuth.isLoginFailure &&
+    //   !nextProps.userAuth.isLoadingIcon;
+    // this.setState({ isLoginDone: isOpenSuccessbar });
   };
   /**
    * このコンポーネントのプロパティを変更するメソッド
@@ -82,6 +82,10 @@ class HomePage extends React.Component<Props, State> {
     this.setState({ isLoginDone: true });
   };
 
+  handleLoginDone = (status: boolean) => {
+    this.setState({ isLoginDone: status });
+  };
+
   render() {
     // eslint-disable-next-line
     const isLogin = this.props.userAuth.userId.length > 0;
@@ -95,7 +99,10 @@ class HomePage extends React.Component<Props, State> {
                 openLoginSuccessSnackbar={this.handleSuccessSnackbarOpen}
               />
             ) : (
-              <LoginForm requestPasswordReset={this.handleRequestPasswordReset} />
+              <LoginForm
+                isLoginDone={this.handleLoginDone}
+                requestPasswordReset={this.handleRequestPasswordReset}
+              />
             );
           })()}
         </Slide>
