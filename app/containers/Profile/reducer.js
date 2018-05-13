@@ -1,26 +1,29 @@
 // @flow
-import type { Action } from './actionTypes';
-import { Actions } from './actionTypes';
-import type { UserAccountType } from '../../types/userAccount';
+import type { Action } from "./actionTypes";
+import { Actions } from "./actionTypes";
+import type { UserAccountType } from "../../types/userAccount";
 
 export type State = UserAccountType;
 
 export const initialState: State = {
-  key: '',
-  userId: '',
-  mailAddress: '',
-  password: '',
+  key: "",
+  userId: "",
+  mailAddress: "",
+  password: "",
   expireDate: null,
-  paymentMethod: '',
-  registeredMailAddress: '',
+  paymentMethod: "",
+  registeredMailAddress: "",
   isLoadingIcon: false,
   isFailure: false,
-  errorMessage: '',
+  errorMessage: "",
   isFirstProfile: true
 };
 
 // eslint-disable-next-line space-before-function-paren
-export default function(state: State = initialState, action: Action): UserAccountType {
+export default function(
+  state: State = initialState,
+  action: Action
+): UserAccountType {
   switch (action.type) {
     case Actions.SET_PROFILE:
       return {
@@ -32,7 +35,7 @@ export default function(state: State = initialState, action: Action): UserAccoun
         expireDate: action.payload.expireDate,
         paymentMethod: action.payload.paymentMethod,
         registeredMailAddress: action.payload.registeredMailAddress,
-        errorMessage: '',
+        errorMessage: "",
         isFailure: false,
         isFirstProfile: action.payload.isFirstProfile
       };
@@ -47,7 +50,7 @@ export default function(state: State = initialState, action: Action): UserAccoun
         expireDate: action.payload.expireDate,
         paymentMethod: action.payload.paymentMethod,
         registeredMailAddress: action.payload.registeredMailAddress,
-        errorMessage: '',
+        errorMessage: "",
         isFailure: false,
         isFirstProfile: action.payload.isFirstProfile
       };

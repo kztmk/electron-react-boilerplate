@@ -1,5 +1,5 @@
 // @flow
-import type { BlogAccountType } from '../../types/blogAccount';
+import type { BlogAccountType } from "../../types/blogAccount";
 
 import {
   GET_BLOGS_REQUEST,
@@ -17,7 +17,7 @@ import {
   IMPORT_BLOGS_REQUEST,
   IMPORT_BLOGS_SUCCESS,
   IMPORT_BLOGS_FAILURE
-} from './actionTypes';
+} from "./actionTypes";
 import type {
   GetBlogsRequest,
   GetBlogsSuccess,
@@ -34,14 +34,16 @@ import type {
   ImportBlogsRequest,
   ImportBlogsSuccess,
   ImportBlogsFailure
-} from './actionTypes';
+} from "./actionTypes";
 
 export function getBlogsRequest(): GetBlogsRequest {
   return {
     type: GET_BLOGS_REQUEST
   };
 }
-export function getBlogsSuccess(payload: Array<BlogAccountType>): GetBlogsSuccess {
+export function getBlogsSuccess(
+  payload: Array<BlogAccountType>
+): GetBlogsSuccess {
   return {
     type: GET_BLOGS_SUCCESS,
     payload
@@ -59,7 +61,9 @@ export function createBlogRequest(payload: BlogAccountType): CreateBlogRequest {
     payload
   };
 }
-export function createBlogSuccess(payload: Array<BlogAccountType>): CreateBlogSuccess {
+export function createBlogSuccess(
+  payload: Array<BlogAccountType>
+): CreateBlogSuccess {
   return {
     type: CREATE_BLOG_SUCCESS,
     payload
@@ -77,7 +81,9 @@ export function updateBlogRequest(payload: BlogAccountType): UpdateBlogRequest {
     payload
   };
 }
-export function updateBlogSuccess(payload: Array<BlogAccountType>): UpdateBlogSuccess {
+export function updateBlogSuccess(
+  payload: Array<BlogAccountType>
+): UpdateBlogSuccess {
   return {
     type: UPDATE_BLOG_SUCCESS,
     payload
@@ -95,7 +101,9 @@ export function deleteBlogRequest(payload: BlogAccountType): DeleteBlogRequest {
     payload
   };
 }
-export function deleteBlogSuccess(payload: Array<BlogAccountType>): DeleteBlogSuccess {
+export function deleteBlogSuccess(
+  payload: Array<BlogAccountType>
+): DeleteBlogSuccess {
   return {
     type: DELETE_BLOG_SUCCESS,
     payload
@@ -107,7 +115,9 @@ export function deleteBlogFailure(payload: string): DeleteBlogFailure {
     payload
   };
 }
-export function importBlogsRequest(payload: Array<BlogAccountType>): ImportBlogsRequest {
+export function importBlogsRequest(
+  payload: Array<BlogAccountType>
+): ImportBlogsRequest {
   return {
     type: IMPORT_BLOGS_REQUEST,
     payload

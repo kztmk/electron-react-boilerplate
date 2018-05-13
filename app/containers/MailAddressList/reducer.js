@@ -1,7 +1,7 @@
 // @flow
-import type { Action } from './actionTypes';
-import { Actions } from './actionTypes';
-import type MailAccountType from '../../types/mailAccount';
+import type { Action } from "./actionTypes";
+import { Actions } from "./actionTypes";
+import type MailAccountType from "../../types/mailAccount";
 
 /**
  * mailAccounts: data accounts
@@ -34,7 +34,7 @@ export const initialState: State = {
   isDeleting: false,
   isImporting: false,
   isFailure: false,
-  metaMessage: '',
+  metaMessage: "",
   transAccounts: []
 };
 
@@ -82,7 +82,7 @@ export default function(state: State = initialState, action: Action): State {
         isDeleting: false,
         isImporting: false,
         isFailure: false,
-        metaMessage: '',
+        metaMessage: "",
         transAccounts: []
       };
 
@@ -113,7 +113,7 @@ export default function(state: State = initialState, action: Action): State {
         isDeleting: false,
         isImporting: false,
         isFailure: false,
-        metaMessage: '',
+        metaMessage: "",
         transAccounts: []
       };
 
@@ -144,7 +144,7 @@ export default function(state: State = initialState, action: Action): State {
         isDeleting: true,
         isImporting: false,
         isFailure: false,
-        metaMessage: '',
+        metaMessage: "",
         transAccounts: []
       };
 
@@ -175,7 +175,7 @@ export default function(state: State = initialState, action: Action): State {
         isDeleting: false,
         isImporting: true,
         isFailure: false,
-        metaMessage: '',
+        metaMessage: "",
         transAccounts: action.payload
       };
 

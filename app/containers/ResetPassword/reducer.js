@@ -1,20 +1,23 @@
 // @flow
-import type { Action } from './actionTypes';
-import { Actions } from './actionTypes';
-import type { AuthType } from '../../types/auth';
+import type { Action } from "./actionTypes";
+import { Actions } from "./actionTypes";
+import type { AuthType } from "../../types/auth";
 
 export const initialState: AuthType = {
-  userId: '',
-  mailAddress: '',
-  password: '',
+  userId: "",
+  mailAddress: "",
+  password: "",
   isLoginFailure: false,
   isLoadingIcon: false,
-  errorMessage: ''
+  errorMessage: ""
 };
 
 export type State = AuthType;
 
-export default function(state: AuthType = initialState, action: Action): AuthType {
+export default function(
+  state: AuthType = initialState,
+  action: Action
+): AuthType {
   switch (action.type) {
     case Actions.SET_AUTH_INFO:
       return {

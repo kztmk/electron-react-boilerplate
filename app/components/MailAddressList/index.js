@@ -41,6 +41,7 @@ type Props = {
   // startCreateMailAccount: (mailAccount: MailAccountType) => void,
   startUpdateMailAccount: (mailAccount: MailAccountType) => void,
   startDeleteMailAccount: (mailAccount: MailAccountType) => void,
+  startCloseConnection: () => void,
   mailAccounts: Array<MailAccountType>,
   isGetting: boolean,
   isCreating: boolean,
@@ -193,7 +194,7 @@ class MailAddressListPage extends React.Component<Props, State> {
     console.log(
       `imp:${nextProps.isImporting}--cre:${nextProps.isCreating}--Get:${nextProps.isGetting}--up:${
         nextProps.isUpdating
-      }--del:${nextProps.isDeleting}`
+      }--del:${nextProps.isDeleting}--connect:${nextProps.isMessageLoading}`
     );
     console.log(`my-mode:${this.state.mode}`);
     if (
@@ -382,6 +383,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                     mailAccounts={this.props.mailAccounts}
                     deleteAccount={this.props.startDeleteMailAccount}
                     editAccount={this.props.startUpdateMailAccount}
+                    closeConnection={this.props.startCloseConnection}
                   />
                 </div>
               }

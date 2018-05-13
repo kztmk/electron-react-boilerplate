@@ -33,6 +33,8 @@ import FormMailAddressEdit from './formMailAddressEdit';
 import accountListPageStyle from '../../asets/jss/material-dashboard-pro-react/views/accountListPageStyle';
 import SweetAlertTitle from '../SweetAlertTitle';
 
+import MailAccount from '../../containers/MailAccount';
+
 function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
@@ -43,6 +45,7 @@ type State = {
   mode: string,
   targetAccount: ?MailAccountType,
   openEditForm: boolean,
+  openMailAccount: boolean,
   isUpdated: boolean
 };
 
@@ -53,7 +56,8 @@ type Props = {
   isFailure: boolean,
   errorMessage: string,
   deleteAccount: () => void,
-  editAccount: () => void
+  editAccount: () => void,
+  closeConnection: () => void
 };
 
 const initialMailAccount = {
@@ -110,7 +114,8 @@ class MailAddressList extends React.Component<Props, State> {
       targetAccount: initialMailAccount,
       sweetAlert: null,
       mode: 'none',
-      openEditForm: false
+      openEditForm: false,
+      openMailAccount: false
     };
   }
 
@@ -193,8 +198,21 @@ class MailAddressList extends React.Component<Props, State> {
           <Tooltip title="メールアカウントへログイン" placement="top-end">
             <IconButton
               onClick={() => {
-                const obj = this.state.data.find(o => o.key === prop.key);
-                alert(`you click:${obj.mailAddress}`);
+                const account = this.state.data.find(o => o.key === prop.key);
+                if (account) {
+                  const restoredTags = account.tags.join(',');
+                  const restoredLastLogin =
+                    account.lastLogin.length > 0 ? moment(account.lastLogin).valueOf() : 0;
+                  const target = {
+                    ...account,
+                    tags: restoredTags,
+                    createDate: moment(account.createDate).valueOf(),
+                    lastLogin: restoredLastLogin
+                  };
+                  this.showMailAccount(target);
+                } else {
+                  alert('ログイン用アカウントの取得に失敗しました。');
+                }
               }}
               color="success"
             >
@@ -262,6 +280,22 @@ class MailAddressList extends React.Component<Props, State> {
         </div>
       )
     }));
+
+  restoreMailAccountFromTableRow = account => {
+    if (account) {
+      const restoredTags = account.tags.join(',');
+      const restoredLastLogin =
+        account.lastLogin.length > 0 ? moment(account.lastLogin).valueOf() : 0;
+      const target = {
+        ...account,
+        tags: restoredTags,
+        createDate: moment(account.createDate).valueOf(),
+        lastLogin: restoredLastLogin
+      };
+
+      return target;
+    }
+  };
 
   /**
    * メールアカウント削除ダイアログからproceed処理を選択
@@ -344,6 +378,10 @@ class MailAddressList extends React.Component<Props, State> {
     });
   };
 
+  /**
+   * mailAccount情報編集フォームを開く
+   * @param account
+   */
   showEditForm = account => {
     this.setState({
       targetAccount: account,
@@ -351,10 +389,28 @@ class MailAddressList extends React.Component<Props, State> {
     });
   };
 
-  handleCloseModal = () => {
+  /**
+   * mailAccount情報編集フォームを閉じる
+   */
+  handleCloseEditForm = () => {
     this.setState({
       openEditForm: false
     });
+  };
+
+  showMailAccount = account => {
+    this.setState({
+      targetAccount: account,
+      openMailAccount: true
+    });
+  };
+
+  handleCloseMailAccount = () => {
+    this.setState({
+      targetAccount: initialMailAccount,
+      openMailAccount: false
+    });
+    this.props.closeConnection();
   };
 
   render() {
@@ -505,7 +561,7 @@ class MailAddressList extends React.Component<Props, State> {
               ]}
               defaultPageSize={10}
               showPaginationTop
-              showPaginationBotoom={false}
+              showPaginationBottom={false}
               className="-striped -highlight"
               previousText="< 前"
               nextText="次 >"
@@ -524,7 +580,7 @@ class MailAddressList extends React.Component<Props, State> {
               open={this.state.openEditForm}
               transition={Transition}
               keepMounted
-              onClose={() => this.handleCloseModal()}
+              onClose={() => this.handleCloseEditForm()}
               aria-labelledby="notice-modal-slide-title"
               aria-describedby="notice-modal-slide-description"
               disableBackdropClick
@@ -539,7 +595,7 @@ class MailAddressList extends React.Component<Props, State> {
                   key="close"
                   aria-label="Close"
                   color="defaultNoBackground"
-                  onClick={() => this.handleCloseModal()}
+                  onClick={() => this.handleCloseEditForm()}
                 >
                   <Close className={classes.modalClose} />
                 </IconButton>
@@ -548,10 +604,43 @@ class MailAddressList extends React.Component<Props, State> {
                 <FormMailAddressEdit
                   mode={this.props.mode}
                   errorMessage={this.props.errorMessage}
-                  closeModal={this.handleCloseModal}
+                  closeModal={this.handleCloseEditForm}
                   targetAccount={this.state.targetAccount}
                   updateAccount={this.props.editAccount}
                 />
+              </DialogContent>
+            </Dialog>
+            <Dialog
+              classes={{
+                paper: classes.modal
+              }}
+              maxWidth={false}
+              fullWidth
+              open={this.state.openMailAccount}
+              transition={Transition}
+              keepMounted
+              onClose={() => this.handleCloseMailAccount()}
+              aria-labelledby="notice-modal-slide-title"
+              aria-describedby="notice-modal-slide-description"
+              disableBackdropClick
+            >
+              <DialogTitle
+                id="notice-modal-slide-title"
+                disableTypography
+                className={classes.modalHeader}
+              >
+                <IconButton
+                  style={modalCloseButtonStyle}
+                  key="close"
+                  aria-label="Close"
+                  color="defaultNoBackground"
+                  onClick={() => this.handleCloseMailAccount()}
+                >
+                  <Close className={classes.modalClose} />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
+                <MailAccount targetAccount={this.state.targetAccount} />
               </DialogContent>
             </Dialog>
           </ItemGrid>

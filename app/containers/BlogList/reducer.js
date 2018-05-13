@@ -1,7 +1,7 @@
 // @flow
-import type { Action } from './actionTypes';
-import { Actions } from './actionTypes';
-import type { BlogAccountType } from '../../types/blogAccount';
+import type { Action } from "./actionTypes";
+import { Actions } from "./actionTypes";
+import type { BlogAccountType } from "../../types/blogAccount";
 
 export type State = {
   blogAccounts: Array<BlogAccountType>,
@@ -13,22 +13,22 @@ export type State = {
 };
 
 export const initialBlogAccount: BlogAccountType = {
-  key: '',
-  accountId: '',
-  password: '',
-  mailAddress: '',
-  provider: '',
-  title: '',
-  description: '',
-  url: '',
-  remark: '',
+  key: "",
+  accountId: "",
+  password: "",
+  mailAddress: "",
+  provider: "",
+  title: "",
+  description: "",
+  url: "",
+  remark: "",
   createDate: 0,
   detailInfo: [],
-  apiId: '',
-  apiPass: '',
-  blogId: '',
-  endPoint: '',
-  groupTags: '',
+  apiId: "",
+  apiPass: "",
+  blogId: "",
+  endPoint: "",
+  groupTags: "",
   affiliateTags: []
 };
 
@@ -37,7 +37,7 @@ export const initialState: State = {
   targetAccount: initialBlogAccount,
   isLoading: false,
   isFailure: false,
-  errorMessage: '',
+  errorMessage: "",
   errorAccounts: []
 };
 
@@ -49,7 +49,7 @@ export default function(state: State = initialState, action: Action): State {
         ...initialState,
         isLoading: true,
         isFilure: false,
-        errorMessage: '',
+        errorMessage: "",
         errorAccounts: []
       };
 
@@ -73,7 +73,7 @@ export default function(state: State = initialState, action: Action): State {
         ...state,
         targetAccount: action.payload,
         isLoading: true,
-        errorMessage: ''
+        errorMessage: ""
       };
 
     case Actions.CREATE_BLOG_SUCCESS:
@@ -97,7 +97,7 @@ export default function(state: State = initialState, action: Action): State {
         ...state,
         targetAccount: action.payload,
         isLoading: true,
-        errorMessage: ''
+        errorMessage: ""
       };
 
     case Actions.UPDATE_BLOG_SUCCESS:
@@ -121,7 +121,7 @@ export default function(state: State = initialState, action: Action): State {
         ...state,
         targetAccount: action.payload,
         isLoading: true,
-        errorMessage: ''
+        errorMessage: ""
       };
 
     case Actions.DELETE_BLOG_SUCCESS:
@@ -144,7 +144,7 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         isLoading: true,
-        errorMessage: '',
+        errorMessage: "",
         errorAccounts: action.payload
       };
 

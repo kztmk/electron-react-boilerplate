@@ -1,21 +1,24 @@
 // @flow
-import type { Action } from './actionTypes';
-import { Actions } from './actionTypes';
-import type { AuthType } from '../../types/auth';
+import type { Action } from "./actionTypes";
+import { Actions } from "./actionTypes";
+import type { AuthType } from "../../types/auth";
 
 export type State = AuthType;
 
 export const initialState: AuthType = {
-  userId: '',
-  mailAddress: '',
-  password: '',
+  userId: "",
+  mailAddress: "",
+  password: "",
   isLoginFailure: false,
   isLoadingIcon: false,
-  errorMessage: ''
+  errorMessage: ""
 };
 
 // eslint-disable-next-line space-before-function-paren
-export default function(state: AuthType = initialState, action: Action): AuthType {
+export default function(
+  state: AuthType = initialState,
+  action: Action
+): AuthType {
   switch (action.type) {
     case Actions.UPDATE_AUTH_INFO:
       return {
@@ -28,14 +31,14 @@ export default function(state: AuthType = initialState, action: Action): AuthTyp
         ...state,
         mailAddress: action.payload.mailAddress,
         password: action.payload.password,
-        errorMessage: '',
+        errorMessage: "",
         isLoginFailure: false
       };
     case Actions.LOGIN_REQUEST:
       return {
         ...state,
         isLoadingIcon: true,
-        errorMessage: '',
+        errorMessage: "",
         isLoginFailure: false
       };
     case Actions.LOGIN_SUCCESS:

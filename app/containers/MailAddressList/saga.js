@@ -39,10 +39,6 @@ const mailAccountSort = (a: MailAccountType, b: MailAccountType) => {
   return 0;
 };
 
-function* getExistsAccounts(userId) {
-  return existsAccounts;
-}
-
 /**
  * メールアカウントの一括インポート
  * @param action importMailAddressRequest

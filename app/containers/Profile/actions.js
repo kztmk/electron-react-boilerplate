@@ -1,5 +1,5 @@
 // @flow
-import type { UserAccountType } from '../../types/userAccount';
+import type { UserAccountType } from "../../types/userAccount";
 
 import {
   SET_PROFILE,
@@ -16,7 +16,7 @@ import {
   DELETE_PROFILE_REQUEST,
   DELETE_PROFILE_SUCCESS,
   DELETE_PROFILE_FAILURE
-} from './actionTypes';
+} from "./actionTypes";
 import type {
   SetProfile,
   UpdateProfileInfo,
@@ -32,7 +32,7 @@ import type {
   DeleteProfileRequest,
   DeleteProfileSuccess,
   DeleteProfileFailure
-} from './actionTypes';
+} from "./actionTypes";
 
 export function setProfile(payload: UserAccountType): SetProfile {
   return {
@@ -51,13 +51,17 @@ export function createProfileRequest(): CreateProfileRequest {
     type: CREATE_PROFILE_REQUEST
   };
 }
-export function createProfileSuccess(payload: UserAccountType): CreateProfileSuccess {
+export function createProfileSuccess(
+  payload: UserAccountType
+): CreateProfileSuccess {
   return {
     type: CREATE_PROFILE_SUCCESS,
     payload
   };
 }
-export function createProfileFailure(payload: UserAccountType): CreateProfileFailure {
+export function createProfileFailure(
+  payload: UserAccountType
+): CreateProfileFailure {
   return {
     type: CREATE_PROFILE_FAILURE,
     payload
@@ -90,7 +94,9 @@ export function updateProfileSuccess(): UpdateProfileSuccess {
     type: UPDATE_PROFILE_SUCCESS
   };
 }
-export function updateProfileFailure(payload: UserAccountType): UpdateProfileFailure {
+export function updateProfileFailure(
+  payload: UserAccountType
+): UpdateProfileFailure {
   return {
     type: UPDATE_PROFILE_FAILURE,
     payload
@@ -106,7 +112,9 @@ export function deleteProfileSuccess(): DeleteProfileSuccess {
     type: DELETE_PROFILE_SUCCESS
   };
 }
-export function deleteProfileFailure(payload: UserAccountType): DeleteProfileFailure {
+export function deleteProfileFailure(
+  payload: UserAccountType
+): DeleteProfileFailure {
   return {
     type: DELETE_PROFILE_FAILURE,
     payload

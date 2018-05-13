@@ -11,6 +11,7 @@ import {
 } from './actions';
 
 import MailAddressListPage from '../../components/MailAddressList';
+import { closeConnectionRequest } from '../MailAccount/actions';
 
 const mapStateToProps = (state: State) => ({
   mailAccounts: state.MailAddressList.mailAccounts,
@@ -39,6 +40,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startDeleteMailAccount(mailAccount) {
     dispatch(deleteMailAddressRequest(mailAccount));
+  },
+  startCloseConnection() {
+    dispatch(closeConnectionRequest());
   }
 });
 

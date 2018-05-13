@@ -5,6 +5,7 @@ import ResetPassword from './containers/ResetPassword/saga';
 import Profile from './containers/Profile/saga';
 import MailAddressList from './containers/MailAddressList/saga';
 import BlogList from './containers/BlogList/saga';
+import MailAccount from './containers/MailAccount/saga';
 
 function* root(): Generator<*, void, void> {
   yield all([
@@ -12,7 +13,8 @@ function* root(): Generator<*, void, void> {
     fork(ResetPassword),
     fork(Profile),
     fork(MailAddressList),
-    fork(BlogList)
+    fork(BlogList),
+    fork(MailAccount)
   ]);
 }
 

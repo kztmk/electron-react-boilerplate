@@ -498,7 +498,7 @@ class BlogList extends React.Component<Props, State> {
             ]}
             defaultPageSize={10}
             showPaginationTop
-            showPaginationBotoom={false}
+            showPaginationBottom={false}
             className="-striped -highlight"
             previousText="< 前"
             nextText="次 >"
