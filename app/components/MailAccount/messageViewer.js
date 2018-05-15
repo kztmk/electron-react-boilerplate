@@ -1,17 +1,24 @@
 // @flow
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
-import ReactPaginate from 'react-paginate';
+
 import moment from 'moment';
 import { withStyles } from 'material-ui/styles';
 import Checkbox from 'material-ui/Checkbox';
 import Check from 'material-ui-icons/Check';
 import matchSorter from 'match-sorter';
 
-import { GridContainer, ItemGrid, Button } from '../../ui';
+import ReactPaginate from 'react-paginate';
+import { GridContainer, ItemGrid, Button, FullHeaderCard } from '../../ui';
 
 import type { MailRowMessageType } from '../../types/mailMessageType';
 import { primaryColor } from '../../asets/jss/material-dashboard-pro-react';
+
+const checkBoxStyle = {
+  root: {
+    height: '24px'
+  }
+};
 
 const styles = {
   icon: {
@@ -25,8 +32,8 @@ const styles = {
     color: primaryColor
   },
   checkedIcon: {
-    width: '20px',
-    height: '20px',
+    width: '14px',
+    height: '14px',
     border: '1px solid rgba(0, 0, 0, .54)',
     borderRadius: '3px'
   },
@@ -69,7 +76,8 @@ class MessageViewer extends Component<Props, State> {
       seqFrom: this.props.imapSeqFrom,
       mailCount: this.props.imapMailCount,
       checked: [],
-      checkedAll: 0
+      checkedAll: 0,
+      decodedMessages: []
     };
   }
 
@@ -115,19 +123,34 @@ class MessageViewer extends Component<Props, State> {
   handleToggleCheckBox(uid) {
     let check = { ...this.state.checked };
     check[uid] = !this.state.checked[uid];
-    let clearCheck = false;
     let allClearCheck = 2;
 
-    if (check.length > 0) {
-      for (const key in check) {
-        if (check[key]) {
-          clearCheck = true;
-        }
+    console.log(`check.length:${check.length !== null}`);
+    console.log(`check-length:${check.length}`);
+    if (check.length !== null && check.length > 0) {
+      let trueCount = 0;
+      let falseCount = 0;
+      if (check.length > 0) {
+        check.forEach(value => {
+          if (value) {
+            trueCount += 1;
+          } else {
+            falseCount += 1;
+          }
+        });
+      }
+      console.log(`true:${trueCount}`);
+      console.log(`false:${falseCount}`);
+
+      if (trueCount === check.length) {
+        allClearCheck = 1;
+        check = [];
+        console.log('all clear');
       }
 
-      if (!clearCheck) {
-        check = [];
+      if (falseCount === check.length) {
         allClearCheck = 0;
+        console.log('all checked');
       }
     }
 
@@ -152,6 +175,20 @@ class MessageViewer extends Component<Props, State> {
     });
   }
 
+  isSeenMessage = uid => {
+    let result = false;
+    const message = this.state.messages.find(m => m.uid === uid);
+
+    if (message !== undefined) {
+      const seen = message.flags.find(f => f.toLowerCase() === '\\seen');
+      if (seen !== undefined) {
+        result = true;
+      }
+    }
+
+    return result;
+  };
+
   handlePageClick = data => {
     const selected = data.selected;
     alert(`you clicled ${selected}`);
@@ -160,20 +197,26 @@ class MessageViewer extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <GridContainer>
-        <ItemGrid>
+        <ItemGrid xs={12} sm={12} md={12}>
           {this.state.mailCount > 25 && (
             <ReactPaginate
-              previousLabel={'<'}
-              nextLabel={'>'}
+              previousLabel="前25件"
+              nextLabel="次25件"
               breakLabel={<a href="">...</a>}
-              breakClassName="break-me"
+              breakClassName="Pagination-paginationLink"
               pageCount={Math.ceil(this.state.mailCount / 25)}
               marginPagesDisplayed={2}
               pageRangeDisplayed={3}
               onPageChange={this.handlePageClick}
-              containerClassName="react-paginate"
-              subContainerClassName="pages pagination"
-              activeClassName="active"
+              containerClassName="Pagination-pagination"
+              pageClassName="Pagination-paginationItem"
+              pageLinkClassName="Pagination-paginationLink"
+              activeClassName="Pagination-primary"
+              disabledClassName="Pagination-disabled"
+              nextClassName="Pagination-paginationItem"
+              nextLinkClassName="Pagination-paginationLink"
+              previousClassName="Pagination-paginationItem"
+              previousLinkClassName="Pagination-paginationLink"
             />
           )}
         </ItemGrid>
@@ -190,12 +233,14 @@ class MessageViewer extends Component<Props, State> {
                 Cell: ({ original }) => (
                   <Checkbox
                     tabIndex={-1}
+                    checked={this.state.checked[original.uid] === true}
                     onClick={() => this.handleToggleCheckBox(original.uid)}
                     checkedIcon={<Check className={classes.checkedIcon} />}
                     icon={<Check className={classes.uncheckedIcon} />}
                     classes={{
                       checked: classes.checked
                     }}
+                    style={checkBoxStyle.root}
                   />
                 ),
                 Header: x => (
@@ -217,6 +262,12 @@ class MessageViewer extends Component<Props, State> {
               {
                 Header: () => <span style={{ fontSize: 12 }}>件名</span>,
                 accessor: 'subject',
+                Cell: row =>
+                  this.isSeenMessage(row.original.uid) ? (
+                    <span style={{ fontSize: 12 }}>{row.original.subject}</span>
+                  ) : (
+                    <span style={{ fontSize: 12, fontWeight: 'bold' }}>{row.original.subject}</span>
+                  ),
                 minWidth: 200,
                 filterable: true,
                 sortable: false,
@@ -283,6 +334,27 @@ class MessageViewer extends Component<Props, State> {
               fontSize: '12px',
               lineHeight: '1.1em'
             }}
+            getTdProps={(state, rowInfo, column) => {
+              return {
+                onClick: (e, handleOriginal) => {
+                  // this.showMessage(rowInfo.original.uid);
+                  if (column.id !== 'checkbox') {
+                    console.log(rowInfo.original.uid);
+                  }
+                  if (handleOriginal) {
+                    handleOriginal();
+                  }
+                }
+              };
+            }}
+          />
+        </ItemGrid>
+        <ItemGrid>
+          <FullHeaderCard
+            cardTitle={this.state.subject}
+            headerColor="rose"
+            cardSubTitle={`送信元:${this.state.from}    受信日時:${this.state.date}`}
+            content={this.state.html}
           />
         </ItemGrid>
       </GridContainer>

@@ -102,7 +102,8 @@ const modalCloseButtonStyle = {
   textShadow: 'none',
   fontWeight: '700',
   lineHeight: '1',
-  float: 'right'
+  float: 'right',
+  height: '32px'
 };
 
 class MailAddressList extends React.Component<Props, State> {

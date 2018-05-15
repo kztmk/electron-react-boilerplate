@@ -14,10 +14,13 @@ import type { MailRowMessageType, MailBoxesType } from '../../types/mailMessageT
 
 const drawerWidth = 240;
 
+const toolBarStyles = {
+  minHeight: '48px'
+};
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: '80vh',
+    height: '95vh',
     zIndex: 1,
     overflow: 'auto',
     position: 'relative',
@@ -33,7 +36,7 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: `0 24px 24px`,
     minWidth: 0 // So the Typography noWrap works
   },
   toolbar: theme.mixins.toolbar
@@ -92,7 +95,7 @@ class MailAccount extends React.Component<Props, State> {
     return (
       <div className={classes.root}>
         <AppBar position="absolute" className={classes.appBar}>
-          <Toolbar>
+          <Toolbar style={toolBarStyles}>
             <Typography variant="title" color="inherit" noWrap>
               メールアドレス: {this.props.targetAccount.mailAddress}
             </Typography>

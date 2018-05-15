@@ -236,7 +236,7 @@
     "react-hot-loader": "^4.0.0-beta.13",
     "react-loading-overlay": "^0.3.0",
     "react-material-ui-form-validator": "^2.0.0-beta.4",
-    "react-paginate": "^5.2.3",
+    "react-paginate": "git+https://github.com/kztmk/react-paginate.git#master",
     "react-popper": "^0.8.3",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",

@@ -6,7 +6,7 @@ class MainWindow {
     this.window = new BrowserWindow({
       show: false,
       width: 1024,
-      height: 880,
+      height: 748,
       minWidth: 465
     });
     this.window.loadURL(`file://${__dirname}/app.html`);
