@@ -43,7 +43,7 @@ app/renderer.prod.js
 app/renderer.prod.js.map
 app/style.css
 app/style.css.map
-app/daatabase/config.js
+app/database/config.js
 dist
 dll
 main.js
