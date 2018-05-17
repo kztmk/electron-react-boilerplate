@@ -65,6 +65,10 @@ type State = {
   data: Array<Object>
 };
 
+/**
+ * mailbox内のmail一覧、選択したmail内容を表示するcomponent
+ *
+ */
 class MessageViewer extends Component<Props, State> {
   constructor(props) {
     super(props);
@@ -81,6 +85,10 @@ class MessageViewer extends Component<Props, State> {
     };
   }
 
+  /**
+   * propsが更新された場合の処理
+   * @param nextProps
+   */
   componentWillReceiveProps = nextProps => {
     // page更新 or path更新
     console.log(`now-seq:${this.state.seqFrom}-path:${this.state.boxPath}`);
@@ -102,6 +110,11 @@ class MessageViewer extends Component<Props, State> {
     }
   };
 
+  /**
+   * mail送信元オブジェクトを文字列化する
+   * @param senders
+   * @returns {string}
+   */
   getSender = senders => {
     let addressFormat = '';
     if (senders.length > 0) {
@@ -111,6 +124,11 @@ class MessageViewer extends Component<Props, State> {
     return addressFormat;
   };
 
+  /**
+   * mailbox内のmailを一覧表示するために、変換
+   * @param messages
+   * @returns {*}
+   */
   convertTableData = messages =>
     messages.map(msg => ({
       uid: msg.uid,
@@ -120,38 +138,44 @@ class MessageViewer extends Component<Props, State> {
       from: this.getSender(msg.from)
     }));
 
+  /**
+   * チェックボックスのClickにて、チェック状態を変化させる
+   * @param uid
+   */
   handleToggleCheckBox(uid) {
+    // 現在のstateをコピー
     let check = { ...this.state.checked };
+    // clickされたuidをkeyにし、チェック状態を
+    // ----> keyがない場合には、新規にtrueで作成
+    // ----> keyがある場合、falseに
     check[uid] = !this.state.checked[uid];
+    // 全選択checkboxを中に
     let allClearCheck = 2;
 
-    console.log(`check.length:${check.length !== null}`);
-    console.log(`check-length:${check.length}`);
-    if (check.length !== null && check.length > 0) {
-      let trueCount = 0;
-      let falseCount = 0;
-      if (check.length > 0) {
-        check.forEach(value => {
-          if (value) {
-            trueCount += 1;
-          } else {
-            falseCount += 1;
-          }
-        });
-      }
-      console.log(`true:${trueCount}`);
-      console.log(`false:${falseCount}`);
+    // 全選択checkboxと連動するために
+    // 現在のcheck内が全てtrue且つmessage数と同じ->全選択状態
+    // 現在のcheck内が全てfalseの場合->選択状態ナシ
+    let trueCount = 0;
+    let falseCount = 0;
+    if (Object.keys(check).length > 0) {
+      Object.keys(check).forEach(m => {
+        if (check[m]) {
+          trueCount += 1;
+        } else {
+          falseCount += 1;
+        }
+      });
+    }
 
-      if (trueCount === check.length) {
-        allClearCheck = 1;
-        check = [];
-        console.log('all clear');
-      }
+    // 全選択状態
+    if (trueCount === Object.keys(this.state.messages).length) {
+      allClearCheck = 1;
+    }
 
-      if (falseCount === check.length) {
-        allClearCheck = 0;
-        console.log('all checked');
-      }
+    // 全非選択状態
+    if (falseCount === Object.keys(check).length) {
+      allClearCheck = 0;
+      check = [];
     }
 
     this.setState({
@@ -160,6 +184,10 @@ class MessageViewer extends Component<Props, State> {
     });
   }
 
+  /**
+   * 全選択・全解除ボタンClick
+   *
+   */
   handleToggleCheckBoxAll() {
     const checkAll = {};
 
@@ -175,6 +203,11 @@ class MessageViewer extends Component<Props, State> {
     });
   }
 
+  /**
+   * メッセージの未読・既読の判断
+   * @param uid
+   * @returns {boolean}
+   */
   isSeenMessage = uid => {
     let result = false;
     const message = this.state.messages.find(m => m.uid === uid);
@@ -189,10 +222,17 @@ class MessageViewer extends Component<Props, State> {
     return result;
   };
 
+  /**
+   * paginationをclickしたときに、該当ページのmailを取得
+   * TODO: seqFromにoffsetをセットして、pathと一緒に問合せ
+   * @param data
+   */
   handlePageClick = data => {
     const selected = data.selected;
     alert(`you clicled ${selected}`);
   };
+
+
   render() {
     const { classes } = this.props;
     return (
