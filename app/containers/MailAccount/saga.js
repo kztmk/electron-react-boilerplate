@@ -1,7 +1,8 @@
 // @flow
 import type Saga from 'redux-saga';
-import { call, put, takeEvery } from 'redux-saga/effects';
+import { call, put, takeEvery, select } from 'redux-saga/effects';
 import ImapClient from 'emailjs-imap-client';
+import parse from 'emailjs-mime-parser';
 import { Actions } from './actionTypes';
 import {
   closeConnectionFailure,
@@ -9,7 +10,9 @@ import {
   openConnectionFailure,
   openConnectionSuccess,
   selectMailBoxFailure,
-  selectMailBoxSuccess
+  selectMailBoxSuccess,
+  updateFlagsFailure,
+  updateFlagsSuccess
 } from './actions';
 import type { ImapManagerPropertyType, MailRowMessageType } from '../../types/mailMessageType';
 
@@ -109,7 +112,7 @@ function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
         subject: mailMessage.envelope.subject,
         date: mailMessage.envelope.date,
         from: mailMessage.envelope.from,
-        body: mailMessage['body[]']
+        mime: parse(mailMessage['body[]'])
       });
     });
     messages.reverse();
@@ -163,15 +166,11 @@ function* openImapConnection(action) {
       useSecureTransport: true
     });
 
-    imapClient.onerror = function(error) {
-      console.log(`error occurred. close connection:${error}`);
-      imapClient = null;
-      throw new Error({ errorMessage: error.toString() });
-    };
-
     // error発生
-    imapClient.onerror = error => {
-      throw new Error(error.toString());
+    imapClient.onerror = function(error) {
+      console.log(`error:${error}`);
+      imapClient.close();
+      imapClient = null;
     };
 
     // imap serverへ接続
@@ -241,10 +240,82 @@ function* closeImapConnection() {
   }
 }
 
+function* updateFlags(action) {
+  if (imapClient !== null) {
+    // update定義
+    const updateFlagsToServer = (client, path, seq, flagsObject) => {
+      client.setFlags(path, seq, flagsObject, { silent: true });
+    };
+
+    const sequences = action.payload.seq.joint(',');
+    try {
+      // imap serverへupdate
+      yield call(updateFlagsToServer, imapClient, sequences, action.payload.flagUpdateObject);
+
+      // stateから現時点でのmessagesを取得
+      const currentMessages = yield select(state => state.MailAccount);
+      // flag update対象のmailを取得
+      const targetMessage = currentMessages.messages.find(
+        message => message.uid === action.payload.uid
+      );
+      // 取得出来た場合
+      if (targetMessage !== undefined) {
+        // 現時点でのflagsを取得
+        let currentFlags = { ...targetMessage.flags };
+        console.log('currentFlags');
+        console.log(currentFlags);
+        if (currentFlags === null || undefined) {
+          currentFlags = [];
+        }
+        // update flagを配列で取得
+        const flags =
+          action.payload.flagUpdateObject[Object.keys(action.payload.flagUpdateObject)[0]];
+        // 現時点のflagにupdate flagを追加
+        flags.forEach(f => currentFlags.push(f));
+        // 現時点のmailと更新したflagをcopy
+        const updateMessage = {
+          ...targetMessage,
+          flags: currentFlags
+        };
+        // messagesから更新したmail以外を
+        const holdMessages = currentMessages.messages.filter(m => m.uid !== targetMessage.uid);
+        // 更新したmailを追加
+        holdMessages.push(updateMessage);
+
+        // 更新前の未読数を取得
+        let currentUnseen = currentMessages.unseenCount;
+        // 更新flagに「既読」があれば、未読数を1減らす
+        if (flags.some(f => f.toLowerCase() === '\\seen')) {
+          currentUnseen -= 1;
+        }
+
+        // 更新前のmessagesと更新mail,未読数をコピー
+        const updateMessages = {
+          currentMessages,
+          holdMessages,
+          currentUnseen
+        };
+        yield put(updateFlagsSuccess(updateMessages));
+      } else {
+        throw new Error({ errorMessage: '更新対象のメールの取得に失敗しました。' });
+      }
+    } catch (error) {
+      yield put(updateFlagsFailure({ errorMessage: error.toString() }));
+      return;
+    }
+    yield put(
+      updateFlagsFailure({
+        errorMessage: 'メールサーバーへの接続が切れています。開き直してください'
+      })
+    );
+  }
+}
+
 function* rootSaga(): Saga {
   yield takeEvery(Actions.OPEN_CONNECTION_REQUEST, openImapConnection);
   yield takeEvery(Actions.SELECT_MAIL_BOX_REQUEST, selectMailbox);
   yield takeEvery(Actions.CLOSE_CONNECTION_REQUEST, closeImapConnection);
+  yield takeEvery(Actions.UPDATE_FLAGS_REQUEST, updateFlags);
 }
 
 export default rootSaga;

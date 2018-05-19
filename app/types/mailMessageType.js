@@ -63,7 +63,7 @@ export type MailEnvelopeType = {
 
 export type MailBoxArgsType = {
   path: string,
-  sequece: string,
+  sequence: string,
   query: string
 };
 
@@ -100,7 +100,8 @@ export type ImapManagerPropertyType = {
 
 export type ImapFlagsArgsType = {
   path: string,
-  sequence: string,
+  seq: Array<number>,
+  seqFrom: number,
   flagUpdateObject: Object
 };
 
@@ -111,5 +112,5 @@ export type MailRowMessageType = {
   subject: string,
   date: string,
   from: MailAddressValueType,
-  body: string
+  mime: Object
 };

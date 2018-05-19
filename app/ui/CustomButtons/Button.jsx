@@ -12,7 +12,7 @@ import buttonStyle from '../../asets/jss/material-dashboard-pro-react/components
 /* eslint-disable */
 export type Props = {
   classes: Object,
-  color?: 'primary' | 'info' | 'success' | 'warning' | 'danger' | 'rose' | 'defaultNoBackground' | 'primaryNoBackground' | 'infoNoBackground' | 'successNoBackground' | 'warningNoBackground' | 'dangerNoBackground' | 'roseNoBackground' | 'twitter' | 'twitterNoBackground' | 'facebook' | 'facebookNoBackground' | 'google' | 'googleNoBackground' | 'linkedin' | 'linkedinNoBackground' | 'pinterest' | 'pinterestNoBackground' | 'youtube' | 'youtubeNoBackground' | 'tumblr' | 'tumblrNoBackground' | 'github' | 'githubNoBackground' | 'behance' | 'behanceNoBackground' | 'dribbble' | 'dribbbleNoBackground' | 'reddit' | 'redditNoBackground' | 'white' | 'simple' | 'transparent',
+  color?: 'primary' | 'primarySub' | 'info' | 'success' | 'warning' | 'danger' | 'rose' | 'defaultNoBackground' | 'primaryNoBackground' | 'infoNoBackground' | 'successNoBackground' | 'warningNoBackground' | 'dangerNoBackground' | 'roseNoBackground' | 'twitter' | 'twitterNoBackground' | 'facebook' | 'facebookNoBackground' | 'google' | 'googleNoBackground' | 'linkedin' | 'linkedinNoBackground' | 'pinterest' | 'pinterestNoBackground' | 'youtube' | 'youtubeNoBackground' | 'tumblr' | 'tumblrNoBackground' | 'github' | 'githubNoBackground' | 'behance' | 'behanceNoBackground' | 'dribbble' | 'dribbbleNoBackground' | 'reddit' | 'redditNoBackground' | 'white' | 'simple' | 'transparent',
   round?: boolean,
   fullWidth?: boolean,
   disabled?: boolean,

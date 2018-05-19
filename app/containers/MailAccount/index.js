@@ -3,7 +3,12 @@ import { connect } from 'react-redux';
 import type { State } from '../../types/state';
 import type { DispatchType } from '../../types';
 import MailAccount from '../../components/MailAccount';
-import { deleteMessageRequest, openConnectionRequest, selectMailBoxRequest } from './actions';
+import {
+  deleteMessageRequest,
+  openConnectionRequest,
+  selectMailBoxRequest,
+  updateFlagsRequest
+} from './actions';
 
 const mapStateToProps = (state: State) => ({
   imapMessageLoading: state.MailAccount.isLoading,
@@ -26,6 +31,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startDeleteImapMessage(uid) {
     dispatch(deleteMessageRequest(uid));
+  },
+  startUpdateFlags(flagUpdateArgs) {
+    dispatch(updateFlagsRequest(flagUpdateArgs));
   }
 });
 

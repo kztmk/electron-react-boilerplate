@@ -7,15 +7,25 @@ import Toolbar from 'material-ui/Toolbar';
 import List from 'material-ui/List';
 import Typography from 'material-ui/Typography';
 
+import { Button } from '../../ui';
 import MailBox from './mailbox';
 import MessageViewer from './messageViewer';
 import type MailAccountType from '../../types/mailAccount';
 import type { MailRowMessageType, MailBoxesType } from '../../types/mailMessageType';
 
+/**
+ * TODO:
+ * 1. when open mailbox success, update last login date
+ * 2. small list fond and narrow
+ * 3. delete mails button
+ * @type {number}
+ */
 const drawerWidth = 240;
 
 const toolBarStyles = {
-  minHeight: '48px'
+  minHeight: '48px',
+  display: 'flex',
+  justifyContent: 'space-between'
 };
 const styles = theme => ({
   root: {
@@ -36,10 +46,47 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: `0 24px 24px`,
+    padding: '0 24px 24px',
     minWidth: 0 // So the Typography noWrap works
   },
-  toolbar: theme.mixins.toolbar
+  toolbar: theme.mixins.toolbar,
+  cardContentRight: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  buttonGroup: {
+    position: 'relative',
+    margin: '10px 1px',
+    display: 'inline-block',
+    verticalAlign: 'middle'
+  },
+  firstButton: {
+    borderTopRightRadius: '0',
+    borderBottomRightRadius: '0',
+    margin: '0',
+    position: 'relative',
+    float: 'left',
+    '&:hover': {
+      zIndex: '2'
+    }
+  },
+  middleButton: {
+    borderRadius: '0',
+    margin: '0',
+    position: 'relative',
+    float: 'left',
+    '&:hover': {
+      zIndex: '2'
+    }
+  },
+  lastButton: {
+    borderTopLeftRadius: '0',
+    borderBottomLeftRadius: '0',
+    margin: '0',
+    '&:hover': {
+      zIndex: '2'
+    }
+  }
 });
 
 type Props = {
@@ -48,6 +95,7 @@ type Props = {
   startOpenConnection: account => void,
   startSelectImapMailBox: path => void,
   startDeleteImapMessage: uid => void,
+  startUpdateFlags: flagUpdateArgs => void,
   imapMessageLoading: boolean,
   imapIsError: boolean,
   imapErrorMessage: string,
@@ -99,6 +147,19 @@ class MailAccount extends React.Component<Props, State> {
             <Typography variant="title" color="inherit" noWrap>
               メールアドレス: {this.props.targetAccount.mailAddress}
             </Typography>
+            <div className={classes.cardContentRight}>
+              <div className={classes.buttonGroup}>
+                <Button color="primarySub" customClass={classes.firstButton}>
+                  既読に
+                </Button>
+                <Button color="primarySub" customClass={classes.middleButton}>
+                  未読に
+                </Button>
+                <Button color="primarySub" customClass={classes.lastButton}>
+                  ゴミ箱
+                </Button>
+              </div>
+            </div>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -131,7 +192,9 @@ class MailAccount extends React.Component<Props, State> {
             imapSelectMailBoxPath={this.props.imapSelectMailBoxPath}
             imapSeqFrom={this.props.imapSeqFrom}
             imapMailCount={this.props.imapMailCount}
+            selectImapMailBoxPage={this.props.startSelectImapMailBox}
             deleteImapMessage={this.props.startDeleteImapMessage}
+            updateFlags={this.props.startUpdateFlags}
           />
         </main>
       </div>

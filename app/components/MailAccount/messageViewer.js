@@ -10,6 +10,7 @@ import matchSorter from 'match-sorter';
 
 import ReactPaginate from 'react-paginate';
 import { GridContainer, ItemGrid, Button, FullHeaderCard } from '../../ui';
+import text2Html from '../../utils/text2html';
 
 import type { MailRowMessageType } from '../../types/mailMessageType';
 import { primaryColor } from '../../asets/jss/material-dashboard-pro-react';
@@ -19,6 +20,14 @@ const checkBoxStyle = {
     height: '24px'
   }
 };
+
+/**
+ * TODO:
+ * 1. 完了--react table hover時にpointerへ
+ * 2. when a message show if it does not have \seen flag, update flag
+ * 3.
+ * @type {{icon: {verticalAlign: string, width: string, height: string, top: string, position: string}, checked: {color: string}, checkedIcon: {width: string, height: string, border: string, borderRadius: string}, uncheckedIcon: {width: string, height: string, padding: string, border: string, borderRadius: string}}}
+ */
 
 const styles = {
   icon: {
@@ -48,7 +57,9 @@ const styles = {
 
 type Props = {
   classes: Object,
+  selectImapMailBoxPage: () => void,
   deleteImapMessage: uid => void,
+  updateFlags: flagUpdateArgs => void,
   imapMessages: Array<MailRowMessageType>,
   imapSelectMailBoxPath: string,
   imapMailCount: number,
@@ -62,7 +73,11 @@ type State = {
   messages: Array<MailRowMessageType>,
   checked: Array<number>,
   checkedAll: number,
-  data: Array<Object>
+  data: Array<Object>,
+  displaySubject: string,
+  displaySubtitle: string,
+  displayMessage: string,
+  currentPage: number
 };
 
 /**
@@ -81,7 +96,9 @@ class MessageViewer extends Component<Props, State> {
       mailCount: this.props.imapMailCount,
       checked: [],
       checkedAll: 0,
-      decodedMessages: []
+      displaySubject: '',
+      displaySubtitle: '',
+      displayMessage: ''
     };
   }
 
@@ -95,7 +112,8 @@ class MessageViewer extends Component<Props, State> {
     console.log(`new-seq:${nextProps.imapSeqFrom}-path:${nextProps.imapSelectMailBoxPath}`);
     if (
       this.state.seqFrom !== nextProps.imapSeqFrom ||
-      this.state.boxPath !== nextProps.imapSelectMailBoxPath
+      this.state.boxPath !== nextProps.imapSelectMailBoxPath ||
+      this.state.messages !== nextProps.imapMessages
     ) {
       console.log('write - table');
       this.setState({
@@ -105,7 +123,10 @@ class MessageViewer extends Component<Props, State> {
         seqFrom: nextProps.imapSeqFrom,
         mailCount: nextProps.imapMailCount,
         boxPath: nextProps.imapSelectMailBoxPath,
-        checkedAll: 0
+        checkedAll: 0,
+        displaySubject: '',
+        displaySubtitle: '',
+        displayMessage: ''
       });
     }
   };
@@ -228,10 +249,87 @@ class MessageViewer extends Component<Props, State> {
    * @param data
    */
   handlePageClick = data => {
-    const selected = data.selected;
-    alert(`you clicled ${selected}`);
+    const selectedPage = data.selected;
+    let newPageTopSeq = 1;
+    if (selectedPage > 0) {
+      newPageTopSeq = 25 * selectedPage;
+    }
+    const newSeqFrom = this.state.mailCount - newPageTopSeq;
+    this.props.selectImapMailBoxPage({ path: this.state.boxPath, seqFrom: newSeqFrom });
   };
 
+  /**
+   * mailのbodyをparseして、mimeNodeオブジェクトへ変換
+   * @param mimeNode
+   * @returns {Array}
+   */
+  decodeContent = mimeNode => {
+    let contents = [];
+
+    if (mimeNode.hasOwnProperty('content')) {
+      // decode to string
+      const content = new TextDecoder().decode(mimeNode.content);
+      contents.push(content);
+    }
+
+    if (mimeNode.hasOwnProperty('childNodes')) {
+      mimeNode.childNodes.forEach(node => {
+        contents = this.decodeContent(node);
+      });
+    }
+    return contents;
+  };
+
+  /**
+   * メール一覧グリッドのsubjectのclickで、メール内容を表示する
+   * TODO: base64の文字化け、表示されないメールがある
+   * @param messageUid
+   */
+  showMessage = messageUid => {
+    console.log(`messageUid:${messageUid}`);
+
+    // find message in messages
+    const message = this.state.messages.find(m => m.uid === messageUid);
+
+    if (message !== undefined) {
+      // get contents
+      let contents = this.decodeContent(message.mime);
+
+      let isPlainText = true;
+      console.log(`type:${message.mime.contentType.value}`);
+      if (message.mime.contentType.value !== 'text/plain') {
+        isPlainText = false;
+      }
+
+      if (isPlainText) {
+        if (contents.length != null && contents.length > 0) contents = text2Html(contents[0]);
+      }
+
+      if (message.mime.hasOwnProperty('contentTransferEncoding')) {
+        if (message.mime.contentTransferEncoding.value === 'base64') {
+          console.log(`contents-base64:`);
+        }
+      }
+
+      console.log(`contents:${contents}`);
+      this.setState({
+        displaySubject: message.subject,
+        displaySubtitle: `送信元:${this.getSender(message.from)}    受信日時:${moment(
+          message.date
+        ).format('YYYY/MM/DD HH:mm')}`,
+        displayMessage: contents
+      });
+
+      if (!message.flags.some(f => f.toLowerCase() === '\\seen')) {
+        this.props.updateFlags({
+          path: this.state.boxPath,
+          uid: messageUid,
+          seqFrom: this.state.seqFrom,
+          flagUpdateObject: { add: ['\\Seen'] }
+        });
+      }
+    }
+  };
 
   render() {
     const { classes } = this.props;
@@ -311,6 +409,7 @@ class MessageViewer extends Component<Props, State> {
                 minWidth: 200,
                 filterable: true,
                 sortable: false,
+                className: 'rtMailSubject',
                 Filter: ({ filter, onChange }) => (
                   <input
                     type="text"
@@ -366,7 +465,7 @@ class MessageViewer extends Component<Props, State> {
                 show: false
               }
             ]}
-            className="-striped-highlight"
+            className="-striped -highlight"
             loadingText="読込中..."
             noDataText="このフォルダにはメールがありません。"
             style={{
@@ -374,27 +473,25 @@ class MessageViewer extends Component<Props, State> {
               fontSize: '12px',
               lineHeight: '1.1em'
             }}
-            getTdProps={(state, rowInfo, column) => {
-              return {
-                onClick: (e, handleOriginal) => {
-                  // this.showMessage(rowInfo.original.uid);
-                  if (column.id !== 'checkbox') {
-                    console.log(rowInfo.original.uid);
-                  }
-                  if (handleOriginal) {
-                    handleOriginal();
-                  }
+            getTdProps={(state, rowInfo, column) => ({
+              onClick: (e, handleOriginal) => {
+                // this.showMessage(rowInfo.original.uid);
+                if (column.id !== 'checkbox') {
+                  this.showMessage(rowInfo.original.uid);
                 }
-              };
-            }}
+                if (handleOriginal) {
+                  handleOriginal();
+                }
+              }
+            })}
           />
         </ItemGrid>
         <ItemGrid>
           <FullHeaderCard
-            cardTitle={this.state.subject}
+            cardTitle={this.state.displaySubject}
             headerColor="rose"
-            cardSubTitle={`送信元:${this.state.from}    受信日時:${this.state.date}`}
-            content={this.state.html}
+            cardSubtitle={this.state.displaySubtitle}
+            content={<div dangerouslySetInnerHTML={{ __html: this.state.displayMessage }} />}
           />
         </ItemGrid>
       </GridContainer>

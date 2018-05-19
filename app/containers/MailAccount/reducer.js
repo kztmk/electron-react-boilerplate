@@ -1,11 +1,7 @@
 // @flow
-import type { Action } from "./actionTypes";
-import { Actions } from "./actionTypes";
-import {
-  MailBoxesType,
-  MailBoxInfoType,
-  MailRowMessageType
-} from "../../types/mailMessageType";
+import type { Action } from './actionTypes';
+import { Actions } from './actionTypes';
+import { MailBoxesType, MailBoxInfoType, MailRowMessageType } from '../../types/mailMessageType';
 
 export type State = {
   isLoading: boolean,
@@ -26,17 +22,17 @@ export const initialMailBoxInfo: MailBoxInfoType = {
   readOnly: false,
   uidValidity: 0,
   uidNext: 0,
-  highestModseq: ""
+  highestModseq: ''
 };
 
 export const initialMailBox: MailBoxesType = {
-  name: "",
-  path: "",
-  delimiter: "",
+  name: '',
+  path: '',
+  delimiter: '',
   listed: false,
   subscribed: false,
-  specialUse: "",
-  specialUseFlag: "",
+  specialUse: '',
+  specialUseFlag: '',
   flags: [],
   children: []
 };
@@ -44,9 +40,9 @@ export const initialMailBox: MailBoxesType = {
 export const initialState: State = {
   isLoading: false,
   isFailure: false,
-  errorMessage: "",
+  errorMessage: '',
   mailBoxes: [],
-  selectMailBoxPath: "",
+  selectMailBoxPath: '',
   messages: [],
   mailCount: 0,
   unseenCount: 0,
@@ -145,12 +141,8 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         isLoading: false,
-        mailBoxes: action.payload.mailBoxes,
-        selectMailBoxPath: action.payload.selectMailBoxPath,
         messages: action.payload.messages,
-        mailCount: action.payload.mailCount,
-        unseenCount: action.payload.unseenCount,
-        seqFrom: action.payload.seqFrom
+        unseenCount: action.payload.unseenCount
       };
 
     case Actions.UPDATE_FLAGS_FAILURE:
