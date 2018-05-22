@@ -17,6 +17,7 @@ import {
   moveMailsFailure
 } from './actions';
 import type { ImapManagerPropertyType, MailRowMessageType } from '../../types/mailMessageType';
+import { firebaseDbUpdate } from '../../database/db';
 
 let imapClient = null;
 
@@ -47,7 +48,7 @@ const getImapConfig = targetAccount => {
       break;
     case 'Outlook':
       config = {
-        host: 'imap-mail.outlook.com',
+        host: 'outlook.office365.com',
         port: 993
       };
       break;
@@ -190,9 +191,22 @@ function* openImapConnection(action) {
     const imapConnect = client => client.connect();
     yield call(imapConnect, imapClient);
 
+    // 最終ログイン時刻を更新
+    const userAuth = yield select(state => state.Login);
+    try {
+      // firebaseをアップデート
+      yield call(firebaseDbUpdate, `/users/${userAuth.userId}/mailAccount/${action.payload.key}`, {
+        lastLogin: Date.now()
+      });
+    } catch (error) {
+      throw new Error({ errorMessage: error.toString() });
+    }
+
     // account内のメールフォルダを取得
     const maiBoxesRoot = yield call(getMailboxes);
     imapProperty.mailBoxes = maiBoxesRoot.children;
+
+    console.log(maiBoxesRoot.children);
 
     // inboxのpathを検索
     const inbox = imapProperty.mailBoxes.filter(box => {

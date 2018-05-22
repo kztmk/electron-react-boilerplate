@@ -17,7 +17,7 @@ import IconButton from 'material-ui/IconButton';
 
 import Close from 'material-ui-icons/Close';
 
-import { MailSeenIcon, MailUnseenIcon, CloseIcon, TashIcon, TrashIcon } from '../../asets/icons';
+import { MailSeenIcon, MailUnseenIcon, CloseIcon, TrashIcon } from '../../asets/icons';
 
 import { Button } from '../../ui';
 import MailBox from './mailbox';
@@ -378,6 +378,7 @@ class MailAccount extends React.Component<Props, State> {
                     color="primarySub"
                     customClass={classes.firstButton}
                     onClick={() => this.handleUpdateFlags('toSeen')}
+                    size="sm"
                   >
                     <MailSeenIcon className={classes.icons} />
                     既読に
@@ -386,6 +387,7 @@ class MailAccount extends React.Component<Props, State> {
                     color="primarySub"
                     customClass={classes.middleButton}
                     onClick={() => this.handleUpdateFlags('toUnseen')}
+                    size="sm"
                   >
                     <MailUnseenIcon className={classes.icons} /> 未読に
                   </Button>
@@ -393,6 +395,7 @@ class MailAccount extends React.Component<Props, State> {
                     color="primarySub"
                     customClass={classes.middleButton}
                     onClick={() => this.handleMoveTo('trash')}
+                    size="sm"
                   >
                     <TrashIcon className={classes.icons} />
                     ゴミ箱
@@ -401,6 +404,7 @@ class MailAccount extends React.Component<Props, State> {
                     color="primarySub"
                     customClass={classes.lastButton}
                     onClick={() => this.handleCloseThis()}
+                    size="sm"
                   >
                     <CloseIcon className={classes.icons} />
                     閉じる

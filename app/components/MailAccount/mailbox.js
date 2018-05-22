@@ -358,7 +358,10 @@ class MailBox extends Component<Props, State> {
           box.name !== 'Draft' &&
           box.name !== 'Inbox' &&
           box.name !== 'Sent' &&
-          box.name !== 'Trash'
+          box.name !== 'Trash' &&
+          box.name != 'Deleted' &&
+          box.name !== 'Drafts' &&
+          box.name !== 'Junk'
         ) {
           return box;
         }
@@ -413,9 +416,11 @@ class MailBox extends Component<Props, State> {
         const boxName = box.name.toLowerCase();
         switch (boxName) {
           case 'bulk mail':
+          case 'junk':
             bulkMail = box;
             break;
           case 'draft':
+          case 'drafts':
             draft = box;
             break;
           case 'inbox':
@@ -425,6 +430,7 @@ class MailBox extends Component<Props, State> {
             sent = box;
             break;
           case 'trash':
+          case 'deleted':
             trash = box;
             break;
           default:

@@ -371,7 +371,8 @@ class MessageViewer extends Component<Props, State> {
           path: this.state.boxPath,
           sequences,
           seqFrom: this.state.seqFrom,
-          flagUpdateObject: { add: ['\\Seen'] }
+          flagUpdateObject: { add: ['\\Seen'] },
+          moveDestination: ''
         });
       }
     }
