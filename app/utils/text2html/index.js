@@ -1,6 +1,6 @@
 const text2Html = text => {
   const htmlHeader = `<!DOCTYPE html>
-<htmllang="ja">
+<html lang="ja">
 <head>
     <title>---</title>
     <meta charset="UTF-8">

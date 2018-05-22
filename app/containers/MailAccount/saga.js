@@ -12,7 +12,9 @@ import {
   selectMailBoxFailure,
   selectMailBoxSuccess,
   updateFlagsFailure,
-  updateFlagsSuccess
+  updateFlagsSuccess,
+  moveMailsSuccess,
+  moveMailsFailure
 } from './actions';
 import type { ImapManagerPropertyType, MailRowMessageType } from '../../types/mailMessageType';
 
@@ -53,6 +55,17 @@ const getImapConfig = targetAccount => {
       throw new Error('提供元のIMAP情報の取得に失敗しました。');
   }
   return config;
+};
+
+const mailSortBySequence = (a, b) => {
+  let comparison = 0;
+  if (a.key < b.key) {
+    comparison = 1;
+  } else if (a.key > b.key) {
+    comparison = -1;
+  }
+
+  return comparison;
 };
 
 /**
@@ -115,7 +128,7 @@ function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
         mime: parse(mailMessage['body[]'])
       });
     });
-    messages.reverse();
+    messages.sort(mailSortBySequence);
   }
   // 返却用オブジェクトへ格納
   console.log(messages);
@@ -247,66 +260,63 @@ function* updateFlags(action) {
       client.setFlags(path, seq, flagsObject, { silent: true });
     };
 
-    const sequences = action.payload.seq.joint(',');
+    // sequenceの文字列を作成
+    const sequences = action.payload.sequences.join(',');
+
     try {
       // imap serverへupdate
-      yield call(updateFlagsToServer, imapClient, sequences, action.payload.flagUpdateObject);
-
-      // stateから現時点でのmessagesを取得
-      const currentMessages = yield select(state => state.MailAccount);
-      // flag update対象のmailを取得
-      const targetMessage = currentMessages.messages.find(
-        message => message.uid === action.payload.uid
+      yield call(
+        updateFlagsToServer,
+        imapClient,
+        action.payload.path,
+        sequences,
+        action.payload.flagUpdateObject
       );
-      // 取得出来た場合
-      if (targetMessage !== undefined) {
-        // 現時点でのflagsを取得
-        let currentFlags = { ...targetMessage.flags };
-        console.log('currentFlags');
-        console.log(currentFlags);
-        if (currentFlags === null || undefined) {
-          currentFlags = [];
-        }
-        // update flagを配列で取得
-        const flags =
-          action.payload.flagUpdateObject[Object.keys(action.payload.flagUpdateObject)[0]];
-        // 現時点のflagにupdate flagを追加
-        flags.forEach(f => currentFlags.push(f));
-        // 現時点のmailと更新したflagをcopy
-        const updateMessage = {
-          ...targetMessage,
-          flags: currentFlags
-        };
-        // messagesから更新したmail以外を
-        const holdMessages = currentMessages.messages.filter(m => m.uid !== targetMessage.uid);
-        // 更新したmailを追加
-        holdMessages.push(updateMessage);
 
-        // 更新前の未読数を取得
-        let currentUnseen = currentMessages.unseenCount;
-        // 更新flagに「既読」があれば、未読数を1減らす
-        if (flags.some(f => f.toLowerCase() === '\\seen')) {
-          currentUnseen -= 1;
-        }
+      // pathを指定してmailBox内のメールを取得
+      yield call(getSelectMailboxInfoAndMessages, action.payload.path, action.payload.seqFrom);
 
-        // 更新前のmessagesと更新mail,未読数をコピー
-        const updateMessages = {
-          currentMessages,
-          holdMessages,
-          currentUnseen
-        };
-        yield put(updateFlagsSuccess(updateMessages));
-      } else {
-        throw new Error({ errorMessage: '更新対象のメールの取得に失敗しました。' });
-      }
+      yield put(updateFlagsSuccess(imapProperty));
     } catch (error) {
       yield put(updateFlagsFailure({ errorMessage: error.toString() }));
-      return;
     }
+  } else {
     yield put(
-      updateFlagsFailure({
-        errorMessage: 'メールサーバーへの接続が切れています。開き直してください'
-      })
+      updateFlagsFailure({ errorMessage: 'サーバーから切断されています。再度開き直してください。' })
+    );
+  }
+}
+
+function* moveMails(action) {
+  if (imapClient !== null) {
+    // move mails to another mailbox定義
+    const moveMessages = (client, pathFrom, seq, pathTo) => {
+      client.moveMessages(pathFrom, seq, pathTo);
+    };
+
+    // sequenceの文字列を作成
+    const sequences = action.payload.sequences.join(',');
+
+    try {
+      // imap serverへupdate
+      yield call(
+        moveMessages,
+        imapClient,
+        action.payload.path,
+        sequences,
+        action.payload.moveDestination
+      );
+
+      // pathを指定してmailBox内のメールを取得
+      yield call(getSelectMailboxInfoAndMessages, action.payload.moveDestination, 0);
+
+      yield put(moveMailsSuccess(imapProperty));
+    } catch (error) {
+      yield put(moveMailsFailure({ errorMessage: error.toString() }));
+    }
+  } else {
+    yield put(
+      moveMailsFailure({ errorMessage: 'サーバーから切断されています。再度開き直してください。' })
     );
   }
 }
@@ -316,6 +326,7 @@ function* rootSaga(): Saga {
   yield takeEvery(Actions.SELECT_MAIL_BOX_REQUEST, selectMailbox);
   yield takeEvery(Actions.CLOSE_CONNECTION_REQUEST, closeImapConnection);
   yield takeEvery(Actions.UPDATE_FLAGS_REQUEST, updateFlags);
+  yield takeEvery(Actions.MOVE_MAILS_REQUEST, moveMails);
 }
 
 export default rootSaga;

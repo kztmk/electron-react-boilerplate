@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 // @flow
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
@@ -60,6 +61,10 @@ type Props = {
   selectImapMailBoxPage: () => void,
   deleteImapMessage: uid => void,
   updateFlags: flagUpdateArgs => void,
+  startUpdateFlags: string,
+  startMoveMails: string,
+  handleUpdateFlags: () => void,
+  handleMoveTo: () => void,
   imapMessages: Array<MailRowMessageType>,
   imapSelectMailBoxPath: string,
   imapMailCount: number,
@@ -110,10 +115,10 @@ class MessageViewer extends Component<Props, State> {
     // page更新 or path更新
     console.log(`now-seq:${this.state.seqFrom}-path:${this.state.boxPath}`);
     console.log(`new-seq:${nextProps.imapSeqFrom}-path:${nextProps.imapSelectMailBoxPath}`);
+    // select mailbox path or paging change
     if (
       this.state.seqFrom !== nextProps.imapSeqFrom ||
-      this.state.boxPath !== nextProps.imapSelectMailBoxPath ||
-      this.state.messages !== nextProps.imapMessages
+      this.state.boxPath !== nextProps.imapSelectMailBoxPath
     ) {
       console.log('write - table');
       this.setState({
@@ -128,6 +133,43 @@ class MessageViewer extends Component<Props, State> {
         displaySubtitle: '',
         displayMessage: ''
       });
+    }
+
+    // flagのみ変更
+    if (
+      this.state.messages !== nextProps.imapMessages &&
+      this.state.mailCount === nextProps.imapMailCount
+    ) {
+      this.setState({
+        checked: [],
+        checkedAll: 0,
+        data: this.convertTableData(nextProps.imapMessages),
+        messages: nextProps.imapMessages
+      });
+    }
+
+    // 親コンポーネントからflag更新指示
+    if (nextProps.startUpdateFlags !== '') {
+      // check内のuidがtrueのもののflagを更新
+      const updateUids = [];
+      Object.keys(this.state.checked).forEach(m => {
+        if (this.state.checked[m]) {
+          updateUids.push(parseInt(m, 10));
+        }
+      });
+
+      this.props.handleUpdateFlags(updateUids);
+    }
+
+    if (nextProps.startMoveMails !== '') {
+      const moveUids = [];
+      Object.keys(this.state.checked).forEach(m => {
+        if (this.state.checked[m]) {
+          moveUids.push(parseInt(m, 10));
+        }
+      });
+
+      this.props.handleMoveTo(moveUids);
     }
   };
 
@@ -245,7 +287,6 @@ class MessageViewer extends Component<Props, State> {
 
   /**
    * paginationをclickしたときに、該当ページのmailを取得
-   * TODO: seqFromにoffsetをセットして、pathと一緒に問合せ
    * @param data
    */
   handlePageClick = data => {
@@ -307,11 +348,13 @@ class MessageViewer extends Component<Props, State> {
 
       if (message.mime.hasOwnProperty('contentTransferEncoding')) {
         if (message.mime.contentTransferEncoding.value === 'base64') {
-          console.log(`contents-base64:`);
+          console.log('contents-base64:');
         }
       }
 
       console.log(`contents:${contents}`);
+      console.log('currentFlags:');
+      console.log(message.flags);
       this.setState({
         displaySubject: message.subject,
         displaySubtitle: `送信元:${this.getSender(message.from)}    受信日時:${moment(
@@ -320,10 +363,13 @@ class MessageViewer extends Component<Props, State> {
         displayMessage: contents
       });
 
+      // flagsに[\\seen]がない場合には、[\\seen]を追加
       if (!message.flags.some(f => f.toLowerCase() === '\\seen')) {
+        const sequences = [];
+        sequences.push(message.key);
         this.props.updateFlags({
           path: this.state.boxPath,
-          uid: messageUid,
+          sequences,
           seqFrom: this.state.seqFrom,
           flagUpdateObject: { add: ['\\Seen'] }
         });

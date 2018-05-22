@@ -5,6 +5,7 @@ import type { DispatchType } from '../../types';
 import MailAccount from '../../components/MailAccount';
 import {
   deleteMessageRequest,
+  moveMailsRequest,
   openConnectionRequest,
   selectMailBoxRequest,
   updateFlagsRequest
@@ -34,6 +35,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startUpdateFlags(flagUpdateArgs) {
     dispatch(updateFlagsRequest(flagUpdateArgs));
+  },
+  startMoveMessages(flagUpdateArgs) {
+    dispatch(moveMailsRequest(flagUpdateArgs));
   }
 });
 

@@ -153,6 +153,31 @@ export default function(state: State = initialState, action: Action): State {
         errorMessage: action.meta.errorMessage
       };
 
+    case Actions.MOVE_MAILS_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
+
+    case Actions.MOVE_MAILS_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        selectMailBoxPath: action.payload.selectMailBoxPath,
+        messages: action.payload.messages,
+        mailCount: action.payload.mailCount,
+        unseenCount: action.payload.unseenCount,
+        seqFrom: action.payload.seqFrom
+      };
+
+    case Actions.MOVE_MAILS_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isFailure: true,
+        errorMessage: action.meta.errorMessage
+      };
+
     case Actions.CLOSE_CONNECTION_REQUEST:
       return {
         ...state,

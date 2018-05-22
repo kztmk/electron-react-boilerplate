@@ -100,9 +100,10 @@ export type ImapManagerPropertyType = {
 
 export type ImapFlagsArgsType = {
   path: string,
-  seq: Array<number>,
+  sequences: Array<number>,
   seqFrom: number,
-  flagUpdateObject: Object
+  flagUpdateObject: Object,
+  moveDestination: string
 };
 
 export type MailRowMessageType = {

@@ -11,7 +11,8 @@ import ReportIcon from 'material-ui-icons/Report';
 import FolderIcon from 'material-ui-icons/Folder';
 import Divider from 'material-ui/Divider';
 import Badge from 'material-ui/Badge';
-import Loadable from 'react-loading-overlay';
+
+
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 import type MailAccountType from '../../types/mailAccount';
@@ -46,7 +47,6 @@ type State = {
   mailCount: number,
   mailUnseenCount: number,
   seqFrom: number,
-  openLoading: boolean,
   alert: string,
   defaultMailBoxes: React.Element,
   otherMailBoxes?: React.Element
@@ -127,7 +127,6 @@ class MailBox extends Component<Props, State> {
       mailCount: this.props.imapMailCount,
       mailUnseenCount: this.props.imapMailUnseenCount,
       seqFrom: this.props.imapSeqFrom,
-      openLoading: this.props.imapMessageLoading,
       alert: '',
       defaultMailBoxes: baseMailBoxes,
       otherMailBoxes: null
@@ -139,14 +138,6 @@ class MailBox extends Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
-    // loading start/stop in case of error show errorMessage
-    if (!this.state.openLoading && nextProps.imapMessageLoading) {
-      this.setState({ openLoading: true });
-    }
-
-    if (this.state.openLoading && !nextProps.imapMessageLoading) {
-      this.setState({ openLoading: false });
-    }
     // select mailbox pathが更新(別なメールフォルダを選択)
     if (this.state.imapSelectMailBoxPath !== nextProps.imapSelectMailBoxPath) {
       const defMailBox = this.generateMailBoxList(
@@ -163,7 +154,6 @@ class MailBox extends Component<Props, State> {
       );
       console.log('finish otherboxes in willMout');
       this.setState({
-        imapMessages: nextProps.imapMessages,
         imapSelectMailBoxPath: nextProps.imapSelectMailBoxPath,
         mailCount: nextProps.imapMailCount,
         mailUnseenCount: nextProps.imapMailUnseenCount,
@@ -195,7 +185,31 @@ class MailBox extends Component<Props, State> {
         nextProps.imapMailUnseenCount
       );
       this.setState({
-        imapMessages: nextProps.imapMessages,
+        mailCount: nextProps.imapMailCount,
+        mailUnseenCount: nextProps.imapMailUnseenCount,
+        seqFrom: nextProps.imapSeqFrom,
+        defaultMailBoxes: defMailBox,
+        otherMailBoxes: otherBoxes
+      });
+    }
+    // 未読数、総メール数が変わった場合,
+    if (
+      this.state.mailCount !== nextProps.imapMailCount ||
+      this.state.unseenCount !== nextProps.imapMailUnseenCount
+    ) {
+      const defMailBox = this.generateMailBoxList(
+        nextProps.imapMailBoxes,
+        nextProps.imapSelectMailBoxPath,
+        nextProps.imapMailCount,
+        nextProps.imapMailUnseenCount
+      );
+      const otherBoxes = this.otherBoxes(
+        nextProps.imapMailBoxes,
+        nextProps.imapSelectMailBoxPath,
+        nextProps.imapMailCount,
+        nextProps.imapMailUnseenCount
+      );
+      this.setState({
         mailCount: nextProps.imapMailCount,
         mailUnseenCount: nextProps.imapMailUnseenCount,
         seqFrom: nextProps.imapSeqFrom,
@@ -526,14 +540,14 @@ class MailBox extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <Loadable active={this.state.openLoading} spinner text="メール取得中・・・・">
+      <div>
         <List key="defaultBoxes" className={classes.outerList}>
           {this.state.defaultMailBoxes}
         </List>
         <Divider />
         <List key="personalBoxes">{this.state.otherMailBoxes}</List>
         {this.state.alert}
-      </Loadable>
+      </div>
     );
   }
 }

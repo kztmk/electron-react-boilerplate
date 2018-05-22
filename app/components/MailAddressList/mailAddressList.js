@@ -641,7 +641,10 @@ class MailAddressList extends React.Component<Props, State> {
                 </IconButton>
               </DialogTitle>
               <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
-                <MailAccount targetAccount={this.state.targetAccount} />
+                <MailAccount
+                  targetAccount={this.state.targetAccount}
+                  closeMailAccount={this.handleCloseMailAccount}
+                />
               </DialogContent>
             </Dialog>
           </ItemGrid>
