@@ -13,7 +13,7 @@ import ReactPaginate from 'react-paginate';
 import { GridContainer, ItemGrid, Button, FullHeaderCard } from '../../ui';
 import text2Html from '../../utils/text2html';
 
-import type { MailRowMessageType } from '../../types/mailMessageType';
+import type { ImapFlagsArgsType, MailRowMessageType } from '../../types/mailMessageType';
 import { primaryColor } from '../../asets/jss/material-dashboard-pro-react';
 
 const checkBoxStyle = {
@@ -59,8 +59,8 @@ const styles = {
 type Props = {
   classes: Object,
   selectImapMailBoxPage: () => void,
-  deleteImapMessage: uid => void,
-  updateFlags: flagUpdateArgs => void,
+  deleteImapMessage: ImapFlagsArgsType => void,
+  updateFlags: ImapFlagsArgsType => void,
   startUpdateFlags: string,
   startMoveMails: string,
   handleUpdateFlags: () => void,
@@ -386,7 +386,7 @@ class MessageViewer extends Component<Props, State> {
             <ReactPaginate
               previousLabel="前25件"
               nextLabel="次25件"
-              breakLabel={<a href="">...</a>}
+              breakLabel="..."
               breakClassName="Pagination-paginationLink"
               pageCount={Math.ceil(this.state.mailCount / 25)}
               marginPagesDisplayed={2}

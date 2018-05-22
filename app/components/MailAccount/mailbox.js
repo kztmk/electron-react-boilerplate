@@ -12,7 +12,6 @@ import FolderIcon from 'material-ui-icons/Folder';
 import Divider from 'material-ui/Divider';
 import Badge from 'material-ui/Badge';
 
-
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 import type MailAccountType from '../../types/mailAccount';
@@ -116,13 +115,27 @@ const styles = theme => ({
   }
 });
 
+const listItemStyles = {
+  paddingTop: '6px',
+  paddingBottom: '6px'
+};
+
+const itemIconStyles = {
+  marginRight: '6px'
+};
+
+const listItemTextStyle = {
+  lineHeight: '1.1em',
+  fontSize: '1.0em',
+  padding: '0 8px'
+};
+
 class MailBox extends Component<Props, State> {
   constructor(props) {
     super(props);
 
     this.state = {
       imapMailBoxes: this.props.imapMailBoxes,
-      imapMessages: this.props.imapMessages,
       imapSelectMailBoxPath: this.props.imapSelectMailBoxPath,
       mailCount: this.props.imapMailCount,
       mailUnseenCount: this.props.imapMailUnseenCount,
@@ -286,23 +299,22 @@ class MailBox extends Component<Props, State> {
         renderedChildren = childBoxes.map(childBox => {
           if ('children' in childBox) {
             return (
-              <div key={childBox.path}>
+              <List key={childBox.path}>
                 <ListItem
                   button
                   onClick={() => {
                     this.handleSelectBox(childBox.path);
                   }}
+                  style={listItemStyles}
                 >
-                  <ListItemIcon>
+                  <ListItemIcon style={itemIconStyles}>
                     <FolderIcon />
                   </ListItemIcon>
-                  <ListItemText primary={childBox.name} />
+                  <ListItemText primary={childBox.name} style={listItemTextStyle} />
                   {this.unseenCountBadge(childBox, selectedPath, mailCount, unseenCount)}
                 </ListItem>
-                <List key={childBox.path}>
-                  {this.renderChild(childBox, selectedPath, mailCount, unseenCount)}
-                </List>
-              </div>
+                {this.renderChild(childBox, selectedPath, mailCount, unseenCount)}
+              </List>
             );
           }
           return (
@@ -311,11 +323,12 @@ class MailBox extends Component<Props, State> {
               onClick={() => {
                 this.handleSelectBox(childBox.path);
               }}
+              style={listItemStyles}
             >
-              <ListItemIcon>
+              <ListItemIcon style={itemIconStyles}>
                 <FolderIcon />
               </ListItemIcon>
-              <ListItemText primary={childBox.name} />
+              <ListItemText primary={childBox.name} style={listItemTextStyle} />
               {this.unseenCountBadge(childBox, selectedPath, mailCount, unseenCount)}
             </ListItem>
           );
@@ -361,16 +374,15 @@ class MailBox extends Component<Props, State> {
               onClick={() => {
                 this.handleSelectBox(box.path);
               }}
+              style={listItemStyles}
             >
-              <ListItemIcon>
+              <ListItemIcon style={itemIconStyles}>
                 <FolderIcon />
               </ListItemIcon>
-              <ListItemText primary={box.name} />
+              <ListItemText primary={box.name} style={listItemTextStyle} />
               {this.unseenCountBadge(box, selectedPath, mailCount, unseenCount)}
             </ListItem>
-            <List key={box.path}>
-              {this.renderChild(box, selectedPath, mailCount, unseenCount)}
-            </List>
+            {this.renderChild(box, selectedPath, mailCount, unseenCount)}
           </div>
         ));
       }
@@ -430,11 +442,12 @@ class MailBox extends Component<Props, State> {
             className={
               inbox.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
+            style={listItemStyles}
           >
-            <ListItemIcon>
+            <ListItemIcon style={itemIconStyles}>
               <InboxIcon />
             </ListItemIcon>
-            <ListItemText primary="受信箱" />
+            <ListItemText primary="受信箱" style={listItemTextStyle} />
             {this.unseenCountBadge(inbox, selectedPath, mailCount, unseenCount)}
           </ListItem>
           <List key={inbox.path}>
@@ -448,11 +461,13 @@ class MailBox extends Component<Props, State> {
             className={
               sent.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
+            style={listItemStyles}
           >
-            <ListItemIcon>
+            <ListItemIcon style={itemIconStyles}>
               <SendIcon />
             </ListItemIcon>
-            <ListItemText primary="送信済" />
+            <ListItemText primary="送信済" style={listItemTextStyle} />
+            {this.unseenCountBadge(sent, selectedPath, mailCount, unseenCount)}
           </ListItem>
           <ListItem
             button
@@ -462,11 +477,13 @@ class MailBox extends Component<Props, State> {
             className={
               draft.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
+            style={listItemStyles}
           >
-            <ListItemIcon>
+            <ListItemIcon style={itemIconStyles}>
               <DraftsIcon />
             </ListItemIcon>
-            <ListItemText primary="下書き" />
+            <ListItemText primary="下書き" style={listItemTextStyle} />
+            {this.unseenCountBadge(draft, selectedPath, mailCount, unseenCount)}
           </ListItem>
           <ListItem
             button
@@ -476,12 +493,13 @@ class MailBox extends Component<Props, State> {
             className={
               trash.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
+            style={listItemStyles}
           >
-            <ListItemIcon>
+            <ListItemIcon style={itemIconStyles}>
               <DeleteIcon />
             </ListItemIcon>
-            <ListItemText primary="ゴミ箱" />
-            {this.unseenCountBadge(trash, selectedPath, unseenCount)}
+            <ListItemText primary="ゴミ箱" style={listItemTextStyle} />
+            {this.unseenCountBadge(trash, selectedPath, mailCount, unseenCount)}
           </ListItem>
           <ListItem
             button
@@ -491,11 +509,12 @@ class MailBox extends Component<Props, State> {
             className={
               bulkMail.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
+            style={listItemStyles}
           >
-            <ListItemIcon>
+            <ListItemIcon style={itemIconStyles}>
               <ReportIcon />
             </ListItemIcon>
-            <ListItemText primary="迷惑メール" />
+            <ListItemText primary="迷惑メール" style={listItemTextStyle} />
             {this.unseenCountBadge(bulkMail, selectedPath, mailCount, unseenCount)}
           </ListItem>
         </div>
