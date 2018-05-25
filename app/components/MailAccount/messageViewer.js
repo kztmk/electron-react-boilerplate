@@ -1,4 +1,4 @@
-/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-prototype-builtins,function-paren-newline */
 // @flow
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
@@ -10,25 +10,20 @@ import Check from 'material-ui-icons/Check';
 import matchSorter from 'match-sorter';
 
 import ReactPaginate from 'react-paginate';
-import { GridContainer, ItemGrid, Button, FullHeaderCard } from '../../ui';
+import { GridContainer, ItemGrid, FullHeaderCard } from '../../ui';
 import text2Html from '../../utils/text2html';
 
 import type { ImapFlagsArgsType, MailRowMessageType } from '../../types/mailMessageType';
 import { primaryColor } from '../../asets/jss/material-dashboard-pro-react';
+
+// eslint-disable-next-line prefer-destructuring
+const MailParser = require('mailparser-mit').MailParser;
 
 const checkBoxStyle = {
   root: {
     height: '24px'
   }
 };
-
-/**
- * TODO:
- * 1. 完了--react table hover時にpointerへ
- * 2. when a message show if it does not have \seen flag, update flag
- * 3.
- * @type {{icon: {verticalAlign: string, width: string, height: string, top: string, position: string}, checked: {color: string}, checkedIcon: {width: string, height: string, border: string, borderRadius: string}, uncheckedIcon: {width: string, height: string, padding: string, border: string, borderRadius: string}}}
- */
 
 const styles = {
   icon: {
@@ -59,7 +54,7 @@ const styles = {
 type Props = {
   classes: Object,
   selectImapMailBoxPage: () => void,
-  deleteImapMessage: ImapFlagsArgsType => void,
+  //  deleteImapMessage: ImapFlagsArgsType => void,
   updateFlags: ImapFlagsArgsType => void,
   startUpdateFlags: string,
   startMoveMails: string,
@@ -161,6 +156,7 @@ class MessageViewer extends Component<Props, State> {
       this.props.handleUpdateFlags(updateUids);
     }
 
+    // 親コンポーネントからmailBox移動の指示
     if (nextProps.startMoveMails !== '') {
       const moveUids = [];
       Object.keys(this.state.checked).forEach(m => {
@@ -300,81 +296,84 @@ class MessageViewer extends Component<Props, State> {
   };
 
   /**
-   * mailのbodyをparseして、mimeNodeオブジェクトへ変換
-   * @param mimeNode
-   * @returns {Array}
-   */
-  decodeContent = mimeNode => {
-    let contents = [];
-
-    if (mimeNode.hasOwnProperty('content')) {
-      // decode to string
-      const content = new TextDecoder().decode(mimeNode.content);
-      contents.push(content);
-    }
-
-    if (mimeNode.hasOwnProperty('childNodes')) {
-      mimeNode.childNodes.forEach(node => {
-        contents = this.decodeContent(node);
-      });
-    }
-    return contents;
-  };
-
-  /**
    * メール一覧グリッドのsubjectのclickで、メール内容を表示する
-   * TODO: base64の文字化け、表示されないメールがある
+   *
    * @param messageUid
    */
   showMessage = messageUid => {
-    console.log(`messageUid:${messageUid}`);
-
     // find message in messages
     const message = this.state.messages.find(m => m.uid === messageUid);
 
     if (message !== undefined) {
-      // get contents
-      let contents = this.decodeContent(message.mime);
+      const mailparser = new MailParser();
+      mailparser.end(message.mime.raw);
+      mailparser.on('end', mail => {
+        let mailBody = '';
+        if (!mail.hasOwnProperty('html')) {
+          if (mail.hasOwnProperty('text')) {
+            mailBody = text2Html(mail.text);
+          }
+        } else {
+          mailBody = mail.html;
+          // inlineでのcontentIdをhtml内から取得する。
+          const reg = /src="cid:(.*?)"/gi;
+          let result;
 
-      let isPlainText = true;
-      console.log(`type:${message.mime.contentType.value}`);
-      if (message.mime.contentType.value !== 'text/plain') {
-        isPlainText = false;
-      }
+          const inlineFiles = [];
+          // 上記正規表現でnullが返るまで繰り返し
+          // eslint-disable-next-line no-cond-assign
+          while ((result = reg.exec(mailBody)) !== null) {
+            // 取得したcid
+            let fileName = result[0];
+            // contentId名に整形
+            if (fileName.endsWith('"')) {
+              fileName = fileName.slice(0, -1);
+              fileName = fileName.replace('src="cid:', '');
+            }
 
-      if (isPlainText) {
-        if (contents.length != null && contents.length > 0) contents = text2Html(contents[0]);
-      }
-
-      if (message.mime.hasOwnProperty('contentTransferEncoding')) {
-        if (message.mime.contentTransferEncoding.value === 'base64') {
-          console.log('contents-base64:');
+            // attachment.contentId名で、該当コンテンツを取得
+            const attachment = mail.attachments.find(attach => attach.contentId === fileName);
+            // コンテンツが見つかった場合
+            if (attachment) {
+              // コンテンツの位置がinline
+              if (attachment.contentDisposition === 'inline') {
+                // base64で復号化
+                const base64 = attachment.content.toString('base64');
+                const type = attachment.contentType;
+                // 正規表現キャプチャで元htmlが消えているため、key: contentID, value: 置き換えコンテンツを作成
+                inlineFiles[`src="cid:${fileName}"`] = `src="data:${type};base64,${base64}" `;
+              }
+            }
+          }
+          // 置換用オブジェクトで元htmlのsrc="cid:xxx"を置換
+          // eslint-disable-next-line guard-for-in,no-restricted-syntax
+          for (const key in inlineFiles) {
+            console.log(`replace:${key}`);
+            mailBody = mailBody.replace(key, inlineFiles[key]);
+          }
         }
-      }
 
-      console.log(`contents:${contents}`);
-      console.log('currentFlags:');
-      console.log(message.flags);
-      this.setState({
-        displaySubject: message.subject,
-        displaySubtitle: `送信元:${this.getSender(message.from)}    受信日時:${moment(
-          message.date
-        ).format('YYYY/MM/DD HH:mm')}`,
-        displayMessage: contents
-      });
-
-      // flagsに[\\seen]がない場合には、[\\seen]を追加
-      if (!message.flags.some(f => f.toLowerCase() === '\\seen')) {
-        const sequences = [];
-        sequences.push(message.key);
-        this.props.updateFlags({
-          path: this.state.boxPath,
-          sequences,
-          seqFrom: this.state.seqFrom,
-          flagUpdateObject: { add: ['\\Seen'] },
-          moveDestination: ''
+        this.setState({
+          displaySubject: message.subject,
+          displaySubtitle: `送信元:${this.getSender(message.from)}    受信日時:${moment(
+            message.date
+          ).format('YYYY/MM/DD HH:mm')}`,
+          displayMessage: mailBody
         });
-      }
+
+        // flagsに[\\seen]がない場合には、[\\seen]を追加
+        if (!message.flags.some(f => f.toLowerCase() === '\\seen')) {
+          const sequences = [];
+          sequences.push(message.uid);
+          this.props.updateFlags({
+            path: this.state.boxPath,
+            sequences,
+            seqFrom: this.state.seqFrom,
+            flagUpdateObject: { add: ['\\Seen'] },
+            moveDestination: ''
+          });
+        }
+      });
     }
   };
 
@@ -428,13 +427,14 @@ class MessageViewer extends Component<Props, State> {
                     style={checkBoxStyle.root}
                   />
                 ),
-                Header: x => (
+                Header: () => (
                   <input
                     type="checkbox"
                     className="checkbox"
                     checked={this.state.checkedAll === 1}
                     ref={input => {
                       if (input) {
+                        // eslint-disable-next-line no-param-reassign
                         input.indeterminate = this.state.checkedAll === 2;
                       }
                     }}
@@ -447,6 +447,7 @@ class MessageViewer extends Component<Props, State> {
               {
                 Header: () => <span style={{ fontSize: 12 }}>件名</span>,
                 accessor: 'subject',
+                // eslint-disable-next-line no-confusing-arrow
                 Cell: row =>
                   this.isSeenMessage(row.original.uid) ? (
                     <span style={{ fontSize: 12 }}>{row.original.subject}</span>

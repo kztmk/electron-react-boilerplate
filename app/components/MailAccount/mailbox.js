@@ -359,7 +359,7 @@ class MailBox extends Component<Props, State> {
           box.name !== 'Inbox' &&
           box.name !== 'Sent' &&
           box.name !== 'Trash' &&
-          box.name != 'Deleted' &&
+          box.name !== 'Deleted' &&
           box.name !== 'Drafts' &&
           box.name !== 'Junk'
         ) {
@@ -442,7 +442,7 @@ class MailBox extends Component<Props, State> {
           <ListItem
             button
             onClick={() => {
-              this.handleSelectBox('Inbox');
+              this.handleSelectBox(inbox.path);
             }}
             // className={this.isSelected(inbox, selectedPath) ? classes.selectedList : ''}
             className={
@@ -462,7 +462,7 @@ class MailBox extends Component<Props, State> {
           <ListItem
             button
             onClick={() => {
-              this.handleSelectBox('Sent');
+              this.handleSelectBox(sent.path);
             }}
             className={
               sent.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
@@ -478,7 +478,7 @@ class MailBox extends Component<Props, State> {
           <ListItem
             button
             onClick={() => {
-              this.handleSelectBox('Draft');
+              this.handleSelectBox(draft.path);
             }}
             className={
               draft.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
@@ -494,7 +494,7 @@ class MailBox extends Component<Props, State> {
           <ListItem
             button
             onClick={() => {
-              this.handleSelectBox('Trash');
+              this.handleSelectBox(trash.path);
             }}
             className={
               trash.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
@@ -510,7 +510,7 @@ class MailBox extends Component<Props, State> {
           <ListItem
             button
             onClick={() => {
-              this.handleSelectBox('Bulk Mail');
+              this.handleSelectBox(bulkMail.path);
             }}
             className={
               bulkMail.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''

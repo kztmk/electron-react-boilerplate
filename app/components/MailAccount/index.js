@@ -31,9 +31,10 @@ import type {
 
 /**
  * TODO:
- * 1. when open mailbox success, update last login date
- * 2. small list fond and narrow
+ * 1. 完了-when open mailbox success, update last login date
+ * 2. 完了-small list fond and narrow
  * 3. delete mails button
+ * 4. ゴミ箱へ移動した場合、selectMailboxを呼び出してもexistが更新されない
  * @type {number}
  */
 const drawerWidth = 240;
@@ -333,9 +334,11 @@ class MailAccount extends React.Component<Props, State> {
       this.setState({ moveToBoxPath: '', openDialog: true });
     } else {
       let destination = this.state.moveToBoxPath;
+      console.log(`moveTo:${destination}`);
       this.setState({ moveToBoxPath: '' });
-      if (destination === 'trash') {
+      if (destination === 'trash' || destination.toLowerCase() === 'deleted') {
         destination = this.getExactPath('trash');
+        console.log(`movePath:${destination}`);
       }
       if (destination !== null) {
         this.props.startMoveMessages({
@@ -350,8 +353,14 @@ class MailAccount extends React.Component<Props, State> {
   };
 
   getExactPath = path => {
+    let moveTo = path;
+    if (this.props.targetAccount.provider === 'Outlook') {
+      if (path.toLowerCase() === 'trash') {
+        moveTo = 'deleted';
+      }
+    }
     const box = this.props.imapMailBoxes.find(m => {
-      if (m.path.toLowerCase() === path.toLowerCase()) {
+      if (m.path.toLowerCase() === moveTo.toLowerCase()) {
         return m.path;
       }
     });

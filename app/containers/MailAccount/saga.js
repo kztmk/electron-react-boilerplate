@@ -87,6 +87,7 @@ function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
   if (imapClient === null) {
     throw new Error({ errorMessage: '接続が切れています。開き直してください。' });
   }
+  console.log(imapProperty.mailCount);
   // mailbox情報の取得関数を作成
   const getMailboxInfo = (client, boxPath) =>
     client.selectMailbox(boxPath).then(mailbox => mailbox);
@@ -271,7 +272,7 @@ function* updateFlags(action) {
   if (imapClient !== null) {
     // update定義
     const updateFlagsToServer = (client, path, seq, flagsObject) => {
-      client.setFlags(path, seq, flagsObject, { silent: true });
+      client.setFlags(path, seq, flagsObject, { byUid: true, silent: true });
     };
 
     // sequenceの文字列を作成
@@ -287,10 +288,77 @@ function* updateFlags(action) {
         action.payload.flagUpdateObject
       );
 
-      // pathを指定してmailBox内のメールを取得
-      yield call(getSelectMailboxInfoAndMessages, action.payload.path, action.payload.seqFrom);
+      // 現在のImapServerPropertyを取得
+      const currentImapManagerProperty = yield select(state => state.MailAccount);
+      // messagesを取得
+      const workingMessages = { ...currentImapManagerProperty.messages };
+      let workingUnseenCount = currentImapManagerProperty.unseenCount;
+      const workingSequences = action.payload.sequences;
 
-      yield put(updateFlagsSuccess(imapProperty));
+      // flagUpdateObject
+      const update = Object.keys(action.payload.flagUpdateObject);
+      const newFlags = action.payload.flagUpdateObject[update];
+
+      console.log('update');
+      console.log(update);
+      console.log(newFlags);
+      const updateMessages = [];
+      update.forEach(u => {
+        if (u === 'add') {
+          Object.keys(workingMessages).forEach(k => {
+            workingSequences.forEach(s => {
+              if (workingMessages[k].uid === s) {
+                const flagSeen = workingMessages[k].flags.find(f => f === '\\Seen');
+                if (flagSeen === undefined) {
+                  workingMessages[k].flags.push('\\Seen');
+                  updateMessages.push(workingMessages[k]);
+                  workingUnseenCount -= 1;
+                }
+              }
+            });
+          });
+          console.log('updated messages');
+          console.log(updateMessages);
+        }
+
+        if (u === 'remove') {
+          Object.keys(workingMessages).forEach(k => {
+            console.log(`message key:${workingMessages[k].key}`);
+            workingSequences.forEach(s => {
+              console.log(`sequence: ${s}`);
+              if (workingMessages[k].uid === s) {
+                console.log('before remove');
+                console.log(workingMessages[k].flags);
+                const flagSeen = workingMessages[k].flags.find(f => f === '\\Seen');
+                if (flagSeen !== undefined) {
+                  const updatedFlags = workingMessages[k].flags.filter(f => f !== '\\Seen');
+                  workingMessages[k].flags = updatedFlags;
+                  updateMessages.push(workingMessages[k]);
+                  workingUnseenCount += 1;
+                }
+              }
+            });
+          });
+          console.log('updated messages');
+          console.log(updateMessages);
+        }
+      });
+
+      const originalMessages = [];
+      for (const key in currentImapManagerProperty.messages) {
+        originalMessages.push(currentImapManagerProperty.messages[key]);
+      }
+      console.log('orig');
+      console.log(originalMessages);
+
+      const updateImapManagerProperty = {
+        ...currentImapManagerProperty,
+        unseenCount: workingUnseenCount
+      };
+      // pathを指定してmailBox内のメールを取得
+      // yield call(getSelectMailboxInfoAndMessages, action.payload.path, action.payload.seqFrom);
+
+      yield put(updateFlagsSuccess(updateImapManagerProperty));
     } catch (error) {
       yield put(updateFlagsFailure({ errorMessage: error.toString() }));
     }
@@ -305,9 +373,11 @@ function* moveMails(action) {
   if (imapClient !== null) {
     // move mails to another mailbox定義
     const moveMessages = (client, pathFrom, seq, pathTo) => {
-      client.moveMessages(pathFrom, seq, pathTo);
+      client.moveMessages(pathFrom, seq, pathTo, { byUid: true });
     };
 
+    console.log('boxPath');
+    console.log(action.payload.moveDestination);
     // sequenceの文字列を作成
     const sequences = action.payload.sequences.join(',');
 
@@ -322,7 +392,11 @@ function* moveMails(action) {
       );
 
       // pathを指定してmailBox内のメールを取得
-      yield call(getSelectMailboxInfoAndMessages, action.payload.moveDestination, 0);
+      let boxPath = action.payload.moveDestination;
+      if (boxPath.toLowerCase() === 'trash' || boxPath.toLowerCase() === 'deleted') {
+        boxPath = 'INBOX';
+      }
+      yield call(getSelectMailboxInfoAndMessages, boxPath, 0);
 
       yield put(moveMailsSuccess(imapProperty));
     } catch (error) {

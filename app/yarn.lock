@@ -113,6 +113,10 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
 
+addressparser@~1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/addressparser/-/addressparser-1.0.1.tgz#47afbe1a2a9262191db6838e4fd1d39b40821746"
+
 ajv@^5.1.0:
   version "5.5.2"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-5.5.2.tgz#73b5eeca3fab653e3d3f9422b341ad42205dc965"
@@ -303,13 +307,17 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
 
-encoding@^0.1.11:
+encoding@^0.1.11, encoding@^0.1.12, encoding@~0.1.12:
   version "0.1.12"
   resolved "https://registry.yarnpkg.com/encoding/-/encoding-0.1.12.tgz#538b66f3ee62cd1ab51ec323829d1f9480c74beb"
   dependencies:
     iconv-lite "~0.4.13"
 
-extend@~3.0.1:
+escape-string-regexp@~1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
+
+extend@~3.0.0, extend@~3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
 
@@ -472,6 +480,12 @@ iconv-lite@~0.4.13:
   dependencies:
     safer-buffer "^2.1.0"
 
+iconv@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/iconv/-/iconv-2.3.0.tgz#9739887c2bd492d9a5e236dd3667c5358601201b"
+  dependencies:
+    nan "^2.3.5"
+
 inflight@^1.0.4:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/inflight/-/inflight-1.0.6.tgz#49bd6331d7d02d0c09bc910a1075ba8165b56df9"
@@ -559,6 +573,15 @@ long@~3:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/long/-/long-3.2.0.tgz#d821b7138ca1cb581c172990ef14db200b5c474b"
 
+mailparser-mit@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/mailparser-mit/-/mailparser-mit-0.6.2.tgz#5dc44071b3322756f04b2cf0f8179b41399ea0ee"
+  dependencies:
+    encoding "^0.1.12"
+    mime "^1.3.4"
+    mimelib "^0.3.0"
+    uue "^3.1.0"
+
 mime-db@~1.33.0:
   version "1.33.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.33.0.tgz#a3492050a5cb9b63450541e39d9788d2272783db"
@@ -568,6 +591,17 @@ mime-types@^2.1.12, mime-types@~2.1.17:
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.18.tgz#6f323f60a83d11146f831ff11fd66e2fe5503bb8"
   dependencies:
     mime-db "~1.33.0"
+
+mime@^1.3.4:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
+
+mimelib@^0.3.0:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/mimelib/-/mimelib-0.3.1.tgz#787add2415d827acb3af6ec4bca1ea9596418853"
+  dependencies:
+    addressparser "~1.0.1"
+    encoding "~0.1.12"
 
 minimatch@^3.0.0, minimatch@^3.0.4:
   version "3.0.4"
@@ -593,7 +627,7 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
-nan@^2.10.0:
+nan@^2.10.0, nan@^2.3.5:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
 
@@ -881,6 +915,13 @@ uid-number@^0.0.6:
 util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
+
+uue@^3.1.0:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/uue/-/uue-3.1.2.tgz#e99368414e87200012eb37de4dbaebaa1c742ad2"
+  dependencies:
+    escape-string-regexp "~1.0.5"
+    extend "~3.0.0"
 
 uuid@^3.1.0:
   version "3.2.1"
