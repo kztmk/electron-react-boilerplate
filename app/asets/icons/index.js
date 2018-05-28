@@ -62,6 +62,41 @@ export function CloseIcon(props) {
   );
 }
 
+export function FolderDownloadIcon(props) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M20,6A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H20M19.25,13H16V9H14V13H10.75L15,17.25" />
+    </SvgIcon>
+  );
+}
+
+export function AddIcon(props) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M11,15V12H9V15H6V17H9V20H11V17H14V15H11Z" />
+    </SvgIcon>
+  );
+}
+
+export function SaveAltIcon(props) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M19,12v7H5v-7H3v7c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2v-7H19z M13,12.67l2.59-2.58L17,11.5l-5,5l-5-5l1.41-1.41L11,12.67V3   h2V12.67z" />
+    </SvgIcon>
+  );
+}
+
+export function CancelIcon(props) {
+  return (
+    <SvgIcon {...props}>
+      <path
+        d="M12,2C6.47,2,2,6.47,2,12c0,5.53,4.47,10,10,10c5.53,0,10-4.47,10-10C22,6.47,17.53,2,12,2z M12,20c-4.41,0-8-3.59-8-8
+      s3.59-8,8-8s8,3.59,8,8S16.41,20,12,20z"
+      />
+    </SvgIcon>
+  );
+}
+
 /*
 export function TemplateIcon(props) {
   return (

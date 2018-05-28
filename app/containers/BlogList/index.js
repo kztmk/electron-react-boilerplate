@@ -14,11 +14,14 @@ import BlogListPage from '../../components/BlogsListPage';
 
 const mapStateToProps = (state: State) => ({
   blogAccounts: state.BlogList.blogAccounts,
-  targetAccount: state.BlogList.targetAccount,
-  isLoading: state.BlogList.isLoading,
+  isGetting: state.BlogList.isGetting,
+  isCreating: state.BlogList.isCreating,
+  isUpdating: state.BlogList.isUpdating,
+  isDeleting: state.BlogList.isDeleting,
+  isImporting: state.BlogList.isImporting,
   isFailure: state.BlogList.isFailure,
-  errorMessage: state.BlogList.errorMessage,
-  errorAccounts: state.BlogList.errorAccounts
+  metaMessage: state.BlogList.metaMessage,
+  transAccounts: state.BlogList.transAccounts
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({

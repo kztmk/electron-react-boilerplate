@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import Slide from 'material-ui/transitions/Slide';
 import MailOutline from 'material-ui-icons/MailOutline';
 import Loadable from 'react-loading-overlay';
+import Tooltip from 'material-ui/Tooltip';
 
 // import Button from 'material-ui/Button';
 import Dialog from 'material-ui/Dialog';
@@ -15,11 +16,13 @@ import DialogActions from 'material-ui/Dialog/DialogActions';
 import moment from 'moment';
 // material-ui-icons
 import AddAlert from 'material-ui-icons/AddAlert';
+import OpenInNew from 'material-ui-icons/OpenInNew';
+import { AddIcon, FolderDownloadIcon } from '../../asets/icons';
 
 import { GridContainer, ItemGrid, IconCard, Snackbar } from '../../ui';
 import type MailAccountType from '../../types/mailAccount';
 import MailAddressList from './mailAddressList';
-
+import FormMailAddressAdd from './formMailAddressAdd';
 import Button from '../../ui/CustomButtons/Button';
 
 import accountListPageStyles from '../../asets/jss/material-dashboard-pro-react/views/accountListPageStyle';
@@ -32,13 +35,14 @@ type State = {
   openSuccessNotification: boolean,
   openErrorNotification: boolean,
   openModalSaveErrorAccounts: boolean,
+  openFormMailAddressAdd: boolean,
   mode: string
 };
 type Props = {
   classes: Object,
   // startGetMailAccounts: () => void,
   startImportMailAccounts: (mailAccounts: Array<MailAccountType>) => void,
-  // startCreateMailAccount: (mailAccount: MailAccountType) => void,
+  startCreateMailAccount: (mailAccount: MailAccountType) => void,
   startUpdateMailAccount: (mailAccount: MailAccountType) => void,
   startDeleteMailAccount: (mailAccount: MailAccountType) => void,
   startCloseConnection: () => void,
@@ -76,6 +80,13 @@ const Transition = props => <Slide direction="down" {...props} />;
 
 /**
  * メールアカウント一覧ページ
+ *    mailAddressList
+ *       --formMailAddressEdit
+ *
+ *       --MailAccount( login via imap)
+ *          --mailBox(left)
+ *          --messageView(right)
+ *
  */
 class MailAddressListPage extends React.Component<Props, State> {
   constructor(props) {
@@ -88,6 +99,7 @@ class MailAddressListPage extends React.Component<Props, State> {
       openSuccessNotification: false,
       openErrorNotification: false,
       openModalSaveErrorAccounts: false,
+      openFormMailAddressAdd: false,
       mode: 'none'
     };
   }
@@ -191,12 +203,7 @@ class MailAddressListPage extends React.Component<Props, State> {
     let isFailure = false;
     let isSuccessButDup = false;
     let notificationMsg = '';
-    console.log(
-      `imp:${nextProps.isImporting}--cre:${nextProps.isCreating}--Get:${nextProps.isGetting}--up:${
-        nextProps.isUpdating
-      }--del:${nextProps.isDeleting}--connect:${nextProps.isMessageLoading}`
-    );
-    console.log(`my-mode:${this.state.mode}`);
+
     if (
       !nextProps.isImporting &&
       !nextProps.isCreating &&
@@ -207,7 +214,6 @@ class MailAddressListPage extends React.Component<Props, State> {
       // request完了後に処理済みでのprops更新
       switch (this.state.mode) {
         case 'import':
-          console.log('got case import');
           if (!nextProps.isFailure) {
             // import成功
             notificationMsg = nextProps.metaMessage;
@@ -219,6 +225,7 @@ class MailAddressListPage extends React.Component<Props, State> {
               isSuccess = true;
             }
           } else {
+            // import失敗
             isFailure = true;
             notificationMsg = `インポートエラー：${nextProps.metaMessage}`;
           }
@@ -237,7 +244,7 @@ class MailAddressListPage extends React.Component<Props, State> {
           break;
       }
     } else {
-      // Requestが飛んで、propsが更新される。
+      // Request時のpropsが更新で、modeに処理名を設定
       if (nextProps.isImporting) {
         this.setState({ mode: 'import' });
         return;
@@ -347,6 +354,14 @@ class MailAddressListPage extends React.Component<Props, State> {
     }
   };
 
+  handleOpenFormMailAddressAdd = () => {
+    this.setState({ openFormMailAddressAdd: true });
+  };
+
+  handleCloseFormMailAddressAdd = () => {
+    this.setState({ openFormMailAddressAdd: false });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -361,19 +376,35 @@ class MailAddressListPage extends React.Component<Props, State> {
                 <div>
                   <GridContainer justify="flex-end" className={classes.cardContentRight}>
                     <div className={classes.buttonGroupStyle}>
-                      <Button color="primary" customClass={classes.firstButton}>
-                        新規作成
-                      </Button>
-                      <Button color="primary" customClass={classes.middleButton}>
-                        追加
-                      </Button>
-                      <Button
-                        color="primary"
-                        customClass={classes.lastButton}
-                        onClick={this.handleClickImportButton}
+                      <Tooltip title="新規メールアドレスを作成" placement="bottom">
+                        <Button color="primary" customClass={classes.firstButton}>
+                          <OpenInNew />
+                          新規作成
+                        </Button>
+                      </Tooltip>
+                      <Tooltip title="メールアドレスを手入力で追加" placement="bottom">
+                        <Button
+                          color="primary"
+                          customClass={classes.middleButton}
+                          onClick={this.handleOpenFormMailAddressAdd}
+                        >
+                          <AddIcon />
+                          追加
+                        </Button>
+                      </Tooltip>
+                      <Tooltip
+                        title="寄騎形式のファイルからメールアドレスをインポート"
+                        placement="bottom"
                       >
-                        ファイルからインポート
-                      </Button>
+                        <Button
+                          color="primary"
+                          customClass={classes.lastButton}
+                          onClick={this.handleClickImportButton}
+                        >
+                          <FolderDownloadIcon />
+                          インポート
+                        </Button>
+                      </Tooltip>
                     </div>
                   </GridContainer>
                   <MailAddressList
@@ -415,18 +446,12 @@ class MailAddressListPage extends React.Component<Props, State> {
               transition={Transition}
               keepMounted
               onClose={() => this.handleClose('noticeModal')}
-              aria-labelledby="small-modal-slide-title"
-              aria-describedby="small-modal-slide-description"
             >
-              <DialogTitle
-                id="small-modal-slide-title"
-                disableTypography
-                className={classes.modalHeader}
-              >
+              <DialogTitle id="has-dup" disableTypography className={classes.modalHeader}>
                 {this.state.metaMessage}
               </DialogTitle>
               <DialogContent
-                id="small-modal-slide-description"
+                id="dup-description"
                 className={`${classes.modalBody} ${classes.modalSmallBody}`}
               >
                 <h5>重複のためインポートされなかったメールアカウントをファイルに書出しますか？</h5>
@@ -449,6 +474,26 @@ class MailAddressListPage extends React.Component<Props, State> {
                   はい
                 </Button>
               </DialogActions>
+            </Dialog>
+            <Dialog
+              classes={{
+                root: classes.center,
+                paper: `${classes.modal} ${classes.modalSmall}`
+              }}
+              open={this.state.openFormMailAddressAdd}
+              transition={Transition}
+              keepMounted
+              onClose={() => this.handleCloseFormMailAddressAdd()}
+            >
+              <DialogContent
+                id="formMailAddressAddBody"
+                className={`${classes.modalBody} ${classes.modalSmallBody}`}
+              >
+                <FormMailAddressAdd
+                  closeForm={this.handleCloseFormMailAddressAdd}
+                  addMailAddress={this.props.startCreateMailAccount}
+                />
+              </DialogContent>
             </Dialog>
           </ItemGrid>
         </GridContainer>

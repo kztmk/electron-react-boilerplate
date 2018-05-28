@@ -201,7 +201,8 @@ type Props = {
   imapSelectMailBoxPath: string,
   imapMailCount: number,
   imapMailUnseenCount: number,
-  imapSeqFrom: number
+  imapSeqFrom: number,
+  formStatus: boolean
 };
 
 type State = {
@@ -245,7 +246,11 @@ class MailAccount extends React.Component<Props, State> {
 
     console.log(`mailAccount-isLoading:${nextProps.imapMessageLoading}`);
     // 新たなmailAddressが指定され、モードが無指定の場合、openConnection
-    if (this.props.targetAccount.mailAddress !== nextProps.targetAccount.mailAddress) {
+    console.log(`this.form.status:${this.props.formStatus}`);
+    if (
+      this.props.targetAccount.mailAddress !== nextProps.targetAccount.mailAddress &&
+      nextProps.formStatus
+    ) {
       // targetAccountのmailAddressが更新され、且つ、長さがある場合
       if (nextProps.targetAccount.mailAddress.length > 0) {
         console.log('call imap connection ...');

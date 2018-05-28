@@ -1,7 +1,7 @@
 // @flow
-import type { Action } from "./actionTypes";
-import { Actions } from "./actionTypes";
-import type MailAccountType from "../../types/mailAccount";
+import type { Action } from './actionTypes';
+import { Actions } from './actionTypes';
+import type MailAccountType from '../../types/mailAccount';
 
 /**
  * mailAccounts: data accounts
@@ -10,6 +10,7 @@ import type MailAccountType from "../../types/mailAccount";
  * isCreating: status for creating
  * isUpdating: status for updating
  * isDeleting: status for deleting
+ * isImporting: status for importing
  * isFailure: success/fail
  * metaMessage: error or notes
  * trasAccounts: import accounts/error accounts
@@ -26,6 +27,19 @@ export type State = {
   transAccounts: Array<MailAccountType>
 };
 
+/**
+ * Mail Accounts manage initial state
+ * @type {{
+ *   mailAccounts: Array,
+ *  isGetting: boolean,
+ *  isCreating: boolean,
+ *  isUpdating: boolean,
+ *  isDeleting: boolean,
+ *  isImporting: boolean,
+ *  isFailure: boolean,
+ *  metaMessage: string,
+ *  transAccounts: Array}}
+ */
 export const initialState: State = {
   mailAccounts: [],
   isGetting: false,
@@ -34,7 +48,7 @@ export const initialState: State = {
   isDeleting: false,
   isImporting: false,
   isFailure: false,
-  metaMessage: "",
+  metaMessage: '',
   transAccounts: []
 };
 
@@ -82,7 +96,7 @@ export default function(state: State = initialState, action: Action): State {
         isDeleting: false,
         isImporting: false,
         isFailure: false,
-        metaMessage: "",
+        metaMessage: '',
         transAccounts: []
       };
 
@@ -113,7 +127,7 @@ export default function(state: State = initialState, action: Action): State {
         isDeleting: false,
         isImporting: false,
         isFailure: false,
-        metaMessage: "",
+        metaMessage: '',
         transAccounts: []
       };
 
@@ -144,7 +158,7 @@ export default function(state: State = initialState, action: Action): State {
         isDeleting: true,
         isImporting: false,
         isFailure: false,
-        metaMessage: "",
+        metaMessage: '',
         transAccounts: []
       };
 
@@ -175,7 +189,7 @@ export default function(state: State = initialState, action: Action): State {
         isDeleting: false,
         isImporting: true,
         isFailure: false,
-        metaMessage: "",
+        metaMessage: '',
         transAccounts: action.payload
       };
 

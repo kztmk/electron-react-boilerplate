@@ -6,11 +6,13 @@ import TagsInput from 'react-tagsinput';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Loadable from 'react-loading-overlay';
+import Cancel from 'material-ui-icons/Cancel';
 import type MailAccountType from '../../types/mailAccount';
 import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button } from '../../ui';
 
 import regularFormsStyle from '../../asets/jss/material-dashboard-pro-react/views/regularFormsStyle';
 import Table from '../../ui/Table/Table';
+import { SaveAltIcon } from '../../asets/icons';
 
 import { getProviderImage } from './mailAddressList';
 
@@ -20,7 +22,8 @@ export type Props = {
   mode: string,
   targetAccount: MailAccountType,
   updateAccount: () => void,
-  closeModal: () => void
+  closeModal: () => void,
+  formStatus: boolean
 };
 
 type State = {
@@ -37,6 +40,11 @@ const providerImageStyle = {
   paddingTop: '6px',
   width: '32px',
   height: '36px'
+};
+
+const iconStyle = {
+  width: '18px',
+  height: '18px'
 };
 
 class FormMailAddressEdit extends Component<Props, State> {
@@ -63,6 +71,7 @@ class FormMailAddressEdit extends Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
+    // this.state.isUpdatedがtrueの場合はrequestではなく処理完了通知
     if (nextProps.mode === 'update' && this.state.isUpdated) {
       // propsのtargetAccountが持つtagsは文字列のため、「,」で区切り、配列を取得
       const tagArray =
@@ -87,13 +96,17 @@ class FormMailAddressEdit extends Component<Props, State> {
       // 処理と結果でstateの更新・dialogの選択・表示
       let flg = -1;
       if (!this.state.isUpdated) {
+        // 更新処理ではない
         flg = 0;
       } else {
+        // 更新処理 成功・失敗flag
         flg = isUpdateSuccess ? 1 : 2;
       }
+
       switch (flg) {
         // フォームの表示
         case 0:
+          console.log('display edit form');
           this.setState({
             password: nextProps.targetAccount.password,
             tags: tagArray,
@@ -115,7 +128,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                 title="更新完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 {msg}
               </SweetAlert>
@@ -135,7 +148,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                 title="更新失敗"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 {msg}
               </SweetAlert>
@@ -145,8 +158,15 @@ class FormMailAddressEdit extends Component<Props, State> {
         default:
           break;
       }
-    } else {
-      this.setState({ sweetAlert: null });
+    } else if (this.props.formStatus) {
+      const tagArray =
+        nextProps.targetAccount.tags.length > 0 ? nextProps.targetAccount.tags.split(',') : [];
+      this.setState({
+        password: nextProps.targetAccount.password,
+        tags: tagArray,
+        data: this.convertTableData(nextProps.targetAccount.detailInfo),
+        sweetAlert: null
+      });
     }
   };
 
@@ -213,6 +233,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                           customClass={classes.firstButton}
                           onClick={this.props.closeModal}
                         >
+                          <Cancel style={iconStyle} />
                           キャンセル
                         </Button>
                         <Button
@@ -220,6 +241,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                           customClass={classes.lastButton}
                           onClick={this.updateMailAccount}
                         >
+                          <SaveAltIcon style={iconStyle} />
                           保存
                         </Button>
                       </div>
@@ -312,6 +334,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                             fullWidth: true
                           }}
                           lessSpace
+                          // eslint-disable-next-line react/jsx-equals-spacing
                           inputProps={{
                             placeholder: 'Disabled',
                             disabled: true,

@@ -22,30 +22,34 @@ import type BlogAccountType from '../../types/blogAccount';
 import Button from '../../ui/CustomButtons/Button';
 
 import accountListPageStyles from '../../asets/jss/material-dashboard-pro-react/views/accountListPageStyle';
+import type MailAccountType from '../../types/mailAccount';
 
 type State = {
+  isLoading: boolean,
   isFailure: boolean,
-  errorMessage: string,
-  msg: string,
-  errorAccounts: Array<BlogAccountType>,
+  metaMessage: string,
+  transAccounts: Array<MailAccountType>,
   openSuccessNotification: boolean,
   openErrorNotification: boolean,
   openModalSaveErrorAccounts: boolean,
-  mode: string,
-  isLoading: boolean
+  mode: string
 };
 type Props = {
   classes: Object,
   startGetBlogAccounts: () => void,
   startImportBlogAccounts: (blogAccounts: Array<BlogAccountType>) => void,
-  startCreateBlogAccount: (blogAccount: BlogAccountType) => void,
+  // startCreateBlogAccount: (blogAccount: BlogAccountType) => void,
   startUpdateBlogAccount: (blogAccount: BlogAccountType) => void,
   startDeleteBlogAccount: (blogAccount: BlogAccountType) => void,
   blogAccounts: Array<BlogAccountType>,
-  isLoading: boolean,
+  isGetting: boolean,
+  isCreating: boolean,
+  isUpdating: boolean,
+  isDeleting: boolean,
+  isImporting: boolean,
   isFailure: boolean,
-  errorMessage: string,
-  errorAccounts: Array<BlogAccountType>
+  metaMessage: string,
+  transAccounts: Array<BlogAccountType>
 };
 
 const Transition = props => <Slide direction="down" {...props} />;
@@ -58,13 +62,13 @@ class BlogListPage extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      errorMessage: this.props.errorMessage,
-      errorAccounts: this.props.errorAccounts,
+      isLoading: false,
+      metaMessage: this.props.metaMessage,
+      transAccounts: this.props.transAccounts,
       openSuccessNotification: false,
       openErrorNotification: false,
       openModalSaveErrorAccounts: false,
-      mode: 'none',
-      isLoading: this.props.isLoading
+      mode: 'none'
     };
   }
 
@@ -96,11 +100,12 @@ class BlogListPage extends React.Component<Props, State> {
       if (!this.checkBlogDataObject(mAccounts[0])) {
         this.setState({
           openErrorNotification: true,
-          errorMessage: '寄騎V5用のブログデータファイルではありません。ファイルを確認してください。'
+          metaMessage: '寄騎V5用のブログデータファイルではありません。ファイルを確認してください。'
         });
         return;
       }
 
+      this.setState({ isLoading: true });
       // インポート用BlogAccountType配列
       const blogAccounts: Array<BlogAccountType> = [];
       // 受信object[key, createDate]をBlogAccountTypeの型に変換
@@ -142,9 +147,9 @@ class BlogListPage extends React.Component<Props, State> {
      */
     ipcRenderer.on('REQUEST_ERROR_BLOG_ACCOUNT_JSON', () => {
       let jsonFile: string = '';
-      if (this.state.errorAccounts.length > 0) {
+      if (this.state.transAccounts.length > 0) {
         const blogAccounts = [];
-        this.state.errorAccounts.forEach(acc => {
+        this.state.transAccounts.forEach(acc => {
           const createDate = moment(acc.createDate).format();
           const accTimeToString = {
             ...acc,
@@ -159,7 +164,7 @@ class BlogListPage extends React.Component<Props, State> {
 
       this.setState({
         openModalSaveErrorAccounts: false,
-        errorMessage: ''
+        metaMessage: ''
       });
     });
   }
@@ -175,39 +180,79 @@ class BlogListPage extends React.Component<Props, State> {
     let isSuccessButDup = false;
     let notificationMsg = '';
 
-    if (!nextProps.isLoading) {
+    console.log(
+      `imp:${nextProps.isImporting}--cre:${nextProps.isCreating}--Get:${nextProps.isGetting}--up:${
+        nextProps.isUpdating
+      }--del:${nextProps.isDeleting}`
+    );
+    console.log(`my-mode:${this.state.mode}`);
+
+    if (
+      !nextProps.isImporting &&
+      !nextProps.isCreating &&
+      !nextProps.isGetting &&
+      !nextProps.isUpdating &&
+      !nextProps.isDeleting
+    ) {
+      // request完了後の処理済みの場合
       switch (this.state.mode) {
         case 'import':
           if (!nextProps.isFailure) {
-            notificationMsg = nextProps.errorMessage;
-            if (nextProps.errorAccounts.length > 0) {
+            // import成功
+            notificationMsg = nextProps.metaMessage;
+            if (nextProps.transAccounts.length > 0) {
+              // import成功 dupあり
               isSuccessButDup = true;
             } else {
+              // import完全成功
               isSuccess = true;
             }
           } else {
             isFailure = true;
-            notificationMsg = `インポートエラー：${nextProps.errorMessage}`;
+            notificationMsg = `インポートエラー：${nextProps.metaMessage}`;
           }
+          // import操作完了時のstate更新
           this.setState({
-            errorAccounts: nextProps.errorAccounts,
+            transAccounts: nextProps.transAccounts,
             openSuccessNotification: isSuccess,
             openErrorNotification: isFailure,
-            errorMessage: notificationMsg,
+            metaMessage: notificationMsg,
             openModalSaveErrorAccounts: isSuccessButDup,
             mode: 'none'
           });
           break;
         case 'refresh':
           console.log('refreshed');
-          ipcRenderer.send('request-importBlogAccount-action');
+
           this.setState({
             mode: 'import'
           });
           break;
+        default:
       }
     } else {
-      console.log('isLoading true');
+      // Request時のprops更新
+      if (nextProps.isImporting) {
+        this.setState({ mode: 'import' });
+        return;
+      }
+      if (nextProps.isCreating) {
+        this.setState({ mode: 'create' });
+        return;
+      }
+      if (nextProps.isGetting) {
+        if (this.state.mode !== 'refresh') {
+          this.setState({ mode: 'get' });
+        }
+        return;
+      }
+      if (nextProps.isUpdating) {
+        this.setState({ mode: 'update' });
+        return;
+      }
+      if (nextProps.isDeleting) {
+        this.setState({ mode: 'delete' });
+      }
     }
   };
 
@@ -249,6 +294,7 @@ class BlogListPage extends React.Component<Props, State> {
     return true;
   };
 
+  // V4からV5での変更をインポート時に行う
   convertProviderName = providerNameV4 => {
     let providerNameV5 = '';
 
@@ -307,13 +353,9 @@ class BlogListPage extends React.Component<Props, State> {
    * main processの「request-importBlogAccount-action」を呼び出し
    * ファイル選択用ダイアログを表示させる
    */
-  handleClickButton = () => {
-    // import前にfirebaseと同期
-    this.setState({
-      mode: 'refresh',
-      isLoading: true
-    });
-    this.props.startGetBlogAccounts();
+  handleClickImportButton = () => {
+    // import用ダイアログの要求
+    ipcRenderer.send('request-importBlogAccount-action');
   };
 
   /**
@@ -322,7 +364,7 @@ class BlogListPage extends React.Component<Props, State> {
   handleErrorNotificationClose = () => {
     this.setState({
       openErrorNotification: false,
-      errorMessage: '',
+      metaMessage: '',
       isLoading: false
     });
   };
@@ -333,7 +375,7 @@ class BlogListPage extends React.Component<Props, State> {
   handleSuccessNotificationClose = () => {
     this.setState({
       openSuccessNotification: false,
-      errorMessage: '',
+      metaMessage: '',
       isLoading: false
     });
   };
@@ -347,17 +389,15 @@ class BlogListPage extends React.Component<Props, State> {
    * @param req 保存時 needSave
    */
   handleCloseModal = req => {
+    this.setState({
+      openModalSaveErrorAccounts: false,
+      metaMessage: '',
+      isLoading: false
+    });
+
     if (req === 'needSave') {
       // main processへファイル保存ダイアログ表示の要求
       ipcRenderer.send('request-errorBlogAccount-export-action');
-      this.setState({ isLoading: false, errorMessage: '' });
-    } else {
-      // 保存しない場合には、ダイアログを閉じる
-      this.setState({
-        openModalSaveErrorAccounts: false,
-        errorMessage: '',
-        isLoading: false
-      });
     }
   };
 
@@ -381,16 +421,16 @@ class BlogListPage extends React.Component<Props, State> {
                       <Button
                         color="primary"
                         customClass={classes.lastButton}
-                        onClick={this.handleClickButton}
+                        onClick={this.handleClickImportButton}
                       >
                         ファイルからインポート
                       </Button>
                     </div>
                   </GridContainer>
                   <BlogList
-                    isLoading={this.props.isLoading}
+                    mode={this.state.mode}
                     isFailure={this.props.isFailure}
-                    errorMessage={this.props.errorMessage}
+                    errorMessage={this.props.metaMessage}
                     blogAccounts={this.props.blogAccounts}
                     deleteAccount={this.props.startDeleteBlogAccount}
                     editAccount={this.props.startUpdateBlogAccount}
@@ -433,7 +473,7 @@ class BlogListPage extends React.Component<Props, State> {
                 disableTypography
                 className={classes.modalHeader}
               >
-                {this.state.errorMessage}
+                {this.state.metaMessage}
               </DialogTitle>
               <DialogContent
                 id="small-modal-slide-description"

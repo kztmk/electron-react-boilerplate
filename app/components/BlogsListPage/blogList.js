@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import Loadable from 'react-loading-overlay';
 import { withStyles } from 'material-ui/styles';
 import Slide from 'material-ui/transitions/Slide';
 import Tooltip from 'material-ui/Tooltip';
@@ -93,7 +94,7 @@ type State = {
 type Props = {
   classes: Object,
   blogAccounts: Array<BlogAccountType>,
-  isLoading: boolean,
+  mode: string,
   isFailure: boolean,
   errorMessage: string,
   deleteAccount: () => void,
@@ -143,7 +144,7 @@ class BlogList extends React.Component<Props, State> {
    */
   componentWillReceiveProps = nextProps => {
     // 処理 deleteで更新されたのか？
-    if (this.state.mode === 'delete') {
+    if (nextProps.mode === 'delete' && this.state.mode === 'delete') {
       if (!nextProps.isFailure) {
         // delete success
         this.setState({
@@ -313,6 +314,7 @@ class BlogList extends React.Component<Props, State> {
    */
   hideAlert = () => {
     this.setState({
+      mode: '',
       sweetAlert: null
     });
   };
@@ -370,185 +372,188 @@ class BlogList extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <GridContainer>
-        <ItemGrid xs={12} sm={12} md={12}>
-          <ReactTable
-            data={this.state.data}
-            resizable
-            columns={[
-              {
-                Header: 'provider',
-                accessor: 'provider',
-                filterable: true,
-                sortable: true,
-                show: false,
-                filterAll: true
-              },
-              {
-                Header: () => <span style={{ fontSize: 12 }} />,
-                accessor: 'provider',
-                Cell: row => (
-                  <div>
-                    <img height={24} src={getBlogProviderImage(row.original.provider)} alt="" />
-                  </div>
-                ),
-                width: 60,
-                filterable: true,
-                sortable: true,
-                filterMethod: (filter, rows) =>
-                  matchSorter(rows, filter.value, { keys: ['provider'] }),
-                Filter: ({ filter, onChange }) => (
-                  <select
-                    onChange={event => onChange(event.target.value)}
-                    style={{ width: '100%', fontSize: '12px' }}
-                    value={filter ? filter.value : ''}
-                  >
-                    <option value="">全て</option>
-                    <option value="fc2">FC2</option>
-                    <option value="webnode">webnode</option>
-                    <option value="livedoor">Livedoor</option>
-                    <option value="seesaa">SeeSaa</option>
-                    <option value="ameba">アメーバ</option>
-                    <option value="rakuten">楽天</option>
-                    <option value="kokolog">ココログ</option>
-                    <option value="yaplog">Yaplog</option>
-                    <option value="jugem">Jugem</option>
-                    <option value="ninjya">忍者</option>
-                    <option value="hatena">はてな</option>
-                    <option value="webryblog">ウェブリブログ</option>
-                    <option value="wpcom">WordPress.com</option>
-                    <option value="goo">gooブログ</option>
-                  </select>
-                ),
-                filterAll: true
-              },
-              {
-                Header: () => <span style={{ fontSize: 12 }}>タイトル</span>,
-                Cell: row => (
-                  <Tooltip
-                    id={row.original.id}
-                    title={row.original.description}
-                    placement="right-start"
-                    className={classes.toolTip}
-                  >
-                    <div>{row.original.title}</div>
-                  </Tooltip>
-                ),
-                accessor: 'title',
-                minWidth: 250,
-                maxWidth: 400,
-                filterable: true,
-                sortable: true,
-                Filter: ({ filter, onChange }) => (
-                  <input
-                    type="text"
-                    placeholder="タイトルで絞込み"
-                    value={filter ? filter.value : ''}
-                    onChange={event => onChange(event.target.value)}
-                  />
-                ),
-                filterMethod: (filter, rows) =>
-                  matchSorter(rows, filter.value, { keys: ['title'] }),
-                filterAll: true
-              },
-              {
-                Header: () => <span style={{ fontSize: 12 }}>グループ</span>,
-                accessor: 'groupTags',
-                Cell: row => (
-                  <TagsInput
-                    value={row.original.groupTags}
-                    tagProps={{ className: 'react-tagsinput-tag info' }}
-                    disabled
-                    inputProps={{
-                      placeholder: ''
-                    }}
-                  />
-                ),
-                minWidth: 200,
-                maxWidth: 400,
-                filterable: true,
-                sortable: true,
-                Filter: ({ filter, onChange }) => (
-                  <input
-                    type="text"
-                    placeholder="グループで絞込み"
-                    value={filter ? filter.value : ''}
-                    onChange={event => onChange(event.target.value)}
-                    style={{ fontSize: 12 }}
-                  />
-                ),
-                filterMethod: (filter, row) => {
-                  if (row.groupTags.length > 0) {
-                    let isMatch = false;
-                    row.groupTags.forEach(r => {
-                      if (r.indexOf(filter.value) > -1) {
-                        isMatch = true;
-                      }
-                    });
-                    return isMatch;
+      <Loadable active={this.state.mode === 'delete'} spinner text="サーバーと通信中・・・・">
+        <GridContainer>
+          <ItemGrid xs={12} sm={12} md={12}>
+            <ReactTable
+              data={this.state.data}
+              resizable
+              columns={[
+                {
+                  Header: 'provider',
+                  accessor: 'provider',
+                  filterable: true,
+                  sortable: true,
+                  show: false,
+                  filterAll: true
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }} />,
+                  accessor: 'provider',
+                  Cell: row => (
+                    <div>
+                      <img height={24} src={getBlogProviderImage(row.original.provider)} alt="" />
+                    </div>
+                  ),
+                  width: 60,
+                  filterable: true,
+                  sortable: true,
+                  filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ['provider'] }),
+                  Filter: ({ filter, onChange }) => (
+                    <select
+                      onChange={event => onChange(event.target.value)}
+                      style={{ width: '100%', fontSize: '12px' }}
+                      value={filter ? filter.value : ''}
+                    >
+                      <option value="">全て</option>
+                      <option value="fc2">FC2</option>
+                      <option value="webnode">webnode</option>
+                      <option value="livedoor">Livedoor</option>
+                      <option value="seesaa">SeeSaa</option>
+                      <option value="ameba">アメーバ</option>
+                      <option value="rakuten">楽天</option>
+                      <option value="kokolog">ココログ</option>
+                      <option value="yaplog">Yaplog</option>
+                      <option value="jugem">Jugem</option>
+                      <option value="ninjya">忍者</option>
+                      <option value="hatena">はてな</option>
+                      <option value="webryblog">ウェブリブログ</option>
+                      <option value="wpcom">WordPress.com</option>
+                      <option value="goo">gooブログ</option>
+                    </select>
+                  ),
+                  filterAll: true
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }}>タイトル</span>,
+                  Cell: row => (
+                    <Tooltip
+                      id={row.original.id}
+                      title={row.original.description}
+                      placement="right-start"
+                      className={classes.toolTip}
+                    >
+                      <div>{row.original.title}</div>
+                    </Tooltip>
+                  ),
+                  accessor: 'title',
+                  minWidth: 250,
+                  maxWidth: 400,
+                  filterable: true,
+                  sortable: true,
+                  Filter: ({ filter, onChange }) => (
+                    <input
+                      type="text"
+                      placeholder="タイトルで絞込み"
+                      value={filter ? filter.value : ''}
+                      onChange={event => onChange(event.target.value)}
+                    />
+                  ),
+                  filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ['title'] }),
+                  filterAll: true
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }}>グループ</span>,
+                  accessor: 'groupTags',
+                  Cell: row => (
+                    <TagsInput
+                      value={row.original.groupTags}
+                      tagProps={{ className: 'react-tagsinput-tag info' }}
+                      disabled
+                      inputProps={{
+                        placeholder: ''
+                      }}
+                    />
+                  ),
+                  minWidth: 200,
+                  maxWidth: 400,
+                  filterable: true,
+                  sortable: true,
+                  Filter: ({ filter, onChange }) => (
+                    <input
+                      type="text"
+                      placeholder="グループで絞込み"
+                      value={filter ? filter.value : ''}
+                      onChange={event => onChange(event.target.value)}
+                      style={{ fontSize: 12 }}
+                    />
+                  ),
+                  filterMethod: (filter, row) => {
+                    if (row.groupTags.length > 0) {
+                      let isMatch = false;
+                      row.groupTags.forEach(r => {
+                        if (r.indexOf(filter.value) > -1) {
+                          isMatch = true;
+                        }
+                      });
+                      return isMatch;
+                    }
                   }
+                },
+                {
+                  Header: '',
+                  accessor: 'actions',
+                  sortable: false,
+                  filterable: false
                 }
-              },
-              {
-                Header: '',
-                accessor: 'actions',
-                sortable: false,
-                filterable: false
-              }
-            ]}
-            defaultPageSize={10}
-            showPaginationTop
-            showPaginationBottom={false}
-            className="-striped -highlight"
-            previousText="< 前"
-            nextText="次 >"
-            loadingText="読込中..."
-            noDataText="データがありません"
-            pageText=""
-            ofText="/"
-            rowsText="行"
-          />
-          {this.state.sweetAlert}
-          <Dialog
-            classes={{
-              paper: classes.modal
-            }}
-            maxWidth={false}
-            open={this.state.openEditForm}
-            transition={Transition}
-            keepMounted
-            onClose={() => this.handleCloseModal()}
-            aria-labelledby="notice-modal-slide-title"
-            aria-describedby="notice-modal-slide-description"
-            disableBackdropClick
-          >
-            <DialogTitle
-              id="notice-modal-slide-title"
-              disableTypography
-              className={classes.modalHeader}
+              ]}
+              defaultPageSize={10}
+              showPaginationTop
+              showPaginationBottom={false}
+              className="-striped -highlight"
+              previousText="< 前"
+              nextText="次 >"
+              loadingText="読込中..."
+              noDataText="データがありません"
+              pageText=""
+              ofText="/"
+              rowsText="行"
+            />
+            {this.state.sweetAlert}
+            <Dialog
+              classes={{
+                paper: classes.modal
+              }}
+              maxWidth={false}
+              open={this.state.openEditForm}
+              transition={Transition}
+              keepMounted
+              onClose={() => this.handleCloseModal()}
+              aria-labelledby="notice-modal-slide-title"
+              aria-describedby="notice-modal-slide-description"
+              disableBackdropClick
             >
-              <IconButton
-                style={modalCloseButtonStyle}
-                key="close"
-                aria-label="Close"
-                color="defaultNoBackground"
-                onClick={() => this.handleCloseModal()}
+              <DialogTitle
+                id="notice-modal-slide-title"
+                disableTypography
+                className={classes.modalHeader}
               >
-                <Close className={classes.modalClose} />
-              </IconButton>
-            </DialogTitle>
-            <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
-              <FormBlogEdit
-                isLoading={this.props.isLoading}
-                errorMessage={this.props.errorMessage}
-                closeModal={this.handleCloseModal}
-                targetAccount={this.state.targetAccount}
-                updateAccount={this.props.editAccount}
-              />
-            </DialogContent>
-          </Dialog>
-        </ItemGrid>
-      </GridContainer>
+                <IconButton
+                  style={modalCloseButtonStyle}
+                  key="close"
+                  aria-label="Close"
+                  color="defaultNoBackground"
+                  onClick={() => this.handleCloseModal()}
+                >
+                  <Close className={classes.modalClose} />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
+                <FormBlogEdit
+                  mode={this.props.mode}
+                  errorMessage={this.props.errorMessage}
+                  closeModal={this.handleCloseModal}
+                  targetAccount={this.state.targetAccount}
+                  updateAccount={this.props.editAccount}
+                  formStatus={this.state.openEditForm}
+                />
+              </DialogContent>
+            </Dialog>
+          </ItemGrid>
+        </GridContainer>
+      </Loadable>
     );
   }
 }

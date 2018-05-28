@@ -133,8 +133,7 @@ class MailAddressList extends React.Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
-    // 処理 deleteで更新されたのか？
-    console.log(`nextPros.mode:${nextProps.mode}`);
+    // 処理 deleteで更新されたのか？ this.stae.modeが空欄の場合はrequest
     if (nextProps.mode === 'delete' && this.state.mode === 'delete') {
       if (!nextProps.isFailure) {
         // delete success
@@ -171,6 +170,7 @@ class MailAddressList extends React.Component<Props, State> {
         });
       }
     } else {
+      // 削除以外
       this.setState({
         data: this.convertTableData(nextProps.mailAccounts)
       });
@@ -210,6 +210,7 @@ class MailAddressList extends React.Component<Props, State> {
                     createDate: moment(account.createDate).valueOf(),
                     lastLogin: restoredLastLogin
                   };
+                  // ログインするアカウントをセットして、showMailAccount
                   this.showMailAccount(target);
                 } else {
                   alert('ログイン用アカウントの取得に失敗しました。');
@@ -234,6 +235,7 @@ class MailAddressList extends React.Component<Props, State> {
                     createDate: moment(account.createDate).valueOf(),
                     lastLogin: restoredLastLogin
                   };
+                  // 編集対象のアカウントをセットしてshowEditForm
                   this.showEditForm(target);
                 } else {
                   alert('編集対象のメールアカウントの取得に失敗しました。');
@@ -256,6 +258,7 @@ class MailAddressList extends React.Component<Props, State> {
                     createDate: moment(account.createDate).valueOf(),
                     lastLogin: moment(account.lastLogin).valueOf()
                   };
+                  // 削除処理
                   this.handleDeleteMailAccount(target);
                 } else {
                   alert('削除対象のメールアカウントの取得に失敗しました。');
@@ -604,6 +607,7 @@ class MailAddressList extends React.Component<Props, State> {
               <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
                 <FormMailAddressEdit
                   mode={this.props.mode}
+                  formStatus={this.state.openEditForm}
                   errorMessage={this.props.errorMessage}
                   closeModal={this.handleCloseEditForm}
                   targetAccount={this.state.targetAccount}
@@ -642,6 +646,7 @@ class MailAddressList extends React.Component<Props, State> {
               </DialogTitle>
               <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
                 <MailAccount
+                  formStatus={this.state.openMailAccount}
                   targetAccount={this.state.targetAccount}
                   closeMailAccount={this.handleCloseMailAccount}
                 />

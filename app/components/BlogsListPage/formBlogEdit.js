@@ -5,6 +5,7 @@ import FormLabel from 'material-ui/Form/FormLabel';
 import TagsInput from 'react-tagsinput';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import Loadable from 'react-loading-overlay';
 import type BlogAccountType from '../../types/blogAccount';
 import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button } from '../../ui';
 
@@ -15,11 +16,12 @@ import { getBlogProviderImage } from './blogList';
 
 export type Props = {
   classes: Object,
-  isLoading: boolean,
+  mode: string,
   errorMessage: string,
   targetAccount: BlogAccountType,
   updateAccount: () => void,
-  closeModal: () => void
+  closeModal: () => void,
+  formStatus: boolean
 };
 
 type State = {
@@ -73,7 +75,7 @@ class FormBlogEdit extends Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
-    if (!nextProps.isLoading) {
+    if (nextProps.mode === 'update' && this.state.isUpdated) {
       console.log(`props change isUpdated:${this.state.isUpdated}`);
       // propsのtargetAccountが持つtagsは文字列のため、「,」で区切り、配列を取得
       const tagArray =
@@ -174,8 +176,23 @@ class FormBlogEdit extends Component<Props, State> {
         default:
           break;
       }
-    } else {
+    } else if (this.props.formStatus) {
       // loading
+      const tagArray =
+        this.props.targetAccount.groupTags.length > 0
+          ? this.props.targetAccount.groupTags.split(',')
+          : [];
+      this.setState({
+        accountId: this.props.targetAccount.accountId,
+        password: this.props.targetAccount.password,
+        mailAddress: this.props.targetAccount.mailAddress,
+        title: this.props.targetAccount.title,
+        description: this.props.targetAccount.description,
+        remark: this.props.targetAccount.remark,
+        groupTags: tagArray,
+        data: this.convertTableData(nextProps.targetAccount.detailInfo),
+        sweetAlert: null
+      });
     }
   };
 
@@ -293,208 +310,216 @@ class FormBlogEdit extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <GridContainer>
-        <ItemGrid xs={12} sm={12} md={12}>
-          <HeaderCard
-            cardTitle="ブログ情報　編集"
-            headerColor="rose"
-            content={
-              <div>
-                <ItemGrid xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
-                  <div className={classes.buttonGroupStyle}>
-                    <div className={classes.buttonGroup}>
-                      <Button
-                        color="primary"
-                        customClass={classes.firstButton}
-                        onClick={this.props.closeModal}
-                      >
-                        キャンセル
-                      </Button>
-                      <Button
-                        color="primary"
-                        customClass={classes.lastButton}
-                        onClick={this.updateBlogAccount}
-                      >
-                        保存
-                      </Button>
-                    </div>
-                  </div>
-                </ItemGrid>
-                <form>
-                  <GridContainer>
-                    <ItemGrid xs={12} sm={3}>
-                      <FormLabel className={classes.labelHorizontalLessUpperSpace}>
-                        ブログ名:
-                      </FormLabel>
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={8}>
-                      <CustomInput
-                        id="title"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        lessSpace
-                        inputProps={{
-                          type: 'text',
-                          value: this.state.title,
-                          onChange: event => this.handleChangeTitle(event)
-                        }}
-                      />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={1}>
-                      <img
-                        style={providerImageStyle}
-                        src={getBlogProviderImage(this.props.targetAccount.provider)}
-                        alt={this.props.targetAccount.provider}
-                      />
-                    </ItemGrid>
-                  </GridContainer>
-                  <GridContainer>
-                    <ItemGrid xs={12} sm={3}>
-                      <FormLabel className={classes.labelHorizontalLessUpperSpace}>
-                        ブログ説明
-                      </FormLabel>
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={9}>
-                      <CustomInput
-                        id="description"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        lessSpace
-                        inputProps={{
-                          type: 'text',
-                          value: this.state.description,
-                          onChange: event => this.handleChangeDescription(event)
-                        }}
-                      />
-                    </ItemGrid>
-                  </GridContainer>
-                  <GridContainer>
-                    <ItemGrid xs={12} sm={3}>
-                      <FormLabel className={classes.labelHorizontalLessUpperSpace}>
-                        ログインID:
-                      </FormLabel>
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={3}>
-                      <CustomInput
-                        id="accountId"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        lessSpace
-                        inputProps={{
-                          type: 'text',
-                          disabled: true,
-                          value: this.state.accountId,
-                          onChange: event => this.handleChangeAccountId(event)
-                        }}
-                      />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={3}>
-                      <FormLabel className={classes.labelHorizontalLessUpperSpace}>
-                        パスワード:
-                      </FormLabel>
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={3}>
-                      <CustomInput
-                        id="pass"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        lessSpace
-                        inputProps={{
-                          type: 'text',
-                          value: this.state.password,
-                          onChange: event => this.handleChangePassword(event)
-                        }}
-                      />
-                    </ItemGrid>
-                  </GridContainer>
-                  <GridContainer>
-                    <ItemGrid xs={12} sm={2}>
-                      <FormLabel className={classes.labelHorizontalLessUpperSpace}>作成:</FormLabel>
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={3}>
-                      <CustomInput
-                        id="disabled"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        lessSpace
-                        inputProps={{
-                          className: classes.inputNoLabelLessUpperSpace,
-                          disabled: true,
-                          // eslint-disable-next-line function-paren-newline
-                          value: moment(this.props.targetAccount.createDate).format(
-                            'YYYY/MM/DD HH:mm'
-                            // eslint-disable-next-line function-paren-newline
-                          )
-                        }}
-                      />
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={1}>
-                      <FormLabel className={classes.labelHorizontalLessUpperSpace}>URL:</FormLabel>
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={6}>
-                      <div style={urlSpaceAdjust}>
-                        <a href={this.props.targetAccount.url} target="_blank">
-                          {this.props.targetAccount.url}
-                        </a>
+      <Loadable active={this.state.isUpdated} spinner text="サーバーと通信中・・・・">
+        <GridContainer>
+          <ItemGrid xs={12} sm={12} md={12}>
+            <HeaderCard
+              cardTitle="ブログ情報　編集"
+              headerColor="rose"
+              content={
+                <div>
+                  <ItemGrid xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
+                    <div className={classes.buttonGroupStyle}>
+                      <div className={classes.buttonGroup}>
+                        <Button
+                          color="primary"
+                          customClass={classes.firstButton}
+                          onClick={this.props.closeModal}
+                        >
+                          キャンセル
+                        </Button>
+                        <Button
+                          color="primary"
+                          customClass={classes.lastButton}
+                          onClick={this.updateBlogAccount}
+                        >
+                          保存
+                        </Button>
                       </div>
-                    </ItemGrid>
-                  </GridContainer>
-                  <GridContainer>
-                    <ItemGrid xs={12} sm={3}>
-                      <FormLabel className={classes.labelHorizontalLeastUpperSpace}>
-                        グループタグ:
-                      </FormLabel>
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={9}>
-                      <div className={classes.inputNoLabelLessUpperSpace}>
-                        <TagsInput
-                          value={this.state.groupTags}
-                          tagProps={{ className: 'react-tagsinput-tag info' }}
-                          onChange={::this.handleTags}
+                    </div>
+                  </ItemGrid>
+                  <form>
+                    <GridContainer>
+                      <ItemGrid xs={12} sm={3}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                          ブログ名:
+                        </FormLabel>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={8}>
+                        <CustomInput
+                          id="title"
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          lessSpace
                           inputProps={{
-                            className: 'react-tagsinput-input',
-                            placeholder: 'ここへタグを追加'
+                            type: 'text',
+                            value: this.state.title,
+                            onChange: event => this.handleChangeTitle(event)
                           }}
                         />
-                      </div>
-                    </ItemGrid>
-                  </GridContainer>
-                  <GridContainer>
-                    <ItemGrid xs={12} sm={1}>
-                      <FormLabel className={classes.labelHorizontalLessUpperSpace}>備考:</FormLabel>
-                    </ItemGrid>
-                    <ItemGrid xs={12} sm={11}>
-                      <CustomInput
-                        id="pass"
-                        formControlProps={{
-                          fullWidth: true
-                        }}
-                        lessSpace
-                        inputProps={{
-                          type: 'text',
-                          value: this.state.remark,
-                          onChange: event => this.handleChangeRemark(event)
-                        }}
-                      />
-                    </ItemGrid>
-                  </GridContainer>
-                  <GridContainer>
-                    <ItemGrid>
-                      <Table tableHead={['---詳細情報---']} tableData={this.state.data} />
-                    </ItemGrid>
-                  </GridContainer>
-                </form>
-              </div>
-            }
-          />
-          {this.state.sweetAlert}
-        </ItemGrid>
-      </GridContainer>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={1}>
+                        <img
+                          style={providerImageStyle}
+                          src={getBlogProviderImage(this.props.targetAccount.provider)}
+                          alt={this.props.targetAccount.provider}
+                        />
+                      </ItemGrid>
+                    </GridContainer>
+                    <GridContainer>
+                      <ItemGrid xs={12} sm={3}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                          ブログ説明
+                        </FormLabel>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={9}>
+                        <CustomInput
+                          id="description"
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          lessSpace
+                          inputProps={{
+                            type: 'text',
+                            value: this.state.description,
+                            onChange: event => this.handleChangeDescription(event)
+                          }}
+                        />
+                      </ItemGrid>
+                    </GridContainer>
+                    <GridContainer>
+                      <ItemGrid xs={12} sm={3}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                          ログインID:
+                        </FormLabel>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={3}>
+                        <CustomInput
+                          id="accountId"
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          lessSpace
+                          inputProps={{
+                            type: 'text',
+                            disabled: true,
+                            value: this.state.accountId,
+                            onChange: event => this.handleChangeAccountId(event)
+                          }}
+                        />
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={3}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                          パスワード:
+                        </FormLabel>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={3}>
+                        <CustomInput
+                          id="pass"
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          lessSpace
+                          inputProps={{
+                            type: 'text',
+                            value: this.state.password,
+                            onChange: event => this.handleChangePassword(event)
+                          }}
+                        />
+                      </ItemGrid>
+                    </GridContainer>
+                    <GridContainer>
+                      <ItemGrid xs={12} sm={2}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                          作成:
+                        </FormLabel>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={3}>
+                        <CustomInput
+                          id="disabled"
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          lessSpace
+                          inputProps={{
+                            className: classes.inputNoLabelLessUpperSpace,
+                            disabled: true,
+                            // eslint-disable-next-line function-paren-newline
+                            value: moment(this.props.targetAccount.createDate).format(
+                              'YYYY/MM/DD HH:mm'
+                              // eslint-disable-next-line function-paren-newline
+                            )
+                          }}
+                        />
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={1}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                          URL:
+                        </FormLabel>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={6}>
+                        <div style={urlSpaceAdjust}>
+                          <a href={this.props.targetAccount.url} target="_blank">
+                            {this.props.targetAccount.url}
+                          </a>
+                        </div>
+                      </ItemGrid>
+                    </GridContainer>
+                    <GridContainer>
+                      <ItemGrid xs={12} sm={3}>
+                        <FormLabel className={classes.labelHorizontalLeastUpperSpace}>
+                          グループタグ:
+                        </FormLabel>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={9}>
+                        <div className={classes.inputNoLabelLessUpperSpace}>
+                          <TagsInput
+                            value={this.state.groupTags}
+                            tagProps={{ className: 'react-tagsinput-tag info' }}
+                            onChange={::this.handleTags}
+                            inputProps={{
+                              className: 'react-tagsinput-input',
+                              placeholder: 'ここへタグを追加'
+                            }}
+                          />
+                        </div>
+                      </ItemGrid>
+                    </GridContainer>
+                    <GridContainer>
+                      <ItemGrid xs={12} sm={1}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                          備考:
+                        </FormLabel>
+                      </ItemGrid>
+                      <ItemGrid xs={12} sm={11}>
+                        <CustomInput
+                          id="pass"
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          lessSpace
+                          inputProps={{
+                            type: 'text',
+                            value: this.state.remark,
+                            onChange: event => this.handleChangeRemark(event)
+                          }}
+                        />
+                      </ItemGrid>
+                    </GridContainer>
+                    <GridContainer>
+                      <ItemGrid>
+                        <Table tableHead={['---詳細情報---']} tableData={this.state.data} />
+                      </ItemGrid>
+                    </GridContainer>
+                  </form>
+                </div>
+              }
+            />
+            {this.state.sweetAlert}
+          </ItemGrid>
+        </GridContainer>
+      </Loadable>
     );
   }
 }
