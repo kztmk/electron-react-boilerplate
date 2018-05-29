@@ -56,7 +56,7 @@ const accountListPageStyle = {
     minHeight: '60vh',
     maxHeight: '100vh',
     minWidth: '75vw',
-    maxWidth: '88vw'
+    maxWidth: '95vw'
   },
   modalHeader: {
     borderBottom: 'none',

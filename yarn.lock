@@ -8722,9 +8722,9 @@ react-bootstrap-sweetalert@^4.2.3:
   dependencies:
     object-assign "^4.1.0"
 
-react-datetime@^2.14.0:
+"react-datetime@git+https://github.com/kztmk/react-datetime.git#master":
   version "2.14.0"
-  resolved "https://registry.yarnpkg.com/react-datetime/-/react-datetime-2.14.0.tgz#c7859c5b765275d7980f1cca27c03a727ff9ccef"
+  resolved "git+https://github.com/kztmk/react-datetime.git#18eebb433dac29e03bab0a69807d2ae641c846ff"
   dependencies:
     create-react-class "^15.5.2"
     object-assign "^3.0.0"

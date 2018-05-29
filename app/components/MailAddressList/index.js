@@ -477,7 +477,6 @@ class MailAddressListPage extends React.Component<Props, State> {
             </Dialog>
             <Dialog
               classes={{
-                root: classes.center,
                 paper: `${classes.modal} ${classes.modalSmall}`
               }}
               open={this.state.openFormMailAddressAdd}

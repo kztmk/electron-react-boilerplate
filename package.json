@@ -233,7 +233,7 @@
     "puppeteer": "^1.4.0",
     "react": "^16.2.0",
     "react-bootstrap-sweetalert": "^4.2.3",
-    "react-datetime": "^2.14.0",
+    "react-datetime": "git+https://github.com/kztmk/react-datetime.git#master",
     "react-dom": "^16.2.0",
     "react-hot-loader": "^4.0.0-beta.13",
     "react-loading-overlay": "^0.3.0",
