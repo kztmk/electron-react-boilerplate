@@ -139,15 +139,59 @@ function* importBlogAccounts(action) {
   }
 }
 
+/**
+ * databaseへブログを登録
+ * 登録前にURLを使用してダブりチェック
+ * @param action
+ * @returns {IterableIterator<*>}
+ */
 function* createBlogAccount(action) {
   const userAuth: AuthType = yield select(state => state.Login);
-  const newAccount: BlogAccountType = { ...action.payload };
+  const newAccount = {
+    accountId: action.payload.accountId,
+    password: action.payload.password,
+    mailAddress: action.payload.mailAddress,
+    provider: action.payload.provider,
+    title: action.payload.title,
+    description: action.payload.description,
+    url: action.payload.url,
+    remark: action.payload.remark,
+    createDate: action.payload.createDate,
+    detailInfo:
+      action.payload.detailInfo === undefined ||
+      action.payload.detailInfo === null ||
+      action.payload.detailInfo.length === 0
+        ? ['詳細情報なし']
+        : action.payload.detailInfo,
+    apiId: action.payload.apiId,
+    apiPass: action.payload.apiPass,
+    blogId: action.payload.blogId,
+    endPoint: action.payload.endPoint,
+    groupTags: action.payload.groupTags,
+    affiliateTags:
+      action.payload.affiliateTags === undefined ||
+      action.payload.affiliateTags === null ||
+      action.payload.affiliateTags.length === 0
+        ? ['アフィリエイト情報なし']
+        : action.payload.affiliateTags
+  };
+
+  const currentAccounts = yield select(state => state.BlogList.blogAccounts);
+
   try {
-    const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/blogAccount`, newAccount);
-    const blogAccounts = yield select(state => state.BlogList.blogAccounts);
-    yield put(
-      createBlogSuccess(...blogAccounts.push({ ...newAccount, key: ref }).sort(blogAccountSort))
-    );
+    // dup check
+    const dupAccount = currentAccounts.find(currentAccount => {
+      return currentAccount.url === newAccount.url;
+    });
+
+    if (!dupAccount) {
+      const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/blogAccount`, newAccount);
+      const addAccount = { ...newAccount, key: ref.key };
+      currentAccounts.push(addAccount);
+      yield put(createBlogSuccess(currentAccounts));
+    } else {
+      yield put(createBlogFailure('このURLは既に登録されています。'));
+    }
   } catch (error) {
     yield put(createBlogFailure(error.toString()));
   }

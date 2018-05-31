@@ -5,6 +5,7 @@ import { withStyles } from 'material-ui/styles';
 import Slide from 'material-ui/transitions/Slide';
 import Web from 'material-ui-icons/Web';
 import Loadable from 'react-loading-overlay';
+import Tooltip from 'material-ui/Tooltip';
 
 // import Button from 'material-ui/Button';
 import Dialog from 'material-ui/Dialog';
@@ -20,9 +21,12 @@ import { GridContainer, ItemGrid, IconCard, Snackbar } from '../../ui';
 import type BlogAccountType from '../../types/blogAccount';
 
 import Button from '../../ui/CustomButtons/Button';
+import { AddIcon, FolderDownloadIcon } from '../../asets/icons';
 
 import accountListPageStyles from '../../asets/jss/material-dashboard-pro-react/views/accountListPageStyle';
 import type MailAccountType from '../../types/mailAccount';
+
+import FormBlogAdd from './formBlogAdd';
 
 type State = {
   isLoading: boolean,
@@ -32,13 +36,14 @@ type State = {
   openSuccessNotification: boolean,
   openErrorNotification: boolean,
   openModalSaveErrorAccounts: boolean,
+  openFormBlogAdd: boolean,
   mode: string
 };
 type Props = {
   classes: Object,
   startGetBlogAccounts: () => void,
   startImportBlogAccounts: (blogAccounts: Array<BlogAccountType>) => void,
-  // startCreateBlogAccount: (blogAccount: BlogAccountType) => void,
+  startCreateBlogAccount: (blogAccount: BlogAccountType) => void,
   startUpdateBlogAccount: (blogAccount: BlogAccountType) => void,
   startDeleteBlogAccount: (blogAccount: BlogAccountType) => void,
   blogAccounts: Array<BlogAccountType>,
@@ -68,6 +73,7 @@ class BlogListPage extends React.Component<Props, State> {
       openSuccessNotification: false,
       openErrorNotification: false,
       openModalSaveErrorAccounts: false,
+      openFormBlogAdd: false,
       mode: 'none'
     };
   }
@@ -401,6 +407,20 @@ class BlogListPage extends React.Component<Props, State> {
     }
   };
 
+  /**
+   * ブログ追加フォームを開く
+   */
+  handleOpenFormBlogAdd = () => {
+    this.setState({ openFormBlogAdd: true });
+  };
+
+  /**
+   * ブログ追加フォームを閉じる
+   */
+  handleCloseFormBlogAdd = () => {
+    this.setState({ openFormBlogAdd: false });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -415,16 +435,26 @@ class BlogListPage extends React.Component<Props, State> {
                 <div>
                   <GridContainer justify="flex-end" className={classes.cardContentRight}>
                     <div className={classes.buttonGroupStyle}>
-                      <Button color="primary" customClass={classes.firstButton}>
-                        追加
-                      </Button>
-                      <Button
-                        color="primary"
-                        customClass={classes.lastButton}
-                        onClick={this.handleClickImportButton}
-                      >
-                        ファイルからインポート
-                      </Button>
+                      <Tooltip title="新規ブログを追加" placement="bottom">
+                        <Button
+                          color="primary"
+                          onClick={this.handleOpenFormBlogAdd}
+                          customClass={classes.firstButton}
+                        >
+                          <AddIcon />
+                          追加
+                        </Button>
+                      </Tooltip>
+                      <Tooltip title="寄騎形式のファイルからブログをインポート" placement="bottom">
+                        <Button
+                          color="primary"
+                          customClass={classes.lastButton}
+                          onClick={this.handleClickImportButton}
+                        >
+                          <FolderDownloadIcon />
+                          インポート
+                        </Button>
+                      </Tooltip>
                     </div>
                   </GridContainer>
                   <BlogList
@@ -499,6 +529,30 @@ class BlogListPage extends React.Component<Props, State> {
                   はい
                 </Button>
               </DialogActions>
+            </Dialog>
+            <Dialog
+              classes={{
+                paper: `${classes.modal} ${classes.modalSmall}`
+              }}
+              open={this.state.openFormBlogAdd}
+              transition={Transition}
+              keepMounted
+              onClose={() => this.handleCloseFormBlogAdd()}
+            >
+              <DialogContent
+                id="formMailAddressAddBody"
+                className={`${classes.modalBody} ${classes.modalSmallBody}`}
+              >
+                <FormBlogAdd
+                  mode={this.state.mode}
+                  formStatus={this.state.openFormBlogAdd}
+                  isFailure={this.props.isFailure}
+                  isLoading={this.props.isCreating}
+                  metaMessage={this.props.metaMessage}
+                  closeForm={this.handleCloseFormBlogAdd}
+                  addBlogAccount={this.props.startCreateBlogAccount}
+                />
+              </DialogContent>
             </Dialog>
           </ItemGrid>
         </GridContainer>

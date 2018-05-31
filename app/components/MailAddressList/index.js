@@ -198,6 +198,11 @@ class MailAddressListPage extends React.Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
+    console.log(
+      `imp:${nextProps.isImporting}--cre:${nextProps.isCreating}--Get:${nextProps.isGetting}--up:${
+        nextProps.isUpdating
+      }--del:${nextProps.isDeleting}`
+    );
     // notification表示用flagとmessage
     let isSuccess = false;
     let isFailure = false;
@@ -245,11 +250,13 @@ class MailAddressListPage extends React.Component<Props, State> {
       }
     } else {
       // Request時のpropsが更新で、modeに処理名を設定
+      console.log(`isCreating:${nextProps.isCreating}`);
       if (nextProps.isImporting) {
         this.setState({ mode: 'import' });
         return;
       }
       if (nextProps.isCreating) {
+        console.log('create request');
         this.setState({ mode: 'create' });
         return;
       }
@@ -354,10 +361,25 @@ class MailAddressListPage extends React.Component<Props, State> {
     }
   };
 
+  /**
+   * 編集フォームを閉じる
+   */
+  handleCloseEditForm = () => {
+    this.setState({
+      mode: ''
+    });
+  };
+
+  /**
+   * 追加フォームを開く
+   */
   handleOpenFormMailAddressAdd = () => {
     this.setState({ openFormMailAddressAdd: true });
   };
 
+  /**
+   * 追加フォームを閉じる
+   */
   handleCloseFormMailAddressAdd = () => {
     this.setState({ openFormMailAddressAdd: false });
   };
@@ -414,6 +436,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                     mailAccounts={this.props.mailAccounts}
                     deleteAccount={this.props.startDeleteMailAccount}
                     editAccount={this.props.startUpdateMailAccount}
+                    closeEditForm={this.handleCloseEditForm}
                     closeConnection={this.props.startCloseConnection}
                   />
                 </div>
@@ -489,6 +512,11 @@ class MailAddressListPage extends React.Component<Props, State> {
                 className={`${classes.modalBody} ${classes.modalSmallBody}`}
               >
                 <FormMailAddressAdd
+                  mode={this.state.mode}
+                  formStatus={this.state.openFormMailAddressAdd}
+                  isFailure={this.props.isFailure}
+                  isLoading={this.props.isCreating}
+                  metaMessage={this.props.metaMessage}
                   closeForm={this.handleCloseFormMailAddressAdd}
                   addMailAddress={this.props.startCreateMailAccount}
                 />

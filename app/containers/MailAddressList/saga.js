@@ -136,17 +136,52 @@ function* importMailAccounts(action) {
   }
 }
 
+/**
+ * databseへメールアカウントを登録
+ * 登録前に、mailAccountを使用してダブりチェック
+ * @param action
+ * @returns {IterableIterator<*>}
+ */
 function* createMailAccount(action) {
+  console.log('call create account');
   const userAuth = yield select(state => state.Login);
-  const newAccount: MailAccountType = { ...action.payload };
+  const newAccount = {
+    accountId: action.payload.accountId,
+    password: action.payload.password,
+    mailAddress: action.payload.mailAddress,
+    provider: action.payload.provider,
+    createDate: action.payload.createDate,
+    lastLogin: 0,
+    tags: action.payload.tags,
+    detailInfo:
+      action.payload.detailInfo === undefined ||
+      action.payload.detailInfo === null ||
+      action.payload.detailInfo.length === 0
+        ? ['詳細情報なし']
+        : action.payload.detailInfo
+  };
+  const currentAccounts = yield select(state => state.MailAddressList.mailAccounts);
+
   try {
-    const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, newAccount);
-    const mailAccounts = yield select(state => state.MailAddressList.mailAccounts);
-    yield put(
-      createMailAddressSuccess(
-        ...mailAccounts.push({ ...newAccount, key: ref.key }).sort(mailAccountSort)
-      )
-    );
+    // dup check
+    console.log('dup check');
+    console.log(newAccount.mailAddress);
+    // eslint-disable-next-line arrow-body-style
+    const dupAccount = currentAccounts.find(currentAccount => {
+      return currentAccount.mailAddress === newAccount.mailAddress;
+    });
+
+    if (!dupAccount) {
+      console.log('not dup');
+      const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, newAccount);
+      const addAccount = { ...newAccount, key: ref.key };
+      currentAccounts.push(addAccount);
+
+      yield put(createMailAddressSuccess(currentAccounts));
+    } else {
+      console.log('found dup');
+      yield put(createMailAddressFailure('このメールアドレスは、既に登録されています。'));
+    }
   } catch (error) {
     yield put(createMailAddressFailure(error.toString()));
   }

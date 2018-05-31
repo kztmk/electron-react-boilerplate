@@ -83,18 +83,25 @@ function* getMailboxes() {
  * @param startSeq
  * @returns {IterableIterator<*>}
  */
-function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
+function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0, onlyBoxInfo = false) {
   if (imapClient === null) {
     throw new Error({ errorMessage: '接続が切れています。開き直してください。' });
   }
   console.log(imapProperty.mailCount);
   // mailbox情報の取得関数を作成
-  const getMailboxInfo = (client, boxPath) =>
-    client.selectMailbox(boxPath).then(mailbox => mailbox);
+  // let mailBoxInfo = new Object();
+  // const getMailboxInfo = (client, boxPath) =>
+  // client.selectMailbox(boxPath).then(mailbox => mailbox);
   // mailbox情報を取得
-  const mailBoxInfo = yield call(getMailboxInfo, imapClient, path);
+  // mailBoxInfo = yield call(getMailboxInfo, imapClient, path);
+  const mailBoxInfo = yield imapClient.selectMailbox(path).then(mailbox => mailbox);
+  console.log('-----------------------------------');
+  console.log(`now mailCount:${imapProperty.mailCount}`);
+  console.log(`now unseen:${imapProperty.selectMailBoxPath}`);
   // 返却用オブジェクトへ格納
   imapProperty.selectMailBoxPath = path;
+  console.log(`property:${imapProperty.mailCount}`);
+  console.log(`boxInfo:${mailBoxInfo.exists}`);
   imapProperty.mailCount = mailBoxInfo.exists;
 
   // メール取得位置の作成
@@ -394,6 +401,7 @@ function* moveMails(action) {
       // pathを指定してmailBox内のメールを取得
       let boxPath = action.payload.moveDestination;
       if (boxPath.toLowerCase() === 'trash' || boxPath.toLowerCase() === 'deleted') {
+        yield call(getSelectMailboxInfoAndMessages, boxPath, 0, true);
         boxPath = 'INBOX';
       }
       yield call(getSelectMailboxInfoAndMessages, boxPath, 0);

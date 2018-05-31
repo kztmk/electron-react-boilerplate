@@ -57,7 +57,8 @@ type Props = {
   errorMessage: string,
   deleteAccount: () => void,
   editAccount: () => void,
-  closeConnection: () => void
+  closeConnection: () => void,
+  closeEditForm: () => void
 };
 
 const initialMailAccount = {
@@ -400,6 +401,8 @@ class MailAddressList extends React.Component<Props, State> {
     this.setState({
       openEditForm: false
     });
+    // 親フォームのmodeをリセット
+    this.props.closeEditForm();
   };
 
   showMailAccount = account => {

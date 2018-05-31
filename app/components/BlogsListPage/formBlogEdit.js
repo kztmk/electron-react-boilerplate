@@ -6,11 +6,13 @@ import TagsInput from 'react-tagsinput';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Loadable from 'react-loading-overlay';
+import Cancel from 'material-ui-icons/Cancel';
 import type BlogAccountType from '../../types/blogAccount';
 import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button } from '../../ui';
 
 import regularFormsStyle from '../../asets/jss/material-dashboard-pro-react/views/regularFormsStyle';
 import Table from '../../ui/Table/Table';
+import { SaveAltIcon } from '../../asets/icons';
 
 import { getBlogProviderImage } from './blogList';
 
@@ -38,6 +40,11 @@ const providerImageStyle = {
   paddingTop: '6px',
   width: '32px',
   height: '36px'
+};
+
+const iconStyle = {
+  width: '18px',
+  height: '18px'
 };
 
 const urlSpaceAdjust = {
@@ -326,6 +333,7 @@ class FormBlogEdit extends Component<Props, State> {
                           customClass={classes.firstButton}
                           onClick={this.props.closeModal}
                         >
+                          <Cancel style={iconStyle} />
                           キャンセル
                         </Button>
                         <Button
@@ -333,6 +341,7 @@ class FormBlogEdit extends Component<Props, State> {
                           customClass={classes.lastButton}
                           onClick={this.updateBlogAccount}
                         >
+                          <SaveAltIcon style={iconStyle} />
                           保存
                         </Button>
                       </div>
