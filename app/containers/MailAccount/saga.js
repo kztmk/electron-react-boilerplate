@@ -400,6 +400,7 @@ function* moveMails(action) {
 
       // pathを指定してmailBox内のメールを取得
       let boxPath = action.payload.moveDestination;
+
       if (boxPath.toLowerCase() === 'trash' || boxPath.toLowerCase() === 'deleted') {
         yield call(getSelectMailboxInfoAndMessages, boxPath, 0, true);
         boxPath = 'INBOX';

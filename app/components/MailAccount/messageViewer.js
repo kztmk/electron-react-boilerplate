@@ -408,6 +408,9 @@ class MessageViewer extends Component<Props, State> {
           <ReactTable
             data={this.state.data}
             showPagination={false}
+            showPaginationBottom={false}
+            showPageSizeOption={false}
+            defaultPageSize={25}
             resizable
             filterable
             columns={[

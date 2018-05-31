@@ -16,11 +16,9 @@ import Cancel from 'material-ui-icons/Cancel';
 import AddAlert from 'material-ui-icons/AddAlert';
 
 import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button, Snackbar } from '../../ui';
-import type MailAccountType from '../../types/mailAccount';
 
 import { SaveAltIcon } from '../../asets/icons';
 import fromAddStyle from '../../asets/jss/material-dashboard-pro-react/views/formAddStyle';
-import { BlogProviders } from './blogProviders';
 
 import Fc2 from '../../asets/img/blogs/fc2.png';
 import Webnode from '../../asets/img/blogs/webnode.png';
@@ -108,12 +106,12 @@ class FormBlogAdd extends Component<Props, State> {
   }
 
   componentWillReceiveProps = nextProps => {
-    console.log(
+    /*    console.log(
       `add form props formState- this:${this.props.formStatus}--next:${nextProps.formStatus}`
     );
     console.log(`add form issFailure-this:${this.props.isFailure}--next:${nextProps.isFailure}`);
     console.log(`this-mode:${this.props.mode}--nextMode::${nextProps.mode}`);
-    console.log(`next errorMessage:${nextProps.metaMessage}`);
+    console.log(`next errorMessage:${nextProps.metaMessage}`);  */
     // formを開くときに初期化
     if (!this.props.formStatus && nextProps.formStatus) {
       this.setState({
@@ -749,6 +747,7 @@ class FormBlogAdd extends Component<Props, State> {
                           locale="ja"
                           onChange={value => this.setState({ createDate: value })}
                           value={this.state.createDate}
+                          closeOnSelect={true}
                         />
                       </ItemGrid>
                       <ItemGrid xs={12} sm={2}>
