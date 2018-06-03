@@ -21,7 +21,7 @@ class MainWindow {
       this.window.focus();
     });
 
-    // this.window.webContents.openDevTools();
+    this.window.webContents.openDevTools();
   }
 
   /**
