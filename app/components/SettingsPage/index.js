@@ -1,165 +1,31 @@
 // @flow
 import React, { Component } from 'react';
+import moment from 'moment';
 import { withStyles } from 'material-ui/styles';
 import Checkbox from 'material-ui/Checkbox';
+import FormControl from 'material-ui/Form/FormControl';
 import FormLabel from 'material-ui/Form/FormLabel';
 import FormControlLabel from 'material-ui/Form/FormControlLabel';
+import InputLabel from 'material-ui/Input/InputLabel';
 import Radio from 'material-ui/Radio';
+import Select from 'material-ui/Select';
+import MenuItem from 'material-ui/Menu/MenuItem';
 import PermIdentity from 'material-ui-icons/PermIdentity';
 import Check from 'material-ui-icons/Check';
 import FiberManualRecord from 'material-ui-icons/FiberManualRecord';
-import { GridContainer, ItemGrid, IconCard, CustomInput, Button, Clearfix } from '../../ui';
-import { primaryColor } from '../../asets/jss/material-dashboard-pro-react';
+import AddAlert from 'material-ui-icons/AddAlert';
+import {
+  GridContainer,
+  ItemGrid,
+  IconCard,
+  CustomInput,
+  Button,
+  Clearfix,
+  Snackbar
+} from '../../ui';
 import { SaveAltIcon } from '../../asets/icons';
 
-const styles = {
-  cardRoot: {
-    width: '75vw'
-  },
-  marginReset: {
-    margin: '-70px'
-  },
-  label: {
-    cursor: 'pointer',
-    paddingLeft: '0',
-    color: 'rgba(0, 0, 0, 0.7)',
-    fontSize: '14px',
-    lineHeight: '1.428571429',
-    fontWeight: '400',
-    display: 'inline-flex',
-    transition: '0.3s ease all'
-  },
-  labelDisabled: {
-    cursor: 'pointer',
-    paddingLeft: '0',
-    color: 'rgba(0, 0, 0, 0.26)',
-    fontSize: '14px',
-    lineHeight: '1.428571429',
-    fontWeight: '400',
-    display: 'inline-flex',
-    transition: '0.3s ease all'
-  },
-  labelHorizontal: {
-    color: 'rgba(0, 0, 0, 0.7)',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    fontSize: '14px',
-    lineHeight: '1.428571429',
-    fontWeight: '400',
-    paddingTop: '39px',
-    marginRight: '0',
-    '@media (min-width: 992px)': {
-      float: 'right'
-    }
-  },
-  labelHorizontalDisabled: {
-    color: 'rgba(0, 0, 0, 0.26)',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    fontSize: '14px',
-    lineHeight: '1.428571429',
-    fontWeight: '400',
-    paddingTop: '39px',
-    marginRight: '0',
-    '@media (min-width: 992px)': {
-      float: 'right'
-    }
-  },
-  labelHorizontalLessUpperSpace: {
-    color: 'rgba(0, 0, 0, 0.26)',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    fontSize: '14px',
-    lineHeight: '1.428571429',
-    fontWeight: '400',
-    paddingTop: '22px',
-    marginRight: '0',
-    '@media (min-width: 992px)': {
-      float: 'right'
-    }
-  },
-  checkboxAndRadio: {
-    position: 'relative',
-    display: 'block',
-    marginTop: '10px',
-    marginBottom: '10px'
-  },
-  checkboxAndRadioHorizontal: {
-    position: 'relative',
-    display: 'block',
-    '&:first-child': {
-      marginTop: '10px'
-    },
-    '&:not(:first-child)': {
-      marginTop: '-14px'
-    },
-    marginTop: '0',
-    marginBottom: '0'
-  },
-  checked: {
-    color: primaryColor
-  },
-  checkedIcon: {
-    width: '20px',
-    height: '20px',
-    border: '1px solid rgba(0, 0, 0, .54)',
-    borderRadius: '3px'
-  },
-  uncheckedIcon: {
-    width: '0px',
-    height: '0px',
-    padding: '9px',
-    border: '1px solid rgba(0, 0, 0, .54)',
-    borderRadius: '3px'
-  },
-  radio: {
-    color: primaryColor
-  },
-  radioChecked: {
-    width: '20px',
-    height: '20px',
-    border: `1px solid ${primaryColor}`,
-    borderRadius: '50%'
-  },
-  radioUnchecked: {
-    width: '0px',
-    height: '0px',
-    padding: '9px',
-    border: '1px solid rgba(0, 0, 0, .54)',
-    borderRadius: '50%'
-  },
-  groupBox: {
-    border: '1px solid rgba(0, 0, 0, .54)',
-    borderRadius: '30px',
-    padding: '20px'
-  },
-  groupBoxDisabled: {
-    border: '1px solid rgba(0, 0, 0, .25)',
-    borderRadius: '30px',
-    padding: '20px'
-  },
-  cardContentRight: {
-    padding: '0',
-    position: 'relative'
-  },
-  buttonGroupStyle: {
-    marginTop: '-65px'
-  },
-  buttonGroup: {
-    position: 'relative',
-    margin: '10px 1px',
-    display: 'inline-block',
-    verticalAlign: 'middle'
-  },
-  lastButton: {
-    borderTopLeftRadius: '0',
-    borderBottomLeftRadius: '0',
-    margin: '0',
-    '&:hover': {
-      zIndex: '2'
-    }
-  }
-};
+import settingPageStyle from '../../asets/jss/material-dashboard-pro-react/views/settingsPage';
 
 const iconStyle = {
   width: '18px',
@@ -193,7 +59,9 @@ type State = {
   postalCodeState: string,
   prefecture: string,
   prefectureState: string,
-  useDefault: boolean
+  useDefault: boolean,
+  errorMessage: string,
+  openErrorSnackbar: boolean
 };
 
 class SettingsPage extends React.Component<Props, State> {
@@ -223,7 +91,9 @@ class SettingsPage extends React.Component<Props, State> {
       postalCodeState: '',
       prefecture: '',
       prefectureState: '',
-      useDefault: false
+      useDefault: false,
+      errorMessage: '',
+      openErrorSnackbar: false
     };
   }
 
@@ -381,6 +251,157 @@ class SettingsPage extends React.Component<Props, State> {
     this.setState({ useDefault: !this.state.useDefault });
   };
 
+  saveSettings = () => {
+    let errorMsg = '';
+    if (this.state.lastNameKanji.length === 0) {
+      this.setState({ lastNameKanjiState: 'error' });
+      errorMsg += '姓(漢字)は必須項目です。\n';
+    }
+
+    if (this.state.firstNameKanji.length === 0) {
+      this.setState({ firstNameKanjiState: 'error' });
+      errorMsg += '名(漢字)は必須項目です。\n';
+    }
+
+    if (this.state.lastNameKana.length === 0) {
+      this.setState({ lastNameKanaState: 'error' });
+      errorMsg += 'せい(ひらがな)は、必須項目です。\n';
+    } else if (this.state.lastNameKanaState !== 'success') {
+      errorMsg += 'せい（ひらがな）に、平仮名以外が含まれていませんか？\n';
+    }
+
+    if (this.state.firstNameKana.length === 0) {
+      this.setState({ firstNameKanaState: 'error' });
+      errorMsg += 'めい(ひらがな)は、必須項目です。\n';
+    } else if (this.state.firstNameKanaState !== 'success') {
+      errorMsg += 'めい(ひらがな)に、平仮名以外が含まれていませんか？\n';
+    }
+
+    if (this.state.lastNameKatakana.length === 0) {
+      this.setState({ lastNameKatakanaState: 'error' });
+      errorMsg += 'セイ(カタカナ)は、必須項目です。\n';
+    } else if (this.state.lastNameKatakanaState !== 'success') {
+      errorMsg += 'セイ（カタカナ）に、カタカナ以外が含まれていませんか？\n';
+    }
+
+    if (this.state.firstNameKatakana.length === 0) {
+      this.setState({ firstNameKatakanaState: 'error' });
+      errorMsg += 'メイ(カタカナ)は、必須項目です。\n';
+    } else if (this.state.firstNameKatakanaState !== 'success') {
+      errorMsg += 'メイ(カタカナ)に、カタカナ以外が含まれていませんか？\n';
+    }
+
+    if (this.state.lastNameHepburn.length === 0) {
+      this.setState({ lastNameHepburnState: 'error' });
+      errorMsg += '姓(ローマ字)は必須項目です。\n';
+    } else if (this.state.lastNameHepburnState !== 'success') {
+      errorMsg += '姓（ローマ字）に、半角英文字以外が含まれていませんか？\n';
+    }
+
+    if (this.state.firstNameHepburn.length === 0) {
+      this.setState({ firstNameHepburnState: 'error' });
+      errorMsg += '名(ローマ字)は、必須項目です。\n';
+    } else if (this.state.firstNameHepburnState !== 'success') {
+      errorMsg += '名(ローマ字)に、半角英文字以外が含まれていませんか？\n';
+    }
+
+    if (this.state.postalCode.length === 0) {
+      this.setState({ postalCodeState: 'error' });
+      errorMsg += '郵便番号は必須項目です。\n';
+    } else if (this.state.postalCodeState !== 'success') {
+      errorMsg += '郵便番号に半角数字以外が含まれていませんか？\n';
+    }
+
+    if (!moment(this.state.birthDate).isValid()) {
+      this.setState({ birthDateState: 'error' });
+      errorMsg += '生年月日が有効な日付ではありません。';
+    }
+
+    if (errorMsg.length > 0) {
+      this.setState({
+        openErrorSnackbar: true,
+        errorMessage: errorMsg
+      });
+    }
+
+    // save settings
+  };
+
+  handleErrorSnackbarClose = () => {
+    this.setState({ openErrorSnackbar: false });
+  };
+
+  selectMenuItems = () => {
+    const prefectures = [
+      '北海道',
+      '青森県',
+      '岩手県',
+      '宮城県',
+      '秋田県',
+      '山形県',
+      '福島県',
+      '茨城県',
+      '栃木県',
+      '群馬県',
+      '埼玉県',
+      '千葉県',
+      '東京都',
+      '神奈川県',
+      '新潟県',
+      '富山県',
+      '石川県',
+      '福井県',
+      '山梨県',
+      '長野県',
+      '岐阜県',
+      '静岡県',
+      '愛知県',
+      '三重県',
+      '滋賀県',
+      '京都府',
+      '大阪府',
+      '兵庫県',
+      '奈良県',
+      '和歌山県',
+      '鳥取県',
+      '島根県',
+      '岡山県',
+      '広島県',
+      '山口県',
+      '徳島県',
+      '香川県',
+      '愛媛県',
+      '高知県',
+      '福岡県',
+      '佐賀県',
+      '長崎県',
+      '熊本県',
+      '大分県',
+      '宮崎県',
+      '鹿児島県',
+      '沖縄県'
+    ];
+
+    const { classes } = this.props;
+
+    return prefectures.map(p => (
+      <MenuItem
+        key={p}
+        classes={{
+          root: classes.selectMenuItem,
+          selected: classes.selectMenuItemSelected
+        }}
+        value={p}
+      >
+        {p}
+      </MenuItem>
+    ));
+  };
+
+  handleSelectPrefecture = event => {
+    this.setState({ prefecture: event.target.value });
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -405,7 +426,11 @@ class SettingsPage extends React.Component<Props, State> {
                     >
                       <div className={classes.buttonGroupStyle}>
                         <div className={classes.buttonGroup}>
-                          <Button color="primary" customClass={classes.lastButton}>
+                          <Button
+                            color="primary"
+                            customClass={classes.lastButton}
+                            onClick={this.saveSettings}
+                          >
                             <SaveAltIcon style={iconStyle} />
                             保存
                           </Button>
@@ -712,21 +737,43 @@ class SettingsPage extends React.Component<Props, State> {
                         />
                       </ItemGrid>
                       <ItemGrid xs={12} sm={12} md={4}>
-                        <CustomInput
-                          success={this.state.prefectureState === 'success'}
-                          error={this.state.prefectureState === 'error'}
-                          labelText="都道府県"
-                          id="prefecture"
-                          formControlProps={{
-                            fullWidth: true
-                          }}
-                          inputProps={{
-                            onChange: event => this.inputFormField(event, 'prefecture'),
-                            value: this.state.prefecture,
-                            type: 'text',
-                            disabled: !this.state.useDefault
-                          }}
-                        />
+                        <FormControl fullWidth className={classes.selectFormControl}>
+                          <InputLabel
+                            htmlFor="prefecture-select"
+                            className={
+                              !this.state.useDefault
+                                ? classes.selectLabelDisabled
+                                : classes.selectLabel
+                            }
+                          >
+                            都道府県名を選択
+                          </InputLabel>
+                          <Select
+                            MenuProps={{
+                              className: classes.selectMenu
+                            }}
+                            classes={{
+                              select: classes.select
+                            }}
+                            value={this.state.prefecture}
+                            onChange={this.handleSelectPrefecture}
+                            inputProps={{
+                              name: 'prefectureSelect',
+                              id: 'prefecture-select',
+                              disabled: !this.state.useDefault
+                            }}
+                          >
+                            <MenuItem
+                              disabled
+                              classes={{
+                                root: classes.selectMenuItem
+                              }}
+                            >
+                              都道府県名
+                            </MenuItem>
+                            {this.selectMenuItems()}
+                          </Select>
+                        </FormControl>
                       </ItemGrid>
                       <ItemGrid xs={12} sm={12} md={1} />
                     </GridContainer>
@@ -744,6 +791,8 @@ class SettingsPage extends React.Component<Props, State> {
                       </ItemGrid>
                       <ItemGrid xs={12} sm={3} md={4}>
                         <CustomInput
+                          success={this.state.birthDateState === 'success'}
+                          error={this.state.birthDateState === 'error'}
                           labelText="生年月日"
                           id="birthDate"
                           formControlProps={{
@@ -767,9 +816,18 @@ class SettingsPage extends React.Component<Props, State> {
             />
           </ItemGrid>
         </GridContainer>
+        <Snackbar
+          color="warning"
+          place="bc"
+          icon={AddAlert}
+          open={this.state.openErrorSnackbar}
+          closeNotification={this.handleErrorSnackbarClose}
+          close
+          message={<span id="login_error">{this.state.errorMessage}</span>}
+        />
       </GridContainer>
     );
   }
 }
 
-export default withStyles(styles)(SettingsPage);
+export default withStyles(settingPageStyle)(SettingsPage);
