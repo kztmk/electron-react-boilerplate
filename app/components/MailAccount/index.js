@@ -17,7 +17,7 @@ import IconButton from 'material-ui/IconButton';
 
 import Close from 'material-ui-icons/Close';
 
-import { MailSeenIcon, MailUnseenIcon, CloseIcon, TrashIcon } from '../../asets/icons';
+import { MailSeenIcon, MailUnseenIcon, CloseIcon, TrashIcon } from '../../assets/icons';
 
 import { Button } from '../../ui';
 import MailBox from './mailbox';

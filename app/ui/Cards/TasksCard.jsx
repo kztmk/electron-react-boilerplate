@@ -14,7 +14,7 @@ import Tab from 'material-ui/Tabs/Tab';
 // core components
 import Tasks from '../Tasks/Tasks';
 
-import tasksCardStyle from '../../asets/jss/material-dashboard-pro-react/components/tasksCardStyle';
+import tasksCardStyle from '../../assets/jss/material-dashboard-pro-react/components/tasksCardStyle';
 
 // react/require-default-props
 /* eslint-disable */

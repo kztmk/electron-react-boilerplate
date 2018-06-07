@@ -6,7 +6,7 @@ import cx from 'classnames';
 import withStyles from 'material-ui/styles/withStyles';
 import IconButton from 'material-ui/IconButton';
 
-import iconButtonStyle from '../../asets/jss/material-dashboard-pro-react/components/iconButtonStyle';
+import iconButtonStyle from '../../assets/jss/material-dashboard-pro-react/components/iconButtonStyle';
 
 // react/require-default-props
 /* eslint-disable */

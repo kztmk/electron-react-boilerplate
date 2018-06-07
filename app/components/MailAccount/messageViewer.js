@@ -14,7 +14,7 @@ import { GridContainer, ItemGrid, FullHeaderCard } from '../../ui';
 import text2Html from '../../utils/text2html';
 
 import type { ImapFlagsArgsType, MailRowMessageType } from '../../types/mailMessageType';
-import { primaryColor } from '../../asets/jss/material-dashboard-pro-react';
+import { primaryColor } from '../../assets/jss/material-dashboard-pro-react';
 
 // eslint-disable-next-line prefer-destructuring
 const MailParser = require('mailparser-mit').MailParser;

@@ -4,7 +4,7 @@ import React from 'react';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 
-import badgeStyle from '../../asets/jss/material-dashboard-pro-react/components/badgeStyle';
+import badgeStyle from '../../assets/jss/material-dashboard-pro-react/components/badgeStyle';
 
 export type Props = {
   classes: Object,

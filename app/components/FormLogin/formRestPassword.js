@@ -5,7 +5,7 @@ import Grid from 'material-ui/Grid';
 import { AddAlert } from 'material-ui-icons/AddAlert';
 import type { AuthType } from '../../types/auth';
 import { FullHeaderCard, ItemGrid, Button, Snackbar } from '../../ui';
-import { PasswordResetIcon } from '../../asets/icons';
+import { PasswordResetIcon } from '../../assets/icons';
 
 export type Props = {
   userAuth: AuthType,

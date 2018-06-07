@@ -9,7 +9,7 @@ import CardContent from 'material-ui/Card/CardContent';
 // material-ui-icons
 import FormatQuote from 'material-ui-icons/FormatQuote';
 
-import testimonialCardStyle from '../../asets/jss/material-dashboard-pro-react/components/testimonialCardStyle';
+import testimonialCardStyle from '../../assets/jss/material-dashboard-pro-react/components/testimonialCardStyle';
 
 // react/require-default-props
 /* eslint-disable */

@@ -17,23 +17,23 @@ import AddAlert from 'material-ui-icons/AddAlert';
 
 import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button, Snackbar } from '../../ui';
 
-import { SaveAltIcon } from '../../asets/icons';
-import fromAddStyle from '../../asets/jss/material-dashboard-pro-react/views/formAddStyle';
+import { SaveAltIcon } from '../../assets/icons';
+import fromAddStyle from '../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
 
-import Fc2 from '../../asets/img/blogs/fc2.png';
-import Webnode from '../../asets/img/blogs/webnode.png';
-import Livedoor from '../../asets/img/blogs/livedoor.png';
-import Seesaa from '../../asets/img/blogs/seesaa.png';
-import Ameba from '../../asets/img/blogs/ameba.png';
-import Rakuten from '../../asets/img/blogs/rakuten.png';
-import Kokolog from '../../asets/img/blogs/kokolog.png';
-import Yaplog from '../../asets/img/blogs/yaplog.png';
-import Jugem from '../../asets/img/blogs/jugem.png';
-import Ninjya from '../../asets/img/blogs/ninja.png';
-import Hatena from '../../asets/img/blogs/hatena.png';
-import Webryblog from '../../asets/img/blogs/webryblog.png';
-import Wpcom from '../../asets/img/blogs/wpcom.png';
-import Goo from '../../asets/img/blogs/goo.png';
+import Fc2 from '../../assets/img/blogs/fc2.png';
+import Webnode from '../../assets/img/blogs/webnode.png';
+import Livedoor from '../../assets/img/blogs/livedoor.png';
+import Seesaa from '../../assets/img/blogs/seesaa.png';
+import Ameba from '../../assets/img/blogs/ameba.png';
+import Rakuten from '../../assets/img/blogs/rakuten.png';
+import Kokolog from '../../assets/img/blogs/kokolog.png';
+import Yaplog from '../../assets/img/blogs/yaplog.png';
+import Jugem from '../../assets/img/blogs/jugem.png';
+import Ninjya from '../../assets/img/blogs/ninja.png';
+import Hatena from '../../assets/img/blogs/hatena.png';
+import Webryblog from '../../assets/img/blogs/webryblog.png';
+import Wpcom from '../../assets/img/blogs/wpcom.png';
+import Goo from '../../assets/img/blogs/goo.png';
 
 const selectAvatarStyle = {
   display: 'flex',

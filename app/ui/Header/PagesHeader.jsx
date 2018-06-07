@@ -22,7 +22,7 @@ import Menu from 'material-ui-icons/Menu';
 
 import pagesRoutes from '../../routes/app';
 
-import pagesHeaderStyle from '../../asets/jss/material-dashboard-pro-react/components/pagesHeaderStyle';
+import pagesHeaderStyle from '../../assets/jss/material-dashboard-pro-react/components/pagesHeaderStyle';
 
 // react/require-default-props
 /* eslint-disable */

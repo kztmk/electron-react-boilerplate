@@ -21,9 +21,9 @@ import { GridContainer, ItemGrid, IconCard, Snackbar } from '../../ui';
 import type BlogAccountType from '../../types/blogAccount';
 
 import Button from '../../ui/CustomButtons/Button';
-import { AddIcon, FolderDownloadIcon } from '../../asets/icons';
+import { AddIcon, FolderDownloadIcon } from '../../assets/icons';
 
-import accountListPageStyles from '../../asets/jss/material-dashboard-pro-react/views/accountListPageStyle';
+import accountListPageStyles from '../../assets/jss/material-dashboard-pro-react/views/accountListPageStyle';
 import type MailAccountType from '../../types/mailAccount';
 
 import FormBlogAdd from './formBlogAdd';

@@ -23,9 +23,9 @@ import {
   Clearfix,
   Snackbar
 } from '../../ui';
-import { SaveAltIcon } from '../../asets/icons';
+import { SaveAltIcon } from '../../assets/icons';
 
-import settingPageStyle from '../../asets/jss/material-dashboard-pro-react/views/settingsPage';
+import settingPageStyle from '../../assets/jss/material-dashboard-pro-react/views/settingsPage';
 
 const iconStyle = {
   width: '18px',

@@ -13,7 +13,7 @@ import InputLabel from 'material-ui/Input/InputLabel';
 import Clear from 'material-ui-icons/Clear';
 import Check from 'material-ui-icons/Check';
 
-import customInputStyle from '../../asets/jss/material-dashboard-pro-react/components/customInputStyle';
+import customInputStyle from '../../assets/jss/material-dashboard-pro-react/components/customInputStyle';
 
 // react/require-default-props
 /* eslint-disable */

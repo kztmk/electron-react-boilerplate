@@ -8,7 +8,7 @@ import withStyles from 'material-ui/styles/withStyles';
 // core components
 import Badge from '../Badge/Badge';
 
-import timelineStyle from '../../asets/jss/material-dashboard-pro-react/components/timelineStyle';
+import timelineStyle from '../../assets/jss/material-dashboard-pro-react/components/timelineStyle';
 
 /* eslint-disable react/require-default-props */
 export type Props = {

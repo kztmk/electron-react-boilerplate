@@ -8,7 +8,7 @@ import Card from 'material-ui/Card';
 import CardContent from 'material-ui/Card/CardContent';
 import CardHeader from 'material-ui/Card/CardHeader';
 
-import iconCardStyle from '../../asets/jss/material-dashboard-pro-react/components/iconCardStyle';
+import iconCardStyle from '../../assets/jss/material-dashboard-pro-react/components/iconCardStyle';
 
 // react/require-default-props
 /* eslint-disable */

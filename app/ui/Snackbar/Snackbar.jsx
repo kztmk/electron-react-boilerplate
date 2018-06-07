@@ -10,7 +10,7 @@ import IconButton from 'material-ui/IconButton';
 // material-ui-icons
 import Close from 'material-ui-icons/Close';
 
-import snackbarContentStyle from '../../asets/jss/material-dashboard-pro-react/components/snackbarContentStyle';
+import snackbarContentStyle from '../../assets/jss/material-dashboard-pro-react/components/snackbarContentStyle';
 
 
 /* eslint-disable react/require-default-props */

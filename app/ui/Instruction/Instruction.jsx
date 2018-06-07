@@ -9,7 +9,7 @@ import withStyles from 'material-ui/styles/withStyles';
 import GridContainer from '../Grid/GridContainer';
 import ItemGrid from '../Grid/ItemGrid';
 
-import instructionStyle from '../../asets/jss/material-dashboard-pro-react/components/instructionStyle';
+import instructionStyle from '../../assets/jss/material-dashboard-pro-react/components/instructionStyle';
 
 // react/require-default-props
 /* eslint-disable */

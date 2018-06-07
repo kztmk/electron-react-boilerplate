@@ -4,10 +4,10 @@ import { withStyles, Tooltip, Grid } from 'material-ui';
 import Modal from 'material-ui/Modal';
 import IconButton from 'material-ui/IconButton';
 import Cancel from 'material-ui-icons/Cancel';
-import { LogoutIcon } from '../../asets/icons';
+import { LogoutIcon } from '../../assets/icons';
 import { ItemGrid, FullHeaderCard, Button } from '../../ui';
 
-import LogoutButtonStyle from '../../asets/jss/material-dashboard-pro-react/components/logout';
+import LogoutButtonStyle from '../../assets/jss/material-dashboard-pro-react/components/logout';
 
 type Props = {
   classes: object,

@@ -9,7 +9,7 @@ import Card from 'material-ui/Card';
 // core components
 import Button from '../CustomButtons/Button';
 
-import wizardStyle from '../../asets/jss/material-dashboard-pro-react/components/wizardStyle';
+import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
 
 /* eslint-disable react/require-default-props */
 export type Props = {

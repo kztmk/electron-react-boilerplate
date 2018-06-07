@@ -5,7 +5,7 @@ import React from 'react';
 import withStyles from 'material-ui/styles/withStyles';
 import LinearProgress from 'material-ui/Progress/LinearProgress';
 
-import customLinearProgressStyle from '../../asets/jss/material-dashboard-pro-react/components/customLinearProgressStyle';
+import customLinearProgressStyle from '../../assets/jss/material-dashboard-pro-react/components/customLinearProgressStyle';
 
 export type Props = {
   classes: Object,

@@ -6,7 +6,7 @@ import moment from 'moment';
 import AddAlert from 'material-ui-icons/AddAlert';
 import { FullHeaderCard, Button, CustomInput, ItemGrid, Snackbar } from '../../ui';
 import type { UserAccountType } from '../../types/userAccount';
-import validateTextField from '../../asets/jss/material-dashboard-pro-react/components/validateTextField';
+import validateTextField from '../../assets/jss/material-dashboard-pro-react/components/validateTextField';
 
 export type Props = {
   userInfo: UserAccountType,

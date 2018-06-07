@@ -23,7 +23,7 @@ import Search from 'material-ui-icons/Search';
 import CustomInput from '../CustomInput/CustomInput';
 import SearchButton from '../CustomButtons/IconButton';
 
-import headerLinksStyle from '../../asets/jss/material-dashboard-pro-react/components/headerLinksStyle';
+import headerLinksStyle from '../../assets/jss/material-dashboard-pro-react/components/headerLinksStyle';
 
 // react/require-default-props
 /* eslint-disable */

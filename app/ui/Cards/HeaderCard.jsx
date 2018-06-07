@@ -9,7 +9,7 @@ import CardContent from 'material-ui/Card/CardContent';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardActions from 'material-ui/Card/CardActions';
 
-import headerCardStyle from '../../asets/jss/material-dashboard-pro-react/components/headerCardStyle';
+import headerCardStyle from '../../assets/jss/material-dashboard-pro-react/components/headerCardStyle';
 
 // react/require-default-props
 /* eslint-disable */

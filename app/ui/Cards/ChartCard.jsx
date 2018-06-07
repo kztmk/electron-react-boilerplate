@@ -10,7 +10,7 @@ import CardHeader from 'material-ui/Card/CardHeader';
 import CardActions from 'material-ui/Card/CardActions';
 import Typography from 'material-ui/Typography';
 
-import chartCardStyle from '../../asets/jss/material-dashboard-pro-react/components/chartCardStyle';
+import chartCardStyle from '../../assets/jss/material-dashboard-pro-react/components/chartCardStyle';
 
 /* eslint-disable */
 //react/require-default-props

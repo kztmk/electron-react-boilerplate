@@ -5,7 +5,7 @@ import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 import { ConnectedRouter } from 'react-router-redux';
 import { Router, Switch, Route } from 'react-router-dom';
 import defRoute from '../../routes/defRoute';
-import { primaryColor, dangerColor, successColor } from '../../asets/jss/material-dashboard-pro-react';
+import { primaryColor, dangerColor, successColor } from '../../assets/jss/material-dashboard-pro-react';
 
 import App from '../App';
 

@@ -7,7 +7,7 @@ import withStyles from 'material-ui/styles/withStyles';
 import List from 'material-ui/List';
 import ListItem from 'material-ui/List/ListItem';
 
-import footerStyle from '../../asets/jss/material-dashboard-pro-react/components/footerStyle';
+import footerStyle from '../../assets/jss/material-dashboard-pro-react/components/footerStyle';
 
 // react/require-default-props
 /* eslint-disable */

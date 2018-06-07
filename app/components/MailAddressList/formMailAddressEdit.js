@@ -10,9 +10,9 @@ import Cancel from 'material-ui-icons/Cancel';
 import type MailAccountType from '../../types/mailAccount';
 import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button } from '../../ui';
 
-import regularFormsStyle from '../../asets/jss/material-dashboard-pro-react/views/regularFormsStyle';
+import regularFormsStyle from '../../assets/jss/material-dashboard-pro-react/views/regularFormsStyle';
 import Table from '../../ui/Table/Table';
-import { SaveAltIcon } from '../../asets/icons';
+import { SaveAltIcon } from '../../assets/icons';
 
 import { getProviderImage } from './mailAddressList';
 

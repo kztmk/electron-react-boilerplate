@@ -3,7 +3,7 @@ import React from 'react';
 import NavLink from 'react-router-dom/NavLink';
 import cx from 'classnames';
 import { withStyles, List, ListItem, ListItemIcon, Tooltip } from 'material-ui';
-import VerticalNavStyle from '../../asets/jss/material-dashboard-pro-react/components/verticalNavi';
+import VerticalNavStyle from '../../assets/jss/material-dashboard-pro-react/components/verticalNavi';
 import LogoutButton from '../../containers/Logout';
 import type { RouteType } from '../../types/route';
 

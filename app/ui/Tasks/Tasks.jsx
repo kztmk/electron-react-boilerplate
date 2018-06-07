@@ -16,7 +16,7 @@ import Edit from 'material-ui-icons/Edit';
 import Close from 'material-ui-icons/Close';
 import Check from 'material-ui-icons/Check';
 
-import tasksStyle from '../../asets/jss/material-dashboard-pro-react/components/tasksStyle';
+import tasksStyle from '../../assets/jss/material-dashboard-pro-react/components/tasksStyle';
 
 /* eslint-disable react/require-default-props */
 export type Props = {

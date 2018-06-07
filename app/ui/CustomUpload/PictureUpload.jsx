@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 
-import defaultImage from '../../asets/img/default-avatar.png';
+import defaultImage from '../../assets/img/default-avatar.png';
 
 export type Props = {};
 

@@ -51,7 +51,21 @@ const accountListPageStyle = {
     width: '17px',
     height: '17px'
   },
+  modalNarrow: {
+    borderRadius: '6px',
+    minHeight: '40vh',
+    maxHeight: '80vh',
+    minWidth: '40vw',
+    maxWidth: '65vw'
+  },
   modal: {
+    borderRadius: '6px',
+    minHeight: '60vh',
+    maxHeight: '100vh',
+    minWidth: '85vw',
+    maxWidth: '95vw'
+  },
+  modalWide: {
     borderRadius: '6px',
     minHeight: '60vh',
     maxHeight: '100vh',

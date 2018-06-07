@@ -4,7 +4,7 @@ import React from 'react';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 
-import infoStyle from '../../asets/jss/material-dashboard-pro-react/components/infoStyle';
+import infoStyle from '../../assets/jss/material-dashboard-pro-react/components/infoStyle';
 
 // react/require-default-props
 /* eslint-disable */

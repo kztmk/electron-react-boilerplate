@@ -6,7 +6,7 @@ import cx from 'classnames';
 import withStyles from 'material-ui/styles/withStyles';
 import Button from 'material-ui/Button';
 
-import paginationStyle from '../../asets/jss/material-dashboard-pro-react/components/paginationStyle';
+import paginationStyle from '../../assets/jss/material-dashboard-pro-react/components/paginationStyle';
 
 export type Props = {
   classes: Object,

@@ -4,7 +4,7 @@ import React from 'react';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 
-import typographyStyle from '../../asets/jss/material-dashboard-pro-react/components/typographyStyle';
+import typographyStyle from '../../assets/jss/material-dashboard-pro-react/components/typographyStyle';
 
 /* eslint-disable react/require-default-props */
 export type Props = {

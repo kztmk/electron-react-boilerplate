@@ -27,7 +27,7 @@ const wizardStyle = {
   },
   wizardHeader: {
     textAlign: 'center',
-    padding: '25px 0 35px'
+    padding: '5px 0 5px'
   },
   title: {
     margin: '0'
@@ -80,7 +80,7 @@ const wizardStyle = {
   content: {
     marginTop: '20px',
     minHeight: '340px',
-    padding: '20px 15px'
+    padding: '10px 15px'
   },
   stepContent: {
     display: 'none'

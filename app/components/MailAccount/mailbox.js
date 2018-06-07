@@ -22,7 +22,7 @@ import {
   primaryColor,
   grayColor,
   warningColor
-} from '../../asets/jss/material-dashboard-pro-react';
+} from '../../assets/jss/material-dashboard-pro-react';
 
 type Props = {
   classes: Object,

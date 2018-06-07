@@ -7,8 +7,8 @@ import AddAlert from 'material-ui-icons/AddAlert';
 
 import type { AuthType } from '../../types/auth';
 import { FullHeaderCard, ItemGrid, Button, Snackbar } from '../../ui';
-import { LoginIcon } from '../../asets/icons';
-import customInputStyle from '../../asets/jss/material-dashboard-pro-react/components/customInputStyle';
+import { LoginIcon } from '../../assets/icons';
+import customInputStyle from '../../assets/jss/material-dashboard-pro-react/components/customInputStyle';
 import type { UserAccountType } from '../../types/userAccount';
 import type { State as MailAccountState } from '../../containers/MailAddressList/reducer';
 import type { State as BlogAccountState } from '../../containers/BlogList/reducer';

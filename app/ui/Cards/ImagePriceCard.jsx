@@ -13,7 +13,7 @@ import Typography from 'material-ui/Typography';
 // core components
 import Button from '../CustomButtons/Button';
 
-import imagePriceCardStyle from '../../asets/jss/material-dashboard-pro-react/components/imagePriceCardStyle';
+import imagePriceCardStyle from '../../assets/jss/material-dashboard-pro-react/components/imagePriceCardStyle';
 
 // react/require-default-props
 /* eslint-disable */

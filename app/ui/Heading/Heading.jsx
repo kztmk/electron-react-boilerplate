@@ -5,7 +5,7 @@ import cx from 'classnames';
 // material-ui components
 import withStyles from 'material-ui/styles/withStyles';
 
-import headingStyle from '../../asets/jss/material-dashboard-pro-react/components/headingStyle';
+import headingStyle from '../../assets/jss/material-dashboard-pro-react/components/headingStyle';
 
 // react/require-default-props
 /* eslint-disable */

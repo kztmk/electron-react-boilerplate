@@ -17,9 +17,9 @@ import Collapse from 'material-ui/transitions/Collapse';
 import HeaderLinks from '../Header/HeaderLinks';
 import SidebarWrapper from './SidebarWrapper';
 
-import sidebarStyle from '../../asets/jss/material-dashboard-pro-react/components/sidebarStyle';
+import sidebarStyle from '../../assets/jss/material-dashboard-pro-react/components/sidebarStyle';
 
-import avatar from '../../asets/img/faces/avatar.jpg';
+import avatar from '../../assets/img/faces/avatar.jpg';
 import type { RouteType } from '../../types/route';
 
 

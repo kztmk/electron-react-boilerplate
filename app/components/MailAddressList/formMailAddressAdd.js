@@ -17,11 +17,11 @@ import AddAlert from 'material-ui-icons/AddAlert';
 import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button, Snackbar } from '../../ui';
 import type MailAccountType from '../../types/mailAccount';
 
-import { SaveAltIcon } from '../../asets/icons';
-import fromAddStyle from '../../asets/jss/material-dashboard-pro-react/views/formAddStyle';
+import { SaveAltIcon } from '../../assets/icons';
+import fromAddStyle from '../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
 
-import Yahoo from '../../asets/img/providerImage/y64.png';
-import Outlook from '../../asets/img/providerImage/outlook64.png';
+import Yahoo from '../../assets/img/providerImage/y64.png';
+import Outlook from '../../assets/img/providerImage/outlook64.png';
 // import gmail from '../../asets/img/providerImage/gmail64.png';
 // import ownDomain from '../../asets/img/providerImage/domain64.png';
 

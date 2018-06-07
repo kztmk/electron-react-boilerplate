@@ -15,7 +15,7 @@ import Divider from 'material-ui/Divider';
 // core components
 import Button from '../CustomButtons/Button';
 
-import customDropdownStyle from '../../asets/jss/material-dashboard-pro-react/components/customDropdownStyle';
+import customDropdownStyle from '../../assets/jss/material-dashboard-pro-react/components/customDropdownStyle';
 
 // react/require-default-props
 /* eslint-disable */

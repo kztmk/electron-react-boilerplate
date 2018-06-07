@@ -22,15 +22,15 @@ import Close from 'material-ui-icons/Close';
 import { GridContainer, ItemGrid, IconButton } from '../../ui';
 import type MailAccountType from '../../types/mailAccount';
 
-import Yahoo from '../../asets/img/providerImage/y64.png';
-import Excite from '../../asets/img/providerImage/excite64.png';
-import Outlook from '../../asets/img/providerImage/outlook64.png';
-import gmail from '../../asets/img/providerImage/gmail64.png';
-import ownDomain from '../../asets/img/providerImage/domain64.png';
+import Yahoo from '../../assets/img/providerImage/y64.png';
+import Excite from '../../assets/img/providerImage/excite64.png';
+import Outlook from '../../assets/img/providerImage/outlook64.png';
+import gmail from '../../assets/img/providerImage/gmail64.png';
+import ownDomain from '../../assets/img/providerImage/domain64.png';
 
-import { LoginIcon } from '../../asets/icons';
+import { LoginIcon } from '../../assets/icons';
 import FormMailAddressEdit from './formMailAddressEdit';
-import accountListPageStyle from '../../asets/jss/material-dashboard-pro-react/views/accountListPageStyle';
+import accountListPageStyle from '../../assets/jss/material-dashboard-pro-react/views/accountListPageStyle';
 import SweetAlertTitle from '../SweetAlertTitle';
 
 import MailAccount from '../../containers/MailAccount';

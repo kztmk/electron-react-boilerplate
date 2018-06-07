@@ -10,7 +10,7 @@ import TableCell from 'material-ui/Table/TableCell';
 import TableHead from 'material-ui/Table/TableHead';
 import TableRow from 'material-ui/Table/TableRow';
 
-import tableStyle from '../../asets/jss/material-dashboard-pro-react/components/tableStyle';
+import tableStyle from '../../assets/jss/material-dashboard-pro-react/components/tableStyle';
 
 
 /* eslint-disable react/require-default-props */

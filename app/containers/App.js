@@ -6,9 +6,9 @@ import { withStyles } from 'material-ui';
 import appRoutes from '../routes/app';
 import VerticalNavi from '../components/VerticalNav';
 import Footer from '../components/Footer';
-import appStyle from '../asets/jss/material-dashboard-pro-react/layouts/dashboardStyle';
+import appStyle from '../assets/jss/material-dashboard-pro-react/layouts/dashboardStyle';
 
-import logo from '../asets/img/yoriki5.png';
+import logo from '../assets/img/yoriki5.png';
 
 const switchRoutes = auth => (
   <Switch>

@@ -10,7 +10,7 @@ import ExpansionPanelDetails from 'material-ui/ExpansionPanel/ExpansionPanelDeta
 // material-ui-icons
 import ExpandMore from 'material-ui-icons/ExpandMore';
 
-import accordionStyle from '../../asets/jss/material-dashboard-pro-react/components/accordionStyle';
+import accordionStyle from '../../assets/jss/material-dashboard-pro-react/components/accordionStyle';
 
 export type Props = {
   classes: Object,

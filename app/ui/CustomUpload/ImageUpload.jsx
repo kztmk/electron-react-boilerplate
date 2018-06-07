@@ -4,8 +4,8 @@ import React from 'react';
 // core components
 import Button from '../CustomButtons/Button';
 
-import defaultImage from '../../asets/img/image_placeholder.jpg';
-import defaultAvatar from '../../asets/img/placeholder.jpg';
+import defaultImage from '../../assets/img/image_placeholder.jpg';
+import defaultAvatar from '../../assets/img/placeholder.jpg';
 
 // eslint-disable-next-line react/require-default-props
 export type Props = { avatar?: boolean };

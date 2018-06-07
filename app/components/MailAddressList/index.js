@@ -12,20 +12,21 @@ import Dialog from 'material-ui/Dialog';
 import DialogTitle from 'material-ui/Dialog/DialogTitle';
 import DialogContent from 'material-ui/Dialog/DialogContent';
 import DialogActions from 'material-ui/Dialog/DialogActions';
-
+import Close from 'material-ui-icons/Close';
 import moment from 'moment';
 // material-ui-icons
 import AddAlert from 'material-ui-icons/AddAlert';
 import OpenInNew from 'material-ui-icons/OpenInNew';
-import { AddIcon, FolderDownloadIcon } from '../../asets/icons';
+import { AddIcon, FolderDownloadIcon } from '../../assets/icons';
 
-import { GridContainer, ItemGrid, IconCard, Snackbar } from '../../ui';
+import { GridContainer, ItemGrid, IconCard, IconButton, Snackbar } from '../../ui';
 import type MailAccountType from '../../types/mailAccount';
 import MailAddressList from './mailAddressList';
 import FormMailAddressAdd from './formMailAddressAdd';
 import Button from '../../ui/CustomButtons/Button';
 
-import accountListPageStyles from '../../asets/jss/material-dashboard-pro-react/views/accountListPageStyle';
+import accountListPageStyles from '../../assets/jss/material-dashboard-pro-react/views/accountListPageStyle';
+import WizardViewMail from '../MailAccountCreate';
 
 type State = {
   isLoading: boolean,
@@ -36,6 +37,7 @@ type State = {
   openErrorNotification: boolean,
   openModalSaveErrorAccounts: boolean,
   openFormMailAddressAdd: boolean,
+  openFormMailAddressNew: boolean,
   mode: string
 };
 type Props = {
@@ -78,6 +80,24 @@ const convertProviderName = provider => {
 
 const Transition = props => <Slide direction="down" {...props} />;
 
+const modalCloseButtonStyle = {
+  color: '#999999',
+  marginTop: '0',
+  marginRight: '12px',
+  WebkitAppearance: 'none',
+  padding: '0',
+  cursor: 'pointer',
+  background: '0 0',
+  border: '0',
+  fontSize: 'inherit',
+  opacity: '.9',
+  textShadow: 'none',
+  fontWeight: '700',
+  lineHeight: '1',
+  float: 'right',
+  height: '32px'
+};
+
 /**
  * メールアカウント一覧ページ
  *    mailAddressList
@@ -100,6 +120,7 @@ class MailAddressListPage extends React.Component<Props, State> {
       openErrorNotification: false,
       openModalSaveErrorAccounts: false,
       openFormMailAddressAdd: false,
+      openFormMailAddressNew: false,
       mode: 'none'
     };
   }
@@ -384,6 +405,14 @@ class MailAddressListPage extends React.Component<Props, State> {
     this.setState({ openFormMailAddressAdd: false });
   };
 
+  handleOpenFormMailAddressNew = () => {
+    this.setState({ openFormMailAddressNew: true });
+  };
+
+  handleCloseFormMailAddressNew = () => {
+    this.setState({ openFormMailAddressNew: false });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -399,7 +428,11 @@ class MailAddressListPage extends React.Component<Props, State> {
                   <GridContainer justify="flex-end" className={classes.cardContentRight}>
                     <div className={classes.buttonGroupStyle}>
                       <Tooltip title="新規メールアドレスを作成" placement="bottom">
-                        <Button color="primary" customClass={classes.firstButton}>
+                        <Button
+                          color="primary"
+                          customClass={classes.firstButton}
+                          onClick={() => this.handleOpenFormMailAddressNew()}
+                        >
                           <OpenInNew />
                           新規作成
                         </Button>
@@ -463,7 +496,7 @@ class MailAddressListPage extends React.Component<Props, State> {
             <Dialog
               classes={{
                 root: classes.center,
-                paper: `${classes.modal} ${classes.modalSmall}`
+                paper: `${classes.modalNarrow} ${classes.modalSmall}`
               }}
               open={this.state.openModalSaveErrorAccounts}
               transition={Transition}
@@ -519,6 +552,36 @@ class MailAddressListPage extends React.Component<Props, State> {
                   metaMessage={this.props.metaMessage}
                   closeForm={this.handleCloseFormMailAddressAdd}
                   addMailAddress={this.props.startCreateMailAccount}
+                />
+              </DialogContent>
+            </Dialog>
+            <Dialog
+              classes={{
+                paper: `${classes.modal} ${classes.modalSmall}`
+              }}
+              open={this.state.openFormMailAddressNew}
+              transition={Transition}
+              keepMounted
+              onClose={() => this.handleCloseFormMailAddressNew()}
+            >
+              <IconButton
+                style={modalCloseButtonStyle}
+                key="close"
+                aria-label="Close"
+                color="defaultNoBackground"
+                onClick={() => this.handleCloseFormMailAddressNew()}
+              >
+                <Close className={classes.modalClose} />
+              </IconButton>
+              <DialogContent
+                id="formMailAddressNewBody"
+                className={`${classes.modalBody} ${classes.modalSmallBody}`}
+              >
+                <WizardViewMail
+                  mode={this.state.mode}
+                  color="primary"
+                  createMailAccount={this.props.startCreateMailAccount}
+                  cancelAccount={this.handleCloseFormMailAddressNew}
                 />
               </DialogContent>
             </Dialog>

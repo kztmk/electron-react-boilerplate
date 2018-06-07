@@ -12,7 +12,7 @@ import Tabs from 'material-ui/Tabs';
 import GridContainer from '../Grid/GridContainer';
 import ItemGrid from '../Grid/ItemGrid';
 
-import navPillsStyle from '../../asets/jss/material-dashboard-pro-react/components/navPillsStyle';
+import navPillsStyle from '../../assets/jss/material-dashboard-pro-react/components/navPillsStyle';
 
 // react/require-default-props
 /* eslint-disable */

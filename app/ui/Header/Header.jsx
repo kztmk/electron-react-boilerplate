@@ -19,7 +19,7 @@ import ViewList from 'material-ui-icons/ViewList';
 import HeaderLinks from './HeaderLinks';
 import CustomIconButton from '../CustomButtons/IconButton';
 
-import headerStyle from '../../asets/jss/material-dashboard-pro-react/components/headerStyle';
+import headerStyle from '../../assets/jss/material-dashboard-pro-react/components/headerStyle';
 import type { RouteType } from '../../types/route';
 
 // react/require-default-props

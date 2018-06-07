@@ -9,7 +9,7 @@ import CardContent from 'material-ui/Card/CardContent';
 import CardHeader from 'material-ui/Card/CardHeader';
 import Typography from 'material-ui/Typography';
 
-import profileCardStyle from '../../asets/jss/material-dashboard-pro-react/components/profileCardStyle';
+import profileCardStyle from '../../assets/jss/material-dashboard-pro-react/components/profileCardStyle';
 
 // react/require-default-props
 /* eslint-disable */

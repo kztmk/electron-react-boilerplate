@@ -177,7 +177,8 @@ const customCheckboxRadioSwitch = {
     lineHeight: '111px'
   },
   switchBarChecked: {
-    backgroundColor: 'rgba(80, 80, 80, 0.7)',
+    // backgroundColor: 'rgba(80, 80, 80, 0.7)',
+    backgroundColor: 'rgba(0, 172, 172, 0.7)',
     opacity: '1',
     display: 'inline-block',
     width: '30px',
