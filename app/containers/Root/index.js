@@ -1,11 +1,15 @@
 // @flow
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/';
 import { ConnectedRouter } from 'react-router-redux';
 import { Router, Switch, Route } from 'react-router-dom';
 import defRoute from '../../routes/defRoute';
-import { primaryColor, dangerColor, successColor } from '../../assets/jss/material-dashboard-pro-react';
+import {
+  primaryColor,
+  dangerColor,
+  successColor
+} from '../../assets/jss/material-dashboard-pro-react';
 
 import App from '../App';
 
@@ -15,8 +19,8 @@ type Props = {
 };
 
 const theme = createMuiTheme({
-  breakpoints:{
-    values:{
+  breakpoints: {
+    values: {
       sm: 320,
       md: 450
     }

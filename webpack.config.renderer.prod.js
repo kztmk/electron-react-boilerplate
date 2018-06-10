@@ -16,6 +16,8 @@ CheckNodeEnv('production');
 export default merge.smart(baseConfig, {
   devtool: 'source-map',
 
+  mode: 'production',
+
   target: 'electron-renderer',
 
   entry: ['babel-polyfill', './app/index'],
@@ -174,7 +176,8 @@ export default merge.smart(baseConfig, {
     new ExtractTextPlugin('style.css'),
 
     new BundleAnalyzerPlugin({
-      analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+      analyzerMode:
+        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true'
     })
   ]

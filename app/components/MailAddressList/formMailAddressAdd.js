@@ -1,20 +1,30 @@
 // @flow
 import React, { Component } from 'react';
 import Loadable from 'react-loading-overlay';
-import { withStyles } from 'material-ui/styles';
 import Datetime from 'react-datetime';
 import moment from 'moment';
-import Avatar from 'material-ui/Avatar';
-import FormLabel from 'material-ui/Form/FormLabel';
-import FormControl from 'material-ui/Form/FormControl';
 import TagsInput from 'react-tagsinput';
-import InputLabel from 'material-ui/Input/InputLabel';
-import MenuItem from 'material-ui/Menu/MenuItem';
-import Select from 'material-ui/Select';
-import Cancel from 'material-ui-icons/Cancel';
-import AddAlert from 'material-ui-icons/AddAlert';
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 
-import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button, Snackbar } from '../../ui';
+import Cancel from '@material-ui/icons/Cancel';
+import AddAlert from '@material-ui/icons/AddAlert';
+
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import CustomInput from '../../ui/CustomInput/CustomInput';
+import Button from '../../ui/CustomButtons/Button';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 import type MailAccountType from '../../types/mailAccount';
 
 import { SaveAltIcon } from '../../assets/icons';
@@ -34,6 +44,7 @@ const selectAvatarStyle = {
   display: 'flex',
   alignItems: 'center'
 };
+
 
 type Props = {
   classes: Object,
@@ -268,38 +279,41 @@ class FormMailAddressAdd extends Component<Props, State> {
     return (
       <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・・">
         <GridContainer>
-          <ItemGrid xs={12} sm={12} md={12}>
-            <HeaderCard
-              cardTitle="メールアドレス追加"
-              headerColor="purple"
-              content={
-                <div>
-                  <ItemGrid xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
-                    <div className={classes.buttonGroupStyle}>
-                      <div className={classes.buttonGroup}>
-                        <Button
-                          color="primary"
-                          customClass={classes.firstButton}
-                          onClick={this.props.closeForm}
-                        >
-                          <Cancel style={iconStyle} />
-                          キャンセル
-                        </Button>
-                        <Button
-                          color="primary"
-                          customClass={classes.lastButton}
-                          onClick={this.addMailAccount}
-                        >
-                          <SaveAltIcon style={iconStyle} />
-                          保存
-                        </Button>
-                      </div>
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary" text>
+                <CardText color="primary">
+                  <h4 className={classes.cardTitle}>メールアドレス追加</h4>
+                </CardText>
+                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
+                  <div className={classes.buttonGroupStyle}>
+                    <div className={classes.buttonGroup}>
+                      <Button
+                        color="primary"
+                        className={classes.firstButton}
+                        onClick={this.props.closeForm}
+                      >
+                        <Cancel style={iconStyle} />
+                        キャンセル
+                      </Button>
+                      <Button
+                        color="primary"
+                        className={classes.lastButton}
+                        onClick={this.addMailAccount}
+                      >
+                        <SaveAltIcon style={iconStyle} />
+                        保存
+                      </Button>
                     </div>
-                  </ItemGrid>
+                  </div>
+                </GridItem>
+              </CardHeader>
+              <CardBody>
+                <div>
                   <form>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2} />
-                      <ItemGrid xs={12} sm={4}>
+                      <GridItem xs={12} sm={2} />
+                      <GridItem xs={12} sm={4}>
                         <FormControl fullWidth className={classes.selectFormControl}>
                           <InputLabel htmlFor="select-provider" className={classes.selectLabel}>
                             提供元：
@@ -345,13 +359,13 @@ class FormMailAddressAdd extends Component<Props, State> {
                             </MenuItem>
                           </Select>
                         </FormControl>
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>E-mail</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={10}>
+                      </GridItem>
+                      <GridItem xs={12} sm={10}>
                         <CustomInput
                           success={this.state.mailAddressState === 'success'}
                           error={this.state.mailAddressState === 'error'}
@@ -366,13 +380,13 @@ class FormMailAddressAdd extends Component<Props, State> {
                             type: 'email'
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>アカウントID:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={4}>
                         <CustomInput
                           success={this.state.accountIdState === 'success'}
                           error={this.state.accountIdState === 'error'}
@@ -387,11 +401,11 @@ class FormMailAddressAdd extends Component<Props, State> {
                             onChange: event => this.inputFormChange(event, 'accountId')
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={2}>
+                      </GridItem>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>パスワード:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={4}>
                         <CustomInput
                           success={this.state.passwordState === 'success'}
                           error={this.state.passwordState === 'error'}
@@ -406,13 +420,13 @@ class FormMailAddressAdd extends Component<Props, State> {
                             onChange: event => this.inputFormChange(event, 'password')
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>作成日:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={4}>
                         <Datetime
                           className={classes.inputMyControl}
                           dateFormat="YYYY/MM/DD"
@@ -424,11 +438,11 @@ class FormMailAddressAdd extends Component<Props, State> {
                           onChange={value => this.setState({ createDate: value })}
                           value={this.state.createDate}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={2}>
+                      </GridItem>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={4}>
                         <TagsInput
                           value={this.state.tags}
                           tagProps={{ className: 'react-tagsinput-tag info' }}
@@ -438,12 +452,12 @@ class FormMailAddressAdd extends Component<Props, State> {
                             placeholder: 'ここへタグを追加'
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                   </form>
                 </div>
-              }
-            />
+              </CardBody>
+            </Card>
             <Snackbar
               place="bc"
               color="warning"
@@ -462,7 +476,7 @@ class FormMailAddressAdd extends Component<Props, State> {
               closeNotification={() => this.addAccountSuccess()}
               close
             />
-          </ItemGrid>
+          </GridItem>
         </GridContainer>
       </Loadable>
     );

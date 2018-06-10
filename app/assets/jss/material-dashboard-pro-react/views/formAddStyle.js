@@ -240,7 +240,7 @@ const formAddStyle = {
     }
   },
   buttonGroupStyle: {
-    marginTop: '-65px'
+    marginTop: '-25px'
   },
   buttonGroup: {
     position: 'relative',

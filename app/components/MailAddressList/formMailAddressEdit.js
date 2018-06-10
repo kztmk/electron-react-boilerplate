@@ -1,16 +1,26 @@
 // @flow
 import React, { Component } from 'react';
-import { withStyles } from 'material-ui/styles';
-import FormLabel from 'material-ui/Form/FormLabel';
 import TagsInput from 'react-tagsinput';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Loadable from 'react-loading-overlay';
-import Cancel from 'material-ui-icons/Cancel';
-import type MailAccountType from '../../types/mailAccount';
-import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button } from '../../ui';
 
-import regularFormsStyle from '../../assets/jss/material-dashboard-pro-react/views/regularFormsStyle';
+import { withStyles } from '@material-ui/core/styles';
+import FormLabel from '@material-ui/core/FormLabel';
+
+import Cancel from '@material-ui/icons/Cancel';
+
+import type MailAccountType from '../../types/mailAccount';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import CustomInput from '../../ui/CustomInput/CustomInput';
+import Button from '../../ui/CustomButtons/Button';
+
+import formAddStyle from '../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
 import Table from '../../ui/Table/Table';
 import { SaveAltIcon } from '../../assets/icons';
 
@@ -219,42 +229,45 @@ class FormMailAddressEdit extends Component<Props, State> {
     return (
       <Loadable active={this.state.isUpdated} spinner text="サーバーと通信中・・・・">
         <GridContainer>
-          <ItemGrid xs={12} sm={12} md={12}>
-            <HeaderCard
-              cardTitle="メールアカウント情報　編集"
-              headerColor="rose"
-              content={
-                <div>
-                  <ItemGrid xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
-                    <div className={classes.buttonGroupStyle}>
-                      <div className={classes.buttonGroup}>
-                        <Button
-                          color="primary"
-                          customClass={classes.firstButton}
-                          onClick={this.props.closeModal}
-                        >
-                          <Cancel style={iconStyle} />
-                          キャンセル
-                        </Button>
-                        <Button
-                          color="primary"
-                          customClass={classes.lastButton}
-                          onClick={this.updateMailAccount}
-                        >
-                          <SaveAltIcon style={iconStyle} />
-                          保存
-                        </Button>
-                      </div>
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary" text>
+                <CardText color="primary">
+                  <h4 className={classes.cardTitle}>メールアカウント情報　編集</h4>
+                </CardText>
+                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
+                  <div className={classes.buttonGroupStyle}>
+                    <div className={classes.buttonGroup}>
+                      <Button
+                        color="primary"
+                        className={classes.firstButton}
+                        onClick={this.props.closeModal}
+                      >
+                        <Cancel style={iconStyle} />
+                        キャンセル
+                      </Button>
+                      <Button
+                        color="primary"
+                        className={classes.lastButton}
+                        onClick={this.updateMailAccount}
+                      >
+                        <SaveAltIcon style={iconStyle} />
+                        保存
+                      </Button>
                     </div>
-                  </ItemGrid>
+                  </div>
+                </GridItem>
+              </CardHeader>
+              <CardBody>
+                <div>
                   <form>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={3}>
+                      <GridItem xs={12} sm={3}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           メールアドレス:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={8}>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
                         <CustomInput
                           id="mailAddress"
                           formControlProps={{
@@ -267,22 +280,22 @@ class FormMailAddressEdit extends Component<Props, State> {
                             value: this.props.targetAccount.mailAddress
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={1}>
+                      </GridItem>
+                      <GridItem xs={12} sm={1}>
                         <img
                           style={providerImageStyle}
                           src={getProviderImage(this.props.targetAccount.provider)}
                           alt={this.props.targetAccount.provider}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={3}>
+                      <GridItem xs={12} sm={3}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           パスワード:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={9}>
+                      </GridItem>
+                      <GridItem xs={12} sm={9}>
                         <CustomInput
                           id="pass"
                           formControlProps={{
@@ -295,15 +308,15 @@ class FormMailAddressEdit extends Component<Props, State> {
                             onChange: event => this.handleChangePassword(event)
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={3}>
+                      <GridItem xs={12} sm={3}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           作成日時:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <CustomInput
                           id="disabled"
                           formControlProps={{
@@ -321,13 +334,13 @@ class FormMailAddressEdit extends Component<Props, State> {
                             )
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           最終ログイン:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <CustomInput
                           id="disabled"
                           formControlProps={{
@@ -346,10 +359,10 @@ class FormMailAddressEdit extends Component<Props, State> {
                                   )
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={9}>
+                      <GridItem xs={12} sm={9}>
                         <div className={classes.inputNoLabelLessUpperSpace}>
                           <TagsInput
                             value={this.state.tags}
@@ -361,23 +374,23 @@ class FormMailAddressEdit extends Component<Props, State> {
                             }}
                           />
                         </div>
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid>
+                      <GridItem>
                         <Table tableHead={['---詳細情報---']} tableData={this.state.data} />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                   </form>
                 </div>
-              }
-            />
+              </CardBody>
+            </Card>
             {this.state.sweetAlert}
-          </ItemGrid>
+          </GridItem>
         </GridContainer>
       </Loadable>
     );
   }
 }
 
-export default withStyles(regularFormsStyle)(FormMailAddressEdit);
+export default withStyles(formAddStyle)(FormMailAddressEdit);

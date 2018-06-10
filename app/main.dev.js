@@ -53,22 +53,6 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
-const setupDevelopmentEnvironment = async () => {
-  mainWindow.openDevTools();
-  mainWindow.webContents.on('context-menu', (e, props) => {
-    const { x, y } = props;
-
-    Menu.buildFromTemplate([
-      {
-        label: 'Inspect element',
-        click: () => {
-          mainWindow.inspectElement(x, y);
-        }
-      }
-    ]).popup(mainWindow);
-  });
-};
-
 /**
  * FileOpenDialogの表示
  * ファイルの読込
@@ -140,9 +124,6 @@ app.on('ready', async () => {
   // const menuBuilder = new MenuBuilder(mainWindow);
   // menuBuilder.buildMenu();
   setAppMenu();
-  // if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
-  //  await setupDevelopmentEnvironment();
-  // }
 
   /**
    * rendererWindowsから呼ばれるリスナ

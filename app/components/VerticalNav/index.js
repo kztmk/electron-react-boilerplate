@@ -2,7 +2,12 @@
 import React from 'react';
 import NavLink from 'react-router-dom/NavLink';
 import cx from 'classnames';
-import { withStyles, List, ListItem, ListItemIcon, Tooltip } from 'material-ui';
+import { withStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Tooltip from '@material-ui/core/Tooltip';
+
 import VerticalNavStyle from '../../assets/jss/material-dashboard-pro-react/components/verticalNavi';
 import LogoutButton from '../../containers/Logout';
 import type { RouteType } from '../../types/route';

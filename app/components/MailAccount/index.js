@@ -2,24 +2,24 @@
 import React from 'react';
 import Loadable from 'react-loading-overlay';
 // material-ui
-import { withStyles } from 'material-ui/styles';
-import Drawer from 'material-ui/Drawer';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import List from 'material-ui/List';
-import Typography from 'material-ui/Typography';
-import Slide from 'material-ui/transitions/Slide';
-import Dialog from 'material-ui/Dialog';
-import DialogTitle from 'material-ui/Dialog/DialogTitle';
-import DialogContent from 'material-ui/Dialog/DialogContent';
-import DialogActions from 'material-ui/Dialog/DialogActions';
-import IconButton from 'material-ui/IconButton';
+import { withStyles } from '@material-ui/core/styles';
+import Drawer from '@material-ui/core/Drawer';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
+import Typography from '@material-ui/core/Typography';
+import Slide from '@material-ui/core/Slide';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import IconButton from '@material-ui/core/IconButton';
 
-import Close from 'material-ui-icons/Close';
+import Close from '@material-ui/icons/Close';
 
 import { MailSeenIcon, MailUnseenIcon, CloseIcon, TrashIcon } from '../../assets/icons';
 
-import { Button } from '../../ui';
+import Button from '../../ui/CustomButtons/Button';
 import MailBox from './mailbox';
 import MessageViewer from './messageViewer';
 import type MailAccountType from '../../types/mailAccount';
@@ -390,7 +390,7 @@ class MailAccount extends React.Component<Props, State> {
                 <div className={classes.buttonGroup}>
                   <Button
                     color="primarySub"
-                    customClass={classes.firstButton}
+                    className={classes.firstButton}
                     onClick={() => this.handleUpdateFlags('toSeen')}
                     size="sm"
                   >
@@ -399,7 +399,7 @@ class MailAccount extends React.Component<Props, State> {
                   </Button>
                   <Button
                     color="primarySub"
-                    customClass={classes.middleButton}
+                    className={classes.middleButton}
                     onClick={() => this.handleUpdateFlags('toUnseen')}
                     size="sm"
                   >
@@ -407,7 +407,7 @@ class MailAccount extends React.Component<Props, State> {
                   </Button>
                   <Button
                     color="primarySub"
-                    customClass={classes.middleButton}
+                    className={classes.middleButton}
                     onClick={() => this.handleMoveTo('trash')}
                     size="sm"
                   >
@@ -416,7 +416,7 @@ class MailAccount extends React.Component<Props, State> {
                   </Button>
                   <Button
                     color="primarySub"
-                    customClass={classes.lastButton}
+                    className={classes.lastButton}
                     onClick={() => this.handleCloseThis()}
                     size="sm"
                   >
@@ -473,7 +473,7 @@ class MailAccount extends React.Component<Props, State> {
             paper: `${classes.modal} ${classes.modalSmall}`
           }}
           open={this.state.openDialog}
-          transition={Transition}
+          TransitionComponent={Transition}
           keepMounted
           onClose={() => this.handleCloseDialog()}
           aria-labelledby="small-modal-slide-title"
@@ -503,8 +503,8 @@ class MailAccount extends React.Component<Props, State> {
           <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
             <Button
               onClick={() => this.handleCloseDialog()}
-              color="successNoBackground"
-              customClass={`${classes.modalSmallFooterFirstButton} ${
+              color="warning"
+              className={`${classes.modalSmallFooterFirstButton} ${
                 classes.modalSmallFooterSecondButton
               }`}
             >

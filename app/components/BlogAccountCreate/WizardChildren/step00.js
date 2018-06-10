@@ -4,23 +4,27 @@ import React from 'react';
 import moment from 'moment';
 import generatePassword from 'password-generator';
 // material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import { InputAdornment } from 'material-ui';
-import InputLabel from 'material-ui/Input/InputLabel';
-import Tooltip from 'material-ui/Tooltip';
-import FormLabel from 'material-ui/Form/FormLabel';
-import FormControl from 'material-ui/Form/FormControl';
-import Switch from 'material-ui/Switch';
-import Select from 'material-ui/Select';
-import MenuItem from 'material-ui/Menu/MenuItem';
+import { withStyles } from '@material-ui/core/styles';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import InputLabel from '@material-ui/core/InputLabel';
+import Tooltip from '@material-ui/core/Tooltip';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Switch from '@material-ui/core/Switch';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 // @material-ui/icons
-import FolderShared from 'material-ui-icons/FolderShared';
-import AddAlert from 'material-ui-icons/AddAlert';
-import Refresh from 'material-ui-icons/Refresh';
+import FolderShared from '@material-ui/icons/FolderShared';
+import AddAlert from '@material-ui/icons/AddAlert';
+import Refresh from '@material-ui/icons/Refresh';
 
 // core components
-import { GridContainer, ItemGrid, Button, CustomInput, Snackbar } from '../../../ui';
+import GridContainer from '../../../ui/Grid/GridContainer';
+import GridItem from '../../../ui/Grid/GridItem';
+import Button from '../../../ui/CustomButtons/Button';
+import CustomInput from '../../../ui/CustomInput/CustomInput';
+import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import formAddStyle from '../../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
 
@@ -62,7 +66,7 @@ type State = {
   postalCode: string,
   postalCodeState: string,
   errorMessage: string,
-  openErrorSnackbar: false
+  openErrorSnackbar: boolean
 };
 
 /**
@@ -380,7 +384,7 @@ class Steps00 extends React.Component<Props, State> {
       <div>
         <GridContainer style={stepContent}>
           <GridContainer container justify="center" style={groupBoxTop}>
-            <ItemGrid xs={12} sm={3} md={3}>
+            <GridItem xs={12} sm={3} md={3}>
               <FormControl fullWidth className={classes.selectFormControl}>
                 <InputLabel htmlFor="provider-select" className={classes.selectLabel}>
                   メール提供元
@@ -427,8 +431,8 @@ class Steps00 extends React.Component<Props, State> {
                   </MenuItem>
                 </Select>
               </FormControl>
-            </ItemGrid>
-            <ItemGrid xs={12} sm={4} md={4}>
+            </GridItem>
+            <GridItem xs={12} sm={4} md={4}>
               <CustomInput
                 success={this.state.accountIdState === 'success'}
                 error={this.state.accountIdState === 'error'}
@@ -456,8 +460,8 @@ class Steps00 extends React.Component<Props, State> {
                   type: 'text'
                 }}
               />
-            </ItemGrid>
-            <ItemGrid xs={12} sm={4} md={4}>
+            </GridItem>
+            <GridItem xs={12} sm={4} md={4}>
               <CustomInput
                 success={this.state.passwordState === 'success'}
                 error={this.state.passwordState === 'error'}
@@ -484,16 +488,16 @@ class Steps00 extends React.Component<Props, State> {
                   onChange: event => this.formFieldChange(event, 'password')
                 }}
               />
-            </ItemGrid>
+            </GridItem>
           </GridContainer>
         </GridContainer>
         <GridContainer style={stepContent}>
           <GridContainer style={groupBox} container justify="center">
             <GridContainer>
-              <ItemGrid xs={12} sm={2} md={2}>
+              <GridItem xs={12} sm={2} md={2}>
                 <FormLabel className={classes.labelHorizontal}>姓名</FormLabel>
-              </ItemGrid>
-              <ItemGrid xs={12} sm={3} md={3}>
+              </GridItem>
+              <GridItem xs={12} sm={3} md={3}>
                 <CustomInput
                   success={this.state.lastNameState === 'success'}
                   error={this.state.lastNameState === 'error'}
@@ -507,8 +511,8 @@ class Steps00 extends React.Component<Props, State> {
                     value: this.state.lastName
                   }}
                 />
-              </ItemGrid>
-              <ItemGrid xs={12} sm={3} md={3}>
+              </GridItem>
+              <GridItem xs={12} sm={3} md={3}>
                 <CustomInput
                   success={this.state.firstNameState === 'success'}
                   error={this.state.firstNameState === 'error'}
@@ -522,18 +526,18 @@ class Steps00 extends React.Component<Props, State> {
                     value: this.state.firstName
                   }}
                 />
-              </ItemGrid>
-              <ItemGrid xs={12} sm={2} md={2}>
+              </GridItem>
+              <GridItem xs={12} sm={2} md={2}>
                 <Tooltip title="ランダムな個人情報を再取得します。" positions="bottom">
                   <Button color="primary">
                     <Refresh />
                     ランダムデータ再取得
                   </Button>
                 </Tooltip>
-              </ItemGrid>
+              </GridItem>
             </GridContainer>
             <GridContainer>
-              <ItemGrid xs={12} sm={2} md={2}>
+              <GridItem xs={12} sm={2} md={2}>
                 <FormLabel className={classes.labelHorizontalSwitchLeft}>男</FormLabel>
                 <Switch
                   checked={this.state.gender}
@@ -548,8 +552,8 @@ class Steps00 extends React.Component<Props, State> {
                   }}
                 />
                 <FormLabel className={classes.labelHorizontalSwitchRight}>女</FormLabel>
-              </ItemGrid>
-              <ItemGrid xs={12} sm={3} md={3}>
+              </GridItem>
+              <GridItem xs={12} sm={3} md={3}>
                 <CustomInput
                   success={this.state.birthDateState === 'success'}
                   error={this.state.birthDateState === 'error'}
@@ -563,8 +567,8 @@ class Steps00 extends React.Component<Props, State> {
                     value: this.state.birthDate
                   }}
                 />
-              </ItemGrid>
-              <ItemGrid xs={12} sm={3} md={3}>
+              </GridItem>
+              <GridItem xs={12} sm={3} md={3}>
                 <CustomInput
                   success={this.state.postalCodeState === 'success'}
                   error={this.state.postalCodeState === 'error'}
@@ -579,15 +583,15 @@ class Steps00 extends React.Component<Props, State> {
                     placeholder: 'ハイフンなしで7桁の半角数字'
                   }}
                 />
-              </ItemGrid>
-              <ItemGrid xs={12} sm={2} md={2}>
+              </GridItem>
+              <GridItem xs={12} sm={2} md={2}>
                 <Tooltip title="設定画面で保存した個人情報を読込ます。" positions="bottom">
                   <Button color="primary">
                     <FolderShared />
                     既存のデータを使用
                   </Button>
                 </Tooltip>
-              </ItemGrid>
+              </GridItem>
             </GridContainer>
           </GridContainer>
         </GridContainer>

@@ -23,11 +23,12 @@ const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
 const dll = path.resolve(process.cwd(), 'dll');
 const manifest = path.resolve(dll, 'renderer.json');
+const requiredByDLLConfig = module.parent.filename.includes('webpack.config.renderer.dev.dll');
 
 /**
  * Warn if the DLL is not built
  */
-if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
+if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
   console.log(
     chalk.black.bgYellow.bold(
       'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
@@ -39,13 +40,14 @@ if (!(fs.existsSync(dll) && fs.existsSync(manifest))) {
 export default merge.smart(baseConfig, {
   devtool: 'inline-source-map',
 
+  mode: 'development',
+
   target: 'electron-renderer',
 
   entry: [
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port}/`,
     'webpack/hot/only-dev-server',
-    'babel-polyfill',
     path.join(__dirname, 'app/index.js')
   ],
 
@@ -202,11 +204,13 @@ export default merge.smart(baseConfig, {
   },
 
   plugins: [
-    new webpack.DllReferencePlugin({
-      context: process.cwd(),
-      manifest: require(manifest),
-      sourceType: 'var'
-    }),
+    requiredByDLLConfig
+      ? null
+      : new webpack.DllReferencePlugin({
+          context: process.cwd(),
+          manifest: require(manifest),
+          sourceType: 'var'
+        }),
 
     new webpack.HotModuleReplacementPlugin({
       multiStep: true
@@ -267,7 +271,11 @@ export default merge.smart(baseConfig, {
     before() {
       if (process.env.START_HOT) {
         console.log('Starting Main Process...');
-        spawn('npm', ['run', 'start-main-dev'], { shell: true, env: process.env, stdio: 'inherit' })
+        spawn('npm', ['run', 'start-main-dev'], {
+          shell: true,
+          env: process.env,
+          stdio: 'inherit'
+        })
           .on('close', code => process.exit(code))
           .on('error', spawnError => console.error(spawnError));
       }

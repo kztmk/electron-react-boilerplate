@@ -1,12 +1,18 @@
 // @flow
 import React, { Component } from 'react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import { withStyles } from 'material-ui';
-import Grid from 'material-ui/Grid';
-import AddAlert from 'material-ui-icons/AddAlert';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import AddAlert from '@material-ui/icons/AddAlert';
 
 import type { AuthType } from '../../types/auth';
-import { FullHeaderCard, ItemGrid, Button, Snackbar } from '../../ui';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import Button from '../../ui/CustomButtons/Button';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 import { LoginIcon } from '../../assets/icons';
 import customInputStyle from '../../assets/jss/material-dashboard-pro-react/components/customInputStyle';
 import type { UserAccountType } from '../../types/userAccount';
@@ -14,6 +20,7 @@ import type { State as MailAccountState } from '../../containers/MailAddressList
 import type { State as BlogAccountState } from '../../containers/BlogList/reducer';
 
 export type Props = {
+  classes: Object,
   userAuth: AuthType,
   profile: UserAccountType,
   mailAccountState: MailAccountState,
@@ -189,13 +196,20 @@ class LoginForm extends Component<Props, State> {
    * @returns {*}
    */
   render() {
+    const { classes } = this.props;
     return (
       <Grid container justify="center">
-        <ItemGrid xs={12} sm={8} md={6}>
-          <FullHeaderCard
-            cardTitle="寄騎 version5　ログイン"
-            cardSubtitle="登録済みのメールアドレス、パスワードでログイン"
-            content={
+        <GridItem xs={12} sm={8} md={6}>
+          <Card>
+            <CardHeader text color="primary">
+              <CardText color="primary">
+                <h4 className={classes.cardTitleWhite}>寄騎 version5　ログイン</h4>
+                <h4 className={classes.cardCategoryWhite}>
+                  登録済みのメールアドレス、パスワードでログイン
+                </h4>
+              </CardText>
+            </CardHeader>
+            <CardBody>
               <ValidatorForm onSubmit={this.handleSubmit} onError={errors => console.log(errors)}>
                 <TextValidator
                   label="メールアドレス"
@@ -241,9 +255,9 @@ class LoginForm extends Component<Props, State> {
                   message={<span id="login_error">{this.state.errorMessage}</span>}
                 />
               </ValidatorForm>
-            }
-          />
-        </ItemGrid>
+            </CardBody>
+          </Card>
+        </GridItem>
       </Grid>
     );
   }

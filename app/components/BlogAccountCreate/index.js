@@ -2,12 +2,12 @@
 import React from 'react';
 
 // core components
-import MailWizard from './MailWizard';
-import { GridContainer, ItemGrid } from '../../ui';
+import BlogWizard from './BlogWizard';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
 
 import Steps00 from './WizardChildren/step00';
-import StepOutlook from './WizardChildren/stepOutlook';
-import StepYahoo from './WizardChildren/stepYahoo';
+import StepFc2 from './WizardChildren/stepFc2';
 
 type Props = {
   createMailAccount: () => void,
@@ -18,8 +18,8 @@ class WizardViewMail extends React.Component<Props> {
   render() {
     return (
       <GridContainer justify="center">
-        <ItemGrid xs={12} sm={12} md={12}>
-          <MailWizard
+        <GridItem xs={12} sm={12} md={12}>
+          <BlogWizard
             validate
             color="primary"
             steps={[
@@ -28,8 +28,7 @@ class WizardViewMail extends React.Component<Props> {
                 stepComponent: Steps00,
                 stepId: 'start'
               },
-              { stepName: 'Yahoo', stepComponent: StepYahoo, stepId: 'yahoo' },
-              { stepName: 'Outlook', stepComponent: StepOutlook, stepId: 'outlook' }
+              { stepName: 'Fc2', stepComponent: StepFc2, stepId: 'fc2' }
             ]}
             title="新規メールアカウウント作成"
             cancelButtonText="キャンセル"
@@ -39,7 +38,7 @@ class WizardViewMail extends React.Component<Props> {
             finishButtonText="メールアドレス取得"
             finishButtonClick={this.props.createMailAccount}
           />
-        </ItemGrid>
+        </GridItem>
       </GridContainer>
     );
   }

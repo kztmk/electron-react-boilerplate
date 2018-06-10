@@ -20,8 +20,9 @@ class MainWindow {
       this.window.show();
       this.window.focus();
     });
-
-    this.window.webContents.openDevTools();
+    if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+      this.window.webContents.openDevTools();
+    }
   }
 
   /**

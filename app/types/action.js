@@ -5,6 +5,7 @@ import type { Action as MailAccountAction } from "../containers/MailAccount/acti
 import type { Action as MailAddressListAction } from "../containers/MailAddressList/actionTypes";
 import type { Action as ProfileAction } from "../containers/Profile/actionTypes";
 import type { Action as ResetPasswordAction } from "../containers/ResetPassword/actionTypes";
+import type { Action as SettingsAction } from "../containers/Settings/actionTypes";
 
 export type ReduxInitAction = {
   type: "@@INIT"
@@ -17,4 +18,5 @@ export type Action =
   | MailAccountAction
   | MailAddressListAction
   | ProfileAction
-  | ResetPasswordAction;
+  | ResetPasswordAction
+  | SettingsAction;

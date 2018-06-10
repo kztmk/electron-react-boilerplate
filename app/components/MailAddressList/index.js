@@ -1,29 +1,35 @@
 // @flow
 import { ipcRenderer } from 'electron';
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
-import Slide from 'material-ui/transitions/Slide';
-import MailOutline from 'material-ui-icons/MailOutline';
 import Loadable from 'react-loading-overlay';
-import Tooltip from 'material-ui/Tooltip';
-
-// import Button from 'material-ui/Button';
-import Dialog from 'material-ui/Dialog';
-import DialogTitle from 'material-ui/Dialog/DialogTitle';
-import DialogContent from 'material-ui/Dialog/DialogContent';
-import DialogActions from 'material-ui/Dialog/DialogActions';
-import Close from 'material-ui-icons/Close';
 import moment from 'moment';
+
+import { withStyles } from '@material-ui/core/styles';
+import Slide from '@material-ui/core/Slide';
+import Tooltip from '@material-ui/core/Tooltip';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 // material-ui-icons
-import AddAlert from 'material-ui-icons/AddAlert';
-import OpenInNew from 'material-ui-icons/OpenInNew';
+import Close from '@material-ui/icons/Close';
+import AddAlert from '@material-ui/icons/AddAlert';
+import OpenInNew from '@material-ui/icons/OpenInNew';
+import MailOutline from '@material-ui/icons/MailOutline';
 import { AddIcon, FolderDownloadIcon } from '../../assets/icons';
 
-import { GridContainer, ItemGrid, IconCard, IconButton, Snackbar } from '../../ui';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardIcon from '../../ui/Card/CardIcon';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import Button from '../../ui/CustomButtons/Button';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 import type MailAccountType from '../../types/mailAccount';
 import MailAddressList from './mailAddressList';
 import FormMailAddressAdd from './formMailAddressAdd';
-import Button from '../../ui/CustomButtons/Button';
 
 import accountListPageStyles from '../../assets/jss/material-dashboard-pro-react/views/accountListPageStyle';
 import WizardViewMail from '../MailAccountCreate';
@@ -419,62 +425,64 @@ class MailAddressListPage extends React.Component<Props, State> {
     return (
       <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・・">
         <GridContainer>
-          <ItemGrid xs={12} sm={12} md={12}>
-            <IconCard
-              icon={MailOutline}
-              title="メールアドレス一覧"
-              content={
-                <div>
-                  <GridContainer justify="flex-end" className={classes.cardContentRight}>
-                    <div className={classes.buttonGroupStyle}>
-                      <Tooltip title="新規メールアドレスを作成" placement="bottom">
-                        <Button
-                          color="primary"
-                          customClass={classes.firstButton}
-                          onClick={() => this.handleOpenFormMailAddressNew()}
-                        >
-                          <OpenInNew />
-                          新規作成
-                        </Button>
-                      </Tooltip>
-                      <Tooltip title="メールアドレスを手入力で追加" placement="bottom">
-                        <Button
-                          color="primary"
-                          customClass={classes.middleButton}
-                          onClick={this.handleOpenFormMailAddressAdd}
-                        >
-                          <AddIcon />
-                          追加
-                        </Button>
-                      </Tooltip>
-                      <Tooltip
-                        title="寄騎形式のファイルからメールアドレスをインポート"
-                        placement="bottom"
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary" icon>
+                <CardIcon color="primary">
+                  <MailOutline />
+                </CardIcon>
+                <h4 className={classes.cardIconTitle}>メールアドレス一覧</h4>
+                <GridContainer justify="flex-end" className={classes.cardContentRight}>
+                  <div className={classes.buttonGroupStyle}>
+                    <Tooltip title="新規メールアドレスを作成" placement="bottom">
+                      <Button
+                        color="primary"
+                        className={classes.firstButton}
+                        onClick={() => this.handleOpenFormMailAddressNew()}
                       >
-                        <Button
-                          color="primary"
-                          customClass={classes.lastButton}
-                          onClick={this.handleClickImportButton}
-                        >
-                          <FolderDownloadIcon />
-                          インポート
-                        </Button>
-                      </Tooltip>
-                    </div>
-                  </GridContainer>
-                  <MailAddressList
-                    mode={this.state.mode}
-                    isFailure={this.props.isFailure}
-                    errorMessage={this.props.metaMessage}
-                    mailAccounts={this.props.mailAccounts}
-                    deleteAccount={this.props.startDeleteMailAccount}
-                    editAccount={this.props.startUpdateMailAccount}
-                    closeEditForm={this.handleCloseEditForm}
-                    closeConnection={this.props.startCloseConnection}
-                  />
-                </div>
-              }
-            />
+                        <OpenInNew />
+                        新規作成
+                      </Button>
+                    </Tooltip>
+                    <Tooltip title="メールアドレスを手入力で追加" placement="bottom">
+                      <Button
+                        color="primary"
+                        className={classes.middleButton}
+                        onClick={this.handleOpenFormMailAddressAdd}
+                      >
+                        <AddIcon />
+                        追加
+                      </Button>
+                    </Tooltip>
+                    <Tooltip
+                      title="寄騎形式のファイルからメールアドレスをインポート"
+                      placement="bottom"
+                    >
+                      <Button
+                        color="primary"
+                        className={classes.lastButton}
+                        onClick={this.handleClickImportButton}
+                      >
+                        <FolderDownloadIcon />
+                        インポート
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </GridContainer>
+              </CardHeader>
+              <CardBody>
+                <MailAddressList
+                  mode={this.state.mode}
+                  isFailure={this.props.isFailure}
+                  errorMessage={this.props.metaMessage}
+                  mailAccounts={this.props.mailAccounts}
+                  deleteAccount={this.props.startDeleteMailAccount}
+                  editAccount={this.props.startUpdateMailAccount}
+                  closeEditForm={this.handleCloseEditForm}
+                  closeConnection={this.props.startCloseConnection}
+                />
+              </CardBody>
+            </Card>
             <Snackbar
               color="warning"
               place="bc"
@@ -499,7 +507,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                 paper: `${classes.modalNarrow} ${classes.modalSmall}`
               }}
               open={this.state.openModalSaveErrorAccounts}
-              transition={Transition}
+              TransitionComponent={Transition}
               keepMounted
               onClose={() => this.handleClose('noticeModal')}
             >
@@ -515,15 +523,15 @@ class MailAddressListPage extends React.Component<Props, State> {
               <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
                 <Button
                   onClick={() => this.handleCloseModal('doNotNeedSave')}
-                  color="simple"
-                  customClass={classes.modalSmallFooterFirstButton}
+                  color="danger"
+                  className={classes.modalSmallFooterFirstButton}
                 >
                   いいえ
                 </Button>
                 <Button
                   onClick={() => this.handleCloseModal('needSave')}
-                  color="successNoBackground"
-                  customClass={`${classes.modalSmallFooterFirstButton} ${
+                  color="success"
+                  className={`${classes.modalSmallFooterFirstButton} ${
                     classes.modalSmallFooterSecondButton
                   }`}
                 >
@@ -533,10 +541,11 @@ class MailAddressListPage extends React.Component<Props, State> {
             </Dialog>
             <Dialog
               classes={{
+                root: classes.formCenter,
                 paper: `${classes.modal} ${classes.modalSmall}`
               }}
               open={this.state.openFormMailAddressAdd}
-              transition={Transition}
+              TransitionComponent={Transition}
               keepMounted
               onClose={() => this.handleCloseFormMailAddressAdd()}
             >
@@ -557,22 +566,24 @@ class MailAddressListPage extends React.Component<Props, State> {
             </Dialog>
             <Dialog
               classes={{
+                root: classes.formCenter,
                 paper: `${classes.modal} ${classes.modalSmall}`
               }}
               open={this.state.openFormMailAddressNew}
-              transition={Transition}
+              TransitionComponent={Transition}
               keepMounted
               onClose={() => this.handleCloseFormMailAddressNew()}
             >
-              <IconButton
-                style={modalCloseButtonStyle}
+              <Button
+                justIcon
+                className={classes.modalCloseButton}
                 key="close"
                 aria-label="Close"
-                color="defaultNoBackground"
+                color="transparent"
                 onClick={() => this.handleCloseFormMailAddressNew()}
               >
                 <Close className={classes.modalClose} />
-              </IconButton>
+              </Button>
               <DialogContent
                 id="formMailAddressNewBody"
                 className={`${classes.modalBody} ${classes.modalSmallBody}`}
@@ -585,7 +596,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                 />
               </DialogContent>
             </Dialog>
-          </ItemGrid>
+          </GridItem>
         </GridContainer>
       </Loadable>
     );

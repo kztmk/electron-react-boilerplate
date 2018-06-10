@@ -1,26 +1,25 @@
-// @flow
-import React from 'react';
+import React from "react";
+import PropTypes from "prop-types";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
+// @material-ui/core components
+import withStyles from "@material-ui/core/styles/withStyles";
 
-import typographyStyle from '../../assets/jss/material-dashboard-pro-react/components/typographyStyle';
+import typographyStyle from "../../assets/jss/material-dashboard-pro-react/components/typographyStyle.jsx";
 
-/* eslint-disable react/require-default-props */
-export type Props = {
-  classes: Object,
-  text?: number | string | React.Element | Array<any>,
-  author?: number | string | React.Element | Array<any>
-};
-
-function Quote(props: Props) {
+function Quote({ ...props }) {
   const { classes, text, author } = props;
   return (
-    <blockquote className={`${classes.defaultFontStyle} ${classes.quote}`}>
+    <blockquote className={classes.defaultFontStyle + " " + classes.quote}>
       <p className={classes.quoteText}>{text}</p>
       <small className={classes.quoteAuthor}>{author}</small>
     </blockquote>
   );
 }
+
+Quote.propTypes = {
+  classes: PropTypes.object.isRequired,
+  text: PropTypes.node,
+  author: PropTypes.node
+};
 
 export default withStyles(typographyStyle)(Quote);

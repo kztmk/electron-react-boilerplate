@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core/styles';
 import footerStyle from '../../assets/jss/material-dashboard-pro-react/components/footerStyle';
 
 function Footer({ ...props }) {

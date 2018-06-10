@@ -1,39 +1,27 @@
-// @flow
-import React from 'react';
-import cx from 'classnames';
+import React from "react";
+import PropTypes from "prop-types";
+import cx from "classnames";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import List from 'material-ui/List';
-import ListItem from 'material-ui/List/ListItem';
+// @material-ui/core components
+import withStyles from "@material-ui/core/styles/withStyles";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 
-import footerStyle from '../../assets/jss/material-dashboard-pro-react/components/footerStyle';
+import footerStyle from "../../assets/jss/material-dashboard-pro-react/components/footerStyle";
 
-// react/require-default-props
-/* eslint-disable */
-export type Props = {
-  classes: Object,
-  fluid?: boolean,
-  white?: boolean,
-  rtlActive?: boolean
-};
-/* eslint-enable */
-
-function Footer(props: Props) {
-  const {
-    classes, fluid, white
-  } = props;
-  const container = cx({
+function Footer({ ...props }) {
+  const { classes, fluid, white, rtlActive } = props;
+  var container = cx({
     [classes.container]: !fluid,
     [classes.containerFluid]: fluid,
     [classes.whiteColor]: white
   });
-  const anchor =
+  var anchor =
     classes.a +
     cx({
-      [` ${classes.whiteColor}`]: white
+      [" " + classes.whiteColor]: white
     });
-  const block = cx({
+  var block = cx({
     [classes.block]: true,
     [classes.whiteColor]: white
   });
@@ -44,36 +32,45 @@ function Footer(props: Props) {
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
               <a href="#home" className={block}>
-                {'Home'}
+                {rtlActive ? "الصفحة الرئيسية" : "Home"}
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a href="#company" className={block}>
-                {'Company'}
+                {rtlActive ? "شركة" : "Company"}
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a href="#portfolio" className={block}>
-                {'Portfolio'}
+                {rtlActive ? "بعدسة" : "Portfolio"}
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a href="#blog" className={block}>
-                {'Blog'}
+                {rtlActive ? "مدونة" : "Blog"}
               </a>
             </ListItem>
           </List>
         </div>
         <p className={classes.right}>
-          &copy; {1900 + new Date().getYear()}{' '}
-          <a href="http://v5.yoriki.cloud" className={anchor}>
-            {'Support'}
+          &copy; {1900 + new Date().getYear()}{" "}
+          <a href="https://www.creative-tim.com" className={anchor}>
+            {rtlActive ? "توقيت الإبداعية" : "Creative Tim"}
           </a>
-          {'made with love for a better web'}
+          {rtlActive
+            ? ", مصنوعة مع الحب لشبكة الإنترنت أفضل"
+            : ", made with love for a better web"}
         </p>
       </div>
     </footer>
   );
 }
+
+Footer.propTypes = {
+  classes: PropTypes.object.isRequired,
+  fluid: PropTypes.bool,
+  white: PropTypes.bool,
+  rtlActive: PropTypes.bool
+};
 
 export default withStyles(footerStyle)(Footer);

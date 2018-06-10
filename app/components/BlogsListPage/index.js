@@ -1,23 +1,30 @@
 // @flow
 import { ipcRenderer } from 'electron';
 import React from 'react';
-import { withStyles } from 'material-ui/styles';
-import Slide from 'material-ui/transitions/Slide';
-import Web from 'material-ui-icons/Web';
 import Loadable from 'react-loading-overlay';
-import Tooltip from 'material-ui/Tooltip';
-
-// import Button from 'material-ui/Button';
-import Dialog from 'material-ui/Dialog';
-import DialogTitle from 'material-ui/Dialog/DialogTitle';
-import DialogContent from 'material-ui/Dialog/DialogContent';
-import DialogActions from 'material-ui/Dialog/DialogActions';
-
 import moment from 'moment';
+
+import { withStyles } from '@material-ui/core/styles';
+import Slide from '@material-ui/core/Slide';
+import Tooltip from '@material-ui/core/Tooltip';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+
 // material-ui-icons
-import AddAlert from 'material-ui-icons/AddAlert';
+import AddAlert from '@material-ui/icons/AddAlert';
+import Web from '@material-ui/icons/Web';
+
 import BlogList from './blogList';
-import { GridContainer, ItemGrid, IconCard, Snackbar } from '../../ui';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardIcon from '../../ui/Card/CardIcon';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 import type BlogAccountType from '../../types/blogAccount';
 
 import Button from '../../ui/CustomButtons/Button';
@@ -427,36 +434,40 @@ class BlogListPage extends React.Component<Props, State> {
     return (
       <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・">
         <GridContainer>
-          <ItemGrid xs={12} sm={12} md={12}>
-            <IconCard
-              icon={Web}
-              title="ブログ一覧"
-              content={
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary" icon>
+                <CardIcon color="primary">
+                  <Web />
+                </CardIcon>
+                <h4 className={classes.cardIconTitle}>ブログ一覧</h4>
+                <GridContainer justify="flex-end" className={classes.cardContentRight}>
+                  <div className={classes.buttonGroupStyle}>
+                    <Tooltip title="新規ブログを追加" placement="bottom">
+                      <Button
+                        color="primary"
+                        onClick={this.handleOpenFormBlogAdd}
+                        customClass={classes.firstButton}
+                      >
+                        <AddIcon />
+                        追加
+                      </Button>
+                    </Tooltip>
+                    <Tooltip title="寄騎形式のファイルからブログをインポート" placement="bottom">
+                      <Button
+                        color="primary"
+                        customClass={classes.lastButton}
+                        onClick={this.handleClickImportButton}
+                      >
+                        <FolderDownloadIcon />
+                        インポート
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </GridContainer>
+              </CardHeader>
+              <CardBody>
                 <div>
-                  <GridContainer justify="flex-end" className={classes.cardContentRight}>
-                    <div className={classes.buttonGroupStyle}>
-                      <Tooltip title="新規ブログを追加" placement="bottom">
-                        <Button
-                          color="primary"
-                          onClick={this.handleOpenFormBlogAdd}
-                          customClass={classes.firstButton}
-                        >
-                          <AddIcon />
-                          追加
-                        </Button>
-                      </Tooltip>
-                      <Tooltip title="寄騎形式のファイルからブログをインポート" placement="bottom">
-                        <Button
-                          color="primary"
-                          customClass={classes.lastButton}
-                          onClick={this.handleClickImportButton}
-                        >
-                          <FolderDownloadIcon />
-                          インポート
-                        </Button>
-                      </Tooltip>
-                    </div>
-                  </GridContainer>
                   <BlogList
                     mode={this.state.mode}
                     isFailure={this.props.isFailure}
@@ -466,8 +477,8 @@ class BlogListPage extends React.Component<Props, State> {
                     editAccount={this.props.startUpdateBlogAccount}
                   />
                 </div>
-              }
-            />
+              </CardBody>
+            </Card>
             <Snackbar
               color="warning"
               place="bc"
@@ -532,6 +543,7 @@ class BlogListPage extends React.Component<Props, State> {
             </Dialog>
             <Dialog
               classes={{
+                root: classes.formCenter,
                 paper: `${classes.modal} ${classes.modalSmall}`
               }}
               open={this.state.openFormBlogAdd}
@@ -554,7 +566,7 @@ class BlogListPage extends React.Component<Props, State> {
                 />
               </DialogContent>
             </Dialog>
-          </ItemGrid>
+          </GridItem>
         </GridContainer>
       </Loadable>
     );

@@ -4,7 +4,10 @@
     "sourceType": "module",
     "allowImportExportEverywhere": true
   },
-  "extends": "airbnb",
+  "extends": [
+    "airbnb",
+    "prettier"
+  ],
   "env": {
     "browser": true,
     "node": true,
@@ -17,6 +20,7 @@
     "comma-dangle": "off",
     "generator-star-spacing": "off",
     "import/no-unresolved": "error",
+    "import/extensions": "error",
     "import/no-extraneous-dependencies": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "no-console": "off",

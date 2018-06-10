@@ -1,25 +1,14 @@
-// @flow
-import React from 'react';
-import cx from 'classnames';
+import React from "react";
+import PropTypes from "prop-types";
+import cx from "classnames";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import Button from 'material-ui/Button';
+// @material-ui/core components
+import withStyles from "@material-ui/core/styles/withStyles";
+import Button from "@material-ui/core/Button";
 
-import paginationStyle from '../../assets/jss/material-dashboard-pro-react/components/paginationStyle';
+import paginationStyle from "../../assets/jss/material-dashboard-pro-react/components/paginationStyle.jsx";
 
-export type Props = {
-  classes: Object,
-  pages: Array<{
-    active?: boolean,
-    disabled?: boolean,
-    text: number | 'PREV' | 'NEXT' | '...',
-    onClick?: Function
-  }>,
-  color?: 'primary' | 'info' | 'success' | 'warning' | 'danger'
-};
-
-function Pagination(props: Props) {
+function Pagination({ ...props }) {
   const { classes, pages, color } = props;
   return (
     <ul className={classes.pagination}>
@@ -37,7 +26,7 @@ function Pagination(props: Props) {
               </Button>
             ) : (
               <Button
-                onClick={() => console.log(`you've clicked ${prop.text}`)}
+                onClick={() => console.log("you've clicked " + prop.text)}
                 className={paginationLink}
               >
                 {prop.text}
@@ -51,7 +40,23 @@ function Pagination(props: Props) {
 }
 
 Pagination.defaultProps = {
-  color: 'primary'
+  color: "primary"
+};
+
+Pagination.propTypes = {
+  classes: PropTypes.object.isRequired,
+  pages: PropTypes.arrayOf(
+    PropTypes.shape({
+      active: PropTypes.bool,
+      disabled: PropTypes.bool,
+      text: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.oneOf(["PREV", "NEXT", "..."])
+      ]).isRequired,
+      onClick: PropTypes.func
+    })
+  ).isRequired,
+  color: PropTypes.oneOf(["primary", "info", "success", "warning", "danger"])
 };
 
 export default withStyles(paginationStyle)(Pagination);

@@ -1,34 +1,15 @@
-// @flow
-import React from 'react';
-import cx from 'classnames';
+import React from "react";
+// nodejs library that concatenates classes
+import classNames from "classnames";
+// nodejs library to set properties for components
+import PropTypes from "prop-types";
 
 // material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import Button from 'material-ui/Button';
+import withStyles from "@material-ui/core/styles/withStyles";
+import Button from "@material-ui/core/Button";
 
-import buttonStyle from '../../assets/jss/material-dashboard-pro-react/components/buttonStyle';
-
-// react/require-default-props
-/* eslint-disable */
-export type Props = {
-  classes: Object,
-  color?: 'primary' | 'primarySub' | 'info' | 'success' | 'warning' | 'danger' | 'rose' | 'defaultNoBackground' | 'primaryNoBackground' | 'infoNoBackground' | 'successNoBackground' | 'warningNoBackground' | 'dangerNoBackground' | 'roseNoBackground' | 'twitter' | 'twitterNoBackground' | 'facebook' | 'facebookNoBackground' | 'google' | 'googleNoBackground' | 'linkedin' | 'linkedinNoBackground' | 'pinterest' | 'pinterestNoBackground' | 'youtube' | 'youtubeNoBackground' | 'tumblr' | 'tumblrNoBackground' | 'github' | 'githubNoBackground' | 'behance' | 'behanceNoBackground' | 'dribbble' | 'dribbbleNoBackground' | 'reddit' | 'redditNoBackground' | 'white' | 'simple' | 'transparent',
-  round?: boolean,
-  fullWidth?: boolean,
-  disabled?: boolean,
-  customClass?: string,
-  // make the button's min width to 160px
-  wd?: boolean,
-  // make the button smaller
-  justIcon?: boolean,
-  // button will float right
-  right?: boolean,
-  size?: 'sm' | 'lg' | 'xs',
-  children?: React.Node
-};
-/* eslint-enable */
-
-function RegularButton(props: Props) {
+import buttonStyle from "../../assets/jss/material-dashboard-pro-react/components/buttonStyle.jsx";
+function RegularButton({ ...props }) {
   const {
     classes,
     color,
@@ -36,29 +17,69 @@ function RegularButton(props: Props) {
     children,
     fullWidth,
     disabled,
-    customClass,
-    right,
-    justIcon,
+    simple,
     size,
-    wd,
+    block,
+    link,
+    justIcon,
+    className,
+    muiClasses,
     ...rest
   } = props;
-  const btnClasses = cx({
+  const btnClasses = classNames({
+    [classes.button]: true,
+    [classes[size]]: size,
     [classes[color]]: color,
     [classes.round]: round,
     [classes.fullWidth]: fullWidth,
     [classes.disabled]: disabled,
-    [customClass]: customClass,
-    [classes.right]: right,
+    [classes.simple]: simple,
+    [classes.block]: block,
+    [classes.link]: link,
     [classes.justIcon]: justIcon,
-    [classes.wd]: wd,
-    [classes[size]]: size
+    [className]: className
   });
   return (
-    <Button {...rest} className={`${classes.button} ${btnClasses}`}>
+    <Button {...rest} classes={muiClasses} className={btnClasses}>
       {children}
     </Button>
   );
 }
+
+RegularButton.propTypes = {
+  classes: PropTypes.object.isRequired,
+  color: PropTypes.oneOf([
+    "primary",
+    "primarySub",
+    "info",
+    "success",
+    "warning",
+    "danger",
+    "rose",
+    "white",
+    "twitter",
+    "facebook",
+    "google",
+    "linkedin",
+    "pinterest",
+    "youtube",
+    "tumblr",
+    "github",
+    "behance",
+    "dribbble",
+    "reddit",
+    "transparent"
+  ]),
+  size: PropTypes.oneOf(["sm", "lg"]),
+  simple: PropTypes.bool,
+  round: PropTypes.bool,
+  fullWidth: PropTypes.bool,
+  disabled: PropTypes.bool,
+  block: PropTypes.bool,
+  link: PropTypes.bool,
+  justIcon: PropTypes.bool,
+  className: PropTypes.string,
+  muiClasses: PropTypes.object
+};
 
 export default withStyles(buttonStyle)(RegularButton);

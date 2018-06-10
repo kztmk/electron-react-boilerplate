@@ -1,16 +1,26 @@
 // @flow
 import React, { Component } from 'react';
-import { withStyles } from 'material-ui/styles';
-import FormLabel from 'material-ui/Form/FormLabel';
 import TagsInput from 'react-tagsinput';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Loadable from 'react-loading-overlay';
-import Cancel from 'material-ui-icons/Cancel';
-import type BlogAccountType from '../../types/blogAccount';
-import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button } from '../../ui';
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+import FormLabel from '@material-ui/core/FormLabel';
+// material-ui/coins
+import Cancel from '@material-ui/icons/Cancel';
 
-import regularFormsStyle from '../../assets/jss/material-dashboard-pro-react/views/regularFormsStyle';
+import type BlogAccountType from '../../types/blogAccount';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import CustomInput from '../../ui/CustomInput/CustomInput';
+import Button from '../../ui/CustomButtons/Button';
+
+import formAddStyle from '../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
 import Table from '../../ui/Table/Table';
 import { SaveAltIcon } from '../../assets/icons';
 
@@ -148,7 +158,7 @@ class FormBlogEdit extends Component<Props, State> {
                 title="更新完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 {msg}
               </SweetAlert>
@@ -173,7 +183,7 @@ class FormBlogEdit extends Component<Props, State> {
                 title="更新失敗"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 {msg}
               </SweetAlert>
@@ -319,42 +329,45 @@ class FormBlogEdit extends Component<Props, State> {
     return (
       <Loadable active={this.state.isUpdated} spinner text="サーバーと通信中・・・・">
         <GridContainer>
-          <ItemGrid xs={12} sm={12} md={12}>
-            <HeaderCard
-              cardTitle="ブログ情報　編集"
-              headerColor="rose"
-              content={
-                <div>
-                  <ItemGrid xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
-                    <div className={classes.buttonGroupStyle}>
-                      <div className={classes.buttonGroup}>
-                        <Button
-                          color="primary"
-                          customClass={classes.firstButton}
-                          onClick={this.props.closeModal}
-                        >
-                          <Cancel style={iconStyle} />
-                          キャンセル
-                        </Button>
-                        <Button
-                          color="primary"
-                          customClass={classes.lastButton}
-                          onClick={this.updateBlogAccount}
-                        >
-                          <SaveAltIcon style={iconStyle} />
-                          保存
-                        </Button>
-                      </div>
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary" text>
+                <CardText color="primary">
+                  <h4 className={classes.cardTitle}>ブログ情報　編集</h4>
+                </CardText>
+                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
+                  <div className={classes.buttonGroupStyle}>
+                    <div className={classes.buttonGroup}>
+                      <Button
+                        color="primary"
+                        customClass={classes.firstButton}
+                        onClick={this.props.closeModal}
+                      >
+                        <Cancel style={iconStyle} />
+                        キャンセル
+                      </Button>
+                      <Button
+                        color="primary"
+                        customClass={classes.lastButton}
+                        onClick={this.updateBlogAccount}
+                      >
+                        <SaveAltIcon style={iconStyle} />
+                        保存
+                      </Button>
                     </div>
-                  </ItemGrid>
+                  </div>
+                </GridItem>
+              </CardHeader>
+              <CardBody>
+                <div>
                   <form>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={3}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           ブログ名:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={8}>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
                         <CustomInput
                           id="title"
                           formControlProps={{
@@ -367,22 +380,22 @@ class FormBlogEdit extends Component<Props, State> {
                             onChange: event => this.handleChangeTitle(event)
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={1}>
+                      </GridItem>
+                      <GridItem xs={12} sm={1}>
                         <img
                           style={providerImageStyle}
                           src={getBlogProviderImage(this.props.targetAccount.provider)}
                           alt={this.props.targetAccount.provider}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={3}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           ブログ説明
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={9}>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
                         <CustomInput
                           id="description"
                           formControlProps={{
@@ -395,15 +408,15 @@ class FormBlogEdit extends Component<Props, State> {
                             onChange: event => this.handleChangeDescription(event)
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={3}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           ログインID:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <CustomInput
                           id="accountId"
                           formControlProps={{
@@ -417,13 +430,13 @@ class FormBlogEdit extends Component<Props, State> {
                             onChange: event => this.handleChangeAccountId(event)
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3}>
+                      </GridItem>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           パスワード:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <CustomInput
                           id="pass"
                           formControlProps={{
@@ -436,15 +449,15 @@ class FormBlogEdit extends Component<Props, State> {
                             onChange: event => this.handleChangePassword(event)
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           作成:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <CustomInput
                           id="disabled"
                           formControlProps={{
@@ -461,47 +474,31 @@ class FormBlogEdit extends Component<Props, State> {
                             )
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={1}>
+                      </GridItem>
+                      <GridItem xs={12} sm={1}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           URL:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={6}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5}>
                         <div style={urlSpaceAdjust}>
-                          <a href={this.props.targetAccount.url} target="_blank">
+                          <a
+                            href={this.props.targetAccount.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             {this.props.targetAccount.url}
                           </a>
                         </div>
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={3}>
-                        <FormLabel className={classes.labelHorizontalLeastUpperSpace}>
-                          グループタグ:
-                        </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={9}>
-                        <div className={classes.inputNoLabelLessUpperSpace}>
-                          <TagsInput
-                            value={this.state.groupTags}
-                            tagProps={{ className: 'react-tagsinput-tag info' }}
-                            onChange={::this.handleTags}
-                            inputProps={{
-                              className: 'react-tagsinput-input',
-                              placeholder: 'ここへタグを追加'
-                            }}
-                          />
-                        </div>
-                      </ItemGrid>
-                    </GridContainer>
-                    <GridContainer>
-                      <ItemGrid xs={12} sm={1}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           備考:
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={11}>
+                      </GridItem>
+                      <GridItem xs={12} sm={9}>
                         <CustomInput
                           id="pass"
                           formControlProps={{
@@ -514,23 +511,44 @@ class FormBlogEdit extends Component<Props, State> {
                             onChange: event => this.handleChangeRemark(event)
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid>
+                      <GridItem xs={12} sm={2}>
+                        <FormLabel className={classes.labelHorizontalLeastUpperSpace}>
+                          グループタグ:
+                        </FormLabel>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
+                        <div className={classes.inputNoLabelLessUpperSpace}>
+                          <TagsInput
+                            value={this.state.groupTags}
+                            tagProps={{ className: 'react-tagsinput-tag info' }}
+                            onChange={::this.handleTags}
+                            inputProps={{
+                              className: 'react-tagsinput-input',
+                              placeholder: 'ここへタグを追加'
+                            }}
+                          />
+                        </div>
+                      </GridItem>
+                    </GridContainer>
+                    <GridContainer>
+                      <GridItem xs={12} sm={1} md={1} />
+                      <GridItem>
                         <Table tableHead={['---詳細情報---']} tableData={this.state.data} />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                   </form>
                 </div>
-              }
-            />
+              </CardBody>
+            </Card>
             {this.state.sweetAlert}
-          </ItemGrid>
+          </GridItem>
         </GridContainer>
       </Loadable>
     );
   }
 }
 
-export default withStyles(regularFormsStyle)(FormBlogEdit);
+export default withStyles(formAddStyle)(FormBlogEdit);

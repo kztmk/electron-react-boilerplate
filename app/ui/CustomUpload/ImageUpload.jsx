@@ -1,18 +1,15 @@
-// @flow
-import React from 'react';
+import React from "react";
+// used for making the prop types of this component
+import PropTypes from "prop-types";
 
 // core components
-import Button from '../CustomButtons/Button';
+import Button from "components/CustomButtons/Button.jsx";
 
-import defaultImage from '../../assets/img/image_placeholder.jpg';
-import defaultAvatar from '../../assets/img/placeholder.jpg';
-
-// eslint-disable-next-line react/require-default-props
-export type Props = { avatar?: boolean };
+import defaultImage from "assets/img/image_placeholder.jpg";
+import defaultAvatar from "assets/img/placeholder.jpg";
 
 class ImageUpload extends React.Component {
-  props: Props;
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
     this.state = {
       file: null,
@@ -25,11 +22,11 @@ class ImageUpload extends React.Component {
   }
   handleImageChange(e) {
     e.preventDefault();
-    const reader = new FileReader();
-    const file = e.target.files[0];
+    let reader = new FileReader();
+    let file = e.target.files[0];
     reader.onloadend = () => {
       this.setState({
-        file,
+        file: file,
         imagePreviewUrl: reader.result
       });
     };
@@ -42,36 +39,44 @@ class ImageUpload extends React.Component {
     // you have to call it yourself
   }
   handleClick() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = this.handleImageChange;
-    input.click();
+    this.refs.fileInput.click();
   }
   handleRemove() {
     this.setState({
       file: null,
       imagePreviewUrl: this.props.avatar ? defaultAvatar : defaultImage
     });
+    this.refs.fileInput.value = null;
   }
   render() {
+    var {
+      avatar,
+      addButtonProps,
+      changeButtonProps,
+      removeButtonProps
+    } = this.props;
     return (
       <div className="fileinput text-center">
-        <div className={`thumbnail${this.props.avatar ? ' img-circle' : ''}`}>
+        <input type="file" onChange={this.handleImageChange} ref="fileInput" />
+        <div className={"thumbnail" + (avatar ? " img-circle" : "")}>
           <img src={this.state.imagePreviewUrl} alt="..." />
         </div>
         <div>
           {this.state.file === null ? (
-            <Button round color="rose" onClick={() => this.handleClick()}>
-              {this.props.avatar ? 'Add Photo' : 'Select image'}
+            <Button {...addButtonProps} onClick={() => this.handleClick()}>
+              {avatar ? "Add Photo" : "Select image"}
             </Button>
           ) : (
             <span>
-              <Button round color="rose" onClick={() => this.handleClick()}>
+              <Button {...changeButtonProps} onClick={() => this.handleClick()}>
                 Change
               </Button>
-              {this.props.avatar ? <br /> : null}
-              <Button color="danger" round onClick={() => this.handleRemove()}>
-                <i className="fa fa-times" /> Remove
+              {avatar ? <br /> : null}
+              <Button
+                {...removeButtonProps}
+                onClick={() => this.handleRemove()}
+              >
+                <i className="fas fa-times" /> Remove
               </Button>
             </span>
           )}
@@ -80,5 +85,12 @@ class ImageUpload extends React.Component {
     );
   }
 }
+
+ImageUpload.propTypes = {
+  avatar: PropTypes.bool,
+  addButtonProps: PropTypes.object,
+  changeButtonProps: PropTypes.object,
+  removeButtonProps: PropTypes.object
+};
 
 export default ImageUpload;

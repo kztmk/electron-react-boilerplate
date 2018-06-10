@@ -3,22 +3,25 @@ import React from 'react';
 import ReactTable from 'react-table';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Loadable from 'react-loading-overlay';
-import { withStyles } from 'material-ui/styles';
-import Slide from 'material-ui/transitions/Slide';
-import Tooltip from 'material-ui/Tooltip';
-import Dialog from 'material-ui/Dialog';
-import DialogTitle from 'material-ui/Dialog/DialogTitle';
-import DialogContent from 'material-ui/Dialog/DialogContent';
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+import Slide from '@material-ui/core/Slide';
+import Tooltip from '@material-ui/core/Tooltip';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
 
 import moment from 'moment';
 import TagsInput from 'react-tagsinput';
 import matchSorter from 'match-sorter';
 // material-ui-icons
-import Edit from 'material-ui-icons/Edit';
-import DeleteForever from 'material-ui-icons/DeleteForever';
-import Close from 'material-ui-icons/Close';
+import Edit from '@material-ui/icons/Edit';
+import DeleteForever from '@material-ui/icons/DeleteForever';
+import Close from '@material-ui/icons/Close';
 
-import { GridContainer, ItemGrid, IconButton } from '../../ui';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Button from '../../ui/CustomButtons/Button';
 import type BlogAccountType from '../../types/blogAccount';
 import { initialBlogAccount } from '../../containers/BlogList/reducer';
 import FormBlogEdit from './formBlogEdit';
@@ -216,18 +219,22 @@ class BlogList extends React.Component<Props, State> {
       actions: (
         <div className="actions-right">
           <Tooltip title="ブログへログイン" placement="top-end">
-            <IconButton
+            <Button
+              justIcon
               onClick={() => {
                 const obj = this.state.data.find(o => o.key === prop.key);
                 alert(`you click:${obj.title}`);
               }}
               color="success"
+              size="sm"
+              round
             >
               <LoginIcon />
-            </IconButton>
+            </Button>
           </Tooltip>
           <Tooltip title="ブログ情報を表示・編集" placement="top-end">
-            <IconButton
+            <Button
+              justIcon
               onClick={() => {
                 const account = this.state.data.find(o => o.key === prop.key);
                 if (account) {
@@ -244,13 +251,15 @@ class BlogList extends React.Component<Props, State> {
                 }
               }}
               color="warning"
-              customClass="actionButton actionButtonRound"
+              size="sm"
+              round
             >
               <Edit />
-            </IconButton>
+            </Button>
           </Tooltip>
           <Tooltip title="ブログ情報を削除" placement="top-end">
-            <IconButton
+            <Button
+              justIcon
               onClick={() => {
                 const account = this.state.data.find(o => o.key === prop.key);
                 if (account) {
@@ -265,10 +274,11 @@ class BlogList extends React.Component<Props, State> {
                 }
               }}
               color="danger"
-              customClass="actionButton actionButtonRound"
+              size="sm"
+              round
             >
               <DeleteForever />
-            </IconButton>
+            </Button>
           </Tooltip>
         </div>
       )
@@ -374,7 +384,7 @@ class BlogList extends React.Component<Props, State> {
     return (
       <Loadable active={this.state.mode === 'delete'} spinner text="サーバーと通信中・・・・">
         <GridContainer>
-          <ItemGrid xs={12} sm={12} md={12}>
+          <GridItem xs={12} sm={12} md={12}>
             <ReactTable
               data={this.state.data}
               resizable
@@ -514,6 +524,7 @@ class BlogList extends React.Component<Props, State> {
             {this.state.sweetAlert}
             <Dialog
               classes={{
+                root: classes.formCenter,
                 paper: classes.modal
               }}
               maxWidth={false}
@@ -530,7 +541,8 @@ class BlogList extends React.Component<Props, State> {
                 disableTypography
                 className={classes.modalHeader}
               >
-                <IconButton
+                <Button
+                  justIcon
                   style={modalCloseButtonStyle}
                   key="close"
                   aria-label="Close"
@@ -538,7 +550,7 @@ class BlogList extends React.Component<Props, State> {
                   onClick={() => this.handleCloseModal()}
                 >
                   <Close className={classes.modalClose} />
-                </IconButton>
+                </Button>
               </DialogTitle>
               <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
                 <FormBlogEdit
@@ -551,7 +563,7 @@ class BlogList extends React.Component<Props, State> {
                 />
               </DialogContent>
             </Dialog>
-          </ItemGrid>
+          </GridItem>
         </GridContainer>
       </Loadable>
     );

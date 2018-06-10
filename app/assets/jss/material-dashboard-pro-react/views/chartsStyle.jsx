@@ -9,13 +9,25 @@ import {
   successColor,
   infoColor,
   roseColor,
-  grayColor
-} from '../../material-dashboard-pro-react';
+  grayColor,
+  cardTitle
+} from "../../material-dashboard-pro-react";
 
 const chartsStyle = {
+  cardTitle,
+  cardCategory: {
+    margin: "0",
+    color: "#999999"
+  },
+  cardIconTitle: {
+    ...cardTitle,
+    marginTop: "15px",
+    marginBottom: "0px"
+  },
   legendTitle: {
     color: grayColor,
-    margin: '10px 0 !important'
+    margin: "10px 0 !important",
+    display: "flex"
   },
   primary: {
     color: primaryColor
@@ -37,6 +49,9 @@ const chartsStyle = {
   },
   gray: {
     color: grayColor
+  },
+  cardFooter: {
+    display: "block"
   }
 };
 

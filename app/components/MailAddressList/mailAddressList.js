@@ -2,24 +2,27 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { withStyles } from 'material-ui/styles';
-import Slide from 'material-ui/transitions/Slide';
-import Tooltip from 'material-ui/Tooltip';
-import Dialog from 'material-ui/Dialog';
-import DialogTitle from 'material-ui/Dialog/DialogTitle';
-import DialogContent from 'material-ui/Dialog/DialogContent';
 import Loadable from 'react-loading-overlay';
-
 import moment from 'moment';
 import TagsInput from 'react-tagsinput';
 import matchSorter from 'match-sorter';
-// material-ui-icons
-import Edit from 'material-ui-icons/Edit';
-import DeleteForever from 'material-ui-icons/DeleteForever';
-import LibraryAdd from 'material-ui-icons/LibraryAdd';
-import Close from 'material-ui-icons/Close';
 
-import { GridContainer, ItemGrid, IconButton } from '../../ui';
+import { withStyles } from '@material-ui/core/styles';
+import Slide from '@material-ui/core/Slide';
+import Tooltip from '@material-ui/core/Tooltip';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+
+// material-ui-icons
+import Edit from '@material-ui/icons/Edit';
+import DeleteForever from '@material-ui/icons/DeleteForever';
+import LibraryAdd from '@material-ui/icons/LibraryAdd';
+import Close from '@material-ui/icons/Close';
+
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Button from '../../ui/CustomButtons/Button';
 import type MailAccountType from '../../types/mailAccount';
 
 import Yahoo from '../../assets/img/providerImage/y64.png';
@@ -198,7 +201,8 @@ class MailAddressList extends React.Component<Props, State> {
       actions: (
         <div className="actions-right">
           <Tooltip title="メールアカウントへログイン" placement="top-end">
-            <IconButton
+            <Button
+              justIcon
               onClick={() => {
                 const account = this.state.data.find(o => o.key === prop.key);
                 if (account) {
@@ -217,13 +221,16 @@ class MailAddressList extends React.Component<Props, State> {
                   alert('ログイン用アカウントの取得に失敗しました。');
                 }
               }}
+              size="sm"
+              round
               color="success"
             >
               <LoginIcon />
-            </IconButton>
+            </Button>
           </Tooltip>
           <Tooltip title="メールアカウント情報を表示・編集" placement="top-end">
-            <IconButton
+            <Button
+              justIcon
               onClick={() => {
                 const account = this.state.data.find(o => o.key === prop.key);
                 if (account) {
@@ -242,14 +249,16 @@ class MailAddressList extends React.Component<Props, State> {
                   alert('編集対象のメールアカウントの取得に失敗しました。');
                 }
               }}
+              size="sm"
+              round
               color="warning"
-              customClass="actionButton actionButtonRound"
             >
               <Edit />
-            </IconButton>
+            </Button>
           </Tooltip>
           <Tooltip title="メールアカウント情報を削除" placement="top-end">
-            <IconButton
+            <Button
+              justIcon
               onClick={() => {
                 const account = this.state.data.find(o => o.key === prop.key);
                 if (account) {
@@ -265,22 +274,25 @@ class MailAddressList extends React.Component<Props, State> {
                   alert('削除対象のメールアカウントの取得に失敗しました。');
                 }
               }}
+              size="sm"
+              round
               color="danger"
-              customClass="actionButton actionButtonRound"
             >
               <DeleteForever />
-            </IconButton>
+            </Button>
           </Tooltip>
           <Tooltip title="新規ブログを作成" placement="top-end">
-            <IconButton
+            <Button
+              justIcon
               onClick={() => {
                 // const obj = this.state.data.find(o => o.key === prop.key);
               }}
+              size="sm"
+              round
               color="info"
-              customClass="actionButton actionButtonRound"
             >
               <LibraryAdd />
-            </IconButton>
+            </Button>
           </Tooltip>
         </div>
       )
@@ -426,7 +438,7 @@ class MailAddressList extends React.Component<Props, State> {
     return (
       <Loadable active={this.state.mode === 'delete'} spinner text="サーバーと通信中・・・・">
         <GridContainer>
-          <ItemGrid xs={12} sm={12} md={12}>
+          <GridItem xs={12} sm={12} md={12}>
             <ReactTable
               data={this.state.data}
               resizable
@@ -581,11 +593,12 @@ class MailAddressList extends React.Component<Props, State> {
             {this.state.sweetAlert}
             <Dialog
               classes={{
+                root: classes.formCenter,
                 paper: classes.modal
               }}
               maxWidth={false}
               open={this.state.openEditForm}
-              transition={Transition}
+              TransitionComponent={Transition}
               keepMounted
               onClose={() => this.handleCloseEditForm()}
               aria-labelledby="notice-modal-slide-title"
@@ -597,15 +610,16 @@ class MailAddressList extends React.Component<Props, State> {
                 disableTypography
                 className={classes.modalHeader}
               >
-                <IconButton
-                  style={modalCloseButtonStyle}
+                <Button
+                  justIcon
+                  className={classes.modalCloseButton}
                   key="close"
                   aria-label="Close"
-                  color="defaultNoBackground"
+                  color="transparent"
                   onClick={() => this.handleCloseEditForm()}
                 >
                   <Close className={classes.modalClose} />
-                </IconButton>
+                </Button>
               </DialogTitle>
               <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
                 <FormMailAddressEdit
@@ -625,7 +639,7 @@ class MailAddressList extends React.Component<Props, State> {
               maxWidth={false}
               fullWidth
               open={this.state.openMailAccount}
-              transition={Transition}
+              TransitionComponent={Transition}
               keepMounted
               onClose={() => this.handleCloseMailAccount()}
               aria-labelledby="notice-modal-slide-title"
@@ -637,15 +651,16 @@ class MailAddressList extends React.Component<Props, State> {
                 disableTypography
                 className={classes.modalHeader}
               >
-                <IconButton
-                  style={modalCloseButtonStyle}
+                <Button
+                  justIcon
+                  className={classes.modalCloseButton}
                   key="close"
                   aria-label="Close"
-                  color="defaultNoBackground"
+                  color="transparent"
                   onClick={() => this.handleCloseMailAccount()}
                 >
                   <Close className={classes.modalClose} />
-                </IconButton>
+                </Button>
               </DialogTitle>
               <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
                 <MailAccount
@@ -655,7 +670,7 @@ class MailAddressList extends React.Component<Props, State> {
                 />
               </DialogContent>
             </Dialog>
-          </ItemGrid>
+          </GridItem>
         </GridContainer>
       </Loadable>
     );

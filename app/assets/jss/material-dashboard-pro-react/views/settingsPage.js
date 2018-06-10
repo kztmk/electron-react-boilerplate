@@ -1,6 +1,16 @@
-import { primaryColor, primaryBoxShadow } from '../../material-dashboard-pro-react';
+import { primaryColor, primaryBoxShadow, cardTitle } from '../../material-dashboard-pro-react';
 
 const settingPageStyle = {
+  cardTitleWhite: {
+    ...cardTitle,
+    color: '#FFFFFF',
+    marginTop: '0'
+  },
+  cardCategoryWhite: {
+    margin: '0',
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: '.875rem'
+  },
   cardRoot: {
     width: '75vw'
   },
@@ -119,12 +129,14 @@ const settingPageStyle = {
   groupBox: {
     border: '1px solid rgba(0, 0, 0, .54)',
     borderRadius: '30px',
-    padding: '20px'
+    padding: '20px',
+    margin: '0 15px 15px 15px'
   },
   groupBoxDisabled: {
     border: '1px solid rgba(0, 0, 0, .25)',
     borderRadius: '30px',
-    padding: '20px'
+    padding: '20px',
+    margin: '0 15px 15px 15px'
   },
   cardContentRight: {
     padding: '0',

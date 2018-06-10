@@ -1,24 +1,22 @@
-// @flow
-import React from 'react';
+import React from "react";
+import PropTypes from "prop-types";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
+// @material-ui/core components
+import withStyles from "@material-ui/core/styles/withStyles";
 
-import typographyStyle from '../../assets/jss/material-dashboard-pro-react/components/typographyStyle';
+import typographyStyle from "../../assets/jss/material-dashboard-pro-react/components/typographyStyle.jsx";
 
-/* eslint-disable react/require-default-props */
-export type Props = {
-  classes: Object,
-  children: React.Node
-};
-
-function Primary(props: Props) {
+function Primary({ ...props }) {
   const { classes, children } = props;
   return (
-    <div className={`${classes.defaultFontStyle} ${classes.primaryText}`}>
+    <div className={classes.defaultFontStyle + " " + classes.primaryText}>
       {children}
     </div>
   );
 }
+
+Primary.propTypes = {
+  classes: PropTypes.object.isRequired
+};
 
 export default withStyles(typographyStyle)(Primary);

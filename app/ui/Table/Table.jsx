@@ -1,39 +1,18 @@
-// @flow
-import React from 'react';
-import cx from 'classnames';
+import React from "react";
+import cx from "classnames";
+import PropTypes from "prop-types";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import Table from 'material-ui/Table';
-import TableBody from 'material-ui/Table/TableBody';
-import TableCell from 'material-ui/Table/TableCell';
-import TableHead from 'material-ui/Table/TableHead';
-import TableRow from 'material-ui/Table/TableRow';
+// @material-ui/core components
+import withStyles from "@material-ui/core/styles/withStyles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 
-import tableStyle from '../../assets/jss/material-dashboard-pro-react/components/tableStyle';
+import tableStyle from "../../assets/jss/material-dashboard-pro-react/components/tableStyle";
 
-
-/* eslint-disable react/require-default-props */
-export type Props = {
-  classes: Object,
-  tableHeaderColor?: 'warning' | 'primary' | 'danger' | 'success' | 'info' | 'rose' | 'gray',
-  tableHead?: Array<string>,
-  // Of(PropTypes.arrayOf(PropTypes.node)) || Of(PropTypes.object),
-  tableData?: Array<any>,
-  hover?: boolean,
-  coloredColls?: Array<number>,
-  // Of(["warning","primary","danger","success","info","rose","gray"]) - colorsColls
-  colorsColls?: Array<any>,
-  customCellClasses?: Array<string>,
-  customClassesForCells?: Array<number>,
-  customHeadCellClasses?: Array<string>,
-  customHeadClassesForCells?: Array<number>,
-  striped?: boolean,
-  // this will cause some changes in font
-  tableShopping?: boolean
-};
-
-function CustomTable(props: Props) {
+function CustomTable({ ...props }) {
   const {
     classes,
     tableHead,
@@ -57,10 +36,10 @@ function CustomTable(props: Props) {
             <TableRow className={classes.tableRow}>
               {tableHead.map((prop, key) => {
                 const tableCellClasses =
-                  `${classes.tableHeadCell
-                  } ${
-                  classes.tableCell
-                  } ${
+                  classes.tableHeadCell +
+                  " " +
+                  classes.tableCell +
+                  " " +
                   cx({
                     [customHeadCellClasses[
                       customHeadClassesForCells.indexOf(key)
@@ -68,7 +47,7 @@ function CustomTable(props: Props) {
                       customHeadClassesForCells.indexOf(key) !== -1,
                     [classes.tableShoppingHead]: tableShopping,
                     [classes.tableHeadFontSize]: !tableShopping
-                  })}`;
+                  });
                 return (
                   <TableCell className={tableCellClasses} key={key}>
                     {prop}
@@ -80,28 +59,81 @@ function CustomTable(props: Props) {
         ) : null}
         <TableBody>
           {tableData.map((prop, key) => {
-            const rowColor = '';
-            const rowColored = false;
+            var rowColor = "";
+            var rowColored = false;
+            if (prop.color !== undefined) {
+              rowColor = prop.color;
+              rowColored = true;
+              prop = prop.data;
+            }
             const tableRowClasses = cx({
               [classes.tableRowHover]: hover,
-              [classes[`${rowColor}Row`]]: rowColored,
+              [classes[rowColor + "Row"]]: rowColored,
               [classes.tableStripedRow]: striped && key % 2 === 0
             });
+            if (prop.total) {
+              return (
+                <TableRow key={key} hover={hover} className={tableRowClasses}>
+                  <TableCell
+                    className={classes.tableCell}
+                    colSpan={prop.colspan}
+                  />
+                  <TableCell
+                    className={classes.tableCell + " " + classes.tableCellTotal}
+                  >
+                    Total
+                  </TableCell>
+                  <TableCell
+                    className={
+                      classes.tableCell + " " + classes.tableCellAmount
+                    }
+                  >
+                    {prop.amount}
+                  </TableCell>
+                  {tableHead.length - (prop.colspan - 0 + 2) > 0 ? (
+                    <TableCell
+                      className={classes.tableCell}
+                      colSpan={tableHead.length - (prop.colspan - 0 + 2)}
+                    />
+                  ) : null}
+                </TableRow>
+              );
+            }
+            if (prop.purchase) {
+              return (
+                <TableRow key={key} hover={hover} className={tableRowClasses}>
+                  <TableCell
+                    className={classes.tableCell}
+                    colSpan={prop.colspan}
+                  />
+                  <TableCell
+                    className={classes.tableCell + " " + classes.right}
+                    colSpan={prop.col.colspan}
+                  >
+                    {prop.col.text}
+                  </TableCell>
+                </TableRow>
+              );
+            }
             return (
-              <TableRow key={key} hover={hover} className={`${classes.tableRows} ${tableRowClasses}`}>
-                {prop.map((rowData, key2) => {
+              <TableRow
+                key={key}
+                hover={hover}
+                className={classes.tableRow + " " + tableRowClasses}
+              >
+                {prop.map((prop, key) => {
                   const tableCellClasses =
-                    `${classes.tableCell
-                    } ${
+                    classes.tableCell +
+                    " " +
                     cx({
-                      [classes[colorsColls[coloredColls.indexOf(key2)]]]:
-                        coloredColls.indexOf(key2) !== -1,
-                      [customCellClasses[customClassesForCells.indexOf(key2)]]:
-                        customClassesForCells.indexOf(key2) !== -1,
-                    })}`;
+                      [classes[colorsColls[coloredColls.indexOf(key)]]]:
+                        coloredColls.indexOf(key) !== -1,
+                      [customCellClasses[customClassesForCells.indexOf(key)]]:
+                        customClassesForCells.indexOf(key) !== -1
+                    });
                   return (
-                    <TableCell className={tableCellClasses} key={key2}>
-                      {rowData}
+                    <TableCell className={tableCellClasses} key={key}>
+                      {prop}
                     </TableCell>
                   );
                 })}
@@ -115,7 +147,7 @@ function CustomTable(props: Props) {
 }
 
 CustomTable.defaultProps = {
-  tableHeaderColor: 'gray',
+  tableHeaderColor: "gray",
   hover: false,
   colorsColls: [],
   coloredColls: [],
@@ -124,6 +156,33 @@ CustomTable.defaultProps = {
   customClassesForCells: [],
   customHeadCellClasses: [],
   customHeadClassesForCells: []
+};
+
+CustomTable.propTypes = {
+  classes: PropTypes.object.isRequired,
+  tableHeaderColor: PropTypes.oneOf([
+    "warning",
+    "primary",
+    "danger",
+    "success",
+    "info",
+    "rose",
+    "gray"
+  ]),
+  tableHead: PropTypes.arrayOf(PropTypes.string),
+  // Of(PropTypes.arrayOf(PropTypes.node)) || Of(PropTypes.object),
+  tableData: PropTypes.array,
+  hover: PropTypes.bool,
+  coloredColls: PropTypes.arrayOf(PropTypes.number),
+  // Of(["warning","primary","danger","success","info","rose","gray"]) - colorsColls
+  colorsColls: PropTypes.array,
+  customCellClasses: PropTypes.arrayOf(PropTypes.string),
+  customClassesForCells: PropTypes.arrayOf(PropTypes.number),
+  customHeadCellClasses: PropTypes.arrayOf(PropTypes.string),
+  customHeadClassesForCells: PropTypes.arrayOf(PropTypes.number),
+  striped: PropTypes.bool,
+  // this will cause some changes in font
+  tableShopping: PropTypes.bool
 };
 
 export default withStyles(tableStyle)(CustomTable);

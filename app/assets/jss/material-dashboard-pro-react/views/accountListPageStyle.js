@@ -2,7 +2,8 @@
 // // // accountListPage view styles
 // #############################
 
-import { defaultFont } from '../../material-dashboard-pro-react';
+import { cardTitle, defaultFont, grayColor } from '../../material-dashboard-pro-react';
+
 import buttonStyle from '../../material-dashboard-pro-react/components/buttonStyle';
 
 const accountListPageStyle = {
@@ -12,6 +13,11 @@ const accountListPageStyle = {
     color: '#3C4858',
     fontSize: '18px'
   },
+  cardIconTitle: {
+    ...cardTitle,
+    marginTop: '15px',
+    marginBottom: '0px'
+  },
   cardHeader: {
     zIndex: '3'
   },
@@ -20,6 +26,9 @@ const accountListPageStyle = {
     color: '#999999',
     fontSize: '14px',
     margin: '0 0 10px'
+  },
+  formCenter: {
+    width: `calc(100% + 70px)`
   },
   center: {
     textAlign: 'center'
@@ -40,7 +49,7 @@ const accountListPageStyle = {
     padding: '0 20px'
   },
   cardContentRight: {
-    padding: '15px 20px 15px 0px',
+    padding: '15px 20px 15px 0',
     position: 'relative'
   },
   cardContentBottom: {

@@ -1,13 +1,24 @@
 // @flow
 import React, { Component } from 'react';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import Grid from 'material-ui/Grid';
-import { AddAlert } from 'material-ui-icons/AddAlert';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import AddAlert from '@material-ui/icons/AddAlert';
+import Cancel from '@material-ui/icons/Cancel';
 import type { AuthType } from '../../types/auth';
-import { FullHeaderCard, ItemGrid, Button, Snackbar } from '../../ui';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import GridItem from '../../ui/Grid/GridItem';
+import Button from '../../ui/CustomButtons/Button';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 import { PasswordResetIcon } from '../../assets/icons';
 
+import customInputStyle from '../../assets/jss/material-dashboard-pro-react/components/customInputStyle';
+
 export type Props = {
+  classes: Object,
   userAuth: AuthType,
   resetPasswordStart: (userAuth: AuthType) => void,
   cancelRequestPasswordReset: () => void
@@ -89,13 +100,20 @@ class FormResetPassword extends Component<Props, State> {
   };
 
   render() {
+    const { classes } = this.props;
     return (
       <Grid container justify="center">
-        <ItemGrid xs={12} sm={8} md={6}>
-          <FullHeaderCard
-            cardTitle="パスワードリセット"
-            cardSubtitle="登録済みのメールアドレスを入力してください。折り返しパスワードリセット用URLを送ります。"
-            content={
+        <GridItem xs={12} sm={8} md={6}>
+          <Card>
+            <CardHeader text color="primary">
+              <CardText color="primary">
+                <h4 className={classes.cardTitleWhite}>パスワードリセット</h4>
+                <h4 className={classes.cardCategoryWhite}>
+                  登録済みのメールアドレスを入力してください。折り返しパスワードリセット用URLを送ります。
+                </h4>
+              </CardText>
+            </CardHeader>
+            <CardBody>
               <ValidatorForm onSubmit={this.handleSubmit}>
                 <TextValidator
                   label="メールアドレス"
@@ -108,7 +126,10 @@ class FormResetPassword extends Component<Props, State> {
                   fullWidth
                 />
                 <br />
-                <Button onClick={this.props.cancelRequestPasswordReset}>キャンセル</Button>
+                <Button onClick={this.props.cancelRequestPasswordReset}>
+                  <Cancel />
+                  キャンセル
+                </Button>
                 <Button color="primary" type="submit" onClick={this.handleResetPassword}>
                   <PasswordResetIcon />
                   パスワードをリセット
@@ -139,12 +160,12 @@ class FormResetPassword extends Component<Props, State> {
                   }
                 />
               </ValidatorForm>
-            }
-          />
-        </ItemGrid>
+            </CardBody>
+          </Card>
+        </GridItem>
       </Grid>
     );
   }
 }
 
-export default FormResetPassword;
+export default withStyles(customInputStyle)(FormResetPassword);

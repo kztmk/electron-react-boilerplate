@@ -1,33 +1,24 @@
-// @flow
-import React from 'react';
+import React from "react";
+import PropTypes from "prop-types";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import Table from 'material-ui/Table';
-import TableBody from 'material-ui/Table/TableBody';
-import TableCell from 'material-ui/Table/TableCell';
-import TableRow from 'material-ui/Table/TableRow';
-import IconButton from 'material-ui/IconButton';
-import Checkbox from 'material-ui/Checkbox';
-import Tooltip from 'material-ui/Tooltip';
+// @material-ui/core components
+import withStyles from "@material-ui/core/styles/withStyles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
+import IconButton from "@material-ui/core/IconButton";
+import Checkbox from "@material-ui/core/Checkbox";
+import Tooltip from "@material-ui/core/Tooltip";
 
-// material-ui-icons
-import Edit from 'material-ui-icons/Edit';
-import Close from 'material-ui-icons/Close';
-import Check from 'material-ui-icons/Check';
+// @material-ui/icons
+import Edit from "@material-ui/icons/Edit";
+import Close from "@material-ui/icons/Close";
+import Check from "@material-ui/icons/Check";
 
-import tasksStyle from '../../assets/jss/material-dashboard-pro-react/components/tasksStyle';
-
-/* eslint-disable react/require-default-props */
-export type Props = {
-  classes: Object,
-  tasksIndexes?: Array<number>,
-  checkedIndexes?: Array<number>,
-  tasks?: Array<number | string | React.Element | Array<any>>
-};
+import tasksStyle from "../../assets/jss/material-dashboard-pro-react/components/tasksStyle.jsx";
 
 class Tasks extends React.Component {
-  props: Props;
   state = {
     checked: this.props.checkedIndexes
   };
@@ -81,7 +72,7 @@ class Tasks extends React.Component {
                   >
                     <Edit
                       className={
-                        `${classes.tableActionButtonIcon} ${classes.edit}`
+                        classes.tableActionButtonIcon + " " + classes.edit
                       }
                     />
                   </IconButton>
@@ -98,7 +89,7 @@ class Tasks extends React.Component {
                   >
                     <Close
                       className={
-                        `${classes.tableActionButtonIcon} ${classes.close}`
+                        classes.tableActionButtonIcon + " " + classes.close
                       }
                     />
                   </IconButton>
@@ -111,5 +102,12 @@ class Tasks extends React.Component {
     );
   }
 }
+
+Tasks.propTypes = {
+  classes: PropTypes.object.isRequired,
+  tasksIndexes: PropTypes.arrayOf(PropTypes.number),
+  checkedIndexes: PropTypes.arrayOf(PropTypes.number),
+  tasks: PropTypes.arrayOf(PropTypes.node)
+};
 
 export default withStyles(tasksStyle)(Tasks);

@@ -1,13 +1,9 @@
-// @flow
-import React from 'react';
+import React from "react";
 
-import defaultImage from '../../assets/img/default-avatar.png';
-
-export type Props = {};
+import defaultImage from "assets/img/default-avatar.png";
 
 class PictureUpload extends React.Component {
-  props: Props;
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
     this.state = {
       file: null,
@@ -18,11 +14,11 @@ class PictureUpload extends React.Component {
   }
   handleImageChange(e) {
     e.preventDefault();
-    const reader = new FileReader();
-    const file = e.target.files[0];
+    let reader = new FileReader();
+    let file = e.target.files[0];
     reader.onloadend = () => {
       this.setState({
-        file,
+        file: file,
         imagePreviewUrl: reader.result
       });
     };

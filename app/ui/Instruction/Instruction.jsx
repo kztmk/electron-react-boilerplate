@@ -1,30 +1,17 @@
-// @flow
-import React from 'react';
-import cx from 'classnames';
+import React from "react";
+import PropTypes from "prop-types";
+import cx from "classnames";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
+// @material-ui/core components
+import withStyles from "@material-ui/core/styles/withStyles";
 
 // core components
-import GridContainer from '../Grid/GridContainer';
-import ItemGrid from '../Grid/ItemGrid';
+import GridContainer from "components/Grid/GridContainer.jsx";
+import GridItem from "components/Grid/GridItem";
 
-import instructionStyle from '../../assets/jss/material-dashboard-pro-react/components/instructionStyle';
+import instructionStyle from "../../assets/jss/material-dashboard-pro-react/components/instructionStyle.jsx";
 
-// react/require-default-props
-/* eslint-disable */
-export type Props = {
-  classes: Object,
-  title: number | string | React.Element | Array<any>,
-  text: number | string | React.Element | Array<any>,
-  image: string,
-  imageAlt?: string,
-  className?: string,
-  imageClassName?: string
-};
-/* eslint-enable */
-
-function Instruction(props: Props) {
+function Instruction({ ...props }) {
   const {
     classes,
     title,
@@ -45,22 +32,32 @@ function Instruction(props: Props) {
   return (
     <div className={instructionClasses}>
       <GridContainer>
-        <ItemGrid xs={12} sm={12} md={8}>
+        <GridItem xs={12} sm={12} md={8}>
           <strong>{title}</strong>
           <p>{text}</p>
-        </ItemGrid>
-        <ItemGrid xs={12} sm={12} md={4}>
+        </GridItem>
+        <GridItem xs={12} sm={12} md={4}>
           <div className={pictureClasses}>
             <img src={image} alt={imageAlt} className={classes.image} />
           </div>
-        </ItemGrid>
+        </GridItem>
       </GridContainer>
     </div>
   );
 }
 
 Instruction.defaultProps = {
-  imageAlt: '...'
+  imageAlt: "..."
+};
+
+Instruction.propTypes = {
+  classes: PropTypes.object.isRequired,
+  title: PropTypes.node.isRequired,
+  text: PropTypes.node.isRequired,
+  image: PropTypes.string.isRequired,
+  imageAlt: PropTypes.string,
+  className: PropTypes.string,
+  imageClassName: PropTypes.string
 };
 
 export default withStyles(instructionStyle)(Instruction);

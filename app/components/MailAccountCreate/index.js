@@ -3,7 +3,8 @@ import React from 'react';
 
 // core components
 import MailWizard from './MailWizard';
-import { GridContainer, ItemGrid } from '../../ui';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
 
 import Steps00 from './WizardChildren/step00';
 import StepOutlook from './WizardChildren/stepOutlook';
@@ -18,7 +19,7 @@ class WizardViewMail extends React.Component<Props> {
   render() {
     return (
       <GridContainer justify="center">
-        <ItemGrid xs={12} sm={12} md={12}>
+        <GridItem xs={12} sm={12} md={12}>
           <MailWizard
             validate
             color="primary"
@@ -39,7 +40,7 @@ class WizardViewMail extends React.Component<Props> {
             finishButtonText="メールアドレス取得"
             finishButtonClick={this.props.createMailAccount}
           />
-        </ItemGrid>
+        </GridItem>
       </GridContainer>
     );
   }

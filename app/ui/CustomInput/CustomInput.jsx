@@ -1,38 +1,18 @@
-// @flow
-import React from 'react';
-import cx from 'classnames';
+import React from "react";
+import withStyles from "@material-ui/core/styles/withStyles";
+import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
+import Input from "@material-ui/core/Input";
+import Check from "@material-ui/icons/Check";
+import Clear from "@material-ui/icons/Clear";
+// nodejs library to set properties for components
+import PropTypes from "prop-types";
+// nodejs library that concatenates classes
+import classNames from "classnames";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import FormControl from 'material-ui/Form/FormControl';
-import FormHelperText from 'material-ui/Form/FormHelperText';
-import Input from 'material-ui/Input';
-import InputLabel from 'material-ui/Input/InputLabel';
+import customInputStyle from "../../assets/jss/material-dashboard-pro-react/components/customInputStyle.jsx";
 
-// material-ui-icons
-import Clear from 'material-ui-icons/Clear';
-import Check from 'material-ui-icons/Check';
-
-import customInputStyle from '../../assets/jss/material-dashboard-pro-react/components/customInputStyle';
-
-// react/require-default-props
-/* eslint-disable */
-export type Props = {
-  classes: Object,
-  labelText?: number | string | React.Element | Array<any>,
-  labelProps?: Object,
-  id?: string,
-  inputProps?: Object,
-  formControlProps?: Object,
-  error?: boolean,
-  success?: boolean,
-  helpText?: string,
-  rtlActive?: boolean,
-  lessSpace?: boolean
-};
-/* eslint-enable */
-
-function CustomInput(props: Props) {
+function CustomInput({ ...props }) {
   const {
     classes,
     formControlProps,
@@ -41,86 +21,48 @@ function CustomInput(props: Props) {
     labelProps,
     inputProps,
     error,
-    success,
-    helpText,
-    rtlActive,
-    lessSpace
+    white,
+    inputRootCustomClasses,
+    success
   } = props;
 
-  let labelClasses = cx({
-    [` ${classes.labelRootError}`]: error,
-    [` ${classes.labelRootSuccess}`]: success && !error
+  const labelClasses = classNames({
+    [" " + classes.labelRootError]: error,
+    [" " + classes.labelRootSuccess]: success && !error
   });
-
-  const inkbarClasses = cx({
-    [classes.inkbarError]: error,
-    [classes.inkbarSuccess]: success && !error,
-    [classes.inkbar]: !success && !error
+  const underlineClasses = classNames({
+    [classes.underlineError]: error,
+    [classes.underlineSuccess]: success && !error,
+    [classes.underline]: true,
+    [classes.whiteUnderline]: white
   });
-  let formControlClasses = classes.formControl;
+  const marginTop = classNames({
+    [inputRootCustomClasses]: inputRootCustomClasses !== undefined
+  });
+  const inputClasses = classNames({
+    [classes.input]: true,
+    [classes.whiteInput]: white
+  });
+  var formControlClasses;
   if (formControlProps !== undefined) {
-    formControlClasses += ` ${formControlProps.className}`;
+    formControlClasses = classNames(
+      formControlProps.className,
+      classes.formControl
+    );
+  } else {
+    formControlClasses = classes.formControl;
   }
-  let underlineClasses = classes.underline;
+  var feedbackClasses = classes.feedback;
   if (inputProps !== undefined) {
-    formControlClasses =
-      `${formControlClasses
-      } ${
-        cx({
-          [classes.inputWithAdornment]:
-          (inputProps.startAdornment !== undefined ||
-            inputProps.endAdornment !== undefined) &&
-          labelText === undefined
-        })}`;
-    underlineClasses = cx({
-      [classes.underline]: inputProps.disabled !== true
-    });
+    if (inputProps.endAdornment !== undefined) {
+      feedbackClasses = feedbackClasses + " " + classes.feedbackRight;
+    }
   }
-  if (inputProps !== undefined) {
-    labelClasses =
-      `${labelClasses
-      } ${
-        cx({
-          [classes.labelWithAdornment]: inputProps.endAdornment !== undefined
-        })}`;
-  }
-  const successClasses =
-    `${classes.feedback
-    } ${
-      classes.labelRootSuccess
-    } ${
-      cx({
-        [classes.feedbackNoLabel]: labelText === undefined,
-        [classes.feedbackAdorment]:
-        inputProps !== undefined && inputProps.endAdornment !== undefined
-      })}`;
-  const errorClasses =
-    `${classes.feedback
-    } ${
-      classes.labelRootError
-    } ${
-      cx({
-        [classes.feedbackNoLabel]: labelText === undefined,
-        [classes.feedbackAdorment]:
-        inputProps !== undefined && inputProps.endAdornment !== undefined
-      })}`;
-  const input =
-    `${classes.input
-    } ${
-      cx({
-        [classes.inputRTL]: rtlActive,
-        [classes.inputNoLabel]: labelText === undefined && lessSpace === undefined,
-        [classes.inputNoLabelLessUpperSpace]: lessSpace
-      })}`;
   return (
-    <FormControl
-      {...formControlProps}
-      className={formControlClasses}
-      aria-describedby={`${id}-text`}
-    >
+    <FormControl {...formControlProps} className={formControlClasses}>
       {labelText !== undefined ? (
         <InputLabel
-          className={classes.labelRoot + labelClasses}
+          className={classes.labelRoot + " " + labelClasses}
           htmlFor={id}
           {...labelProps}
         >
@@ -129,24 +71,34 @@ function CustomInput(props: Props) {
       ) : null}
       <Input
         classes={{
-          input,
+          input: inputClasses,
+          root: marginTop,
           disabled: classes.disabled,
-          underline: underlineClasses,
-          inkbar: inkbarClasses
+          underline: underlineClasses
         }}
         id={id}
         {...inputProps}
       />
       {error ? (
-        <Clear className={errorClasses} />
+        <Clear className={feedbackClasses + " " + classes.labelRootError} />
       ) : success ? (
-        <Check className={successClasses} />
-      ) : null}
-      {helpText !== undefined ? (
-        <FormHelperText id={`${id}-text`}>{helpText}</FormHelperText>
+        <Check className={feedbackClasses + " " + classes.labelRootSuccess} />
       ) : null}
     </FormControl>
   );
 }
+
+CustomInput.propTypes = {
+  classes: PropTypes.object.isRequired,
+  labelText: PropTypes.node,
+  labelProps: PropTypes.object,
+  id: PropTypes.string,
+  inputProps: PropTypes.object,
+  formControlProps: PropTypes.object,
+  inputRootCustomClasses: PropTypes.string,
+  error: PropTypes.bool,
+  success: PropTypes.bool,
+  white: PropTypes.bool
+};
 
 export default withStyles(customInputStyle)(CustomInput);

@@ -2,17 +2,17 @@
 // // // Icons styles
 // #############################
 
-import { boxShadow } from '../../material-dashboard-pro-react';
+import { boxShadow } from "../../material-dashboard-pro-react";
 
 const iconsStyle = {
   iframe: {
-    width: '100%',
-    height: '500px',
-    border: '0',
+    width: "100%",
+    height: "500px",
+    border: "0",
     ...boxShadow
   },
   iframeContainer: {
-    margin: '0 -20px 0'
+    margin: "0 -20px 0"
   }
 };
 

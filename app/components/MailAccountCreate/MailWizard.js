@@ -1,13 +1,14 @@
+/* eslint-disable react/require-default-props */
 // @flow
 import React from 'react';
 import cx from 'classnames';
 
 // material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import Card from 'material-ui/Card';
+import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
 
 // core components
-import { Button } from '../../ui';
+import Button from '../../ui/CustomButtons/Button';
 
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
 
@@ -207,7 +208,7 @@ class MailWizard extends React.Component<Props, State> {
             <div className={classes.left}>
               {this.state.previousButton ? (
                 <Button
-                  customClass={this.props.previousButtonClasses}
+                  className={this.props.previousButtonClasses}
                   onClick={() => this.previousButtonClick()}
                 >
                   {this.props.previousButtonText}
@@ -215,7 +216,7 @@ class MailWizard extends React.Component<Props, State> {
               ) : null}
               {this.state.cancelButton ? (
                 <Button
-                  customClass={this.props.cancelButtonClasses}
+                  className={this.props.cancelButtonClasses}
                   onClick={() => this.cancelButtonClick()}
                 >
                   {this.props.cancelButtonText}
@@ -226,7 +227,7 @@ class MailWizard extends React.Component<Props, State> {
               {this.state.nextButton ? (
                 <Button
                   color="rose"
-                  customClass={this.props.nextButtonClasses}
+                  className={this.props.nextButtonClasses}
                   onClick={() => this.nextButtonClick()}
                 >
                   {this.props.nextButtonText}
@@ -235,7 +236,7 @@ class MailWizard extends React.Component<Props, State> {
               {this.state.finishButton ? (
                 <Button
                   color="rose"
-                  customClass={this.finishButtonClasses}
+                  className={this.finishButtonClasses}
                   onClick={() => this.finishButtonClick()}
                 >
                   {this.props.finishButtonText}

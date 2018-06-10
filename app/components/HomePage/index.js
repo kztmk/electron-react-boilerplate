@@ -1,13 +1,15 @@
 // @flow
 import React from 'react';
-import { withStyles } from 'material-ui';
-import { AddAlert } from 'material-ui-icons';
-import Slide from 'material-ui/transitions/Slide';
+import { withStyles } from '@material-ui/core/styles';
+import Slide from '@material-ui/core/Slide';
+import AddAlert from '@material-ui/icons/AddAlert';
+
+import GridContainer from '../../ui/Grid/GridContainer';
 import LoginForm from '../../containers/Login';
 import FormResetPassword from '../../containers/ResetPassword';
 import type { AuthType } from '../../types/auth';
 
-import { Snackbar } from '../../ui';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 
 const styles = {
   sliderItem: {
@@ -90,7 +92,7 @@ class HomePage extends React.Component<Props, State> {
     // eslint-disable-next-line
     const isLogin = this.props.userAuth.userId.length > 0;
     return (
-      <div>
+      <GridContainer container justify="center">
         <Slide in={!isLogin}>
           {(() => {
             return this.state.isRequestPasswordReset ? (
@@ -116,7 +118,7 @@ class HomePage extends React.Component<Props, State> {
           close
           message={<span id="login_error">ログイン完了</span>}
         />
-      </div>
+      </GridContainer>
     );
   }
 }

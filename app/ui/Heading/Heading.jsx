@@ -1,32 +1,20 @@
-// @flow
-import React from 'react';
-import cx from 'classnames';
+import React from "react";
+import cx from "classnames";
+import PropTypes from "prop-types";
 
-// material-ui components
-import withStyles from 'material-ui/styles/withStyles';
+// @material-ui/core components
+import withStyles from "@material-ui/core/styles/withStyles";
 
-import headingStyle from '../../assets/jss/material-dashboard-pro-react/components/headingStyle';
+import headingStyle from "../../assets/jss/material-dashboard-pro-react/components/headingStyle.jsx";
 
-// react/require-default-props
-/* eslint-disable */
-export type Props = {
-  classes: Object,
-  title?: number | string | React.Element | Array<any>,
-  category?: number | string | React.Element | Array<any>,
-  textAlign?: 'right' | 'left' | 'center'
-};
-/* eslint-enable */
-
-function Heading(props: Props) {
-  const {
-    textAlign, category, title, classes
-  } = props;
+function Heading({ ...props }) {
+  const { textAlign, category, title, classes } = props;
   const heading =
-    `${classes.heading
-    } ${
-      cx({
-        [classes[`${textAlign}TextAlign`]]: textAlign !== undefined
-      })}`;
+    classes.heading +
+    " " +
+    cx({
+      [classes[textAlign + "TextAlign"]]: textAlign !== undefined
+    });
   if (title !== undefined || category !== undefined) {
     return (
       <div className={heading}>
@@ -41,5 +29,12 @@ function Heading(props: Props) {
   }
   return null;
 }
+
+Heading.propTypes = {
+  classes: PropTypes.object.isRequired,
+  title: PropTypes.node,
+  category: PropTypes.node,
+  textAlign: PropTypes.oneOf(["right", "left", "center"])
+};
 
 export default withStyles(headingStyle)(Heading);

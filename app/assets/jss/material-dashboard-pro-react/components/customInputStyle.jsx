@@ -1,128 +1,128 @@
-// ##############################
-// // // CustomInput styles
-// #############################
-
 import {
   primaryColor,
   dangerColor,
   successColor,
-  defaultFont
-} from '../../material-dashboard-pro-react';
+  defaultFont,
+  card,
+  cardActions,
+  cardHeader,
+  cardTitle,
+  cardSubtitle,
+  cardLink,
+} from "../../material-dashboard-pro-react";
 
 const customInputStyle = {
   disabled: {
-    '&:before': {
-      background: 'transparent !important',
-      backgroundSize: '3px 1px !important',
-      backgroundImage:
-        'linear-gradient(to right, rgba(0, 0, 0, 0.23) 33%, transparent 0%) !important',
-      backgroundRepeat: 'repeat-x !important',
-      backgroundPosition: 'left top !important'
+    "&:before": {
+      borderColor: "transparent !important"
     }
   },
   underline: {
-    '&:before': {
-      backgroundColor: '#D2D2D2 !important',
-      height: '1px !important'
-    }
-  },
-  inkbar: {
-    '&:after': {
-      backgroundColor: primaryColor,
-      transition: '0.3s ease all'
-    }
-  },
-  inkbarError: {
-    '&:after': {
-      backgroundColor: dangerColor,
-      transition: '0.3s ease all'
+    "&:hover:not($disabled):before,&:before": {
+      borderColor: "#D2D2D2 !important",
+      borderWidth: "1px !important"
     },
-    '&:before': {
-      backgroundColor: `${dangerColor}!important`,
-      height: '2px !important'
+    "&:after": {
+      borderColor: primaryColor
     }
   },
-  inkbarSuccess: {
-    '&:after': {
-      backgroundColor: successColor,
-      transition: '0.3s ease all'
+  underlineError: {
+    "&:after": {
+      borderColor: dangerColor
+    }
+  },
+  underlineSuccess: {
+    "&:after": {
+      borderColor: successColor
     }
   },
   labelRoot: {
     ...defaultFont,
-    color: '#AAAAAA',
-    fontWeight: '400',
-    fontSize: '14px',
-    lineHeight: '1.42857',
-    transition: '0.3s ease all'
+    color: "#AAAAAA !important",
+    fontWeight: "400",
+    fontSize: "14px",
+    lineHeight: "1.42857",
+    top: "10px",
+    "& + $underline": {
+      marginTop: "0px"
+    }
   },
   labelRootError: {
-    color: dangerColor
+    color: dangerColor + " !important"
   },
   labelRootSuccess: {
-    color: successColor
+    color: successColor + " !important"
   },
   feedback: {
-    position: 'absolute',
-    top: '23px',
-    right: '0',
-    zIndex: '2',
-    display: 'block',
-    width: '24px',
-    height: '24px',
-    textAlign: 'center',
-    pointerEvents: 'none'
+    position: "absolute",
+    bottom: "3px",
+    right: "0",
+    zIndex: "2",
+    display: "block",
+    width: "1em",
+    height: "1em",
+    textAlign: "center",
+    pointerEvents: "none"
   },
-  feedbackNoLabel: {
-    // top: "8px"
-  },
-  input: {
-    padding: '2px 0 0',
-    fontWeight: '400',
-    height: '36px',
-    fontSize: '14px',
-    lineHeight: '1.428571429',
-    color: '#555',
-    '&[rows]': {
-      height: 'auto'
-    }
-  },
-  inputLessUpperSpace: {
-    padding: '2px 0 0',
-    fontWeight: '400',
-    height: '28px',
-    fontSize: '14px',
-    lineHeight: '1.428571429',
-    color: '#555',
-    '&[rows]': {
-      height: 'auto'
-    }
-  },
-  inputNoLabel: {
-    paddingTop: '18px'
-  },
-  inputNoLabelLessUpperSpace: {
-    paddingTop: '12px'
-  },
-  inputNoLabelLeastUpperSpace: {
-    paddingTop: '8px'
-  },
-  inputRTL: {
-    textAlign: 'right'
-  },
-  inputWithAdornment: {
-    paddingTop: '21px'
+  feedbackRight: {
+    marginRight: "30px"
   },
   formControl: {
-    paddingBottom: '10px',
-    position: 'relative'
+    margin: "0 0 17px 0",
+    paddingTop: "27px",
+    position: "relative",
+    "& svg,& .fab,& .far,& .fal,& .fas": {
+      color: "#495057"
+    }
   },
-  labelWithAdornment: {
-    top: '3px'
+  whiteUnderline: {
+    "&:hover:not($disabled):before,&:before": {
+      backgroundColor: "#FFFFFF"
+    },
+    "&:after": {
+      backgroundColor: "#FFFFFF"
+    }
   },
-  feedbackAdorment: {
-    right: '22px'
-  }
+  input: {
+    color: "#495057",
+    "&,&::placeholder": {
+      fontSize: "14px",
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontWeight: "400",
+      lineHeight: "1.42857",
+      opacity: "1"
+    },
+    "&::placeholder": {
+      color: "#AAAAAA"
+    }
+  },
+  whiteInput: {
+    "&,&::placeholder": {
+      color: "#FFFFFF",
+      opacity: "1"
+    }
+  },
+  ...card,
+  ...cardActions,
+  ...cardHeader,
+  ...cardTitle,
+  ...cardSubtitle,
+  ...cardLink,
+  ...cardTitle,
+  cardTitleWhite: {
+    ...cardTitle,
+    color: "#FFFFFF",
+    marginTop: "0"
+  },
+  cardCategoryWhite: {
+    margin: "0",
+    color: "rgba(255, 255, 255, 0.8)",
+    fontSize: ".875rem"
+  },
+  cardCategory: {
+    color: "#999999",
+    marginTop: "10px"
+  },
 };
 
 export default customInputStyle;

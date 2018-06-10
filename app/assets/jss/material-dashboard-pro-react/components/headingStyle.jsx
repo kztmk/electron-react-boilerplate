@@ -4,24 +4,24 @@
 
 const headingStyle = {
   heading: {
-    marginBottom: '30px'
+    marginBottom: "30px"
   },
   rightTextAlign: {
-    textAlign: 'right'
+    textAlign: "right"
   },
   leftTextAlign: {
-    textAlign: 'left'
+    textAlign: "left"
   },
   centerTextAlign: {
-    textAlign: 'center'
+    textAlign: "center"
   },
   title: {
-    marginTop: '10px',
-    color: '#3C4858',
-    textDecoration: 'none'
+    marginTop: "10px",
+    color: "#3C4858",
+    textDecoration: "none"
   },
   category: {
-    margin: '0 0 10px'
+    margin: "0 0 10px"
   }
 };
 

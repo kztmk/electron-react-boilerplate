@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core/styles';
 import appRoutes from '../routes/app';
 import VerticalNavi from '../components/VerticalNav';
 import Footer from '../components/Footer';
@@ -43,8 +43,8 @@ class App extends React.Component<Props> {
             <div className={classes.content}>
               <div className={classes.container}>{switchRoutes(auth)}</div>
             </div>
-            )}
-            <Footer />
+          )}
+          <Footer />
         </div>
       </div>
     );

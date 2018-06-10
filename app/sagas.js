@@ -6,6 +6,7 @@ import Profile from './containers/Profile/saga';
 import MailAddressList from './containers/MailAddressList/saga';
 import BlogList from './containers/BlogList/saga';
 import MailAccount from './containers/MailAccount/saga';
+// import Settings from './containers/Settings/saga';
 
 function* root(): Generator<*, void, void> {
   yield all([
@@ -15,6 +16,7 @@ function* root(): Generator<*, void, void> {
     fork(MailAddressList),
     fork(BlogList),
     fork(MailAccount)
+    // fork(Settings)
   ]);
 }
 

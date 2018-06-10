@@ -4,17 +4,22 @@ import React, { Component } from 'react';
 import ReactTable from 'react-table';
 
 import moment from 'moment';
-import { withStyles } from 'material-ui/styles';
-import Checkbox from 'material-ui/Checkbox';
-import Check from 'material-ui-icons/Check';
+import { withStyles } from '@material-ui/core/styles';
+import Checkbox from '@material-ui/core/Checkbox';
+import Check from '@material-ui/icons/Check';
 import matchSorter from 'match-sorter';
 
 import ReactPaginate from 'react-paginate';
-import { GridContainer, ItemGrid, FullHeaderCard } from '../../ui';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
 import text2Html from '../../utils/text2html';
 
 import type { ImapFlagsArgsType, MailRowMessageType } from '../../types/mailMessageType';
-import { primaryColor } from '../../assets/jss/material-dashboard-pro-react';
+import { cardTitle, primaryColor } from '../../assets/jss/material-dashboard-pro-react';
 
 // eslint-disable-next-line prefer-destructuring
 const MailParser = require('mailparser-mit').MailParser;
@@ -26,6 +31,18 @@ const checkBoxStyle = {
 };
 
 const styles = {
+  cardTitle,
+  cardTitleWhite: {
+    ...cardTitle,
+    color: '#FFFFFF',
+    marginTop: '0',
+    fontSize: '.875rem'
+  },
+  cardCategoryWhite: {
+    margin: '0',
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: '.6rem'
+  },
   icon: {
     verticalAlign: 'middle',
     width: '17px',
@@ -381,7 +398,7 @@ class MessageViewer extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <GridContainer>
-        <ItemGrid xs={12} sm={12} md={12}>
+        <GridItem xs={12} sm={12} md={12}>
           {this.state.mailCount > 25 && (
             <ReactPaginate
               previousLabel="前25件"
@@ -403,8 +420,8 @@ class MessageViewer extends Component<Props, State> {
               previousLinkClassName="Pagination-paginationLink"
             />
           )}
-        </ItemGrid>
-        <ItemGrid xs={12} sm={12} md={12}>
+        </GridItem>
+        <GridItem xs={12} sm={12} md={12}>
           <ReactTable
             data={this.state.data}
             showPagination={false}
@@ -536,15 +553,20 @@ class MessageViewer extends Component<Props, State> {
               }
             })}
           />
-        </ItemGrid>
-        <ItemGrid>
-          <FullHeaderCard
-            cardTitle={this.state.displaySubject}
-            headerColor="rose"
-            cardSubtitle={this.state.displaySubtitle}
-            content={<div dangerouslySetInnerHTML={{ __html: this.state.displayMessage }} />}
-          />
-        </ItemGrid>
+        </GridItem>
+        <GridItem>
+          <Card>
+            <CardHeader>
+              <CardText color="rose">
+                <h4 className={classes.cardTitleWhite}>{this.state.displaySubject}</h4>
+                <h4 className={classes.cardCategoryWhite}>{this.state.displaySubtitle}</h4>
+              </CardText>
+            </CardHeader>
+            <CardBody>
+              {<div dangerouslySetInnerHTML={{ __html: this.state.displayMessage }} />}
+            </CardBody>
+          </Card>
+        </GridItem>
       </GridContainer>
     );
   }

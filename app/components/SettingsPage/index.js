@@ -1,28 +1,31 @@
 // @flow
 import React, { Component } from 'react';
 import moment from 'moment';
-import { withStyles } from 'material-ui/styles';
-import Checkbox from 'material-ui/Checkbox';
-import FormControl from 'material-ui/Form/FormControl';
-import FormLabel from 'material-ui/Form/FormLabel';
-import FormControlLabel from 'material-ui/Form/FormControlLabel';
-import InputLabel from 'material-ui/Input/InputLabel';
-import Radio from 'material-ui/Radio';
-import Select from 'material-ui/Select';
-import MenuItem from 'material-ui/Menu/MenuItem';
-import PermIdentity from 'material-ui-icons/PermIdentity';
-import Check from 'material-ui-icons/Check';
-import FiberManualRecord from 'material-ui-icons/FiberManualRecord';
-import AddAlert from 'material-ui-icons/AddAlert';
-import {
-  GridContainer,
-  ItemGrid,
-  IconCard,
-  CustomInput,
-  Button,
-  Clearfix,
-  Snackbar
-} from '../../ui';
+
+import { withStyles } from '@material-ui/core/styles';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import InputLabel from '@material-ui/core/InputLabel';
+import Radio from '@material-ui/core/Radio';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+
+import PermIdentity from '@material-ui/icons/PermIdentity';
+import Check from '@material-ui/icons/Check';
+import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
+import AddAlert from '@material-ui/icons/AddAlert';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import CustomInput from '../../ui/CustomInput/CustomInput';
+import Button from '../../ui/CustomButtons/Button';
+import Clearfix from '../../ui/Clearfix/Clearfix';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 import { SaveAltIcon } from '../../assets/icons';
 
 import settingPageStyle from '../../assets/jss/material-dashboard-pro-react/views/settingsPage';
@@ -407,40 +410,43 @@ class SettingsPage extends React.Component<Props, State> {
     return (
       <GridContainer container justify="center" className={classes.marginReset}>
         <GridContainer justify="center">
-          <ItemGrid xs={12} sm={12} md={1} />
-          <ItemGrid xs={12} sm={12} md={10}>
-            <IconCard
-              icon={PermIdentity}
-              iconColor="rose"
-              title="使用する個人情報 - "
-              category="メール・ブログ作成時"
-              content={
-                <div>
-                  <GridContainer justify="flex-end" className={classes.cardContentRight}>
-                    <ItemGrid xs={12} sm={12} md={9} />
-                    <ItemGrid
-                      xs={12}
-                      sm={12}
-                      md={3}
-                      className={classes.labelHorizontalLessUpperSpace}
-                    >
-                      <div className={classes.buttonGroupStyle}>
-                        <div className={classes.buttonGroup}>
-                          <Button
-                            color="primary"
-                            customClass={classes.lastButton}
-                            onClick={this.saveSettings}
-                          >
-                            <SaveAltIcon style={iconStyle} />
-                            保存
-                          </Button>
-                        </div>
+          <GridItem xs={12} sm={12} md={1} />
+          <GridItem xs={12} sm={12} md={10}>
+            <Card>
+              <CardHeader color="primary" icon>
+                <PermIdentity />
+                <CardText color="primary">
+                  <h4 className={classes.cardTitleWhite}>使用する個人情報 - </h4>
+                  <h4 className={classes.cardCategoryWhite}>メール・ブログ作成時</h4>
+                </CardText>
+                <GridContainer justify="flex-end" className={classes.cardContentRight}>
+                  <GridItem xs={12} sm={12} md={9} />
+                  <GridItem
+                    xs={12}
+                    sm={12}
+                    md={3}
+                    className={classes.labelHorizontalLessUpperSpace}
+                  >
+                    <div className={classes.buttonGroupStyle}>
+                      <div className={classes.buttonGroup}>
+                        <Button
+                          color="primary"
+                          customClass={classes.lastButton}
+                          onClick={this.saveSettings}
+                        >
+                          <SaveAltIcon style={iconStyle} />
+                          保存
+                        </Button>
                       </div>
-                    </ItemGrid>
-                  </GridContainer>
+                    </div>
+                  </GridItem>
+                </GridContainer>
+              </CardHeader>
+              <CardBody>
+                <div>
                   <GridContainer>
-                    <ItemGrid xs={12} sm={12} md={1} />
-                    <ItemGrid xs={12} sm={12} md={11}>
+                    <GridItem xs={12} sm={12} md={1} />
+                    <GridItem xs={12} sm={12} md={11}>
                       <div
                         className={
                           classes.checkboxAndRadio + ' ' + classes.checkboxAndRadioHorizontal
@@ -464,13 +470,13 @@ class SettingsPage extends React.Component<Props, State> {
                           label="メール・ブログアカウント作成時に以下の個人情報を使う"
                         />
                       </div>
-                    </ItemGrid>
+                    </GridItem>
                   </GridContainer>
                   <div
                     className={!this.state.useDefault ? classes.groupBoxDisabled : classes.groupBox}
                   >
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2} md={3}>
+                      <GridItem xs={12} sm={2} md={3}>
                         <FormLabel
                           className={
                             !this.state.useDefault
@@ -480,8 +486,8 @@ class SettingsPage extends React.Component<Props, State> {
                         >
                           漢字
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={5} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5} md={4}>
                         <CustomInput
                           success={this.state.lastNameKanjiState === 'success'}
                           error={this.state.lastNameKanjiState === 'error'}
@@ -497,8 +503,8 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={5} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5} md={4}>
                         <CustomInput
                           success={this.state.firstNameKanjiState === 'success'}
                           error={this.state.firstNameKanjiState === 'error'}
@@ -514,11 +520,11 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={12} md={1} />
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={1} />
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2} md={3}>
+                      <GridItem xs={12} sm={2} md={3}>
                         <FormLabel
                           className={
                             !this.state.useDefault
@@ -528,8 +534,8 @@ class SettingsPage extends React.Component<Props, State> {
                         >
                           ふりがな(ひらがな)
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={5} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5} md={4}>
                         <CustomInput
                           success={this.state.lastNameKanaState === 'success'}
                           error={this.state.lastNameKanaState === 'error'}
@@ -545,8 +551,8 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={5} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5} md={4}>
                         <CustomInput
                           success={this.state.firstNameKanaState === 'success'}
                           error={this.state.firstNameKanaState === 'error'}
@@ -562,11 +568,11 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={12} md={1} />
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={1} />
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2} md={3}>
+                      <GridItem xs={12} sm={2} md={3}>
                         <FormLabel
                           className={
                             !this.state.useDefault
@@ -576,8 +582,8 @@ class SettingsPage extends React.Component<Props, State> {
                         >
                           フリガナ(カタカナ)
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={5} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5} md={4}>
                         <CustomInput
                           success={this.state.lastNameKatakanaState === 'success'}
                           error={this.state.lastNameKatakanaState === 'error'}
@@ -593,8 +599,8 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={5} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5} md={4}>
                         <CustomInput
                           success={this.state.firstNameKatakanaState === 'success'}
                           error={this.state.firstNameKatakanaState === 'error'}
@@ -610,11 +616,11 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={12} md={1} />
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={1} />
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2} md={3}>
+                      <GridItem xs={12} sm={2} md={3}>
                         <FormLabel
                           className={
                             !this.state.useDefault
@@ -624,8 +630,8 @@ class SettingsPage extends React.Component<Props, State> {
                         >
                           ローマ字
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={5} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5} md={4}>
                         <CustomInput
                           success={this.state.lastNameHepburnState === 'success'}
                           error={this.state.lastNameHepburnState === 'error'}
@@ -641,8 +647,8 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={5} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={5} md={4}>
                         <CustomInput
                           success={this.state.firstNameHepburnState === 'success'}
                           error={this.state.firstNameHepburnState === 'error'}
@@ -658,11 +664,11 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={12} md={1} />
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={1} />
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={12} md={3}>
+                      <GridItem xs={12} sm={12} md={3}>
                         <div
                           className={`${classes.checkboxAndRadio} ${
                             classes.checkboxAndRadioHorizontal
@@ -717,8 +723,8 @@ class SettingsPage extends React.Component<Props, State> {
                             label="女性"
                           />
                         </div>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={12} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={4}>
                         <CustomInput
                           success={this.state.postalCodeState === 'success'}
                           error={this.state.postalCodeState === 'error'}
@@ -735,8 +741,8 @@ class SettingsPage extends React.Component<Props, State> {
                           }}
                           helpText="（-）ハイフンなしで7桁"
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={12} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={4}>
                         <FormControl fullWidth className={classes.selectFormControl}>
                           <InputLabel
                             htmlFor="prefecture-select"
@@ -774,11 +780,11 @@ class SettingsPage extends React.Component<Props, State> {
                             {this.selectMenuItems()}
                           </Select>
                         </FormControl>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={12} md={1} />
+                      </GridItem>
+                      <GridItem xs={12} sm={12} md={1} />
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={3} md={3}>
+                      <GridItem xs={12} sm={3} md={3}>
                         <FormLabel
                           className={
                             !this.state.useDefault
@@ -788,8 +794,8 @@ class SettingsPage extends React.Component<Props, State> {
                         >
                           生年月日
                         </FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3} md={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3} md={4}>
                         <CustomInput
                           success={this.state.birthDateState === 'success'}
                           error={this.state.birthDateState === 'error'}
@@ -806,15 +812,15 @@ class SettingsPage extends React.Component<Props, State> {
                             disabled: !this.state.useDefault
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={3} md={5} />
+                      </GridItem>
+                      <GridItem xs={12} sm={3} md={5} />
                     </GridContainer>
                     <Clearfix />
                   </div>
                 </div>
-              }
-            />
-          </ItemGrid>
+              </CardBody>
+            </Card>
+          </GridItem>
         </GridContainer>
         <Snackbar
           color="warning"

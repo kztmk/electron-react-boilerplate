@@ -1,21 +1,31 @@
 // @flow
 import React, { Component } from 'react';
 import Loadable from 'react-loading-overlay';
-import { withStyles } from 'material-ui/styles';
 import Datetime from 'react-datetime';
 import moment from 'moment';
 import isUrl from 'is-url';
-import Avatar from 'material-ui/Avatar';
-import FormLabel from 'material-ui/Form/FormLabel';
-import FormControl from 'material-ui/Form/FormControl';
 import TagsInput from 'react-tagsinput';
-import InputLabel from 'material-ui/Input/InputLabel';
-import MenuItem from 'material-ui/Menu/MenuItem';
-import Select from 'material-ui/Select';
-import Cancel from 'material-ui-icons/Cancel';
-import AddAlert from 'material-ui-icons/AddAlert';
+// material-ui
+import { withStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+// material-ui/coins
+import Cancel from '@material-ui/icons/Cancel';
+import AddAlert from '@material-ui/icons/AddAlert';
 
-import { GridContainer, ItemGrid, HeaderCard, CustomInput, Button, Snackbar } from '../../ui';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import CustomInput from '../../ui/CustomInput/CustomInput';
+import Button from '../../ui/CustomButtons/Button';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 
 import { SaveAltIcon } from '../../assets/icons';
 import fromAddStyle from '../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
@@ -43,6 +53,10 @@ const selectAvatarStyle = {
 const iconStyle = {
   width: '18px',
   height: '18px'
+};
+
+const zeroPadding = {
+  paddingTop: '0'
 };
 
 type Props = {
@@ -362,38 +376,41 @@ class FormBlogAdd extends Component<Props, State> {
     return (
       <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・・">
         <GridContainer>
-          <ItemGrid xs={12} sm={12} md={12}>
-            <HeaderCard
-              cardTitle="ブログ追加"
-              headerColor="purple"
-              content={
-                <div>
-                  <ItemGrid xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
-                    <div className={classes.buttonGroupStyle}>
-                      <div className={classes.buttonGroup}>
-                        <Button
-                          color="primary"
-                          customClass={classes.firstButton}
-                          onClick={this.props.closeForm}
-                        >
-                          <Cancel style={iconStyle} />
-                          キャンセル
-                        </Button>
-                        <Button
-                          color="primary"
-                          customClass={classes.lastButton}
-                          onClick={this.addMailAccount}
-                        >
-                          <SaveAltIcon style={iconStyle} />
-                          保存
-                        </Button>
-                      </div>
+          <GridItem xs={12} sm={12} md={12}>
+            <Card>
+              <CardHeader color="primary" text>
+                <CardText color="primary">
+                  <h4 className={classes.cardTitle}>ブログ追加</h4>
+                </CardText>
+                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
+                  <div className={classes.buttonGroupStyle}>
+                    <div className={classes.buttonGroup}>
+                      <Button
+                        color="primary"
+                        customClass={classes.firstButton}
+                        onClick={this.props.closeForm}
+                      >
+                        <Cancel style={iconStyle} />
+                        キャンセル
+                      </Button>
+                      <Button
+                        color="primary"
+                        customClass={classes.lastButton}
+                        onClick={this.addMailAccount}
+                      >
+                        <SaveAltIcon style={iconStyle} />
+                        保存
+                      </Button>
                     </div>
-                  </ItemGrid>
+                  </div>
+                </GridItem>
+              </CardHeader>
+              <CardBody style={zeroPadding}>
+                <div>
                   <form>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2} />
-                      <ItemGrid xs={12} sm={3}>
+                      <GridItem xs={12} sm={2} />
+                      <GridItem xs={12} sm={3}>
                         <FormControl fullWidth className={classes.selectFormControl}>
                           <InputLabel htmlFor="select-provider" className={classes.selectLabel}>
                             提供元：
@@ -590,13 +607,13 @@ class FormBlogAdd extends Component<Props, State> {
                             </MenuItem>
                           </Select>
                         </FormControl>
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>E-mail</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={10}>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
                         <CustomInput
                           success={this.state.mailAddressState === 'success'}
                           error={this.state.mailAddressState === 'error'}
@@ -611,13 +628,13 @@ class FormBlogAdd extends Component<Props, State> {
                             type: 'email'
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>アカウントID:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <CustomInput
                           success={this.state.accountIdState === 'success'}
                           error={this.state.accountIdState === 'error'}
@@ -632,11 +649,11 @@ class FormBlogAdd extends Component<Props, State> {
                             onChange: event => this.inputFormChange(event, 'accountId')
                           }}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={2}>
+                      </GridItem>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>パスワード:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <CustomInput
                           success={this.state.passwordState === 'success'}
                           error={this.state.passwordState === 'error'}
@@ -651,13 +668,13 @@ class FormBlogAdd extends Component<Props, State> {
                             onChange: event => this.inputFormChange(event, 'password')
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>タイトル:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={10}>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
                         <CustomInput
                           success={this.state.titleState === 'success'}
                           error={this.state.titleState === 'error'}
@@ -672,13 +689,13 @@ class FormBlogAdd extends Component<Props, State> {
                             onChange: event => this.inputFormChange(event, 'title')
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>URL:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={10}>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
                         <CustomInput
                           success={this.state.urlState === 'success'}
                           error={this.state.urlState === 'error'}
@@ -693,13 +710,13 @@ class FormBlogAdd extends Component<Props, State> {
                             onChange: event => this.inputFormChange(event, 'url')
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>ブログの説明:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={10}>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
                         <CustomInput
                           id="description"
                           formControlProps={{
@@ -712,13 +729,13 @@ class FormBlogAdd extends Component<Props, State> {
                             onChange: event => this.inputFormChange(event, 'description')
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>備考:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={10}>
+                      </GridItem>
+                      <GridItem xs={12} sm={8}>
                         <CustomInput
                           id="remark"
                           formControlProps={{
@@ -731,13 +748,13 @@ class FormBlogAdd extends Component<Props, State> {
                             onChange: event => this.inputFormChange(event, 'remark')
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <ItemGrid xs={12} sm={2}>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>作成日:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <Datetime
                           className={classes.inputMyControl}
                           dateFormat="YYYY/MM/DD"
@@ -749,11 +766,11 @@ class FormBlogAdd extends Component<Props, State> {
                           value={this.state.createDate}
                           closeOnSelect={true}
                         />
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={2}>
+                      </GridItem>
+                      <GridItem xs={12} sm={2}>
                         <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
-                      </ItemGrid>
-                      <ItemGrid xs={12} sm={4}>
+                      </GridItem>
+                      <GridItem xs={12} sm={3}>
                         <TagsInput
                           value={this.state.tags}
                           tagProps={{ className: 'react-tagsinput-tag info' }}
@@ -763,19 +780,19 @@ class FormBlogAdd extends Component<Props, State> {
                             placeholder: 'ここへタグを追加'
                           }}
                         />
-                      </ItemGrid>
+                      </GridItem>
                     </GridContainer>
                   </form>
                 </div>
-              }
-            />
+              </CardBody>
+            </Card>
             <Snackbar
               place="bc"
               color="warning"
               icon={AddAlert}
               message={this.state.errorMessage}
               open={this.state.openErrorDialog}
-              closeNotification={() => this.setState({ openErrorDialog: false })}
+              action={() => this.setState({ openErrorDialog: false })}
               close
             />
             <Snackbar
@@ -784,10 +801,10 @@ class FormBlogAdd extends Component<Props, State> {
               icon={AddAlert}
               message={this.state.errorMessage}
               open={this.state.openSuccessDialog}
-              closeNotification={() => this.addAccountSuccess()}
+              action={() => this.addAccountSuccess()}
               close
             />
-          </ItemGrid>
+          </GridItem>
         </GridContainer>
       </Loadable>
     );

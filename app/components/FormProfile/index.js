@@ -1,10 +1,21 @@
 // @flow
 import React from 'react';
-import { Grid, Select, MenuItem, withStyles } from 'material-ui';
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import moment from 'moment';
-import AddAlert from 'material-ui-icons/AddAlert';
-import { FullHeaderCard, Button, CustomInput, ItemGrid, Snackbar } from '../../ui';
+import AddAlert from '@material-ui/icons/AddAlert';
+import Card from '../../ui/Card/Card';
+import CardHeader from '../../ui/Card/CardHeader';
+import CardText from '../../ui/Card/CardText';
+import CardBody from '../../ui/Card/CardBody';
+import CardFooter from '../../ui/Card/CardFooter';
+import Button from '../../ui/CustomButtons/Button';
+import CustomInput from '../../ui/CustomInput/CustomInput';
+import GridItem from '../../ui/Grid/GridItem';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 import type { UserAccountType } from '../../types/userAccount';
 import validateTextField from '../../assets/jss/material-dashboard-pro-react/components/validateTextField';
 
@@ -220,16 +231,19 @@ class FormProfile extends React.Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <Grid container justify="center">
-        <ItemGrid xs={12} sm={12} md={8}>
+      <Grid container justify="center" className={classes.noMargin}>
+        <GridItem xs={12} sm={12} md={8}>
           <ValidatorForm onSubmit={this.handleSubmit} onError={errors => this.validateForm(errors)}>
-            <FullHeaderCard
-              cardTitle="ユーザー情報"
-              cardSubtitle=""
-              content={
+            <Card>
+              <CardHeader color="primary" text>
+                <CardText color="primary">
+                  <h4 className={classes.cardTitleWhite}>ユーザー情報</h4>
+                </CardText>
+              </CardHeader>
+              <CardBody>
                 <div>
                   <Grid container>
-                    <ItemGrid xs={12} sm={12} md={10}>
+                    <GridItem xs={12} sm={12} md={10}>
                       <TextValidator
                         className={classes.validatedField}
                         fullWidth
@@ -245,10 +259,10 @@ class FormProfile extends React.Component<Props, State> {
                         helperText="登録メールアドレスは、自由に変更することができます。"
                         validatorListener={this.validatorListenerMailAddress}
                       />
-                    </ItemGrid>
+                    </GridItem>
                   </Grid>
                   <Grid container>
-                    <ItemGrid xs={12} sm={12} md={10}>
+                    <GridItem xs={12} sm={12} md={10}>
                       <TextValidator
                         className={classes.validatedField}
                         label="パスワード"
@@ -265,10 +279,10 @@ class FormProfile extends React.Component<Props, State> {
                         validatorListener={this.validatorListenerPassword}
                         helperText="半角英数字、記号が使えます。"
                       />
-                    </ItemGrid>
+                    </GridItem>
                   </Grid>
                   <Grid container>
-                    <ItemGrid xs={12} sm={12} md={10}>
+                    <GridItem xs={12} sm={12} md={10}>
                       <CustomInput
                         labelText="決済時メールアドレス(登録メールアドレス問合せ時に使用)"
                         id="original-mailaddress"
@@ -280,10 +294,10 @@ class FormProfile extends React.Component<Props, State> {
                           value: this.state.userInfo.registeredMailAddress
                         }}
                       />
-                    </ItemGrid>
+                    </GridItem>
                   </Grid>
                   <Grid container>
-                    <ItemGrid xs={12} sm={12} md={6}>
+                    <GridItem xs={12} sm={12} md={6}>
                       <CustomInput
                         labelText="有効期限"
                         id="expire-date"
@@ -295,9 +309,9 @@ class FormProfile extends React.Component<Props, State> {
                           disabled: true
                         }}
                       />
-                    </ItemGrid>
+                    </GridItem>
                     {/* 管理者用
-                    <ItemGrid>
+                    <GridItem>
                       <CustomInput
                         labelText="有効期限設定"
                         id="expire-date-set"
@@ -310,10 +324,10 @@ class FormProfile extends React.Component<Props, State> {
                           onChange: this.handleChangeExpire
                         }}
                       />
-                    </ItemGrid> */}
+                    </GridItem> */}
                   </Grid>
                   <Grid container>
-                    <ItemGrid xs={12} sm={12} md={6}>
+                    <GridItem xs={12} sm={12} md={6}>
                       <CustomInput
                         labelText="支払い方法"
                         id="payment-method"
@@ -325,9 +339,9 @@ class FormProfile extends React.Component<Props, State> {
                           disabled: true
                         }}
                       />
-                    </ItemGrid>
+                    </GridItem>
                     {/* 管理者用
-                    <ItemGrid xs={12} sm={12} md={6}>
+                    <GridItem xs={12} sm={12} md={6}>
                       <Select
                         value={this.state.userInfo.paymentMethod}
                         onChange={this.handleChangePaymentMethod}
@@ -342,11 +356,11 @@ class FormProfile extends React.Component<Props, State> {
                         <MenuItem value="by">銀行振込年間支払い</MenuItem>
                         <MenuItem value="bm">銀行振込3ヶ月支払い</MenuItem>
                       </Select>
-                    </ItemGrid> */}
+                    </GridItem> */}
                   </Grid>
                 </div>
-              }
-              footer={
+              </CardBody>
+              <CardFooter>
                 <Button
                   type="submit"
                   color="primary"
@@ -355,8 +369,8 @@ class FormProfile extends React.Component<Props, State> {
                 >
                   ユーザー情報更新
                 </Button>
-              }
-            />
+              </CardFooter>
+            </Card>
           </ValidatorForm>
           <Snackbar
             color="warning"
@@ -376,7 +390,7 @@ class FormProfile extends React.Component<Props, State> {
             close
             message={<span id="login_error">ユーザー情報を更新しました。</span>}
           />
-        </ItemGrid>
+        </GridItem>
       </Grid>
     );
   }

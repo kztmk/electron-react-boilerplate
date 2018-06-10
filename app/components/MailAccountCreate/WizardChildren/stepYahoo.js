@@ -2,17 +2,19 @@
 import React from 'react';
 
 // material-ui components
-import withStyles from 'material-ui/styles/withStyles';
-import FormControl from 'material-ui/Form/FormControl';
-import InputLabel from 'material-ui/Input/InputLabel';
-
+import { withStyles } from '@material-ui/core/styles';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 // @material-ui/icons
-import AddAlert from 'material-ui-icons/AddAlert';
+import AddAlert from '@material-ui/icons/AddAlert';
 
-import Select from 'material-ui/Select';
-import MenuItem from 'material-ui/Menu/MenuItem';
 // core components
-import { GridContainer, ItemGrid, CustomInput, Snackbar } from '../../../ui';
+import GridContainer from '../../../ui/Grid/GridContainer';
+import GridItem from '../../../ui/Grid/GridItem';
+import CustomInput from '../../../ui/CustomInput/CustomInput';
+import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import extendedFormsStyle from '../../../assets/jss/material-dashboard-pro-react/views/extendedFormsStyle';
 
@@ -160,7 +162,7 @@ class StepYahoo extends React.Component<Props, State> {
       <GridContainer>
         <GridContainer style={groupBox}>
           <GridContainer container justify="center">
-            <ItemGrid xs={12} sm={8} md={8}>
+            <GridItem xs={12} sm={8} md={8}>
               <FormControl fullWidth className={classes.selectFormControl}>
                 <InputLabel htmlFor="yahooQuestion-select" className={classes.selectLabel}>
                   秘密の質問を選択
@@ -190,10 +192,10 @@ class StepYahoo extends React.Component<Props, State> {
                   {this.getYahooQuestions()}
                 </Select>
               </FormControl>
-            </ItemGrid>
+            </GridItem>
           </GridContainer>
           <GridContainer container justify="center">
-            <ItemGrid xs={12} sm={8} md={8}>
+            <GridItem xs={12} sm={8} md={8}>
               <CustomInput
                 success={this.state.answerState === 'success'}
                 error={this.state.answerState === 'error'}
@@ -208,7 +210,7 @@ class StepYahoo extends React.Component<Props, State> {
                   type: 'text'
                 }}
               />
-            </ItemGrid>
+            </GridItem>
           </GridContainer>
         </GridContainer>
         <Snackbar
