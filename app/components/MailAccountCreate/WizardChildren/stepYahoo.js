@@ -55,6 +55,18 @@ class StepYahoo extends React.Component<Props, State> {
   }
 
   /**
+   * 親フォームから呼ばれてstateを返す
+   * @returns {*}
+   */
+  sendState = () => {
+    const plusInfo = [];
+    plusInfo.Question = this.state.yahooQuestion;
+    plusInfo.answer = this.state.yahooAnswer;
+
+    return plusInfo;
+  };
+
+  /**
    * Yahoo!メール作成時の秘密の質問
    *
    * @returns {any[]}
@@ -130,7 +142,7 @@ class StepYahoo extends React.Component<Props, State> {
    * 入力完了時(フォーム移動時)に全入力項目をチェック
    * @returns {boolean}
    */
-  isValidate = () => {
+  isValidated = () => {
     let errorMsg = '';
     if (this.state.yahooQuestion.length === 0) {
       errorMsg = '秘密の質問を選択してください。\n';

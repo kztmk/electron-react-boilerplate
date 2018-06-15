@@ -1,7 +1,6 @@
 import firebase from 'firebase';
 import config from './config';
 
-
 firebase.initializeApp(config);
 const database = firebase.database();
 
@@ -127,6 +126,22 @@ const firebaseDbDelete = path =>
     .catch(error => {
       throw error;
     });
+
+/**
+ * Database set data
+ *  writes data this databse location
+ *
+ * @param path
+ * @param value
+ * @returns {Promise<any>}
+ */
+const firebaseDbSet = (path, value) =>
+  database
+    .ref(path)
+    .set(value)
+    .catch(error => {
+      throw error;
+    });
 // ------------------------------------
 // Export
 //------------------------------------
@@ -141,5 +156,6 @@ export {
   firebaseDbInsert,
   firebaseDbRead,
   firebaseDbUpdate,
-  firebaseDbDelete
+  firebaseDbDelete,
+  firebaseDbSet
 };

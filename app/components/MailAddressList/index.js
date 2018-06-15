@@ -54,6 +54,7 @@ type Props = {
   startUpdateMailAccount: (mailAccount: MailAccountType) => void,
   startDeleteMailAccount: (mailAccount: MailAccountType) => void,
   startCloseConnection: () => void,
+  startGetRandomPersonalInfo: () => void,
   mailAccounts: Array<MailAccountType>,
   isGetting: boolean,
   isCreating: boolean,
@@ -411,10 +412,17 @@ class MailAddressListPage extends React.Component<Props, State> {
     this.setState({ openFormMailAddressAdd: false });
   };
 
+  /**
+   * 新規メールアドレス取得のため、formMailAddressNewを表示
+   */
   handleOpenFormMailAddressNew = () => {
+    this.props.startGetRandomPersonalInfo();
     this.setState({ openFormMailAddressNew: true });
   };
 
+  /**
+   * formMailAddressNewを閉じる
+   */
   handleCloseFormMailAddressNew = () => {
     this.setState({ openFormMailAddressNew: false });
   };

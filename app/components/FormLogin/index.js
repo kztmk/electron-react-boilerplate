@@ -18,6 +18,7 @@ import customInputStyle from '../../assets/jss/material-dashboard-pro-react/comp
 import type { UserAccountType } from '../../types/userAccount';
 import type { State as MailAccountState } from '../../containers/MailAddressList/reducer';
 import type { State as BlogAccountState } from '../../containers/BlogList/reducer';
+import type { State as PersonalInfoState } from '../../containers/PersonalInfo/reducer';
 
 export type Props = {
   classes: Object,
@@ -25,11 +26,13 @@ export type Props = {
   profile: UserAccountType,
   mailAccountState: MailAccountState,
   blogAccountState: BlogAccountState,
+  personalInfoState: PersonalInfoState,
   loginStart: (userAuth: AuthType) => void,
   requestPasswordReset: () => void,
   startGetProfile: () => void,
   startGetMailAccounts: () => void,
   startGetBlogAccounts: () => void,
+  startGetPersonalInfo: () => void,
   isLoginDone: () => void
 };
 
@@ -93,12 +96,28 @@ class LoginForm extends Component<Props, State> {
       !nextProps.profile.isFailure
     ) {
       // getMailAccounts
-      this.setState({ step: 'getMailAccount' });
-      this.props.startGetMailAccounts();
+      this.setState({ step: 'getPersonalInfo' });
+      this.props.startGetPersonalInfo();
     } else if (this.state.step === 'getProfile' && nextProps.profile.isFailure) {
       this.setState({
         isOpenErrorSnackbar: nextProps.profile.isFailure,
         errorMessage: nextProps.profile.errorMessage
+      });
+      return;
+    }
+
+    if (
+      this.state.step === 'getPersonalInfo' &&
+      !nextProps.personalInfoState.isLoading &&
+      !nextProps.personalInfoState.isFailure
+    ) {
+      // getPersonalInfo
+      this.setState({ step: 'getMailAccount' });
+      this.props.startGetMailAccounts();
+    } else if (this.state.step === 'getPersonalInfo' && nextProps.personalInfoState.isFailure) {
+      this.setState({
+        isOpenErrorSnackbar: nextProps.personalInfoState.isFailure,
+        errorMessage: nextProps.personalInfoState.errorMessage
       });
       return;
     }

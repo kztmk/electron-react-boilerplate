@@ -1,0 +1,106 @@
+// @flow
+import type { Action } from './actionTypes';
+import { Actions } from './actionTypes';
+import type PersonalInfoType from '../../types/personalInfo';
+
+export type State = {
+  isLoading: boolean,
+  isFailure: boolean,
+  errorMessage: string,
+  personalInfo: PersonalInfoType,
+  randomPersonalInfo: PersonalInfoType
+};
+
+const initialPersonalInfo = {
+  lastName: '',
+  firstName: '',
+  lastNameKana: '',
+  firstNameKana: '',
+  lastNameKatakana: '',
+  firstNameKatakana: '',
+  lastNameHepburn: '',
+  firstNameHepburn: '',
+  gender: 0,
+  birthDate: '',
+  postalCode: '',
+  prefecture: '',
+  address1: '',
+  useDefault: false
+};
+export const initialState: State = {
+  isLoading: false,
+  isFailure: false,
+  errorMessage: '',
+  personalInfo: initialPersonalInfo,
+  randomPersonalInfo: initialPersonalInfo
+};
+
+export default function(state: State = initialState, action: Action): Exact<State> {
+  switch (action.type) {
+    case Actions.SAVE_PERSONAL_INFO_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
+
+    case Actions.SAVE_PERSONAL_INFO_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        personalInfo: action.payload
+      };
+
+    case Actions.SAVE_PERSONAL_INFO_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isFailure: true,
+        errorMessage: action.meta.errorMessage
+      };
+
+    case Actions.GET_RANDOM_PERSONAL_INFO_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
+
+    case Actions.GET_RANDOM_PERSONAL_INFO_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        randomPersonalInfo: action.payload
+      };
+
+    case Actions.GET_RANDOM_PERSONAL_INFO_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isFailure: true,
+        errorMessage: action.meta.errorMessage
+      };
+
+    case Actions.GET_PERSONAL_INFO_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
+
+    case Actions.GET_PERSONAL_INFO_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        personalInfo: action.payload
+      };
+
+    case Actions.GET_PERSONAL_INFO_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isFailure: true,
+        errorMessage: action.meta.errorMessage
+      };
+
+    default:
+      return state;
+  }
+}

@@ -7,12 +7,14 @@ import { setAuthInfo, logoutRequest } from './actions';
 import { getProfileRequest } from '../Profile/actions';
 import { getMailAddressRequest } from '../MailAddressList/actions';
 import { getBlogsRequest } from '../BlogList/actions';
+import { getPersonalInfoRequest } from '../PersonalInfo/actions';
 
 const mapStateToProps = (state: State) => ({
   userAuth: state.Login,
   profile: state.Profile,
   mailAccountState: state.MailAddressList,
-  blogAccountState: state.BlogList
+  blogAccountState: state.BlogList,
+  personalInfoState: state.PersonalInfo
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
@@ -30,6 +32,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startGetBlogAccounts() {
     dispatch(getBlogsRequest());
+  },
+  startGetPersonalInfo() {
+    dispatch(getPersonalInfoRequest());
   }
 });
 

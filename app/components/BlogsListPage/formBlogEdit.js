@@ -340,7 +340,7 @@ class FormBlogEdit extends Component<Props, State> {
                     <div className={classes.buttonGroup}>
                       <Button
                         color="primary"
-                        customClass={classes.firstButton}
+                        className={classes.firstButton}
                         onClick={this.props.closeModal}
                       >
                         <Cancel style={iconStyle} />
@@ -348,7 +348,7 @@ class FormBlogEdit extends Component<Props, State> {
                       </Button>
                       <Button
                         color="primary"
-                        customClass={classes.lastButton}
+                        className={classes.lastButton}
                         onClick={this.updateBlogAccount}
                       >
                         <SaveAltIcon style={iconStyle} />

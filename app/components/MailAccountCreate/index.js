@@ -6,7 +6,7 @@ import MailWizard from './MailWizard';
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
 
-import Steps00 from './WizardChildren/step00';
+import Steps00 from '../../containers/MailAccountCreate/WizardChildren/step00';
 import StepOutlook from './WizardChildren/stepOutlook';
 import StepYahoo from './WizardChildren/stepYahoo';
 
@@ -16,6 +16,12 @@ type Props = {
 };
 
 class WizardViewMail extends React.Component<Props> {
+  createMailAccount = () => {
+    // validate data
+
+    // generate data
+  };
+
   render() {
     return (
       <GridContainer justify="center">

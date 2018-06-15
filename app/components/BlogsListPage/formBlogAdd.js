@@ -387,7 +387,7 @@ class FormBlogAdd extends Component<Props, State> {
                     <div className={classes.buttonGroup}>
                       <Button
                         color="primary"
-                        customClass={classes.firstButton}
+                        className={classes.firstButton}
                         onClick={this.props.closeForm}
                       >
                         <Cancel style={iconStyle} />
@@ -395,7 +395,7 @@ class FormBlogAdd extends Component<Props, State> {
                       </Button>
                       <Button
                         color="primary"
-                        customClass={classes.lastButton}
+                        className={classes.lastButton}
                         onClick={this.addMailAccount}
                       >
                         <SaveAltIcon style={iconStyle} />

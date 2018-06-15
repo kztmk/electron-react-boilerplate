@@ -1,10 +1,11 @@
 // @flow
 import React from 'react';
-
+import Loadable from 'react-loading-overlay';
 import moment from 'moment';
 import generatePassword from 'password-generator';
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -27,6 +28,10 @@ import CustomInput from '../../../ui/CustomInput/CustomInput';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import formAddStyle from '../../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
+import type PersonalInfoType from '../../../types/personalInfo';
+
+import Yahoo from '../../../assets/img/providerImage/y64.png';
+import Outlook from '../../../assets/img/providerImage/outlook64.png';
 
 const stepContent = {
   padding: '5px'
@@ -46,8 +51,19 @@ const groupBox = {
   margin: '20px 0 0 0'
 };
 
+const selectAvatarStyle = {
+  display: 'flex',
+  alignItems: 'center'
+};
+
 type Props = {
-  classes: Object
+  classes: Object,
+  isLoading: boolean,
+  isFailure: boolean,
+  errorMessage: string,
+  personalInfo: PersonalInfoType,
+  randomPersonalInfo: PersonalInfoType,
+  startGetRandomPersonalInfo: () => void
 };
 
 type State = {
@@ -66,7 +82,9 @@ type State = {
   postalCode: string,
   postalCodeState: string,
   errorMessage: string,
-  openErrorSnackbar: false
+  openErrorSnackbar: false,
+  forceUseDefault: boolean,
+  forceUseRandom: boolean
 };
 
 /**
@@ -84,17 +102,67 @@ class Steps00 extends React.Component<Props, State> {
       passwordState: '',
       lastName: '',
       lastNameState: '',
+      lastNameKana: '',
       firstName: '',
       firstNameState: '',
-      gender: true,
+      firstNameKana: '',
+      gender: false,
       birthDate: '',
       birthDateState: '',
       postalCode: '',
       postalCodeState: '',
       errorMessage: '',
-      openErrorSnackbar: false
+      openErrorSnackbar: false,
+      forceUseDefault: false,
+      forceUseRandom: false
     };
   }
+
+  componentWillReceiveProps = nextProps => {
+    if (this.props.isLoading && !nextProps.isLoading && !nextProps.isFailure) {
+      this.handleGenerateAccountId();
+      this.handleGeneratePassword();
+
+      if (
+        (!this.state.forceUseDefault && !nextProps.personalInfo.useDefault) ||
+        this.state.forceUseRandom
+      ) {
+        this.setState({
+          lastName: nextProps.randomPersonalInfo.lastName,
+          lastNameKana: nextProps.randomPersonalInfo.lastNameKana,
+          firstName: nextProps.randomPersonalInfo.firstName,
+          firstNameKana: nextProps.randomPersonalInfo.firstNameKana,
+          gender: nextProps.randomPersonalInfo.gender === 1,
+          birthDate: nextProps.randomPersonalInfo.birthDate,
+          postalCode: nextProps.randomPersonalInfo.postalCode
+        });
+      } else {
+        this.setState({
+          lastName: nextProps.personalInfo.lastName,
+          lastNameKana: nextProps.personalInfo.lastNameKana,
+          firstName: nextProps.personalInfo.firstName,
+          firstNameKana: nextProps.personalInfo.firstNameKana,
+          gender: nextProps.personalInfo.gender === 1,
+          birthDate: nextProps.personalInfo.birthDate,
+          postalCode: nextProps.personalInfo.postalCode
+        });
+      }
+    }
+
+    // error get random personalInfo
+    if (this.props.isLoading && !nextProps.isLoading && nextProps.isFailure) {
+      this.setState({
+        errorMessage: nextProps.errorMessage,
+        openErrorSnackbar: true
+      });
+    }
+  };
+
+  /**
+   * 親フォームから呼ばれてstateを返す
+   * @returns {*}
+   */
+  sendState = () => this.state;
 
   /**
    * 性別switch変更時
@@ -240,11 +308,13 @@ class Steps00 extends React.Component<Props, State> {
         if (event.target.value.length > 0) {
           this.setState({
             lastName: event.target.value,
+            lastNameKana: '',
             lastNameState: 'success'
           });
         } else {
           this.setState({
             lastName: event.target.value,
+            lastNameKana: '',
             lastNameState: 'error'
           });
         }
@@ -253,11 +323,13 @@ class Steps00 extends React.Component<Props, State> {
         if (event.target.value.length > 0) {
           this.setState({
             firstName: event.target.value,
+            firstNameKana: '',
             firstNameState: 'success'
           });
         } else {
           this.setState({
             firstName: event.target.value,
+            firstNameKana: '',
             firstNameState: 'error'
           });
         }
@@ -378,234 +450,275 @@ class Steps00 extends React.Component<Props, State> {
     });
   };
 
+  /**
+   * ランダム個人情報をセット
+   */
+  handleSetRandomData = () => {
+    this.setState({
+      forceUseDefault: false,
+      forceUseRandom: true
+    });
+    this.props.startGetRandomPersonalInfo();
+  };
+
+  /**
+   * 既定の個人情報をセット
+   */
+  handleSetDefaultData = () => {
+    if (this.props.personalInfo.lastName.length > 0) {
+      this.setState({
+        lastName: this.props.personalInfo.lastName,
+        firstName: this.props.personalInfo.firstName,
+        gender: this.props.personalInfo.gender === 1,
+        birthDate: this.props.personalInfo.birthDate,
+        postalCode: this.props.personalInfo.postalCode,
+        forceUseDefault: true,
+        forceUseRandom: false
+      });
+    } else {
+      this.setState({
+        errorMessage: '既定の個人情報は設定されていません。設定画面で設定してください。',
+        openErrorSnackbar: true
+      });
+    }
+  };
+
   render() {
     const { classes } = this.props;
     return (
-      <div>
-        <GridContainer style={stepContent}>
-          <GridContainer container justify="center" style={groupBoxTop}>
-            <GridItem xs={12} sm={3} md={3}>
-              <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="provider-select" className={classes.selectLabel}>
-                  メール提供元
-                </InputLabel>
-                <Select
-                  MenuProps={{
-                    className: classes.selectMenu
-                  }}
-                  classes={{
-                    select: classes.select
-                  }}
-                  value={this.state.provider}
-                  onChange={this.handleSelectProvider}
-                  inputProps={{
-                    name: 'providerSelect',
-                    id: 'provider-select'
-                  }}
-                >
-                  <MenuItem
-                    disabled
-                    classes={{
-                      root: classes.selectMenuItem
-                    }}
-                  >
+      <Loadable active={this.props.isLoading} spinner text="個人情報取得中・・・・">
+        <div>
+          <GridContainer style={stepContent}>
+            <GridContainer container justify="center" style={groupBoxTop}>
+              <GridItem xs={12} sm={3} md={3}>
+                <FormControl fullWidth className={classes.selectFormControl}>
+                  <InputLabel htmlFor="provider-select" className={classes.selectLabel}>
                     メール提供元
-                  </MenuItem>
-                  <MenuItem
-                    classes={{
-                      root: classes.selectMenuItem,
-                      selected: classes.selectMenuItemSelected
+                  </InputLabel>
+                  <Select
+                    MenuProps={{
+                      className: classes.selectMenu
                     }}
-                    value="Yahoo"
-                  >
-                    Yahoo!メール
-                  </MenuItem>
-                  <MenuItem
                     classes={{
-                      root: classes.selectMenuItem,
-                      selected: classes.selectMenuItemSelected
+                      select: classes.select
                     }}
-                    value="Outlook"
+                    value={this.state.provider}
+                    onChange={this.handleSelectProvider}
+                    inputProps={{
+                      name: 'providerSelect',
+                      id: 'provider-select'
+                    }}
                   >
-                    Outlook
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </GridItem>
-            <GridItem xs={12} sm={4} md={4}>
-              <CustomInput
-                success={this.state.accountIdState === 'success'}
-                error={this.state.accountIdState === 'error'}
-                labelText="アカウントID:"
-                id="accountId"
-                formControlProps={{
-                  fullWidth: true
-                }}
-                inputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Tooltip title="ランダムアカウントIDを再取得" position="bottom">
-                        <Button
-                          justIcon
-                          size="sm"
-                          color="primary"
-                          onClick={() => this.handleGenerateAccountId()}
-                        >
-                          <Refresh />
-                        </Button>
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
-                  value: this.state.accountId,
-                  onChange: event => this.formFieldChange(event, 'accountId'),
-                  type: 'text'
-                }}
-              />
-            </GridItem>
-            <GridItem xs={12} sm={4} md={4}>
-              <CustomInput
-                success={this.state.passwordState === 'success'}
-                error={this.state.passwordState === 'error'}
-                labelText="パスワード"
-                id="password"
-                formControlProps={{
-                  fullWidth: true
-                }}
-                inputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <Tooltip title="ランダムパスワードを再取得" position="bottom">
-                        <Button
-                          justIcon
-                          size="sm"
-                          color="primary"
-                          onClick={() => this.handleGeneratePassword()}
-                        >
-                          <Refresh />
-                        </Button>
-                      </Tooltip>
-                    </InputAdornment>
-                  ),
-                  value: this.state.password,
-                  onChange: event => this.formFieldChange(event, 'password')
-                }}
-              />
-            </GridItem>
-          </GridContainer>
-        </GridContainer>
-        <GridContainer style={stepContent}>
-          <GridContainer style={groupBox} container justify="center">
-            <GridContainer>
-              <GridItem xs={12} sm={2} md={2}>
-                <FormLabel className={classes.labelHorizontal}>姓名</FormLabel>
+                    <MenuItem
+                      disabled
+                      classes={{
+                        root: classes.selectMenuItem
+                      }}
+                    >
+                      メール提供元
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="Yahoo"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="Yahoo" src={Yahoo} className={classes.avatar} />
+                        Yahoo!メール
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="Outlook"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="Yahoo" src={Outlook} className={classes.avatar} />
+                        Outlook
+                      </div>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
               </GridItem>
-              <GridItem xs={12} sm={3} md={3}>
+              <GridItem xs={12} sm={4} md={4}>
                 <CustomInput
-                  success={this.state.lastNameState === 'success'}
-                  error={this.state.lastNameState === 'error'}
-                  labelText="姓"
-                  id="lastName"
+                  success={this.state.accountIdState === 'success'}
+                  error={this.state.accountIdState === 'error'}
+                  labelText="アカウントID:"
+                  id="accountId"
                   formControlProps={{
                     fullWidth: true
                   }}
                   inputProps={{
-                    onChange: event => this.formFieldChange(event, 'lastName'),
-                    value: this.state.lastName
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Tooltip title="ランダムアカウントIDを再取得" position="bottom">
+                          <Button
+                            justIcon
+                            size="sm"
+                            color="primary"
+                            onClick={() => this.handleGenerateAccountId()}
+                          >
+                            <Refresh />
+                          </Button>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                    value: this.state.accountId,
+                    onChange: event => this.formFieldChange(event, 'accountId'),
+                    type: 'text'
                   }}
                 />
               </GridItem>
-              <GridItem xs={12} sm={3} md={3}>
+              <GridItem xs={12} sm={4} md={4}>
                 <CustomInput
-                  success={this.state.firstNameState === 'success'}
-                  error={this.state.firstNameState === 'error'}
-                  labelText="名"
-                  id="firstname"
+                  success={this.state.passwordState === 'success'}
+                  error={this.state.passwordState === 'error'}
+                  labelText="パスワード"
+                  id="password"
                   formControlProps={{
                     fullWidth: true
                   }}
                   inputProps={{
-                    onChange: event => this.formFieldChange(event, 'firstName'),
-                    value: this.state.firstName
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Tooltip title="ランダムパスワードを再取得" position="bottom">
+                          <Button
+                            justIcon
+                            size="sm"
+                            color="primary"
+                            onClick={() => this.handleGeneratePassword()}
+                          >
+                            <Refresh />
+                          </Button>
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                    value: this.state.password,
+                    onChange: event => this.formFieldChange(event, 'password')
                   }}
                 />
-              </GridItem>
-              <GridItem xs={12} sm={2} md={2}>
-                <Tooltip title="ランダムな個人情報を再取得します。" positions="bottom">
-                  <Button color="primary">
-                    <Refresh />
-                    ランダムデータ再取得
-                  </Button>
-                </Tooltip>
-              </GridItem>
-            </GridContainer>
-            <GridContainer>
-              <GridItem xs={12} sm={2} md={2}>
-                <FormLabel className={classes.labelHorizontalSwitchLeft}>男</FormLabel>
-                <Switch
-                  checked={this.state.gender}
-                  onChange={this.handleChangeGender('gender')}
-                  value="gender"
-                  classes={{
-                    checked: classes.switchChecked,
-                    bar: classes.switchBarChecked,
-                    icon: classes.switchIcon,
-                    iconChecked: classes.switchIconChecked
-                  }}
-                />
-                <FormLabel className={classes.labelHorizontalSwitchRight}>女</FormLabel>
-              </GridItem>
-              <GridItem xs={12} sm={3} md={3}>
-                <CustomInput
-                  success={this.state.birthDateState === 'success'}
-                  error={this.state.birthDateState === 'error'}
-                  labelText="生年月日(YYYY/MM/DD)"
-                  id="birthDate"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                  inputProps={{
-                    onChange: event => this.formFieldChange(event, 'birthDate'),
-                    value: this.state.birthDate
-                  }}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={3} md={3}>
-                <CustomInput
-                  success={this.state.postalCodeState === 'success'}
-                  error={this.state.postalCodeState === 'error'}
-                  labelText="郵便番号(7ケタ)"
-                  id="postalCode"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                  inputProps={{
-                    onChange: event => this.formFieldChange(event, 'postalCode'),
-                    value: this.state.postalCode,
-                    placeholder: 'ハイフンなしで7桁の半角数字'
-                  }}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={2} md={2}>
-                <Tooltip title="設定画面で保存した個人情報を読込ます。" positions="bottom">
-                  <Button color="primary">
-                    <FolderShared />
-                    既存のデータを使用
-                  </Button>
-                </Tooltip>
               </GridItem>
             </GridContainer>
           </GridContainer>
-        </GridContainer>
-        <Snackbar
-          color="warning"
-          place="bc"
-          icon={AddAlert}
-          open={this.state.openErrorSnackbar}
-          closeNotification={this.handleErrorSnackbarClose}
-          close
-          message={<span id="login_error">{this.state.errorMessage}</span>}
-        />
-      </div>
+          <GridContainer style={stepContent}>
+            <GridContainer style={groupBox} container justify="center">
+              <GridContainer>
+                <GridItem xs={12} sm={2} md={2}>
+                  <FormLabel className={classes.labelHorizontal}>姓名</FormLabel>
+                </GridItem>
+                <GridItem xs={12} sm={3} md={3}>
+                  <CustomInput
+                    success={this.state.lastNameState === 'success'}
+                    error={this.state.lastNameState === 'error'}
+                    labelText="姓"
+                    id="lastName"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      onChange: event => this.formFieldChange(event, 'lastName'),
+                      value: this.state.lastName
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={3} md={3}>
+                  <CustomInput
+                    success={this.state.firstNameState === 'success'}
+                    error={this.state.firstNameState === 'error'}
+                    labelText="名"
+                    id="firstname"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      onChange: event => this.formFieldChange(event, 'firstName'),
+                      value: this.state.firstName
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={2} md={2}>
+                  <Tooltip title="ランダムな個人情報を再取得します。" positions="bottom">
+                    <Button color="primary" onClick={() => this.handleSetRandomData()}>
+                      <Refresh />
+                      ランダムデータ再取得
+                    </Button>
+                  </Tooltip>
+                </GridItem>
+              </GridContainer>
+              <GridContainer>
+                <GridItem xs={12} sm={2} md={2}>
+                  <FormLabel className={classes.labelHorizontalSwitchLeft}>男</FormLabel>
+                  <Switch
+                    checked={this.state.gender}
+                    onChange={this.handleChangeGender('gender')}
+                    value="gender"
+                    classes={{
+                      checked: classes.switchChecked,
+                      bar: classes.switchBarChecked,
+                      icon: classes.switchIcon,
+                      iconChecked: classes.switchIconChecked
+                    }}
+                  />
+                  <FormLabel className={classes.labelHorizontalSwitchRight}>女</FormLabel>
+                </GridItem>
+                <GridItem xs={12} sm={3} md={3}>
+                  <CustomInput
+                    success={this.state.birthDateState === 'success'}
+                    error={this.state.birthDateState === 'error'}
+                    labelText="生年月日(YYYY/MM/DD)"
+                    id="birthDate"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      onChange: event => this.formFieldChange(event, 'birthDate'),
+                      value: this.state.birthDate
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={3} md={3}>
+                  <CustomInput
+                    success={this.state.postalCodeState === 'success'}
+                    error={this.state.postalCodeState === 'error'}
+                    labelText="郵便番号(7ケタ)"
+                    id="postalCode"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      onChange: event => this.formFieldChange(event, 'postalCode'),
+                      value: this.state.postalCode,
+                      placeholder: 'ハイフンなしで7桁の半角数字'
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={2} md={2}>
+                  <Tooltip title="設定画面で保存した個人情報を読込ます。" positions="bottom">
+                    <Button color="primary" onClick={() => this.handleSetDefaultData()}>
+                      <FolderShared />
+                      既定のデータを使用
+                    </Button>
+                  </Tooltip>
+                </GridItem>
+              </GridContainer>
+            </GridContainer>
+          </GridContainer>
+          <Snackbar
+            color="warning"
+            place="bc"
+            icon={AddAlert}
+            open={this.state.openErrorSnackbar}
+            closeNotification={this.handleErrorSnackbarClose}
+            close
+            message={<span id="login_error">{this.state.errorMessage}</span>}
+          />
+        </div>
+      </Loadable>
     );
   }
 }

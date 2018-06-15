@@ -61,7 +61,8 @@ class MailWizard extends React.Component<Props, State> {
       width: '50%',
       movingTabStyle: {
         transition: 'transform 0s'
-      }
+      },
+      accountInfo: {}
     };
   }
 
@@ -87,7 +88,6 @@ class MailWizard extends React.Component<Props, State> {
    */
   nextButtonClick = () => {
     if (this[this.props.steps[0].stepId].isValidated()) {
-      console.log('step0 validate true');
       const selectedProvider = this[this.props.steps[0].stepId].getProvider();
       let nextStep = 0;
       switch (selectedProvider) {
@@ -99,12 +99,26 @@ class MailWizard extends React.Component<Props, State> {
           break;
         default:
       }
+      const steps00State = this[this.props.steps[0].stepId].sendState();
+      console.log(steps00State);
       this.setState({
         cancelButton: false,
         currentStep: nextStep,
         nextButton: false,
         previousButton: true,
-        finishButton: true
+        finishButton: true,
+        accountInfo: {
+          provider: steps00State.provider,
+          accountId: steps00State.accountId,
+          password: steps00State.password,
+          lastName: steps00State.lastName,
+          lastNameKana: steps00State.lastNameKana,
+          firstName: steps00State.firstName,
+          firstNameKana: steps00State.firstNameKana,
+          gender: steps00State.gender,
+          birthDate: steps00State.birthDate,
+          postalCode: steps00State.postalCode
+        }
       });
       this.refreshAnimation(nextStep);
     }
@@ -113,6 +127,7 @@ class MailWizard extends React.Component<Props, State> {
   previousButtonClick = () => {
     this.setState({
       currentStep: 0,
+      cancelButton: true,
       nextButton: true,
       previousButton: false,
       finishButton: false
@@ -128,7 +143,53 @@ class MailWizard extends React.Component<Props, State> {
         this[this.props.steps[this.state.currentStep].stepId].isValidated === undefined) &&
       this.props.finishButtonClick !== undefined
     ) {
-      this.props.finishButtonClick();
+      const additionalInfo = this[this.props.steps[this.state.currentStep].stepId].sendState();
+
+      const detailInfo = [];
+      detailInfo.push(
+        `氏名(漢字):${this.state.accountInfo.lastName} ${this.state.accountInfo.firstName}`
+      );
+      detailInfo.push(
+        `しめい(ふりがな):${this.state.accountInfo.lastNameKana} ${
+          this.state.accountInfo.firstNameKana
+        }`
+      );
+      detailInfo.push(`生年月日:${this.state.accountInfo.birthDate}`);
+      detailInfo.push(`郵便番号:${this.state.accountInfo.postalCode}`);
+      let gender = '男';
+      if (this.state.accountInfo.gender) {
+        gender = '女';
+      }
+      detailInfo.push(`性別:${gender}`);
+
+      let accId = '';
+      let mailAddress = '';
+      switch (this.state.accountInfo.provider) {
+        case 'Yahoo':
+          accId = this.state.accountInfo.accountId;
+          mailAddress = `${this.state.accountInfo.accountId}@yahoo.co.jp`;
+          detailInfo.push(`秘密の質問:${additionalInfo.Question}`);
+          detailInfo.push(`秘密の答え:${additionalInfo.answer}`);
+          break;
+        case 'Outlook':
+          accId = `${this.state.accountInfo.accountId}@${additionalInfo[0].domain}`;
+          mailAddress = accId;
+          break;
+        default:
+      }
+
+      const newMailAccount = {
+        key: '',
+        accountId: accId,
+        password: this.state.accountInfo.password,
+        mailAddress,
+        provider: this.state.accountInfo.provider,
+        createDate: Date.now(),
+        lastLogin: 0,
+        tags: '',
+        detailInfo
+      };
+      this.props.finishButtonClick(newMailAccount);
     }
   };
 

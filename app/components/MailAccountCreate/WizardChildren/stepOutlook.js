@@ -49,6 +49,17 @@ class StepOutlook extends React.Component<Props, State> {
   }
 
   /**
+   * 親フォームから呼ばれてstateを返す
+   * @returns {*}
+   */
+  sendState = () => {
+    const plusInfo = [];
+    plusInfo.push({ domain: this.state.domain });
+
+    return plusInfo;
+  };
+
+  /**
    * domain select
    * @param event
    */

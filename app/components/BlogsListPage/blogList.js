@@ -529,7 +529,7 @@ class BlogList extends React.Component<Props, State> {
               }}
               maxWidth={false}
               open={this.state.openEditForm}
-              transition={Transition}
+              TransitionComponent={Transition}
               keepMounted
               onClose={() => this.handleCloseModal()}
               aria-labelledby="notice-modal-slide-title"
@@ -546,7 +546,7 @@ class BlogList extends React.Component<Props, State> {
                   style={modalCloseButtonStyle}
                   key="close"
                   aria-label="Close"
-                  color="defaultNoBackground"
+                  color="transparent"
                   onClick={() => this.handleCloseModal()}
                 >
                   <Close className={classes.modalClose} />

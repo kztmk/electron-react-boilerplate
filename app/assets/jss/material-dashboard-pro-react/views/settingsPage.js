@@ -14,6 +14,12 @@ const settingPageStyle = {
   cardRoot: {
     width: '75vw'
   },
+  cardBodyNoPadding: {
+    padding: '0 20px',
+    flex: '1 1 auto',
+    WebkitBoxFlex: '1',
+    position: 'relative'
+  },
   marginReset: {
     margin: '-70px'
   },

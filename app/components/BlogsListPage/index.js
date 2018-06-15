@@ -22,7 +22,6 @@ import GridItem from '../../ui/Grid/GridItem';
 import Card from '../../ui/Card/Card';
 import CardHeader from '../../ui/Card/CardHeader';
 import CardIcon from '../../ui/Card/CardIcon';
-import CardText from '../../ui/Card/CardText';
 import CardBody from '../../ui/Card/CardBody';
 import Snackbar from '../../ui/Snackbar/Snackbar';
 import type BlogAccountType from '../../types/blogAccount';
@@ -447,7 +446,7 @@ class BlogListPage extends React.Component<Props, State> {
                       <Button
                         color="primary"
                         onClick={this.handleOpenFormBlogAdd}
-                        customClass={classes.firstButton}
+                        className={classes.firstButton}
                       >
                         <AddIcon />
                         追加
@@ -456,7 +455,7 @@ class BlogListPage extends React.Component<Props, State> {
                     <Tooltip title="寄騎形式のファイルからブログをインポート" placement="bottom">
                       <Button
                         color="primary"
-                        customClass={classes.lastButton}
+                        className={classes.lastButton}
                         onClick={this.handleClickImportButton}
                       >
                         <FolderDownloadIcon />
@@ -503,7 +502,7 @@ class BlogListPage extends React.Component<Props, State> {
                 paper: `${classes.modal} ${classes.modalSmall}`
               }}
               open={this.state.openModalSaveErrorAccounts}
-              transition={Transition}
+              TransitionComponent={Transition}
               keepMounted
               onClose={() => this.handleClose('noticeModal')}
               aria-labelledby="small-modal-slide-title"
@@ -525,15 +524,15 @@ class BlogListPage extends React.Component<Props, State> {
               <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
                 <Button
                   onClick={() => this.handleCloseModal('doNotNeedSave')}
-                  color="simple"
-                  customClass={classes.modalSmallFooterFirstButton}
+                  color="danger"
+                  className={classes.modalSmallFooterFirstButton}
                 >
                   いいえ
                 </Button>
                 <Button
                   onClick={() => this.handleCloseModal('needSave')}
-                  color="successNoBackground"
-                  customClass={`${classes.modalSmallFooterFirstButton} ${
+                  color="success"
+                  className={`${classes.modalSmallFooterFirstButton} ${
                     classes.modalSmallFooterSecondButton
                   }`}
                 >
@@ -547,7 +546,7 @@ class BlogListPage extends React.Component<Props, State> {
                 paper: `${classes.modal} ${classes.modalSmall}`
               }}
               open={this.state.openFormBlogAdd}
-              transition={Transition}
+              TransitionComponent={Transition}
               keepMounted
               onClose={() => this.handleCloseFormBlogAdd()}
             >

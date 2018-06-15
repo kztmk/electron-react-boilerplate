@@ -208,7 +208,7 @@ class BlogWizard extends React.Component<Props, State> {
             <div className={classes.left}>
               {this.state.previousButton ? (
                 <Button
-                  customClass={this.props.previousButtonClasses}
+                  className={this.props.previousButtonClasses}
                   onClick={() => this.previousButtonClick()}
                 >
                   {this.props.previousButtonText}
@@ -216,7 +216,7 @@ class BlogWizard extends React.Component<Props, State> {
               ) : null}
               {this.state.cancelButton ? (
                 <Button
-                  customClass={this.props.cancelButtonClasses}
+                  className={this.props.cancelButtonClasses}
                   onClick={() => this.cancelButtonClick()}
                 >
                   {this.props.cancelButtonText}
@@ -227,7 +227,7 @@ class BlogWizard extends React.Component<Props, State> {
               {this.state.nextButton ? (
                 <Button
                   color="rose"
-                  customClass={this.props.nextButtonClasses}
+                  className={this.props.nextButtonClasses}
                   onClick={() => this.nextButtonClick()}
                 >
                   {this.props.nextButtonText}
@@ -236,7 +236,7 @@ class BlogWizard extends React.Component<Props, State> {
               {this.state.finishButton ? (
                 <Button
                   color="rose"
-                  customClass={this.props.finishButtonClasses}
+                  className={this.props.finishButtonClasses}
                   onClick={() => this.finishButtonClick()}
                 >
                   {this.props.finishButtonText}
