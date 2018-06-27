@@ -35,6 +35,10 @@ app/node_modules
 flow-typed/npm/*
 !flow-typed/npm/module_vx.x.x.js
 
+# component
+app/ui
+app/assets/jss
+
 # App packaged
 release
 app/main.prod.js

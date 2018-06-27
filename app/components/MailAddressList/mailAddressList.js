@@ -93,6 +93,7 @@ export const getProviderImage = providerName => {
   }
 };
 
+/*
 const modalCloseButtonStyle = {
   color: '#999999',
   marginTop: '-12px',
@@ -109,6 +110,7 @@ const modalCloseButtonStyle = {
   float: 'right',
   height: '32px'
 };
+*/
 
 class MailAddressList extends React.Component<Props, State> {
   constructor(props) {

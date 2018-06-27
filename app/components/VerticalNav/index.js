@@ -10,15 +10,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import VerticalNavStyle from '../../assets/jss/material-dashboard-pro-react/components/verticalNavi';
 import LogoutButton from '../../containers/Logout';
-import type { RouteType } from '../../types/route';
 
 /* eslint-disable react/require-default-props */
 type Props = {
   classes: Object,
   color?: 'primary' | 'info' | 'success' | 'warning' | 'danger' | 'rose' | 'purple',
   logo?: string,
-  image?: string,
-  logoText?: string,
   routes: Object,
   location: Object
 };
@@ -28,18 +25,21 @@ const VerticalNav = (props: Props) => {
   function activeRoute(routeName) {
     return props.location.pathname.indexOf(routeName) > -1;
   }
-  const { classes, color, logo, image, logoText, routes } = props;
+  const { classes, color, logo, routes } = props;
   const links = (
     <List>
       {routes.map((prop, key) => {
         if (prop.redirect) return null;
         const listItemClasses = cx({
+          // eslint-disable-next-line prefer-template
           [' ' + classes[color]]: activeRoute(prop.path)
         });
         const whiteFontClasses = cx({
+          // eslint-disable-next-line prefer-template
           [' ' + classes.whiteFont]: activeRoute(prop.path)
         });
         return (
+          // eslint-disable-next-line react/no-array-index-key
           <NavLink to={prop.path} className={classes.item} activeClassName="active" key={key}>
             <ListItem button className={classes.itemLink + listItemClasses}>
               <Tooltip

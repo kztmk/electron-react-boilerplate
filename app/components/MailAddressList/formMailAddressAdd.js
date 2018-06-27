@@ -45,7 +45,6 @@ const selectAvatarStyle = {
   alignItems: 'center'
 };
 
-
 type Props = {
   classes: Object,
   mode: string,

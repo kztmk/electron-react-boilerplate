@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 // @flow
 import React from 'react';
 import cx from 'classnames';
@@ -23,7 +22,6 @@ type Props = {
   steps: Array<StepsType>,
   color: 'primary' | 'warning' | 'danger' | 'success' | 'info' | 'rose',
   title: string,
-  subtitle?: string,
   cancelButtonClasses?: string,
   cancelButtonText: string,
   cancelButtonClick: () => void,
@@ -53,7 +51,6 @@ class MailWizard extends React.Component<Props, State> {
 
     this.state = {
       currentStep: 0,
-      color: this.props.color,
       cancelButton: true,
       nextButton: this.props.steps.length > 1,
       previousButton: false,
@@ -146,21 +143,27 @@ class MailWizard extends React.Component<Props, State> {
       const additionalInfo = this[this.props.steps[this.state.currentStep].stepId].sendState();
 
       const detailInfo = [];
+      const requiredInfo = [];
       detailInfo.push(
         `氏名(漢字):${this.state.accountInfo.lastName} ${this.state.accountInfo.firstName}`
       );
+      requiredInfo.lastName = this.state.accountInfo.lastName;
+      requiredInfo.firstName = this.state.accountInfo.firstName;
       detailInfo.push(
         `しめい(ふりがな):${this.state.accountInfo.lastNameKana} ${
           this.state.accountInfo.firstNameKana
         }`
       );
       detailInfo.push(`生年月日:${this.state.accountInfo.birthDate}`);
+      requiredInfo.birthDate = this.state.accountInfo.birthDate;
       detailInfo.push(`郵便番号:${this.state.accountInfo.postalCode}`);
+      requiredInfo.postalCode = this.state.accountInfo.postalCode;
       let gender = '男';
       if (this.state.accountInfo.gender) {
         gender = '女';
       }
       detailInfo.push(`性別:${gender}`);
+      requiredInfo.gender = this.state.accountInfo.gender;
 
       let accId = '';
       let mailAddress = '';
@@ -170,6 +173,10 @@ class MailWizard extends React.Component<Props, State> {
           mailAddress = `${this.state.accountInfo.accountId}@yahoo.co.jp`;
           detailInfo.push(`秘密の質問:${additionalInfo.Question}`);
           detailInfo.push(`秘密の答え:${additionalInfo.answer}`);
+          requiredInfo.accountId = this.state.accountInfo.accountId;
+          requiredInfo.password = this.state.accountInfo.password;
+          requiredInfo.question = additionalInfo.Question;
+          requiredInfo.answer = additionalInfo.answer;
           break;
         case 'Outlook':
           accId = `${this.state.accountInfo.accountId}@${additionalInfo[0].domain}`;
@@ -190,10 +197,12 @@ class MailWizard extends React.Component<Props, State> {
         detailInfo
       };
       this.props.finishButtonClick(newMailAccount);
+      // create account
     }
   };
 
   refreshAnimation = index => {
+    // eslint-disable-next-line react/no-string-refs
     let moveDistance = this.refs.wizard.children[0].offsetWidth / 2;
 
     const indexTemp = index === 0 ? 0 : 1;
@@ -201,7 +210,7 @@ class MailWizard extends React.Component<Props, State> {
     moveDistance -= 8;
 
     const movingTabStyle = {
-      width: '50%',
+      width: this.state.width,
       transform: `translate3d(${moveDistance}px, 0, 0)`,
       transition: 'all 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)'
     };
@@ -214,7 +223,13 @@ class MailWizard extends React.Component<Props, State> {
     if (this.state.currentStep !== 0) {
       return (
         <li className={classes.steps} key={this.state.currentStep} style={{ width: '50%' }}>
-          <a className={classes.stepsAnchor} onClick={() => this.previousButtonClick()}>
+          <a
+            className={classes.stepsAnchor}
+            onClick={() => this.previousButtonClick()}
+            role="button"
+            tabIndex="0"
+            onKeyPress={() => this.previousButtonClick()}
+          >
             {this.props.steps[0].stepName}
           </a>
         </li>
@@ -222,7 +237,13 @@ class MailWizard extends React.Component<Props, State> {
     }
     return (
       <li className={classes.steps} key={-1} style={{ width: '50%' }}>
-        <a className={classes.stepsAnchor} onClick={() => this.previousButtonClick()}>
+        <a
+          className={classes.stepsAnchor}
+          onClick={() => this.previousButtonClick()}
+          role="button"
+          tabIndex="0"
+          onKeyPress={() => this.previousButtonClick()}
+        >
           メール追加情報
         </a>
       </li>
@@ -232,6 +253,7 @@ class MailWizard extends React.Component<Props, State> {
   render() {
     const { classes, title, color, steps } = this.props;
     return (
+      // eslint-disable-next-line react/no-string-refs
       <div className={classes.wizardContainer} ref="wizard">
         <Card className={classes.card}>
           <div className={classes.wizardHeader}>
@@ -240,7 +262,13 @@ class MailWizard extends React.Component<Props, State> {
           <div className={classes.wizardNavigation}>
             <ul className={classes.nav}>
               <li className={classes.steps} key={0} style={{ width: '50%' }}>
-                <a className={classes.stepsAnchor} onClick={() => this.previousButtonClick()} />
+                <a
+                  className={classes.stepsAnchor}
+                  onClick={() => this.previousButtonClick()}
+                  role="button"
+                  tabIndex="0"
+                  onKeyPress={() => this.previousButtonClick()}
+                />
               </li>
               {this.writeTabs()}
             </ul>
@@ -258,6 +286,7 @@ class MailWizard extends React.Component<Props, State> {
                 [classes.stepContent]: this.state.currentStep !== key
               });
               return (
+                // eslint-disable-next-line react/no-array-index-key
                 <div className={stepContentClasses} key={key}>
                   {/* <prop.stepComponent innerRef={prop.stepId}/> */}
                   <prop.stepComponent innerRef={node => (this[prop.stepId] = node)} />
@@ -311,5 +340,23 @@ class MailWizard extends React.Component<Props, State> {
     );
   }
 }
+
+MailWizard.defaultProps = {
+  steps: [],
+  color: 'primary',
+  title: '',
+  subtitle: '',
+  cancelButtonClasses: '',
+  cancelButtonText: '',
+  cancelButtonClick: '',
+  previousButtonClasses: '',
+  previousButtonText: '',
+  nextButtonClasses: '',
+  nextButtonText: '',
+  finishButtonClasses: '',
+  finishButtonText: '',
+  finishButtonClick: '',
+  validate: true
+};
 
 export default withStyles(wizardStyle)(MailWizard);

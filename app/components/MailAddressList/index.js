@@ -23,7 +23,6 @@ import GridItem from '../../ui/Grid/GridItem';
 import Card from '../../ui/Card/Card';
 import CardIcon from '../../ui/Card/CardIcon';
 import CardHeader from '../../ui/Card/CardHeader';
-import CardText from '../../ui/Card/CardText';
 import CardBody from '../../ui/Card/CardBody';
 import Button from '../../ui/CustomButtons/Button';
 import Snackbar from '../../ui/Snackbar/Snackbar';
@@ -87,6 +86,7 @@ const convertProviderName = provider => {
 
 const Transition = props => <Slide direction="down" {...props} />;
 
+/*
 const modalCloseButtonStyle = {
   color: '#999999',
   marginTop: '0',
@@ -104,6 +104,7 @@ const modalCloseButtonStyle = {
   float: 'right',
   height: '32px'
 };
+*/
 
 /**
  * メールアカウント一覧ページ

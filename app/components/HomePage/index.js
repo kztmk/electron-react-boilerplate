@@ -47,6 +47,7 @@ class HomePage extends React.Component<Props, State> {
    * Prospが更新された際にstateを更新
    * @param nextProps
    */
+  /*
   componentWillReceiveProps = nextProps => {
     // const isOpenSuccessbar =
     //   nextProps.userAuth.userId.length > 0 &&
@@ -54,6 +55,7 @@ class HomePage extends React.Component<Props, State> {
     //   !nextProps.userAuth.isLoadingIcon;
     // this.setState({ isLoginDone: isOpenSuccessbar });
   };
+  */
   /**
    * このコンポーネントのプロパティを変更するメソッド
    * PasswordReset画面への切替
@@ -94,8 +96,8 @@ class HomePage extends React.Component<Props, State> {
     return (
       <GridContainer container justify="center">
         <Slide in={!isLogin}>
-          {(() => {
-            return this.state.isRequestPasswordReset ? (
+          {(() =>
+            this.state.isRequestPasswordReset ? (
               <FormResetPassword
                 cancelRequestPasswordReset={this.handleCancelRequestPasswordReset}
                 openLoginSuccessSnackbar={this.handleSuccessSnackbarOpen}
@@ -105,8 +107,7 @@ class HomePage extends React.Component<Props, State> {
                 isLoginDone={this.handleLoginDone}
                 requestPasswordReset={this.handleRequestPasswordReset}
               />
-            );
-          })()}
+            ))()}
         </Slide>
         {isLogin && <h3>ホームページ</h3>}
         <Snackbar
