@@ -66,6 +66,16 @@ class StepYahoo extends React.Component<Props, State> {
     return plusInfo;
   };
 
+  initState = () => {
+    this.setState({
+      yahooQuestion: '',
+      yahooAnswer: '',
+      answerState: '',
+      errorMessage: '',
+      openErrorSnackbar: false
+    });
+  };
+
   /**
    * Yahoo!メール作成時の秘密の質問
    *

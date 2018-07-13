@@ -1,5 +1,5 @@
 /* eslint global-require: 0, flowtype-errors/show-errors: 0 */
-
+// TODO: need logging check electron-log or any other logger
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes

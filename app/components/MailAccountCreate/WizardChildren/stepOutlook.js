@@ -60,6 +60,17 @@ class StepOutlook extends React.Component<Props, State> {
   };
 
   /**
+   * stateを初期化
+   */
+  initState = () => {
+    this.setState({
+      domain: '',
+      errorMessage: '',
+      openErrorSnackbar: false
+    });
+  };
+
+  /**
    * domain select
    * @param event
    */

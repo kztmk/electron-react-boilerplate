@@ -1,5 +1,6 @@
 {
   "rules": {
+    "jsx-a11y/rule-name": 2,
     "flowtype/boolean-style": ["error", "boolean"],
     "flowtype/define-flow-type": "warn",
     "flowtype/delimiter-dangle": ["error", "never"],

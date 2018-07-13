@@ -166,6 +166,34 @@ class Steps00 extends React.Component<Props, State> {
   sendState = () => this.state;
 
   /**
+   * stateを初期化する
+   */
+  initState = () => {
+    this.setState({
+      provider: '',
+      accountId: '',
+      accountIdState: '',
+      password: '',
+      passwordState: '',
+      lastName: '',
+      lastNameState: '',
+      lastNameKana: '',
+      firstName: '',
+      firstNameState: '',
+      firstNameKana: '',
+      gender: false,
+      birthDate: '',
+      birthDateState: '',
+      postalCode: '',
+      postalCodeState: '',
+      errorMessage: '',
+      openErrorSnackbar: false,
+      forceUseDefault: false,
+      forceUseRandom: false
+    });
+  };
+
+  /**
    * 性別switch変更時
    *
    * @param name
@@ -194,14 +222,15 @@ class Steps00 extends React.Component<Props, State> {
    * 文字列長をaccountId欄に入力すれば優先、default length 8
    */
   handleGenerateAccountId = () => {
-    let acLength = 8;
+    let acLength = 7;
     const newAcLength = parseInt(this.state.accountId, 10);
     if (!Number.isNaN(newAcLength)) {
       if (newAcLength > 8) {
-        acLength = newAcLength;
+        acLength = newAcLength - 1;
       }
     }
-    const newAccountId = generatePassword(acLength, false, /[a-zA-Z0-9]/);
+    const newAccountId =
+      generatePassword(1, false, /[a-z]/) + generatePassword(acLength, false, /[a-z0-9]/);
     if (this.isRequiredLength(newAccountId, 8)) {
       this.setState({
         accountId: newAccountId.toLowerCase(),

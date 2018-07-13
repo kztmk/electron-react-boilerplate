@@ -1,15 +1,23 @@
 // @flow
 import React from 'react';
 import cx from 'classnames';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 
+import PuppeteerEmail from './puppeteerEmail';
+
 // core components
 import Button from '../../ui/CustomButtons/Button';
-
+import Table from '../../ui/Table/Table';
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
+
+const errorStyles = {
+  fontWeight: 'bold',
+  color: '#f00'
+};
 
 type StepsType = {
   stepName: string,
@@ -42,7 +50,9 @@ type State = {
   previousButton: boolean,
   finishButton: boolean,
   width: string,
-  movingTabStyle: Object
+  movingTabStyle: Object,
+  accountInfo: Object,
+  sweetAlert: Object
 };
 
 class MailWizard extends React.Component<Props, State> {
@@ -59,7 +69,8 @@ class MailWizard extends React.Component<Props, State> {
       movingTabStyle: {
         transition: 'transform 0s'
       },
-      accountInfo: {}
+      accountInfo: {},
+      sweetAlert: ''
     };
   }
 
@@ -76,7 +87,27 @@ class MailWizard extends React.Component<Props, State> {
     this.refreshAnimation(this.state.currentStep);
   }
 
+  /**
+   * cancel button click or finish button and close
+   */
   cancelButtonClick = () => {
+    // 全てのフォームのstateを初期化
+    // 本体
+    this.setState({
+      currentStep: 0,
+      cancelButton: true,
+      nextButton: this.props.steps.length > 1,
+      previousButton: false,
+      finishButton: this.props.steps.length === 1,
+      accountInfo: {},
+      sweetAlert: ''
+    });
+    // steps0-2
+    this[this.props.steps[0].stepId].initState();
+    this[this.props.steps[1].stepId].initState();
+    this[this.props.steps[2].stepId].initState();
+    // tab move to init location
+    this.refreshAnimation(0);
     this.props.cancelButtonClick();
   };
 
@@ -121,6 +152,9 @@ class MailWizard extends React.Component<Props, State> {
     }
   };
 
+  /**
+   * previous button click on step2
+   */
   previousButtonClick = () => {
     this.setState({
       currentStep: 0,
@@ -130,6 +164,100 @@ class MailWizard extends React.Component<Props, State> {
       finishButton: false
     });
     this.refreshAnimation(0);
+  };
+
+  getDialogMessge = user => {
+    let gender = '';
+    if (user.gender) {
+      gender = '女性';
+    } else {
+      gender = '男性';
+    }
+    console.log(`provider2: ${user.provider}`);
+    switch (user.provider) {
+      case 'yahoo':
+        console.log('yahoo dialog');
+        return (
+          <Table
+            tableData={[
+              ['アカウントID：', user.username, 'パスワード：', user.password],
+              ['氏名：', `${user.lastName} ${user.firstName}`, '性別:', gender],
+              [
+                '生年月日:',
+                `${user.birthday.year}/${user.birthday.month}/${user.birthday.day}`,
+                '郵便番号:',
+                user.postalCode
+              ],
+              ['秘密の質問:', user.secret.question],
+              ['秘密の質問の答え:', user.secret.answer]
+            ]}
+          />
+        );
+      case 'outlook':
+        return (
+          <Table
+            tableData={[
+              ['アカウントID：', user.username, 'パスワード：', user.password],
+              ['氏名：', `${user.lastName} ${user.firstName}`, '性別:', gender],
+              [
+                '生年月日:',
+                `${user.birthday.year}/${user.birthday.month}/${user.birthday.day}`,
+                'ドメイン:',
+                user.domain
+              ]
+            ]}
+          />
+        );
+      default:
+        break;
+    }
+  };
+
+  showFinishDialog = (user, newMailAccount) => {
+    console.log(`provider1: ${user.provider}`);
+    const message = this.getDialogMessge(user);
+    this.setState({
+      sweetAlert: (
+        <SweetAlert
+          style={{ display: 'block', marginTop: '-280px', width: '620px' }}
+          title="メールアカウント作成開始"
+          onConfirm={() => this.createEmailAccount(user, newMailAccount)}
+          onCancel={() => this.hideAlert()}
+          confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.btnSuccess}
+          cancelBtnCssClass={this.props.classes.button + ' ' + this.props.classes.btnDanger}
+          confirmBtnText="作成"
+          cancelBtnText="キャンセル"
+          showCancel
+        >
+          <p>以下の情報でメールアカウントの作成を開始します。 </p>
+          {message}
+          <p>
+            メールアドレス一覧への登録を最初に行います。<br />途中で<span style={errorStyles}>
+              エラー
+            </span>が発生した場合には、<br />
+            ・可能な場合は、失敗時点から手動で継続<br />
+            ・ブラウザを閉じて、メール一覧から削除<br />
+            で、対処してください。
+          </p>
+        </SweetAlert>
+      )
+    });
+  };
+
+  createEmailAccount = (user, newMailAccount) => {
+    // save to database
+    console.log('save to db');
+    this.props.finishButtonClick(newMailAccount);
+    // close dialog and create form
+    this.hideAlert();
+    // create account
+    const puppeteerEmail = new PuppeteerEmail(user);
+    const session = puppeteerEmail.signup(user);
+  };
+
+  hideAlert = () => {
+    this.setState({ sweetAlert: '' });
+    this.cancelButtonClick();
   };
 
   finishButtonClick = () => {
@@ -142,45 +270,68 @@ class MailWizard extends React.Component<Props, State> {
     ) {
       const additionalInfo = this[this.props.steps[this.state.currentStep].stepId].sendState();
 
+      const user = {};
       const detailInfo = [];
-      const requiredInfo = [];
+
       detailInfo.push(
         `氏名(漢字):${this.state.accountInfo.lastName} ${this.state.accountInfo.firstName}`
       );
-      requiredInfo.lastName = this.state.accountInfo.lastName;
-      requiredInfo.firstName = this.state.accountInfo.firstName;
+      user.lastName = this.state.accountInfo.lastName;
+      user.firstName = this.state.accountInfo.firstName;
+
       detailInfo.push(
         `しめい(ふりがな):${this.state.accountInfo.lastNameKana} ${
           this.state.accountInfo.firstNameKana
         }`
       );
       detailInfo.push(`生年月日:${this.state.accountInfo.birthDate}`);
-      requiredInfo.birthDate = this.state.accountInfo.birthDate;
+
       detailInfo.push(`郵便番号:${this.state.accountInfo.postalCode}`);
-      requiredInfo.postalCode = this.state.accountInfo.postalCode;
       let gender = '男';
       if (this.state.accountInfo.gender) {
         gender = '女';
       }
       detailInfo.push(`性別:${gender}`);
-      requiredInfo.gender = this.state.accountInfo.gender;
 
       let accId = '';
       let mailAddress = '';
+      user.username = this.state.accountInfo.accountId;
+      user.password = this.state.accountInfo.password;
+      // birthday スラッシュは自動で入るので、4桁-yyyy、2桁-MM、2桁-DD
+      user.birthday = {};
+      const [year, month, day] = this.state.accountInfo.birthDate.split('/');
+      // check numbers
+      if (!/\d{4}/.test(year)) throw new Error('生年月日-年が不正な値です。');
+      if (!/\d{2}/.test(month)) throw new Error('生年月日-月が不正な値です。');
+      if (!/\d{2}/.test(day)) throw new Error('生年月日-日が不正な値です。');
+
+      user.birthday = { year, month, day };
+
       switch (this.state.accountInfo.provider) {
         case 'Yahoo':
-          accId = this.state.accountInfo.accountId;
-          mailAddress = `${this.state.accountInfo.accountId}@yahoo.co.jp`;
+          user.provider = 'yahoo';
+          user.postalCode = this.state.accountInfo.postalCode;
+          accId = user.username;
+          user.gender = this.state.accountInfo.gender;
+          user.email = `${this.state.accountInfo.accountId}@yahoo.co.jp`;
+          mailAddress = user.email;
           detailInfo.push(`秘密の質問:${additionalInfo.Question}`);
           detailInfo.push(`秘密の答え:${additionalInfo.answer}`);
-          requiredInfo.accountId = this.state.accountInfo.accountId;
-          requiredInfo.password = this.state.accountInfo.password;
-          requiredInfo.question = additionalInfo.Question;
-          requiredInfo.answer = additionalInfo.answer;
+
+          user.secret = {};
+          user.secret.question = additionalInfo.Question;
+          user.secret.answer = additionalInfo.answer;
+
           break;
         case 'Outlook':
+          user.provider = 'outlook';
           accId = `${this.state.accountInfo.accountId}@${additionalInfo[0].domain}`;
           mailAddress = accId;
+          user.domain = additionalInfo[0].domain;
+
+          // birthday check -- outlook do not accept MM, DD
+          user.birthday.month = this.zeroSuppress(user.birthday.month);
+          user.birthday.day = this.zeroSuppress(user.birthday.day);
           break;
         default:
       }
@@ -196,7 +347,9 @@ class MailWizard extends React.Component<Props, State> {
         tags: '',
         detailInfo
       };
-      this.props.finishButtonClick(newMailAccount);
+
+      // show dialog
+      this.showFinishDialog(user, newMailAccount);
       // create account
     }
   };
@@ -215,6 +368,10 @@ class MailWizard extends React.Component<Props, State> {
       transition: 'all 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)'
     };
     this.setState({ movingTabStyle });
+  };
+
+  zeroSuppress = val => {
+    return val.replace(/^0+([0-9]+)/, '$1');
   };
 
   writeTabs = () => {
@@ -336,6 +493,7 @@ class MailWizard extends React.Component<Props, State> {
             <div className={classes.clearfix} />
           </div>
         </Card>
+        {this.state.sweetAlert}
       </div>
     );
   }
