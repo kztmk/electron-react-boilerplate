@@ -2,6 +2,7 @@
 import delay from 'delay';
 import tempy from 'tempy';
 import fs from 'fs';
+import log from 'electron-log';
 
 async function base64Encode(path) {
   const bitmap = fs.readFileSync(path);
@@ -11,119 +12,309 @@ async function base64Encode(path) {
 const signup = async (user, opts) => {
   const { browser } = opts;
 
+  log.info('--------->create outlook mail account--------->');
+  log.info('-----------user----------');
+  log.info(user);
+  log.info('-------------------------');
   const page = await browser.newPage();
-  await page.goto('https://signup.live.com/signup');
+  log.info('create: browser page');
 
-  // email / username and select domain
-  // --------------------------------
+  try {
+    await page.goto('https://signup.live.com/signup');
+    log.info('access https://signup.live.com/signup');
 
-  await page.waitFor('#liveSwitch', { visible: true });
-  await page.click('#liveSwitch', { delay: 10 });
-  await delay(100);
-  await page.click('#domainLabel');
-  await delay(500);
-  switch (user.domain) {
-    case 'outlook.jp':
-      await page.click('#domain0');
-      break;
-    case 'outlook.com':
-      await page.click('#domain1');
-      break;
-    case 'hotmail.com':
-      await page.click('#domain2');
-      break;
-    default:
-  }
+    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
+    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
+    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
 
-  let error = null;
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'Outlookアカウント作成ページへアクセス完了' 
+      }).show();
+    `);
 
-  await page.type('#MemberName', user.username, { delay: 40 });
-  await delay(250);
-  await page.click('#iSignupAction', { delay: 20 });
+    // email / username and select domain
+    // --------------------------------
+    await page.waitFor('#liveSwitch', { visible: true });
+    await page.click('#liveSwitch');
+    await delay(100);
 
-  await delay(1000);
-  error = await page.$('#MemberNameError');
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'新しいメールアドレスを作成をクリック' 
+      }).show();
+    `);
 
-  if (error) {
-    throw new Error('アカウントIDは既に使用されています。');
-  }
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'Outlook アカウントID入力開始' 
+      }).show();
+    `);
+    await page.type('#MemberName', user.username, { delay: 40 });
+    log.info(`input:[MemberName]-${user.username}`);
 
-  console.log(JSON.stringify(user, null, 2));
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'Outlook アカウントID入力完了' 
+      }).show();
+    `);
 
-  // password
-  // -------------------
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        killer: true,
+        text:'ドメイン選択ドロップボックスをクリック' 
+      }).show();
+    `);
+    await page.click('#domainLabel');
+    await delay(500);
+    switch (user.domain) {
+      case 'outlook.jp':
+        await page.click('#domain0');
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'outlook.jpを選択' 
+      }).show();
+    `);
+        break;
+      case 'outlook.com':
+        await page.click('#domain1');
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'outlook.comを選択' 
+      }).show();
+    `);
+        break;
+      case 'hotmail.com':
+        await page.click('#domain2');
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'hotmail.comを選択' 
+      }).show();
+    `);
+        break;
+      default:
+    }
+    log.info(`select:[ドメイン選択]-user.domain`);
 
-  await page.waitFor('#Password', { visible: true });
-  await delay(100);
-  await page.type('#Password', user.password, { delay: 10 });
-  await delay(100);
-  await page.click('#iOptinEmail', { delay: 10 });
-  await delay(100);
-  await page.click('#iSignupAction', { delay: 30 });
+    let error = null;
+    await delay(250);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'次へをクリック' 
+      }).show();
+    `);
+    await page.click('#iSignupAction', { delay: 20 });
+    log.info('click:[次へ]');
 
-  // first and last name
-  // -------------------
+    await delay(1000);
+    error = await page.$('#MemberNameError');
 
-  await page.waitFor('#FirstName', { visible: true });
-  await delay(100);
-  await page.type('#FirstName', user.firstName, { delay: 30 });
-  await delay(120);
-  await page.type('#LastName', user.lastName, { delay: 35 });
-  await delay(260);
-  await page.click('#iSignupAction', { delay: 25 });
+    if (error) {
+      const errMsg = 'アカウントIDは既に使用されています。';
+      log.warn(errMsg);
+      throw new Error(errMsg);
+    }
 
-  // birth date
-  // ----------
+    // password
+    // -------------------
 
-  await page.waitFor('#BirthMonth', { visible: true });
-  await delay(100);
-  await page.select('#BirthMonth', user.birthday.month);
-  await delay(120);
-  await page.select('#BirthDay', user.birthday.day);
-  await delay(260);
-  await page.select('#BirthYear', user.birthday.year);
-  await delay(220);
-  await page.click('#iSignupAction', { delay: 8 });
+    await page.waitFor('#Password', { visible: true });
+    await delay(100);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        killer: true,
+        text:'パスワード入力開始' 
+      }).show();
+    `);
+    await page.type('#Password', user.password, { delay: 10 });
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'パスワード入力完了' 
+      }).show();
+    `);
+    await delay(100);
+    log.info(`input:[password]-${user.password}`);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'キャンペーンメール受け取りを選択' 
+      }).show();
+    `);
+    await page.click('#iOptinEmail', { delay: 10 });
+    await delay(100);
+    log.info(`click: [キャンペーンメールを受け取る]`);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'次へをクリック' 
+      }).show();
+    `);
+    await page.click('#iSignupAction', { delay: 30 });
+    log.info(`click:[次へ]`);
+    // first and last name
+    // -------------------
 
-  // captcha or sms validation
-  // -------------------------
+    await page.waitFor('#FirstName', { visible: true });
+    await delay(100);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        killer: true,
+        text:'名前の入力開始' 
+      }).show();
+    `);
+    await page.type('#FirstName', user.firstName, { delay: 30 });
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'名前の入力完了' 
+      }).show();
+    `);
+    log.info(`input:[名]-${user.firstName}`);
+    await delay(120);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'姓の入力開始' 
+      }).show();
+    `);
+    await page.type('#LastName', user.lastName, { delay: 35 });
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'姓の入力完了' 
+      }).show();
+    `);
+    await delay(260);
+    log.info(`input:[姓]-${user.lastName}`);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'次へをクリック' 
+      }).show();
+    `);
+    await page.click('#iSignupAction', { delay: 25 });
+    log.info(`click:[次へ]`);
 
-  await delay(1000);
+    // birth date
+    // ----------
 
-  if (await page.$('#hipTemplateContainer')) {
-    // captcha
-    let isChaptchaError = true;
-    await page.waitFor('#hipTemplateContainer img', { visible: true });
+    await page.waitFor('#BirthMonth', { visible: true });
+    await delay(100);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        killer: true,
+        text:'生年月日-月-を選択' 
+      }).show();
+    `);
+    await page.select('#BirthMonth', user.birthday.month);
+    await delay(120);
+    log.info(`input:[生年月日]-${user.birthday.month}`);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'生年月日-日-を選択' 
+      }).show();
+    `);
+    await page.select('#BirthDay', user.birthday.day);
+    await delay(260);
+    log.info(`input:[生年月日]-${user.birthday.day}`);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'生年月日-年-を選択' 
+      }).show();
+    `);
+    await page.select('#BirthYear', user.birthday.year);
+    await delay(220);
+    log.info(`input:[生年月日]-${user.birthday.year}`);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'次へをクリック' 
+      }).show();
+    `);
+    await page.click('#iSignupAction', { delay: 8 });
 
-    // captcha clear
-    do {
-      // in case of left previous input
-      await page.focus('#hipTemplateContainer input');
-      const inputCaptcha = await page.$eval('#hipTemplateContainer input', elm => elm.value);
-      if (inputCaptcha && inputCaptcha.length > 0) {
+    // captcha or sms validation
+    // -------------------------
+
+    await delay(1000);
+
+    if (await page.$('#hipTemplateContainer')) {
+      // captcha
+      let isChaptchaError = true;
+      await page.waitFor('#hipTemplateContainer img', { visible: true });
+
+      // captcha clear
+      do {
+        // in case of left previous input
         await page.focus('#hipTemplateContainer input');
-        for (let i = 0; i < inputCaptcha.length; ++i) {
-          await page.keyboard.press('Backspace');
+        const inputCaptcha = await page.$eval('#hipTemplateContainer input', elm => elm.value);
+        if (inputCaptcha && inputCaptcha.length > 0) {
+          await page.focus('#hipTemplateContainer input');
+          for (let i = 0; i < inputCaptcha.length; ++i) {
+            await page.keyboard.press('Backspace');
+          }
         }
-      }
-      const $img = await page.$('#hipTemplateContainer img');
-      const captchaPath = tempy.file({ extension: 'png' });
-      await $img.screenshot({
-        path: captchaPath
-      });
+        const $img = await page.$('#hipTemplateContainer img');
+        const captchaPath = tempy.file({ extension: 'png' });
+        await $img.screenshot({
+          path: captchaPath
+        });
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        killer: true,
+        text:'画像認証をキャプチャ' 
+      }).show();
+    `);
 
-      console.log({ captchaPath });
-      console.log(`Current directory: ${process.cwd()}`);
-      await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
-      await page.addStyleTag({
-        content:
-          '.captchaImage{border:1px solid rgba(51,51,51,0.3);border-radius:12px;padding:10px 15px;'
-      });
-      await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+        await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
+        await page.addStyleTag({
+          content:
+            '.captchaImage{border:1px solid rgba(51,51,51,0.3);border-radius:12px;padding:10px 15px;'
+        });
+        await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
 
-      const imageData = await base64Encode(captchaPath);
+        const imageData = await base64Encode(captchaPath);
 
-      const captchaValue = await page.evaluate(`swal({
+        const captchaValue = await page.evaluate(`swal({
         title: '画像認証',
         text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
         imageUrl: 'data:image/jpg;base64,${imageData}',
@@ -133,69 +324,140 @@ const signup = async (user, opts) => {
         allowOutsideClick: false
       })`);
 
-      console.log(`input captcha:${captchaValue.value}`);
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text: '${captchaValue.value}を入力' 
+      }).show();
+    `);
+        await page.type('#hipTemplateContainer input', captchaValue.value, { delay: 40 });
 
-      await page.type('#hipTemplateContainer input', captchaValue.value, { delay: 40 });
-      console.log('enter value');
+        log.info(`input:[画像認証]-${captchaValue.value}`);
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'次へをクリック' 
+      }).show();
+    `);
+        await page.click('#iSignupAction', { delay: 9 });
+        log.info(`click:[次へ]`);
 
-      await page.click('#iSignupAction', { delay: 9 });
+        await delay(1000);
+        try {
+          const newCaptcha = await page.waitFor('#hipTemplateContainer img', {
+            timeout: 1000,
+            visible: true
+          });
+          log.warn('画像認証の画像と入力が一致しません。');
+        } catch (e) {
+          log.info('画像認証完了');
+          isChaptchaError = false;
+        }
+      } while (isChaptchaError);
+    } else {
+      // TODO: handle case of sms validation
+      await page.waitForNavigation({ timeout: 0 });
+    }
+    log.info('アカウント設定開始');
+    // main account page
+    // -----------------
 
-      console.log(`click next`);
+    await delay(500);
+    await page.goto('https://www.outlook.com/?refd=account.microsoft.com&fref=home.banner.profile');
+    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
+    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
+    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
 
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        killer: true,
+        text:'設定ウィザード開始' 
+      }).show();
+    `);
+
+    log.info('設定ウィザード開始');
+    // inbox page first-run
+    // --------------------
+
+    await delay(800);
+
+    // keep pressing next...
+    while (true) {
+      if (!await page.$('.dialog button.nextButton')) break;
+      await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        killer: true,
+        text:'次へをクリック' 
+      }).show();
+    `);
+      await page.click('.dialog button.nextButton', { delay: 5 });
+      log.info('click:[次へ]');
+      await delay(220);
+    }
+
+    // wait until "let's go" button appears...
+    while (true) {
       await delay(1000);
-      console.log('wait 1sec');
-      try {
-        const newCaptcha = await page.waitFor('#hipTemplateContainer img', {
-          timeout: 1000,
-          visible: true
-        });
-        console.log('got captcha image again, you might enter wrong characters.');
-      } catch (e) {
-        console.log('you solved captcha');
-        isChaptchaError = false;
-      }
-    } while (isChaptchaError);
-  } else {
-    // TODO: handle case of sms validation
-    await page.waitForNavigation({ timeout: 0 });
+      await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        killer: true,
+        text:'次へをクリック' 
+      }).show();
+    `);
+      if (await page.$('.dialog button.primaryButton')) break;
+    }
+    log.info('click:[lets go button]');
+
+    await delay(120);
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click('.dialog button.primaryButton', { delay: 7 })
+    ]);
+
+    log.info('<--------- create outlook mail account<---------');
+    // should now be at https://outlook.live.com/mail/inbox
+    // await page.close();
+    await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
+    await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+
+    const closeConfirm = await page.evaluate(`swal({
+      title: 'Outlookメールアカウントの作成が完了しました。',
+      text: 'ブラウザを閉じてもよろしいですか？',
+      showCancelButton: true,
+      confirmButtonColor: '#4caf50',
+      cancelButtonColor: '#f44336',
+      confirmButtonText: '閉じる',
+      cancelButtonText: 'ブラウザは、このまま',
+      reverseButtons: true
+    })`);
+
+    if (closeConfirm.value) {
+      await page.close();
+    }
+  } catch (error) {
+    log.error(`error:${error.toString()}`);
+    await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
+    await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+
+    await page.evaluate(`swal({
+      title: 'エラー発生',
+      text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
+      showCancelButton: false,
+      confirmButtonColor: '#4caf50',
+      cancelButtonColor: '#f44336',
+      confirmButtonText: '閉じる',
+      cancelButtonText: 'ブラウザは、このまま',
+      reverseButtons: true
+    })`);
   }
-  console.log('resolved captcha');
-  // main account page
-  // -----------------
-
-  await delay(500);
-  await page.goto('https://www.outlook.com/?refd=account.microsoft.com&fref=home.banner.profile');
-
-  console.log('nav to home.banner.profile');
-  // inbox page first-run
-  // --------------------
-
-  await delay(800);
-
-  // keep pressing next...
-  while (true) {
-    if (!await page.$('.dialog button.nextButton')) break;
-    await page.click('.dialog button.nextButton', { delay: 5 });
-    console.log('click next button');
-    await delay(220);
-  }
-
-  // wait until "let's go" button appears...
-  while (true) {
-    await delay(1000);
-    if (await page.$('.dialog button.primaryButton')) break;
-  }
-  console.log('click lets go button');
-
-  await delay(120);
-  await Promise.all([
-    page.waitForNavigation(),
-    page.click('.dialog button.primaryButton', { delay: 7 })
-  ]);
-
-  console.log('done');
-  // should now be at https://outlook.live.com/mail/inbox
-  // await page.close();
 };
 
 export default signup;
