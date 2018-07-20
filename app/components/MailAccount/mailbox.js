@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state,react/no-unused-prop-types */
 // @flow
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
@@ -169,7 +170,7 @@ class MailBox extends Component<Props, State> {
         nextProps.imapMailCount,
         nextProps.imapMailUnseenCount
       );
-      console.log('finish otherboxes in willMout');
+      console.log('finish otherboxes in willMount');
       this.setState({
         imapSelectMailBoxPath: nextProps.imapSelectMailBoxPath,
         mailCount: nextProps.imapMailCount,
@@ -281,9 +282,7 @@ class MailBox extends Component<Props, State> {
    * @param selectedPath
    * @returns {boolean}
    */
-  isSelected = (box, selectedPath) => {
-    return box.path === selectedPath;
-  };
+  isSelected = (box, selectedPath) => box.path === selectedPath;
 
   /**
    * child mailboxを描画
@@ -356,6 +355,7 @@ class MailBox extends Component<Props, State> {
     if (boxes.length > 0) {
       // const otherboxes = [];
 
+      // eslint-disable-next-line array-callback-return
       const otherboxes = boxes.filter(box => {
         if (
           box.name !== 'Bulk Mail' &&
@@ -370,7 +370,7 @@ class MailBox extends Component<Props, State> {
           return box;
         }
       });
-      console.log(`other boxes cout:${otherboxes.length}`);
+      console.log(`other boxes count:${otherboxes.length}`);
 
       if (otherboxes.length > 0) {
         console.log('start render other boxes');

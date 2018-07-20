@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 // @flow
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
@@ -5,13 +6,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/';
 import { ConnectedRouter } from 'react-router-redux';
 import { Router, Switch, Route } from 'react-router-dom';
 import defRoute from '../../routes/defRoute';
-import {
-  primaryColor,
-  dangerColor,
-  successColor
-} from '../../assets/jss/material-dashboard-pro-react';
-
-import App from '../App';
+import { primaryColor, dangerColor } from '../../assets/jss/material-dashboard-pro-react';
 
 type Props = {
   store: {},
@@ -43,9 +38,9 @@ export default class Root extends Component<Props> {
           <MuiThemeProvider theme={theme}>
             <Router history={this.props.history}>
               <Switch>
-                {defRoute.map((prop, key) => {
-                  return <Route path={prop.path} component={prop.component} key={key} />;
-                })}
+                {defRoute.map((prop, key) => (
+                  <Route path={prop.path} component={prop.component} key={key} />
+                ))}
               </Switch>
             </Router>
           </MuiThemeProvider>

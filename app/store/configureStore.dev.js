@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 // import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
 import { createHashHistory } from 'history';
-import { routerMiddleware, routerActions } from 'react-router-redux';
+import { routerMiddleware } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducer';
 import mySaga from '../sagas';

@@ -5,7 +5,6 @@
     "allowImportExportEverywhere": true
   },
   "extends": [
-    "plugin:jsx-a11y/recommended",
     "airbnb",
     "prettier"
   ],
@@ -23,8 +22,8 @@
     "import/no-unresolved": "error",
     "import/extensions": "error",
     "import/no-extraneous-dependencies": "off",
-    "jsx-a11y/rule-name": 2,
-    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/rule-name": "off",
+    "jsx-a11y/anchor-is-valid": 2,
     "no-console": "off",
     "no-use-before-define": "off",
     "no-multi-assign": "off",
@@ -40,7 +39,6 @@
     "react/prefer-stateless-function": "off"
   },
   "plugins": [
-    "jsx-a11y",
     "flowtype",
     "import",
     "promise",

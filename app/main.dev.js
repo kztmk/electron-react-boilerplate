@@ -11,7 +11,7 @@
  * @flow
  */
 import { app, ipcMain, Menu } from 'electron';
-import { autoUpdater } from 'electron-updater';
+// import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import createMainWindow from './createMainWindow';
 // import MenuBuilder from './menu';
@@ -23,8 +23,10 @@ import setAppMenu from './menu';
 let mainWindow = null;
 let fileManager = null;
 
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = 'info';
+// autoUpdater.logger = log;
+// autoUpdater.logger.transports.file.level = 'info';
+log.transports.file.level = 'info';
+log.transports.file.maxSize = 1 * 1024 * 1024;
 log.info('Yoriki-v5 starting...');
 
 process.on('unhandledRejection', (reason, p) => {
@@ -146,7 +148,7 @@ app.on('ready', async () => {
     saveAsNewFileToErrorBlogAccount();
   });
 
-  autoUpdater.checkForUpdatesAndNotify();
+  // autoUpdater.checkForUpdatesAndNotify();
 });
 
 function sendStatusToWindow(text) {
@@ -154,6 +156,7 @@ function sendStatusToWindow(text) {
   mainWindow.webContents.send('message', text);
 }
 
+/*
 autoUpdater.on('checking-for-update', () => {
   sendStatusToWindow('Checking for update...');
 });

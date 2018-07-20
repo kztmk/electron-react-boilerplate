@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key,react/no-string-refs */
 // @flow
 import * as React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
@@ -51,11 +52,9 @@ class App extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    auth: state.Login.userId.length > 0
-  };
-};
+const mapStateToProps = state => ({
+  auth: state.Login.userId.length > 0
+});
 
 const connectedApp = connect(mapStateToProps)(App);
 export default withStyles(appStyle)(connectedApp);

@@ -2,6 +2,7 @@
 /**
  * mailparser
  */
+// eslint-disable-next-line no-unused-vars
 type MailMessageType = {
   headers: Object,
   subject: string,

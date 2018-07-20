@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import EmailProvider from '../provider';
 import EmailSession from '../../session';
 
@@ -53,9 +54,7 @@ class EmailProviderOutlook extends EmailProvider {
     if (!user.birthday.year) throw new Error('生年月日の年がありません。');
     if (!user.birthday.month) throw new Error('生年月日の月がありません。');
     if (!user.birthday.day) throw new Error('生年月日の日がありません。');
-    if (!user.domain) {
-      user.domain = 'outlook.jp';
-    }
+    if (!user.domain) throw new Error('ドメインが選択されていません。');
 
     await signup(user, opts);
 
@@ -90,8 +89,7 @@ class EmailProviderOutlook extends EmailProvider {
     if (!user) throw new Error('ログイン情報は必須です。');
     if (!user.username) throw new Error('ログインIDは必須です。');
     if (!user.password) throw new Error('パスワードは必須です。');
-
-    user.email = user.username;
+    if (!user.email) throw new Error('メールアドレスは必須です。');
 
     await signin(user, opts);
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import fs from 'fs';
 import delay from 'delay';
 import tempy from 'tempy';

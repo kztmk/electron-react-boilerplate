@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/anchor-has-content */
+/* eslint-disable no-return-assign */
 // @flow
 import React from 'react';
 import cx from 'classnames';
@@ -22,7 +24,7 @@ type Props = {
   steps: Array<StepsType>,
   color: 'primary' | 'warning' | 'danger' | 'success' | 'info' | 'rose',
   title: string,
-  subtitle?: string,
+  // subtitle?: string,
   cancelButtonClasses?: string,
   cancelButtonText: string,
   cancelButtonClick: () => void,
@@ -53,12 +55,12 @@ class BlogWizard extends React.Component<Props, State> {
 
     this.state = {
       currentStep: 0,
-      color: this.props.color,
+      // color: this.props.color,
       cancelButton: true,
       nextButton: this.props.steps.length > 1,
       previousButton: false,
       finishButton: this.props.steps.length === 1,
-      width: '50%',
+      // width: '50%',
       movingTabStyle: {
         transition: 'transform 0s'
       }
@@ -133,6 +135,7 @@ class BlogWizard extends React.Component<Props, State> {
   };
 
   refreshAnimation = index => {
+    // eslint-disable-next-line react/no-string-refs
     let moveDistance = this.refs.wizard.children[0].offsetWidth / 2;
 
     const indexTemp = index === 0 ? 0 : 1;
@@ -171,6 +174,7 @@ class BlogWizard extends React.Component<Props, State> {
   render() {
     const { classes, title, color, steps } = this.props;
     return (
+      // eslint-disable-next-line react/no-string-refs
       <div className={classes.wizardContainer} ref="wizard">
         <Card className={classes.card}>
           <div className={classes.wizardHeader}>
@@ -197,6 +201,7 @@ class BlogWizard extends React.Component<Props, State> {
                 [classes.stepContent]: this.state.currentStep !== key
               });
               return (
+                // eslint-disable-next-line react/no-array-index-key
                 <div className={stepContentClasses} key={key}>
                   {/* <prop.stepComponent innerRef={prop.stepId}/> */}
                   <prop.stepComponent innerRef={node => (this[prop.stepId] = node)} />
@@ -250,5 +255,23 @@ class BlogWizard extends React.Component<Props, State> {
     );
   }
 }
+
+BlogWizard.defaultProps = {
+  steps: [],
+  color: 'primary',
+  title: '',
+  subtitle: '',
+  cancelButtonClasses: '',
+  cancelButtonText: '',
+  cancelButtonClick: '',
+  previousButtonClasses: '',
+  previousButtonText: '',
+  nextButtonClasses: '',
+  nextButtonText: '',
+  finishButtonClasses: '',
+  finishButtonText: '',
+  finishButtonClick: '',
+  validate: true
+};
 
 export default withStyles(wizardStyle)(BlogWizard);

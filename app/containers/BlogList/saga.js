@@ -180,9 +180,9 @@ function* createBlogAccount(action) {
 
   try {
     // dup check
-    const dupAccount = currentAccounts.find(currentAccount => {
-      return currentAccount.url === newAccount.url;
-    });
+    const dupAccount = currentAccounts.find(
+      currentAccount => currentAccount.url === newAccount.url
+    );
 
     if (!dupAccount) {
       const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/blogAccount`, newAccount);

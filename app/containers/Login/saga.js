@@ -12,9 +12,6 @@ import {
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
 import { firebaseSignInWithEmailAndPassword, firebaseSignOut } from '../../database/db';
-import { getProfileRequest } from '../Profile/actions';
-import { getMailAddressRequest } from '../MailAddressList/actions';
-import { getBlogsRequest } from '../BlogList/actions';
 
 /**
  * firebae error.codeからerror内容を日本語化する

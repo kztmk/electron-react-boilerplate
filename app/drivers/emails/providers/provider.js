@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars,class-methods-use-this */
 /**
  * Abstract base class for kugutsu email providers.
  */

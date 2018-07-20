@@ -1,5 +1,3 @@
-import EmailProvider from './providers/provider';
-
 /**
  * Holds state for an authenticated kugutsu email session.
  *

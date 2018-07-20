@@ -1,7 +1,7 @@
 import { dialog } from 'electron';
 
-const showOpenFileDialog = () => {
-  return new Promise((resolve, reject) => {
+const showOpenFileDialog = () =>
+  new Promise((resolve, reject) => {
     const files = dialog.showOpenDialog({
       title: 'インポート用ファイルを開く',
       properties: ['openFile'],
@@ -13,6 +13,5 @@ const showOpenFileDialog = () => {
       reject(new Error('ファイル名の取得に失敗しました。'));
     }
   });
-};
 
 export default showOpenFileDialog;

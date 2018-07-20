@@ -47,8 +47,11 @@ dist
 dll
 main.js
 main.js.map
-templates/
+templates
 
 .idea
 npm-debug.log.*
 __snapshots__
+
+# 3rd pirty modules
+app/ui

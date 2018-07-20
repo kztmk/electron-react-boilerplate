@@ -1,3 +1,5 @@
+/* eslint-disable prefer-template,jsx-a11y/anchor-is-valid,jsx-a11y/anchor-has-content,jsx-a11y/anchor-has-content */
+/* eslint-disable no-return-assign */
 // @flow
 import React from 'react';
 import cx from 'classnames';
@@ -37,7 +39,7 @@ type Props = {
   previousButtonText: string,
   nextButtonClasses?: string,
   nextButtonText: string,
-  finishButtonClasses?: string,
+  // finishButtonClasses?: string,
   finishButtonText: string,
   finishButtonClick: () => void,
   validate: boolean
@@ -232,9 +234,9 @@ class MailWizard extends React.Component<Props, State> {
           <p>以下の情報でメールアカウントの作成を開始します。 </p>
           {message}
           <p>
-            メールアドレス一覧への登録を最初に行います。<br />途中で<span style={errorStyles}>
-              エラー
-            </span>が発生した場合には、<br />
+            メールアドレス一覧への登録を最初に行います。<br />途中で
+            <span style={errorStyles}>エラー</span>
+            が発生した場合には、<br />
             ・可能な場合は、失敗時点から手動で継続<br />
             ・ブラウザを閉じて、メール一覧から削除<br />
             で、対処してください。
@@ -252,7 +254,7 @@ class MailWizard extends React.Component<Props, State> {
     this.hideAlert();
     // create account
     const puppeteerEmail = new PuppeteerEmail(user);
-    const session = puppeteerEmail.signup(user);
+    puppeteerEmail.signup(user);
   };
 
   hideAlert = () => {
@@ -370,6 +372,7 @@ class MailWizard extends React.Component<Props, State> {
     this.setState({ movingTabStyle });
   };
 
+  // eslint-disable-next-line arrow-body-style
   zeroSuppress = val => {
     return val.replace(/^0+([0-9]+)/, '$1');
   };

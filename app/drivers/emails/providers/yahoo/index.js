@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import EmailProvider from '../provider';
 import EmailSession from '../../session';
 
@@ -95,8 +96,7 @@ class EmailProviderYahoo extends EmailProvider {
     if (!user) throw new Error('ログイン情報は必須です。');
     if (!user.username) throw new Error('ログインIDは必須です。');
     if (!user.password) throw new Error('パスワードは必須です。');
-
-    user.email = user.email || `${user.username}@yahoo.co.jp`;
+    if (!user.email) throw new Error('メールアドレスは必須です。');
 
     await signin(user, opts);
 

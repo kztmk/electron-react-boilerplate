@@ -1,3 +1,4 @@
+import { app } from 'electron';
 import puppeteer from 'puppeteer';
 
 import EmailProvider from './providers/provider';
@@ -74,9 +75,13 @@ class EmailDriver {
       throw new Error('user information required.');
     }
 
+    console.log(`app path:${app.getAppPath()}`);
+    const chromiumPath =
+      './app/node_modules/puppeteer/.local-chromium/mac-564778/chrome-mac/Chromium.app';
     const browser =
       opts.browser ||
       (await puppeteer.launch({
+        executablePath: chromiumPath,
         headless: false,
         slowMo: 20
       }));

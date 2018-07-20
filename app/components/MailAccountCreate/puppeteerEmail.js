@@ -3,7 +3,6 @@ import EmailDriver from '../../drivers/emails';
 class PuppeteerEmail {
   constructor(user) {
     this.client = null;
-    console.log(`user-provider:${user.provider}`);
     switch (user.provider) {
       case 'yahoo':
         this.client = new EmailDriver('yahoo');

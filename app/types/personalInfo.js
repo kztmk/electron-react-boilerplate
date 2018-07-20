@@ -1,4 +1,5 @@
-type PersonalInfoType = {
+// @flow
+export type PersonalInfoType = {
   lastName: string,
   firstName: string,
   lastNameKana: string,
@@ -15,4 +16,4 @@ type PersonalInfoType = {
   useDefault: boolean
 };
 
-export default PersonalInfoType;
+// export default PersonalInfoType;

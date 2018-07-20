@@ -83,7 +83,7 @@ function* getMailboxes() {
  * @param startSeq
  * @returns {IterableIterator<*>}
  */
-function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0, onlyBoxInfo = false) {
+function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
   if (imapClient === null) {
     throw new Error({ errorMessage: '接続が切れています。開き直してください。' });
   }
@@ -217,6 +217,7 @@ function* openImapConnection(action) {
     console.log(maiBoxesRoot.children);
 
     // inboxのpathを検索
+    // eslint-disable-next-line array-callback-return
     const inbox = imapProperty.mailBoxes.filter(box => {
       if (box.path.toLowerCase().trim() === 'inbox') {
         return box;
@@ -352,6 +353,7 @@ function* updateFlags(action) {
       });
 
       const originalMessages = [];
+      // eslint-disable-next-line guard-for-in,no-restricted-syntax
       for (const key in currentImapManagerProperty.messages) {
         originalMessages.push(currentImapManagerProperty.messages[key]);
       }

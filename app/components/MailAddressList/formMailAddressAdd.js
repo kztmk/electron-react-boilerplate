@@ -430,6 +430,7 @@ class FormMailAddressAdd extends Component<Props, State> {
                           className={classes.inputMyControl}
                           dateFormat="YYYY/MM/DD"
                           timeFormat={false}
+                          // eslint-disable-next-line react/jsx-boolean-value
                           closeOnSelect={true}
                           inputProps={{ placeholder: '作成日' }}
                           direction="up"

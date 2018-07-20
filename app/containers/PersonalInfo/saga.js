@@ -58,9 +58,7 @@ function* getRandomPersonalInfo() {
     personalData = yield fetch(
       'https://us-central1-yoriki5-prod.cloudfunctions.net/getPersonalData'
     )
-      .then(response => {
-        return response.json();
-      })
+      .then(response => response.json())
       .then(data => {
         let postCode = '00';
         if (data.postalCode.length < 7) {

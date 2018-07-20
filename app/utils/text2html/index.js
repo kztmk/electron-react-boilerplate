@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 const text2Html = text => {
   const htmlHeader = `<!DOCTYPE html>
 <html lang="ja">
@@ -10,7 +11,6 @@ const text2Html = text => {
   const htmlFooter = `</body>
 </html>`;
 
-  console.log(text);
   // 1. plain text search
   let txt = text.replace(/&/g, '&amp;');
   txt = txt.replace(/</g, '&lt;');

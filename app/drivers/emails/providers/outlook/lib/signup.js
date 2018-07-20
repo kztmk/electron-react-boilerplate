@@ -287,6 +287,7 @@ const signup = async (user, opts) => {
         const inputCaptcha = await page.$eval('#hipTemplateContainer input', elm => elm.value);
         if (inputCaptcha && inputCaptcha.length > 0) {
           await page.focus('#hipTemplateContainer input');
+          // eslint-disable-next-line no-plusplus
           for (let i = 0; i < inputCaptcha.length; ++i) {
             await page.keyboard.press('Backspace');
           }
@@ -346,7 +347,7 @@ const signup = async (user, opts) => {
 
         await delay(1000);
         try {
-          const newCaptcha = await page.waitFor('#hipTemplateContainer img', {
+          await page.waitFor('#hipTemplateContainer img', {
             timeout: 1000,
             visible: true
           });
