@@ -44,6 +44,11 @@
   },
   "build": {
     "productName": "Yorikiv5",
+    "asarUnpack": [
+      "node_modules/noty/**/*",
+      "node_modules/puppeteer/.local-chromium/**/*",
+      "node_modules/sweetalert2/**/*"
+    ],
     "publish": [
       {
         "provider": "github",
@@ -237,7 +242,6 @@
     "electron-updater": "^2.21.8",
     "emailjs-imap-client": "^3.0.7",
     "emailjs-mime-parser": "^2.0.5",
-    "faker": "^4.1.0",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
     "is-url": "^1.2.4",

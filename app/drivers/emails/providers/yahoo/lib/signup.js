@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import fs from 'fs';
+import path from 'path';
 import delay from 'delay';
 import tempy from 'tempy';
 import log from 'electron-log';
@@ -11,6 +12,19 @@ async function base64Encode(path) {
 
 const signup = async (user, opts) => {
   const { browser } = opts;
+
+  let scriptDir = '.';
+  if (process.env.NODE_ENV === 'production') {
+    scriptDir = process.env.appPath;
+    scriptDir = scriptDir.replace('app.asar', 'app.asar.unpacked');
+    scriptDir = console.log(`APP_PATH:${scriptDir}`);
+  }
+
+  const notyJsPath = path.join(scriptDir, 'drivers/noty/noty.min.js');
+  const notyCssPath = path.join(scriptDir, 'drivers/noty/noty.css');
+  const notyThemePath = path.join(scriptDir, 'drivers/noty/mint.css');
+  const swa2Js = path.join(scriptDir, 'drivers/sweetalert2/sweetalert2.all.min.js');
+  const swa2Css = path.join(scriptDir, 'drivers/sweetalert2/sweetalert2.min.css');
 
   log.info('--------->create yahoo mail account--------->');
   log.info('-----------user----------');
@@ -26,9 +40,9 @@ const signup = async (user, opts) => {
 
     log.info('access: https://www.yahoo.co.jp');
 
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -52,9 +66,9 @@ const signup = async (user, opts) => {
 
     log.info('click:[Yahoo!メール]');
     // click 'create now(今すぐメールアドレスを作る)'
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -67,9 +81,9 @@ const signup = async (user, opts) => {
 
     log.info('click:[今すぐメールアドレスを作る]');
     // [メールアドレスなしで登録する]をクリック
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -84,9 +98,9 @@ const signup = async (user, opts) => {
     // YahooID
     // -------
     let error = '';
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
     new Noty({
@@ -284,9 +298,9 @@ const signup = async (user, opts) => {
 
       await delay(2000);
 
-      await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-      await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-      await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+      await page.addScriptTag({ path: notyJsPath });
+      await page.addStyleTag({ path: notyCssPath });
+      await page.addStyleTag({ path: notyThemePath });
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -296,12 +310,12 @@ const signup = async (user, opts) => {
       }).show();
     `);
 
-      await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
+      await page.addStyleTag({ path: swa2Css });
       await page.addStyleTag({
         content:
           '.captchaImage{border:1px solid rgba(51,51,51,0.3);border-radius:12px;padding:10px 15px;'
       });
-      await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+      await page.addScriptTag({ path: swa2Js });
 
       const imageData = await base64Encode(captchaPath);
       const captchaValue = await page.evaluate(`swal({
@@ -370,9 +384,9 @@ const signup = async (user, opts) => {
     } while (isCaptchaError);
 
     await page.waitFor('#commit');
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
     new Noty({
@@ -387,9 +401,9 @@ const signup = async (user, opts) => {
     await page.$('#msgComplete');
 
     // a ご利用中のサービスに戻るをクリック
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
     new Noty({
@@ -403,9 +417,9 @@ const signup = async (user, opts) => {
     await page.waitFor('#masthead');
 
     // 「さっそく使ってみよう」をクリック
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
     new Noty({
@@ -419,8 +433,8 @@ const signup = async (user, opts) => {
     await page.waitFor('#tabinbox');
 
     log.info('<--------- done yahoo mail account<---------');
-    await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
-    await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
 
     const closeConfirm = await page.evaluate(`swal({
       title: 'Yahoo！メールアカウントの作成が完了しました。',
@@ -438,8 +452,8 @@ const signup = async (user, opts) => {
     }
   } catch (error) {
     log.error(`error:${error.toString()}`);
-    await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
-    await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
 
     await page.evaluate(`swal({
       title: 'エラー発生',

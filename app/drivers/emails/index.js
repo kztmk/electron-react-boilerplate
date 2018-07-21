@@ -1,4 +1,3 @@
-import { app } from 'electron';
 import puppeteer from 'puppeteer';
 
 import EmailProvider from './providers/provider';
@@ -75,13 +74,18 @@ class EmailDriver {
       throw new Error('user information required.');
     }
 
-    console.log(`app path:${app.getAppPath()}`);
-    const chromiumPath =
-      './app/node_modules/puppeteer/.local-chromium/mac-564778/chrome-mac/Chromium.app';
+    // path:/Users/inabakazuya/Documents/Devs/ProjectsRoot/yoriki5/release/mac/Yorikiv5.app/Contents/Resources/app.asar/node_modules/puppeteer/.local-chromium/mac-564778/chrome-mac/Chromium.app/Contents/MacOS/Chromium
+    let exePath = await puppeteer.executablePath();
+    console.log(`puppeteer exe path:${exePath}`);
+    if (process.env.NODE_ENV === 'production') {
+      exePath = exePath.replace('app.asar', 'app.asar.unpacked');
+    }
+    console.log(`sliced path:${exePath}`);
+
     const browser =
       opts.browser ||
       (await puppeteer.launch({
-        executablePath: chromiumPath,
+        executablePath: exePath,
         headless: false,
         slowMo: 20
       }));
