@@ -5,26 +5,26 @@ import delay from 'delay';
 import tempy from 'tempy';
 import log from 'electron-log';
 
-async function base64Encode(path) {
-  const bitmap = fs.readFileSync(path);
+async function base64Encode(imgPath) {
+  const bitmap = fs.readFileSync(imgPath);
   return Buffer.from(bitmap).toString('base64');
 }
 
 const signup = async (user, opts) => {
   const { browser } = opts;
 
-  let scriptDir = '.';
+  let scriptDir = './app';
+
   if (process.env.NODE_ENV === 'production') {
     scriptDir = process.env.appPath;
     scriptDir = scriptDir.replace('app.asar', 'app.asar.unpacked');
     scriptDir = console.log(`APP_PATH:${scriptDir}`);
   }
-
-  const notyJsPath = path.join(scriptDir, 'drivers/noty/noty.min.js');
-  const notyCssPath = path.join(scriptDir, 'drivers/noty/noty.css');
-  const notyThemePath = path.join(scriptDir, 'drivers/noty/mint.css');
-  const swa2Js = path.join(scriptDir, 'drivers/sweetalert2/sweetalert2.all.min.js');
-  const swa2Css = path.join(scriptDir, 'drivers/sweetalert2/sweetalert2.min.css');
+  const notyJsPath = path.join(scriptDir, '/node_modules/noty/lib/noty.min.js');
+  const notyCssPath = path.join(scriptDir, '/node_modules/noty/lib/noty.css');
+  const notyThemePath = path.join(scriptDir, '/node_modules/noty/lib/themes/mint.css');
+  const swa2Js = path.join(scriptDir, '/node_modules/sweetalert2/dist/sweetalert2.all.min.js');
+  const swa2Css = path.join(scriptDir, '/node_modules/sweetalert2/dist/sweetalert2.min.css');
 
   log.info('--------->create yahoo mail account--------->');
   log.info('-----------user----------');

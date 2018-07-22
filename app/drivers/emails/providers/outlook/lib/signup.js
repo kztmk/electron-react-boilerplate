@@ -2,15 +2,28 @@
 import delay from 'delay';
 import tempy from 'tempy';
 import fs from 'fs';
+import path from 'path';
 import log from 'electron-log';
 
-async function base64Encode(path) {
-  const bitmap = fs.readFileSync(path);
+async function base64Encode(imgPath) {
+  const bitmap = fs.readFileSync(imgPath);
   return Buffer.from(bitmap).toString('base64');
 }
 
 const signup = async (user, opts) => {
   const { browser } = opts;
+  let scriptDir = './app';
+
+  if (process.env.NODE_ENV === 'production') {
+    scriptDir = process.env.appPath;
+    scriptDir = scriptDir.replace('app.asar', 'app.asar.unpacked');
+    scriptDir = console.log(`APP_PATH:${scriptDir}`);
+  }
+  const notyJsPath = path.join(scriptDir, '/node_modules/noty/lib/noty.min.js');
+  const notyCssPath = path.join(scriptDir, '/node_modules/noty/lib/noty.css');
+  const notyThemePath = path.join(scriptDir, '/node_modules/noty/lib/themes/mint.css');
+  const swa2Js = path.join(scriptDir, '/node_modules/sweetalert2/dist/sweetalert2.all.min.js');
+  const swa2Css = path.join(scriptDir, '/node_modules/sweetalert2/dist/sweetalert2.min.css');
 
   log.info('--------->create outlook mail account--------->');
   log.info('-----------user----------');
@@ -23,9 +36,9 @@ const signup = async (user, opts) => {
     await page.goto('https://signup.live.com/signup');
     log.info('access https://signup.live.com/signup');
 
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
     new Noty({
@@ -306,12 +319,12 @@ const signup = async (user, opts) => {
       }).show();
     `);
 
-        await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
+        await page.addStyleTag({ path: swa2Css });
         await page.addStyleTag({
           content:
             '.captchaImage{border:1px solid rgba(51,51,51,0.3);border-radius:12px;padding:10px 15px;'
         });
-        await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+        await page.addScriptTag({ path: swa2Js });
 
         const imageData = await base64Encode(captchaPath);
 
@@ -367,9 +380,9 @@ const signup = async (user, opts) => {
 
     await delay(500);
     await page.goto('https://www.outlook.com/?refd=account.microsoft.com&fref=home.banner.profile');
-    await page.addScriptTag({ path: './app/drivers/noty/noty.min.js' });
-    await page.addStyleTag({ path: './app/drivers/noty/noty.css' });
-    await page.addStyleTag({ path: './app/drivers/noty/mint.css' });
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
     new Noty({
@@ -426,8 +439,8 @@ const signup = async (user, opts) => {
     log.info('<--------- create outlook mail account<---------');
     // should now be at https://outlook.live.com/mail/inbox
     // await page.close();
-    await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
-    await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
 
     const closeConfirm = await page.evaluate(`swal({
       title: 'Outlookメールアカウントの作成が完了しました。',
@@ -445,8 +458,8 @@ const signup = async (user, opts) => {
     }
   } catch (error) {
     log.error(`error:${error.toString()}`);
-    await page.addStyleTag({ path: './app/drivers/sweetalert2/sweetalert2.min.css' });
-    await page.addScriptTag({ path: './app/drivers/sweetalert2/sweetalert2.all.min.js' });
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
 
     await page.evaluate(`swal({
       title: 'エラー発生',
