@@ -151,7 +151,7 @@ app.on('ready', async () => {
   // autoUpdater.checkForUpdatesAndNotify();
 });
 
-process.env.appPath = app.getAppPath();
+process.env.NODE_APPPATH = app.getAppPath();
 
 function sendStatusToWindow(text) {
   log.info(text);

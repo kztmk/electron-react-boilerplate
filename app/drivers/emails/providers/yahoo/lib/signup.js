@@ -1,6 +1,5 @@
 /* eslint-disable no-await-in-loop */
 import fs from 'fs';
-import path from 'path';
 import delay from 'delay';
 import tempy from 'tempy';
 import log from 'electron-log';
@@ -14,17 +13,16 @@ const signup = async (user, opts) => {
   const { browser } = opts;
 
   let scriptDir = './app';
-
+  log.info(`appPath:${process.env.NODE_APPPATH}`)
   if (process.env.NODE_ENV === 'production') {
-    scriptDir = process.env.appPath;
+    scriptDir = process.env.NODE_APPPATH;
     scriptDir = scriptDir.replace('app.asar', 'app.asar.unpacked');
-    scriptDir = console.log(`APP_PATH:${scriptDir}`);
   }
-  const notyJsPath = path.join(scriptDir, '/node_modules/noty/lib/noty.min.js');
-  const notyCssPath = path.join(scriptDir, '/node_modules/noty/lib/noty.css');
-  const notyThemePath = path.join(scriptDir, '/node_modules/noty/lib/themes/mint.css');
-  const swa2Js = path.join(scriptDir, '/node_modules/sweetalert2/dist/sweetalert2.all.min.js');
-  const swa2Css = path.join(scriptDir, '/node_modules/sweetalert2/dist/sweetalert2.min.css');
+  const notyJsPath = `${scriptDir}/node_modules/noty/lib/noty.min.js`;
+  const notyCssPath = `${scriptDir}/node_modules/noty/lib/noty.css`;
+  const notyThemePath = `${scriptDir}/node_modules/noty/lib/themes/mint.css`;
+  const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
+  const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
   log.info('--------->create yahoo mail account--------->');
   log.info('-----------user----------');

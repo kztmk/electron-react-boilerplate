@@ -77,7 +77,7 @@ function* getRandomPersonalInfo() {
           lastNameHepburn: data.lnameRome,
           firstNameHepburn: data.fnameRome,
           gender: data.gender,
-          birthDate: moment(data.birthDate).format('YYYY/MM/DD'),
+          birthDate: moment(data.birthDate, 'MM/DD/YYYY').format('YYYY/MM/DD'),
           postalCode: postCode,
           prefecture: data.prefectName,
           address1: data.address1,

@@ -2,7 +2,6 @@
 import delay from 'delay';
 import tempy from 'tempy';
 import fs from 'fs';
-import path from 'path';
 import log from 'electron-log';
 
 async function base64Encode(imgPath) {
@@ -13,17 +12,16 @@ async function base64Encode(imgPath) {
 const signup = async (user, opts) => {
   const { browser } = opts;
   let scriptDir = './app';
-
+  log.info(`appPath:${process.env.NODE_APPPATH}`);
   if (process.env.NODE_ENV === 'production') {
-    scriptDir = process.env.appPath;
+    scriptDir = process.env.NODE_APPPATH;
     scriptDir = scriptDir.replace('app.asar', 'app.asar.unpacked');
-    scriptDir = console.log(`APP_PATH:${scriptDir}`);
   }
-  const notyJsPath = path.join(scriptDir, '/node_modules/noty/lib/noty.min.js');
-  const notyCssPath = path.join(scriptDir, '/node_modules/noty/lib/noty.css');
-  const notyThemePath = path.join(scriptDir, '/node_modules/noty/lib/themes/mint.css');
-  const swa2Js = path.join(scriptDir, '/node_modules/sweetalert2/dist/sweetalert2.all.min.js');
-  const swa2Css = path.join(scriptDir, '/node_modules/sweetalert2/dist/sweetalert2.min.css');
+  const notyJsPath = `${scriptDir}/node_modules/noty/lib/noty.min.js`;
+  const notyCssPath = `${scriptDir}/node_modules/noty/lib/noty.css`;
+  const notyThemePath = `${scriptDir}/node_modules/noty/lib/themes/mint.css`;
+  const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
+  const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
   log.info('--------->create outlook mail account--------->');
   log.info('-----------user----------');
@@ -374,6 +372,13 @@ const signup = async (user, opts) => {
       // TODO: handle case of sms validation
       await page.waitForNavigation({ timeout: 0 });
     }
+
+    if (page.$('#hipDesc') !== null) {
+      throw new Error(
+        'セキュリティ・チェックです。次のOutlookアカウントを作成するまで、少し時間をおいて下さい。'
+      );
+    }
+
     log.info('アカウント設定開始');
     // main account page
     // -----------------
@@ -467,7 +472,7 @@ const signup = async (user, opts) => {
       showCancelButton: false,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',
-      confirmButtonText: '閉じる',
+      confirmButtonText: 'OK',
       cancelButtonText: 'ブラウザは、このまま',
       reverseButtons: true
     })`);
