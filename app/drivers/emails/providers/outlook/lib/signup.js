@@ -356,23 +356,30 @@ const signup = async (user, opts) => {
         await page.click('#iSignupAction', { delay: 9 });
         log.info(`click:[次へ]`);
 
-        await delay(1000);
-        try {
-          await page.waitFor('#hipTemplateContainer img', {
-            timeout: 1000,
-            visible: true
-          });
-          log.warn('画像認証の画像と入力が一致しません。');
-        } catch (e) {
-          log.info('画像認証完了');
+        await delay(1500);
+        const captchaError = await page.$('.alert-error');
+        if (captchaError === null) {
           isChaptchaError = false;
+        } else {
+          log.warn('画像認証の画像と入力が一致しません。');
         }
+        // try {
+        //   await page.waitFor('#hipTemplateContainer img', {
+        //     timeout: 1000,
+        //     visible: true
+        //   });
+        //   log.warn('画像認証の画像と入力が一致しません。');
+        // } catch (e) {
+        //   log.info('画像認証完了');
+        //   isChaptchaError = false;
+        // }
       } while (isChaptchaError);
     } else {
       // TODO: handle case of sms validation
       await page.waitForNavigation({ timeout: 0 });
     }
 
+    await page.waitForNavigation({ timeout: 0 });
     if (page.$('#hipDesc') !== null) {
       throw new Error(
         'セキュリティ・チェックです。次のOutlookアカウントを作成するまで、少し時間をおいて下さい。'
@@ -428,7 +435,7 @@ const signup = async (user, opts) => {
         type: 'success',
         layout: 'topLeft',
         killer: true,
-        text:'次へをクリック' 
+        text:'OKをクリック' 
       }).show();
     `);
       if (await page.$('.dialog button.primaryButton')) break;
@@ -462,7 +469,7 @@ const signup = async (user, opts) => {
       await page.close();
     }
   } catch (error) {
-    log.error(`error:${error.toString()}`);
+    log.error(error.toString());
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
