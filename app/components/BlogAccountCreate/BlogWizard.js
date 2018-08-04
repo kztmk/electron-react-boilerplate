@@ -93,12 +93,45 @@ class BlogWizard extends React.Component<Props, State> {
       const selectedProvider = this[this.props.steps[0].stepId].getProvider();
       let nextStep = 0;
       switch (selectedProvider) {
-        case 'Yahoo':
-          nextStep = 1;
-          break;
-        case 'Outlook':
-          nextStep = 2;
-          break;
+        case 'fc2':
+        nextStep = 1;
+        break;
+        case 'webnode':
+        nextStep = 2;
+        break;
+        case 'livedoor':
+        nextStep = 3;
+        break;
+        case 'seesaa':
+        nextStep = 4;
+        break;
+        case 'ameba':
+        nextStep = 5;
+        break;
+        case 'rakuten':
+        nextStep = 6;
+        break;
+        case 'kokolog':
+        nextStep = 7;
+        break;
+        case 'yaplog':
+        nextStep = 8;
+        break;
+        case 'ninjya':
+        nextStep = 9;
+        break;
+        case 'hatena':
+        nextStep = 10;
+        break;
+        case 'webryBlog':
+        nextStep = 11;
+        break;
+        case 'wpcom':
+        nextStep = 12;
+        break;
+        case 'goo':
+        nextStep = 13;
+        break;
         default:
       }
       this.setState({
@@ -165,7 +198,7 @@ class BlogWizard extends React.Component<Props, State> {
     return (
       <li className={classes.steps} key={-1} style={{ width: '50%' }}>
         <a className={classes.stepsAnchor} onClick={() => this.previousButtonClick()}>
-          メール追加情報
+          ブログ追加情報
         </a>
       </li>
     );

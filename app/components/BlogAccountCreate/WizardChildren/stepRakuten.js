@@ -18,7 +18,6 @@ import CustomInput from '../../../ui/CustomInput/CustomInput';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import extendedFormsStyle from '../../../assets/jss/material-dashboard-pro-react/views/extendedFormsStyle';
-import fc2Junre from './data/fc2';
 
 const groupBox = {
   border: '1px solid #333',
@@ -38,23 +37,18 @@ type State = {
   descriptionState: string,
   remark: string,
   tags: Array<string>,
-  fc2Question: string,
-  fc2QuestionValue: string,
-  fc2Answer: string,
-  mainJunre: string,
-  subJunre: string,
+  junre: string,
+  junreValue: string,
   nickName: string,
   nickNameState: string,
-  answerState: string,
   errorMessage: string,
-  openErrorSnackbar: boolean,
-  subJunreData: any[]
+  openErrorSnackbar: boolean
 };
 
 /**
- * blogAccount自動取得時のfc2blog追加情報フォーム
+ * blogAccount自動取得時の楽天ブログ追加情報フォーム
  */
-class StepFc2 extends React.Component<Props, State> {
+class StepRakuten extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
@@ -65,40 +59,45 @@ class StepFc2 extends React.Component<Props, State> {
       descriptionState: '',
       remark: '',
       tags: [],
-      fc2Question: '',
-      fc2QuestionValue: '',
-      fc2Answer: '',
-      mainJunre: '',
-      mainJunreValue: '',
-      subJunre: '',
-      subJunreValue: '',
+      junre: '',
+      junreValue: '',
       nickName: '',
       nickNameState: '',
-      answerState: '',
       errorMessage: '',
-      openErrorSnackbar: false,
-      subJunreData: []
+      openErrorSnackbar: false
     };
   }
 
   /**
-   * FC2作成時の秘密の質問の選択枝を作成
+   * カテゴリ選択枝の作成
    *
    * @returns {any[]}
    */
-  getFc2Questions = () => {
-    const fc2Questions = [
-      { val: '11', question: '母の出生地' },
-      { val: '12', question: '父の出生地' },
-      { val: '20', question: '初恋の人の名前' },
-      { val: '30', question: '最初に飼ったペットの名前' },
-      { val: '40', question: '卒業した小学校の名前' },
-      { val: '101', question: '保険証番号の下５桁' },
-      { val: '102', question: 'クレジットカード番号の下５桁' }
+  getCategories = () => {
+    const categories = [
+      { val: '100', text: '園芸' },
+      { val: '200', text: 'パソコン・家電' },
+      { val: '300', text: '料理・食べ物' },
+      { val: '400', text: 'ドリンク・お酒' },
+      { val: '500', text: 'ファッション' },
+      { val: '525', text: '出産・子育て' },
+      { val: '600', text: '生活・インテリア' },
+      { val: '700', text: '美容・コスメ' },
+      { val: '710', text: '健康・ダイエット' },
+      { val: '800', text: 'アウトドア・釣り' },
+      { val: '805', text: '車・バイク' },
+      { val: '820', text: 'スポーツ' },
+      { val: '900', text: '趣味・ゲーム' },
+      { val: '920', text: 'ペット' },
+      { val: '1000', text: '映画・ＴＶ' },
+      { val: '1005', text: '読書・コミック' },
+      { val: '1025', text: '音楽' },
+      { val: '1100', text: '旅行・海外情報' },
+      { val: '1200', text: 'そのほか' }
     ];
     const { classes } = this.props;
 
-    return fc2Questions.map(q => (
+    return categories.map(q => (
       <MenuItem
         key={q.val}
         classes={{
@@ -107,87 +106,20 @@ class StepFc2 extends React.Component<Props, State> {
         }}
         value={q}
       >
-        {q.question}
+        {q.text}
       </MenuItem>
     ));
   };
 
   /**
-   * メインジャンルの選択枝を作成
-   * @returns {any[]}
-   */
-  getMainJunre = () => {
-    const { classes } = this.props;
-    return fc2Junre.map(j => (
-      <MenuItem
-        key={j.mainJunre}
-        classes={{
-          root: classes.selectMenuItem,
-          selected: classes.selectMenuItemSelected
-        }}
-        value={j}
-      >
-        {j.text}
-      </MenuItem>
-    ));
-  };
-
-  /**
-   * サブジャンルの選択肢を作成
-   * @param mainJunre
-   * @returns {*}
-   */
-  getSubJunre = mainJunre => {
-    if (mainJunre) {
-      const { classes } = this.props;
-      return mainJunre.sub.map(j => (
-        <MenuItem
-          key={j.index}
-          classes={{
-            root: classes.selectMenuItem,
-            selected: classes.selectMenuItemSelected
-          }}
-          value={j}
-        >
-          {j.text}
-        </MenuItem>
-      ));
-    }
-  };
-
-  /**
-   * 秘密の質問を選択
+   * カテゴリを選択
    *
    * @param event
    */
-  handleQuestionSelected = event => {
+  handleJunreSelected = event => {
     this.setState({
-      fc2Question: event.target.value.question,
-      fc2QuestionValue: event.target.value.val
-    });
-  };
-
-  /**
-   * メインジャンルを選択
-   *
-   * @param event
-   */
-  handleMainJunreSelected = event => {
-    this.setState({
-      subJunreData: this.getSubJunre(event.target.value),
-      mainJunre: event.target.value.text,
-      mainJunreValue: event.target.value.mainJunre
-    });
-  };
-
-  /**
-   * サブジャンルを選択
-   * @param event
-   */
-  handleSubJunreSelected = event => {
-    this.setState({
-      subJunre: event.target.value.text,
-      subJunreValue: event.target.value.subJunre
+      junre: event.target.value.text,
+      junreValue: event.target.value.val
     });
   };
 
@@ -197,27 +129,17 @@ class StepFc2 extends React.Component<Props, State> {
    */
   isValidate = () => {
     let errorMsg = '';
-    if (this.state.fc2Question.length === 0) {
-      errorMsg = '秘密の質問を選択してください。\n';
-    }
-    if (this.state.fc2Answer.length < 3) {
-      this.setState({ answerState: 'error' });
-      errorMsg += '秘密の質問の答えを3文字以上、入力してください。';
-    }
     if (this.state.titleState !== 'success') {
-      errorMsg += 'ブログタイトルの入力を確認してください。。\n';
+      errorMsg += 'ブログタイトルの入力を確認してください。\n';
     }
     if (this.state.descriptionState !== 'success') {
       errorMsg += 'ブログの説明の入力を確認してください。\n';
     }
+    if (this.state.junre.length === 0) {
+      errorMsg = 'ジャンルを選択してください。\n';
+    }
     if (this.state.nickNameState !== 'success') {
       errorMsg += 'ニックネームの入力を確認してください。\n';
-    }
-    if (this.state.mainJunre.length === 0) {
-      errorMsg += 'ジャンルを選択してください。\n';
-    }
-    if (this.state.subJunre.length === 0) {
-      errorMsg += 'サブジャンルを選択してください。\n';
     }
     if (errorMsg.length > 0) {
       this.setState({
@@ -239,7 +161,7 @@ class StepFc2 extends React.Component<Props, State> {
   requiredField = value => value.length > 3;
 
   /**
-   * フォーム入力があった場合にフィールド毎の処理
+   * フォーム入力時のフィールド毎の処理
    *
    * @param event
    * @param type
@@ -275,19 +197,6 @@ class StepFc2 extends React.Component<Props, State> {
       case 'remark':
         this.setState({ remark: event.target.value });
         break;
-      case 'answer':
-        if (event.target.value.length > 2) {
-          this.setState({
-            fc2Answer: event.target.value,
-            answerState: 'success'
-          });
-        } else {
-          this.setState({
-            fc2Answer: event.target.value,
-            answerState: 'error'
-          });
-        }
-        break;
       case 'nickName':
         if (this.requiredField(event.target.value)) {
           this.setState({
@@ -306,7 +215,8 @@ class StepFc2 extends React.Component<Props, State> {
   };
 
   /**
-   * タグフィールド入力時
+   * タグ入力時の処理
+   *
    * @param currentTags
    */
   handleTags = currentTags => {
@@ -377,11 +287,11 @@ class StepFc2 extends React.Component<Props, State> {
             </GridItem>
           </GridContainer>
           <GridContainer container justify="center">
-            <GridContainer xs={12} sm={10} md={10}>
+            <GridContainer xs={12} sm={8} md={8}>
               <GridItem xs={12} sm={2} md={2}>
                 <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
               </GridItem>
-              <GridItem xs={12} sm={4} md={4}>
+              <GridItem xs={12} sm={6} md={6}>
                 <TagsInput
                   value={this.state.tags}
                   tagProps={{ className: 'react-tagsinput-tag info' }}
@@ -392,76 +302,27 @@ class StepFc2 extends React.Component<Props, State> {
                   }}
                 />
               </GridItem>
-              <GridItem xs={12} sm={4} md={4}>
-                <CustomInput
-                  labelText="ニックネーム"
-                  id="nickName"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                  inputProps={{
-                    value: this.state.nickName,
-                    type: 'text',
-                    onChange: event => this.inputFormChange(event, 'nickName')
-                  }}
-                />
-              </GridItem>
             </GridContainer>
           </GridContainer>
           <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>
-              <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="FC2-Question-select" className={classes.selectLabel}>
-                  秘密の質問を選択
-                </InputLabel>
-                <Select
-                  MenuProps={{
-                    className: classes.selectMenu
-                  }}
-                  classes={{
-                    select: classes.select
-                  }}
-                  value={this.state.fc2Question}
-                  onChange={this.handleQuestionSelected}
-                  inputProps={{
-                    name: 'fc2QuestionSelect',
-                    id: 'fc2Question-select'
-                  }}
-                >
-                  <MenuItem
-                    disabled
-                    classes={{
-                      root: classes.selectMenuItem
-                    }}
-                  >
-                    秘密の質問を選択
-                  </MenuItem>
-                  {this.getFc2Questions()}
-                </Select>
-              </FormControl>
-            </GridItem>
-            <GridItem xs={12} sm={4} md={4}>
               <CustomInput
-                success={this.state.answerState === 'success'}
-                error={this.state.answerState === 'error'}
-                labelText="秘密の質問への答え"
-                id="answer"
+                labelText="ニックネーム"
+                id="nickName"
                 formControlProps={{
                   fullWidth: true
                 }}
                 inputProps={{
-                  value: this.state.fc2Answer,
-                  onChange: event => this.inputFormChange(event, 'answer'),
-                  type: 'text'
+                  value: this.state.nickName,
+                  type: 'text',
+                  onChange: event => this.inputFormChange(event, 'nickName')
                 }}
               />
             </GridItem>
-          </GridContainer>
-          <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>
               <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="FC2-junre-select" className={classes.selectLabel}>
-                  ジャンル
+                <InputLabel htmlFor="junre-select" className={classes.selectLabel}>
+                  カテゴリを選択
                 </InputLabel>
                 <Select
                   MenuProps={{
@@ -470,11 +331,11 @@ class StepFc2 extends React.Component<Props, State> {
                   classes={{
                     select: classes.select
                   }}
-                  value={this.state.mainJunre}
-                  onChange={this.handleMainJunreSelected}
+                  value={this.state.junre}
+                  onChange={this.handleJunreSelected}
                   inputProps={{
-                    name: 'fc2MainJunreSelect',
-                    id: 'fc2MainJunre-select'
+                    name: 'junreSelect',
+                    id: 'junre-select'
                   }}
                 >
                   <MenuItem
@@ -483,40 +344,9 @@ class StepFc2 extends React.Component<Props, State> {
                       root: classes.selectMenuItem
                     }}
                   >
-                    ジャンルを選択
+                    カテゴリを選択
                   </MenuItem>
-                  {this.getMainJunre()}
-                </Select>
-              </FormControl>
-            </GridItem>
-            <GridItem xs={12} sm={4} md={4}>
-              <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="FC2-junreSub-select" className={classes.selectLabel}>
-                  サブジャンル
-                </InputLabel>
-                <Select
-                  MenuProps={{
-                    className: classes.selectMenu
-                  }}
-                  classes={{
-                    select: classes.select
-                  }}
-                  value={this.state.subJunre}
-                  onChange={this.handleSubJunreSelected}
-                  inputProps={{
-                    name: 'fc2SubJunreSelect',
-                    id: 'fc2SubJunre-select'
-                  }}
-                >
-                  <MenuItem
-                    disabled
-                    classes={{
-                      root: classes.selectMenuItem
-                    }}
-                  >
-                    サブジャンルを選択
-                  </MenuItem>
-                  {this.state.subJunreData}
+                  {this.getCategories()}
                 </Select>
               </FormControl>
             </GridItem>
@@ -536,4 +366,4 @@ class StepFc2 extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(extendedFormsStyle)(StepFc2);
+export default withStyles(extendedFormsStyle)(StepRakuten);

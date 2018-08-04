@@ -18,7 +18,6 @@ type Props = {
 class WizardViewMail extends React.Component<Props> {
   createMailAccount = () => {
     // validate data
-
     // generate data
   };
 
@@ -38,7 +37,7 @@ class WizardViewMail extends React.Component<Props> {
               { stepName: 'Yahoo', stepComponent: StepYahoo, stepId: 'yahoo' },
               { stepName: 'Outlook', stepComponent: StepOutlook, stepId: 'outlook' }
             ]}
-            title="新規メールアカウウント作成"
+            title="新規メールアカウント作成"
             cancelButtonText="キャンセル"
             cancelButtonClick={this.props.cancelAccount}
             previousButtonText="戻る"

@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unused-state */
+/* eslint-disable react/no-unused-state,prefer-template */
 // @flow
 import React from 'react';
 import TagsInput from 'react-tagsinput';
@@ -9,8 +9,11 @@ import FormLabel from '@material-ui/core/FormLabel';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Radio from '@material-ui/core/Radio';
 // @material-ui/icons
 import AddAlert from '@material-ui/icons/AddAlert';
+import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
 // core components
 import GridContainer from '../../../ui/Grid/GridContainer';
 import GridItem from '../../../ui/Grid/GridItem';
@@ -18,7 +21,6 @@ import CustomInput from '../../../ui/CustomInput/CustomInput';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import extendedFormsStyle from '../../../assets/jss/material-dashboard-pro-react/views/extendedFormsStyle';
-import fc2Junre from './data/fc2';
 
 const groupBox = {
   border: '1px solid #333',
@@ -38,23 +40,22 @@ type State = {
   descriptionState: string,
   remark: string,
   tags: Array<string>,
-  fc2Question: string,
-  fc2QuestionValue: string,
-  fc2Answer: string,
-  mainJunre: string,
-  subJunre: string,
+  occupation: string,
+  occupationValue: string,
+  category: string,
+  categoryValue: string,
   nickName: string,
   nickNameState: string,
-  answerState: string,
+  spouse: string,
+  children: string,
   errorMessage: string,
-  openErrorSnackbar: boolean,
-  subJunreData: any[]
+  openErrorSnackbar: boolean
 };
 
 /**
- * blogAccount自動取得時のfc2blog追加情報フォーム
+ * blogAccount自動取得時のSeesaa追加情報フォーム
  */
-class StepFc2 extends React.Component<Props, State> {
+class StepSeesaa extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
@@ -65,40 +66,40 @@ class StepFc2 extends React.Component<Props, State> {
       descriptionState: '',
       remark: '',
       tags: [],
-      fc2Question: '',
-      fc2QuestionValue: '',
-      fc2Answer: '',
-      mainJunre: '',
-      mainJunreValue: '',
-      subJunre: '',
-      subJunreValue: '',
+      occupation: '',
+      occupationValue: '',
+      category: '',
+      categoryValue: '',
       nickName: '',
       nickNameState: '',
-      answerState: '',
+      spouse: 'S',
+      children: 'N',
       errorMessage: '',
-      openErrorSnackbar: false,
-      subJunreData: []
+      openErrorSnackbar: false
     };
   }
 
   /**
-   * FC2作成時の秘密の質問の選択枝を作成
+   * 職業選択
    *
    * @returns {any[]}
    */
-  getFc2Questions = () => {
-    const fc2Questions = [
-      { val: '11', question: '母の出生地' },
-      { val: '12', question: '父の出生地' },
-      { val: '20', question: '初恋の人の名前' },
-      { val: '30', question: '最初に飼ったペットの名前' },
-      { val: '40', question: '卒業した小学校の名前' },
-      { val: '101', question: '保険証番号の下５桁' },
-      { val: '102', question: 'クレジットカード番号の下５桁' }
+  getOccupations = () => {
+    const occupations = [
+      { val: '01', occupation: '公務員/団体職員' },
+      { val: '02', occupation: '会社員' },
+      { val: '03', occupation: '会社役員' },
+      { val: '04', occupation: '個人事業主' },
+      { val: '05', occupation: '専業主婦' },
+      { val: '06', occupation: 'フリーター' },
+      { val: '07', occupation: '学生' },
+      { val: '08', occupation: 'タレント業' },
+      { val: '09', occupation: '休職中/無職' },
+      { val: '99', occupation: 'その他' }
     ];
     const { classes } = this.props;
 
-    return fc2Questions.map(q => (
+    return occupations.map(q => (
       <MenuItem
         key={q.val}
         classes={{
@@ -107,88 +108,113 @@ class StepFc2 extends React.Component<Props, State> {
         }}
         value={q}
       >
-        {q.question}
+        {q.occupation}
       </MenuItem>
     ));
   };
 
   /**
-   * メインジャンルの選択枝を作成
+   * カテゴリ選択枝作成
    * @returns {any[]}
    */
-  getMainJunre = () => {
+  getCategories = () => {
+    const categories = [
+      { val: '1', category: '生活' },
+      { val: '3', category: '地域' },
+      { val: '4', category: 'ペット' },
+      { val: '5', category: 'ベビー/子育て' },
+      { val: '6', category: '恋愛/結婚' },
+      { val: '7', category: 'ヘルス/ビューティー' },
+      { val: '8', category: 'ダイエット' },
+      { val: '9', category: 'ショッピング' },
+      { val: '10', category: 'ファッション' },
+      { val: '42', category: 'エコロジー' },
+      { val: '43', category: 'ボランティア' },
+      { val: '11', category: 'グルメ' },
+      { val: '12', category: '芸能' },
+      { val: '13', category: '音楽/ポッドキャスト' },
+      { val: '14', category: 'テレビ/映画/DVD' },
+      { val: '15', category: 'ゲーム' },
+      { val: '16', category: 'コミック/アニメ' },
+      { val: '44', category: '動画' },
+      { val: '41', category: 'IT/インターネット' },
+      { val: '17', category: 'テクノロジー/科学' },
+      { val: '18', category: '本/雑誌' },
+      { val: '19', category: '小説/文学' },
+      { val: '20', category: '写真/アート' },
+      { val: '21', category: '自動車/バイク/自転車' },
+      { val: '22', category: '旅行/アウトドア' },
+      { val: '23', category: 'スポーツ' },
+      { val: '24', category: 'ニュース/時事' },
+      { val: '25', category: 'ビジネス' },
+      { val: '26', category: '就職/転職' },
+      { val: '27', category: 'マネー/ファイナンス' },
+      { val: '28', category: 'サークル/部活/学校' },
+      { val: '29', category: '留学/海外生活' },
+      { val: '30', category: 'ショップ' },
+      { val: '31', category: 'サロン' },
+      { val: '40', category: 'ギャンブル' },
+      { val: '32', category: 'アーティスト' },
+      { val: '33', category: '劇団/俳優/女優' },
+      { val: '34', category: 'お笑い/タレント' },
+      { val: '35', category: 'アイドル/グラビア' },
+      { val: '36', category: 'ドクモ/モデル' },
+      { val: '37', category: 'アスリート' },
+      { val: '39', category: 'age嬢/ホスト' }
+    ];
+
     const { classes } = this.props;
-    return fc2Junre.map(j => (
+    return categories.map(j => (
       <MenuItem
-        key={j.mainJunre}
+        key={j.val}
         classes={{
           root: classes.selectMenuItem,
           selected: classes.selectMenuItemSelected
         }}
         value={j}
       >
-        {j.text}
+        {j.category}
       </MenuItem>
     ));
   };
 
   /**
-   * サブジャンルの選択肢を作成
-   * @param mainJunre
-   * @returns {*}
-   */
-  getSubJunre = mainJunre => {
-    if (mainJunre) {
-      const { classes } = this.props;
-      return mainJunre.sub.map(j => (
-        <MenuItem
-          key={j.index}
-          classes={{
-            root: classes.selectMenuItem,
-            selected: classes.selectMenuItemSelected
-          }}
-          value={j}
-        >
-          {j.text}
-        </MenuItem>
-      ));
-    }
-  };
-
-  /**
-   * 秘密の質問を選択
+   * 職業を選択
    *
    * @param event
    */
-  handleQuestionSelected = event => {
+  handleOccupationSelected = event => {
     this.setState({
-      fc2Question: event.target.value.question,
-      fc2QuestionValue: event.target.value.val
+      occupation: event.target.value.occupation,
+      occupationValue: event.target.value.val
     });
   };
 
   /**
-   * メインジャンルを選択
-   *
+   * カテゴリを選択
    * @param event
    */
-  handleMainJunreSelected = event => {
+  handleCategorySelected = event => {
     this.setState({
-      subJunreData: this.getSubJunre(event.target.value),
-      mainJunre: event.target.value.text,
-      mainJunreValue: event.target.value.mainJunre
+      category: event.target.value.category,
+      categoryValue: event.target.value.val
     });
   };
 
   /**
-   * サブジャンルを選択
+   * 配偶者radioボタン変更時の処理
    * @param event
    */
-  handleSubJunreSelected = event => {
-    this.setState({
-      subJunre: event.target.value.text,
-      subJunreValue: event.target.value.subJunre
-    });
+  handleChangeSpouse = event => {
+    this.setState({ spouse: event.target.value });
+  };
+
+  /**
+   * 子どもradioボタン変更時の処理
+   * @param event
+   */
+  handleChangeChildren = event => {
+    this.setState({ children: event.target.value });
   };
 
   /**
@@ -197,27 +223,17 @@ class StepFc2 extends React.Component<Props, State> {
    */
   isValidate = () => {
     let errorMsg = '';
-    if (this.state.fc2Question.length === 0) {
-      errorMsg = '秘密の質問を選択してください。\n';
-    }
-    if (this.state.fc2Answer.length < 3) {
-      this.setState({ answerState: 'error' });
-      errorMsg += '秘密の質問の答えを3文字以上、入力してください。';
-    }
     if (this.state.titleState !== 'success') {
       errorMsg += 'ブログタイトルの入力を確認してください。。\n';
     }
     if (this.state.descriptionState !== 'success') {
       errorMsg += 'ブログの説明の入力を確認してください。\n';
     }
-    if (this.state.nickNameState !== 'success') {
-      errorMsg += 'ニックネームの入力を確認してください。\n';
+    if (this.state.category.length === 0) {
+      errorMsg += 'ブログカテゴリを選択してください。\n';
     }
-    if (this.state.mainJunre.length === 0) {
-      errorMsg += 'ジャンルを選択してください。\n';
-    }
-    if (this.state.subJunre.length === 0) {
-      errorMsg += 'サブジャンルを選択してください。\n';
+    if (this.state.occupation.length === 0) {
+      errorMsg += '職業を選択してください。\n';
     }
     if (errorMsg.length > 0) {
       this.setState({
@@ -239,7 +255,7 @@ class StepFc2 extends React.Component<Props, State> {
   requiredField = value => value.length > 3;
 
   /**
-   * フォーム入力があった場合にフィールド毎の処理
+   * フォーム入力時のフィールド毎の処理
    *
    * @param event
    * @param type
@@ -275,19 +291,6 @@ class StepFc2 extends React.Component<Props, State> {
       case 'remark':
         this.setState({ remark: event.target.value });
         break;
-      case 'answer':
-        if (event.target.value.length > 2) {
-          this.setState({
-            fc2Answer: event.target.value,
-            answerState: 'success'
-          });
-        } else {
-          this.setState({
-            fc2Answer: event.target.value,
-            answerState: 'error'
-          });
-        }
-        break;
       case 'nickName':
         if (this.requiredField(event.target.value)) {
           this.setState({
@@ -306,7 +309,8 @@ class StepFc2 extends React.Component<Props, State> {
   };
 
   /**
-   * タグフィールド入力時
+   * タグ入力時の処理
+   *
    * @param currentTags
    */
   handleTags = currentTags => {
@@ -392,7 +396,7 @@ class StepFc2 extends React.Component<Props, State> {
                   }}
                 />
               </GridItem>
-              <GridItem xs={12} sm={4} md={4}>
+              <GridItem xs={12} sm={2} md={2}>
                 <CustomInput
                   labelText="ニックネーム"
                   id="nickName"
@@ -411,8 +415,8 @@ class StepFc2 extends React.Component<Props, State> {
           <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>
               <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="FC2-Question-select" className={classes.selectLabel}>
-                  秘密の質問を選択
+                <InputLabel htmlFor="occupation-select" className={classes.selectLabel}>
+                  職業を選択
                 </InputLabel>
                 <Select
                   MenuProps={{
@@ -421,11 +425,11 @@ class StepFc2 extends React.Component<Props, State> {
                   classes={{
                     select: classes.select
                   }}
-                  value={this.state.fc2Question}
-                  onChange={this.handleQuestionSelected}
+                  value={this.state.occupation}
+                  onChange={this.handleOccupationSelected}
                   inputProps={{
-                    name: 'fc2QuestionSelect',
-                    id: 'fc2Question-select'
+                    name: 'occupationSelect',
+                    id: 'occupation-select'
                   }}
                 >
                   <MenuItem
@@ -434,91 +438,136 @@ class StepFc2 extends React.Component<Props, State> {
                       root: classes.selectMenuItem
                     }}
                   >
-                    秘密の質問を選択
+                    職業を選択
                   </MenuItem>
-                  {this.getFc2Questions()}
+                  {this.getOccupations()}
                 </Select>
               </FormControl>
             </GridItem>
             <GridItem xs={12} sm={4} md={4}>
-              <CustomInput
-                success={this.state.answerState === 'success'}
-                error={this.state.answerState === 'error'}
-                labelText="秘密の質問への答え"
-                id="answer"
-                formControlProps={{
-                  fullWidth: true
-                }}
-                inputProps={{
-                  value: this.state.fc2Answer,
-                  onChange: event => this.inputFormChange(event, 'answer'),
-                  type: 'text'
-                }}
-              />
+              <FormControl fullWidth className={classes.selectFormControl}>
+                <InputLabel htmlFor="category-select" className={classes.selectLabel}>
+                  カテゴリ
+                </InputLabel>
+                <Select
+                  MenuProps={{
+                    className: classes.selectMenu
+                  }}
+                  classes={{
+                    select: classes.select
+                  }}
+                  value={this.state.category}
+                  onChange={this.handleCategorySelected}
+                  inputProps={{
+                    name: 'categorySelect',
+                    id: 'category-select'
+                  }}
+                >
+                  <MenuItem
+                    disabled
+                    classes={{
+                      root: classes.selectMenuItem
+                    }}
+                  >
+                    カテゴリを選択
+                  </MenuItem>
+                  {this.getCategories()}
+                </Select>
+              </FormControl>
             </GridItem>
           </GridContainer>
           <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>
-              <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="FC2-junre-select" className={classes.selectLabel}>
-                  ジャンル
-                </InputLabel>
-                <Select
-                  MenuProps={{
-                    className: classes.selectMenu
-                  }}
+              <div className={classes.checkboxAndRadio + ' ' + classes.checkboxAndRadioHorizontal}>
+                <FormControlLabel
+                  control={
+                    <Radio
+                      checked={this.state.spouse === 'S'}
+                      onChange={this.handleChangeSpouse}
+                      value="S"
+                      name="single"
+                      aria-label="A"
+                      icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                      checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                      classes={{
+                        checked: classes.radio
+                      }}
+                    />
+                  }
                   classes={{
-                    select: classes.select
+                    label: classes.label
                   }}
-                  value={this.state.mainJunre}
-                  onChange={this.handleMainJunreSelected}
-                  inputProps={{
-                    name: 'fc2MainJunreSelect',
-                    id: 'fc2MainJunre-select'
+                  label="未婚"
+                />
+              </div>
+              <div className={classes.checkboxAndRadio + ' ' + classes.checkboxAndRadioHorizontal}>
+                <FormControlLabel
+                  control={
+                    <Radio
+                      checked={this.state.spouse === 'M'}
+                      onChange={this.handleChangeSpouse}
+                      value="M"
+                      name="married"
+                      aria-label="B"
+                      icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                      checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                      classes={{
+                        checked: classes.radio
+                      }}
+                    />
+                  }
+                  classes={{
+                    label: classes.label
                   }}
-                >
-                  <MenuItem
-                    disabled
-                    classes={{
-                      root: classes.selectMenuItem
-                    }}
-                  >
-                    ジャンルを選択
-                  </MenuItem>
-                  {this.getMainJunre()}
-                </Select>
-              </FormControl>
+                  label="既婚"
+                />
+              </div>
             </GridItem>
             <GridItem xs={12} sm={4} md={4}>
-              <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="FC2-junreSub-select" className={classes.selectLabel}>
-                  サブジャンル
-                </InputLabel>
-                <Select
-                  MenuProps={{
-                    className: classes.selectMenu
-                  }}
+              <div className={classes.checkboxAndRadio + ' ' + classes.checkboxAndRadioHorizontal}>
+                <FormControlLabel
+                  control={
+                    <Radio
+                      checked={this.state.children === 'N'}
+                      onChange={this.handleChangeChildren}
+                      value="N"
+                      name="noChild"
+                      aria-label="A"
+                      icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                      checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                      classes={{
+                        checked: classes.radio
+                      }}
+                    />
+                  }
                   classes={{
-                    select: classes.select
+                    label: classes.label
                   }}
-                  value={this.state.subJunre}
-                  onChange={this.handleSubJunreSelected}
-                  inputProps={{
-                    name: 'fc2SubJunreSelect',
-                    id: 'fc2SubJunre-select'
+                  label="子どもなし"
+                />
+              </div>
+              <div className={classes.checkboxAndRadio + ' ' + classes.checkboxAndRadioHorizontal}>
+                <FormControlLabel
+                  control={
+                    <Radio
+                      checked={this.state.children === 'Y'}
+                      onChange={this.handleChangeChildren}
+                      value="Y"
+                      name="hasChild"
+                      aria-label="B"
+                      icon={<FiberManualRecord className={classes.radioUnchecked} />}
+                      checkedIcon={<FiberManualRecord className={classes.radioChecked} />}
+                      classes={{
+                        checked: classes.radio
+                      }}
+                    />
+                  }
+                  classes={{
+                    label: classes.label
                   }}
-                >
-                  <MenuItem
-                    disabled
-                    classes={{
-                      root: classes.selectMenuItem
-                    }}
-                  >
-                    サブジャンルを選択
-                  </MenuItem>
-                  {this.state.subJunreData}
-                </Select>
-              </FormControl>
+                  label="子どもあり"
+                />
+              </div>
             </GridItem>
           </GridContainer>
         </GridContainer>
@@ -536,4 +585,4 @@ class StepFc2 extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(extendedFormsStyle)(StepFc2);
+export default withStyles(extendedFormsStyle)(StepSeesaa);

@@ -13,12 +13,11 @@ import FormControl from '@material-ui/core/FormControl';
 import Switch from '@material-ui/core/Switch';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import Avatar from '@material-ui/core/Avatar';
 // @material-ui/icons
 import FolderShared from '@material-ui/icons/FolderShared';
 import AddAlert from '@material-ui/icons/AddAlert';
 import Refresh from '@material-ui/icons/Refresh';
-
 // core components
 import GridContainer from '../../../ui/Grid/GridContainer';
 import GridItem from '../../../ui/Grid/GridItem';
@@ -27,6 +26,20 @@ import CustomInput from '../../../ui/CustomInput/CustomInput';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import formAddStyle from '../../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
+
+import Fc2 from '../../../assets/img/blogs/fc2.png';
+import Webnode from '../../../assets/img/blogs/webnode.png';
+import Livedoor from '../../../assets/img/blogs/livedoor.png';
+import Seesaa from '../../../assets/img/blogs/seesaa.png';
+import Ameba from '../../../assets/img/blogs/ameba.png';
+import Rakuten from '../../../assets/img/blogs/rakuten.png';
+import Kokolog from '../../../assets/img/blogs/kokolog.png';
+import Yaplog from '../../../assets/img/blogs/yaplog.png';
+import Ninjya from '../../../assets/img/blogs/ninja.png';
+import Hatena from '../../../assets/img/blogs/hatena.png';
+import Webryblog from '../../../assets/img/blogs/webryblog.png';
+import Wpcom from '../../../assets/img/blogs/wpcom.png';
+import Goo from '../../../assets/img/blogs/goo.png';
 
 const stepContent = {
   padding: '5px'
@@ -44,6 +57,11 @@ const groupBox = {
   padding: '20px 0 20px 20px',
   borderRadius: '20px',
   margin: '20px 0 0 0'
+};
+
+const selectAvatarStyle = {
+  display: 'flex',
+  alignItems: 'center'
 };
 
 type Props = {
@@ -70,7 +88,7 @@ type State = {
 };
 
 /**
- * mailAccount自動取得のWizard画面 Step0
+ * blogAccount自動取得のWizard画面 Step0
  */
 class Steps00 extends React.Component<Props, State> {
   constructor(props) {
@@ -312,7 +330,7 @@ class Steps00 extends React.Component<Props, State> {
   isValidated = () => {
     let errorMsg = '';
     if (this.state.provider.length === 0) {
-      errorMsg += 'メール提供元を選択してください。\n';
+      errorMsg += 'ブログ提供元を選択してください。\n';
     }
     if (!this.isRequiredLength(this.state.accountId, 8)) {
       this.setState({ accountIdState: 'error' });
@@ -387,7 +405,7 @@ class Steps00 extends React.Component<Props, State> {
             <GridItem xs={12} sm={3} md={3}>
               <FormControl fullWidth className={classes.selectFormControl}>
                 <InputLabel htmlFor="provider-select" className={classes.selectLabel}>
-                  メール提供元
+                  ブログ提供元
                 </InputLabel>
                 <Select
                   MenuProps={{
@@ -409,25 +427,163 @@ class Steps00 extends React.Component<Props, State> {
                       root: classes.selectMenuItem
                     }}
                   >
-                    メール提供元
+                    ブログ提供元
                   </MenuItem>
                   <MenuItem
                     classes={{
                       root: classes.selectMenuItem,
                       selected: classes.selectMenuItemSelected
                     }}
-                    value="Yahoo"
+                    value="fc2"
                   >
-                    Yahoo!メール
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="FC2" src={Fc2} className={classes.avatar} />
+                      FC2
+                    </div>
                   </MenuItem>
                   <MenuItem
                     classes={{
                       root: classes.selectMenuItem,
                       selected: classes.selectMenuItemSelected
                     }}
-                    value="Outlook"
+                    value="webnode"
                   >
-                    Outlook
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="webnode" src={Webnode} className={classes.avatar} />
+                      webnode
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="livedoor"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="Livedoor" src={Livedoor} className={classes.avatar} />
+                      Livedoor
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="seesaa"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="Seesaa" src={Seesaa} className={classes.avatar} />
+                      Seesaa
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="ameba"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="アメーバ" src={Ameba} className={classes.avatar} />
+                      アメーバー
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="rakuten"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="楽天" src={Rakuten} className={classes.avatar} />
+                      楽天
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="kokolog"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="ココログ" src={Kokolog} className={classes.avatar} />
+                      ココログ
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="yaplog"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="Yaplog" src={Yaplog} className={classes.avatar} />
+                      Yaplog
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="ninjya"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="忍者" src={Ninjya} className={classes.avatar} />
+                      忍者
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="hatena"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="はてな" src={Hatena} className={classes.avatar} />
+                      はてな
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="webryblog"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="ウェブリブログ" src={Webryblog} className={classes.avatar} />
+                      ウェブリブログ
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="wpcom"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="WordPress.com" src={Wpcom} className={classes.avatar} />
+                      WordPress.com
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    classes={{
+                      root: classes.selectMenuItem,
+                      selected: classes.selectMenuItemSelected
+                    }}
+                    value="goo"
+                  >
+                    <div style={selectAvatarStyle}>
+                      <Avatar alt="gooブログ" src={Goo} className={classes.avatar} />
+                      gooブログ
+                    </div>
                   </MenuItem>
                 </Select>
               </FormControl>
