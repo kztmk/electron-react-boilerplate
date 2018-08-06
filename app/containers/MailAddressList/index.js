@@ -13,6 +13,7 @@ import {
 import MailAddressListPage from '../../components/MailAddressList';
 import { closeConnectionRequest } from '../MailAccount/actions';
 import { getRandomPersonalInfoRequest } from '../PersonalInfo/actions';
+import { createBlogRequest } from '../BlogList/actions';
 
 const mapStateToProps = (state: State) => ({
   mailAccounts: state.MailAddressList.mailAccounts,
@@ -47,6 +48,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startGetRandomPersonalInfo() {
     dispatch(getRandomPersonalInfoRequest());
+  },
+  startCreateBlogAccount(blogAccount) {
+    dispatch(createBlogRequest(blogAccount));
   }
 });
 

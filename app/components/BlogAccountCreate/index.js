@@ -22,7 +22,7 @@ import StepWpcom from './WizardChildren/stepWpcom';
 import StepGoo from './WizardChildren/stepGoo';
 
 type Props = {
-  createMailAccount: () => void,
+  createBlogAccount: () => void,
   cancelAccount: () => void
 };
 

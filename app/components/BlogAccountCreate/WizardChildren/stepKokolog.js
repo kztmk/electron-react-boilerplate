@@ -73,6 +73,44 @@ class StepKokolog extends React.Component<Props, State> {
   }
 
   /**
+   * ブログ作成時に必要な情報を親フォームに送る
+   */
+  sendState = () => {
+    const blogParams = [];
+    blogParams.title = this.state.title;
+    blogParams.description = this.state.description;
+    blogParams.remark = this.state.remark;
+    blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
+    blogParams.question = this.state.questionValue;
+    blogParams.answer = this.state.answer;
+    blogParams.nickName = this.state.nickName;
+
+    return blogParams;
+  };
+
+  /**
+   * キャンセル、完了時にstateを初期化
+   */
+  initState = () => {
+    this.setState({
+      title: '',
+      titleState: '',
+      description: '',
+      descriptionState: '',
+      remark: '',
+      tags: [],
+      question: '',
+      questionValue: '',
+      answer: '',
+      nickName: '',
+      nickNameState: '',
+      answerState: '',
+      errorMessage: '',
+      openErrorSnackbar: false
+    });
+  };
+
+  /**
    * ココログ作成時の秘密の質問
    *
    * @returns {any[]}
@@ -296,37 +334,35 @@ class StepKokolog extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="center">
-            <GridContainer xs={12} sm={10} md={10}>
-              <GridItem xs={12} sm={2} md={2}>
-                <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
-              </GridItem>
-              <GridItem xs={12} sm={4} md={4}>
-                <TagsInput
-                  value={this.state.tags}
-                  tagProps={{ className: 'react-tagsinput-tag info' }}
-                  onChange={this.handleTags}
-                  inputProps={{
-                    className: 'react-tagsinput-input-top-padding',
-                    placeholder: 'ここへタグを追加'
-                  }}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={4} md={4}>
-                <CustomInput
-                  labelText="ニックネーム"
-                  id="nickName"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                  inputProps={{
-                    value: this.state.nickName,
-                    type: 'text',
-                    onChange: event => this.inputFormChange(event, 'nickName')
-                  }}
-                />
-              </GridItem>
-            </GridContainer>
+          <GridContainer container justify="left">
+            <GridItem xs={12} sm={2} md={2}>
+              <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
+            </GridItem>
+            <GridItem xs={12} sm={4} md={4}>
+              <TagsInput
+                value={this.state.tags}
+                tagProps={{ className: 'react-tagsinput-tag info' }}
+                onChange={this.handleTags}
+                inputProps={{
+                  className: 'react-tagsinput-input-top-padding',
+                  placeholder: 'ここへタグを追加'
+                }}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={4} md={4}>
+              <CustomInput
+                labelText="ニックネーム"
+                id="nickName"
+                formControlProps={{
+                  fullWidth: true
+                }}
+                inputProps={{
+                  value: this.state.nickName,
+                  type: 'text',
+                  onChange: event => this.inputFormChange(event, 'nickName')
+                }}
+              />
+            </GridItem>
           </GridContainer>
           <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>

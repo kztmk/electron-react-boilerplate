@@ -32,6 +32,7 @@ import FormMailAddressAdd from './formMailAddressAdd';
 
 import accountListPageStyles from '../../assets/jss/material-dashboard-pro-react/views/accountListPageStyle';
 import WizardViewMail from '../MailAccountCreate';
+import type BlogAccountType from '../../types/blogAccount';
 
 type State = {
   isLoading: boolean,
@@ -54,6 +55,7 @@ type Props = {
   startDeleteMailAccount: (mailAccount: MailAccountType) => void,
   startCloseConnection: () => void,
   startGetRandomPersonalInfo: () => void,
+  startCreateBlogAccount: (blogAccount: BlogAccountType) => void,
   mailAccounts: Array<MailAccountType>,
   isGetting: boolean,
   isCreating: boolean,
@@ -489,6 +491,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                   editAccount={this.props.startUpdateMailAccount}
                   closeEditForm={this.handleCloseEditForm}
                   closeConnection={this.props.startCloseConnection}
+                  createBlogAccount={this.props.startCreateBlogAccount}
                 />
               </CardBody>
             </Card>

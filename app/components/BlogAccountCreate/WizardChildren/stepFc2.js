@@ -22,7 +22,7 @@ import fc2Junre from './data/fc2';
 
 const groupBox = {
   border: '1px solid #333',
-  padding: '20px 0 20px 20px',
+  padding: '0 0 20px 0',
   borderRadius: '20px',
   margin: '20px 0'
 };
@@ -42,7 +42,9 @@ type State = {
   fc2QuestionValue: string,
   fc2Answer: string,
   mainJunre: string,
+  mainJunreValue: string,
   subJunre: string,
+  subJunreValue: string,
   nickName: string,
   nickNameState: string,
   answerState: string,
@@ -80,6 +82,51 @@ class StepFc2 extends React.Component<Props, State> {
       subJunreData: []
     };
   }
+
+  /**
+   * ブログ作成時に必要な情報を親フォームに送る
+   */
+  sendState = () => {
+    const blogParams = [];
+    blogParams.title = this.state.title;
+    blogParams.description = this.state.description;
+    blogParams.remark = this.state.remark;
+    blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
+    blogParams.nickName = this.state.nickName;
+    blogParams.questionValue = this.state.fc2QuestionValue;
+    blogParams.answer = this.state.fc2Answer;
+    blogParams.mainJunre = this.state.mainJunreValue;
+    blogParams.subJunre = this.state.subJunreValue;
+
+    return blogParams;
+  };
+
+  /**
+   * キャンセル、完了時にstateを初期化
+   */
+  initState = () => {
+    this.setState({
+      title: '',
+      titleState: '',
+      description: '',
+      descriptionState: '',
+      remark: '',
+      tags: [],
+      fc2Question: '',
+      fc2QuestionValue: '',
+      fc2Answer: '',
+      mainJunre: '',
+      mainJunreValue: '',
+      subJunre: '',
+      subJunreValue: '',
+      nickName: '',
+      nickNameState: '',
+      answerState: '',
+      errorMessage: '',
+      openErrorSnackbar: false,
+      subJunreData: []
+    });
+  };
 
   /**
    * FC2作成時の秘密の質問の選択枝を作成
@@ -142,7 +189,7 @@ class StepFc2 extends React.Component<Props, State> {
       const { classes } = this.props;
       return mainJunre.sub.map(j => (
         <MenuItem
-          key={j.index}
+          key={j.subJunre}
           classes={{
             root: classes.selectMenuItem,
             selected: classes.selectMenuItemSelected
@@ -376,37 +423,35 @@ class StepFc2 extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="center">
-            <GridContainer xs={12} sm={10} md={10}>
-              <GridItem xs={12} sm={2} md={2}>
-                <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
-              </GridItem>
-              <GridItem xs={12} sm={4} md={4}>
-                <TagsInput
-                  value={this.state.tags}
-                  tagProps={{ className: 'react-tagsinput-tag info' }}
-                  onChange={this.handleTags}
-                  inputProps={{
-                    className: 'react-tagsinput-input-top-padding',
-                    placeholder: 'ここへタグを追加'
-                  }}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={4} md={4}>
-                <CustomInput
-                  labelText="ニックネーム"
-                  id="nickName"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                  inputProps={{
-                    value: this.state.nickName,
-                    type: 'text',
-                    onChange: event => this.inputFormChange(event, 'nickName')
-                  }}
-                />
-              </GridItem>
-            </GridContainer>
+          <GridContainer container justify="left">
+            <GridItem xs={12} sm={2} md={2}>
+              <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
+            </GridItem>
+            <GridItem xs={12} sm={4} md={4}>
+              <TagsInput
+                value={this.state.tags}
+                tagProps={{ className: 'react-tagsinput-tag info' }}
+                onChange={this.handleTags}
+                inputProps={{
+                  className: 'react-tagsinput-input-top-padding',
+                  placeholder: 'ここへタグを追加'
+                }}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={4} md={4}>
+              <CustomInput
+                labelText="ニックネーム"
+                id="nickName"
+                formControlProps={{
+                  fullWidth: true
+                }}
+                inputProps={{
+                  value: this.state.nickName,
+                  type: 'text',
+                  onChange: event => this.inputFormChange(event, 'nickName')
+                }}
+              />
+            </GridItem>
           </GridContainer>
           <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>

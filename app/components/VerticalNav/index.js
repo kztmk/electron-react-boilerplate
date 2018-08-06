@@ -20,6 +20,12 @@ type Props = {
   location: Object
 };
 
+const toolTips = {
+  toolTip: {
+    whiteSpace: 'nowrap'
+  }
+};
+
 const VerticalNav = (props: Props) => {
   // verifies if routeName is the one active
   function activeRoute(routeName) {
@@ -42,12 +48,7 @@ const VerticalNav = (props: Props) => {
           // eslint-disable-next-line react/no-array-index-key
           <NavLink to={prop.path} className={classes.item} activeClassName="active" key={key}>
             <ListItem button className={classes.itemLink + listItemClasses}>
-              <Tooltip
-                className={classes.toolTip}
-                id={prop.id}
-                title={prop.navName}
-                placement="bottom"
-              >
+              <Tooltip id={prop.id} title={prop.navName} placement="bottom">
                 <ListItemIcon className={classes.itemIcon + whiteFontClasses}>
                   <prop.icon />
                 </ListItemIcon>

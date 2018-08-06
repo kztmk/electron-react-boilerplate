@@ -37,6 +37,8 @@ import accountListPageStyle from '../../assets/jss/material-dashboard-pro-react/
 import SweetAlertTitle from '../SweetAlertTitle';
 
 import MailAccount from '../../containers/MailAccount';
+import WizardViewBlog from '../BlogAccountCreate';
+import type BlogAccountType from '../../types/blogAccount';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -49,6 +51,7 @@ type State = {
   targetAccount: ?MailAccountType,
   openEditForm: boolean,
   openMailAccount: boolean,
+  openFormBlogAccountNew: boolean,
   isUpdated: boolean
 };
 
@@ -61,7 +64,8 @@ type Props = {
   deleteAccount: () => void,
   editAccount: () => void,
   closeConnection: () => void,
-  closeEditForm: () => void
+  closeEditForm: () => void,
+  createBlogAccount: (blogAccout: BlogAccountType) => void
 };
 
 const initialMailAccount = {
@@ -122,7 +126,8 @@ class MailAddressList extends React.Component<Props, State> {
       sweetAlert: null,
       mode: 'none',
       openEditForm: false,
-      openMailAccount: false
+      openMailAccount: false,
+      openFormBlogAccountNew: false
     };
   }
 
@@ -287,7 +292,18 @@ class MailAddressList extends React.Component<Props, State> {
             <Button
               justIcon
               onClick={() => {
-                // const obj = this.state.data.find(o => o.key === prop.key);
+                const account = this.state.data.find(o => o.key === prop.key);
+                if (account) {
+                  const target = {
+                    ...account,
+                    tags: '',
+                    createDate: 0,
+                    lastLogin: 0
+                  };
+                  this.createBlogAccount(target);
+                } else {
+                  alert('ブログ作成用メールアカウントの取得に失敗しました。');
+                }
               }}
               size="sm"
               round
@@ -434,6 +450,19 @@ class MailAddressList extends React.Component<Props, State> {
     this.props.closeConnection();
   };
 
+  createBlogAccount = account => {
+    this.setState({
+      targetAccount: account,
+      openFormBlogAccountNew: true
+    });
+  };
+
+  handleCloseFormBlogNew = () => {
+    this.setState({
+      openFormBlogAccountNew: false
+    });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -461,7 +490,6 @@ class MailAddressList extends React.Component<Props, State> {
                       id={row.original.id}
                       title={row.original.provider}
                       placement="right-start"
-                      className={classes.toolTip}
                     >
                       <div>
                         <img height={24} src={getProviderImage(row.original.provider)} alt="" />
@@ -494,7 +522,6 @@ class MailAddressList extends React.Component<Props, State> {
                       id={row.original.id}
                       title={row.original.title}
                       placement="right-start"
-                      className={classes.toolTip}
                     >
                       <div>{row.original.accountId}</div>
                     </Tooltip>
@@ -669,6 +696,38 @@ class MailAddressList extends React.Component<Props, State> {
                   formStatus={this.state.openMailAccount}
                   targetAccount={this.state.targetAccount}
                   closeMailAccount={this.handleCloseMailAccount}
+                />
+              </DialogContent>
+            </Dialog>
+            <Dialog
+              classes={{
+                root: classes.formCenter,
+                paper: `${classes.modal} ${classes.modalSmall}`
+              }}
+              open={this.state.openFormBlogAccountNew}
+              TransitionComponent={Transition}
+              keepMounted
+              onClose={() => this.handleCloseFormBlogNew()}
+            >
+              <Button
+                justIcon
+                className={classes.modalCloseButton}
+                key="close"
+                aria-label="Close"
+                color="transparent"
+                onClick={() => this.handleCloseFormBlogNew()}
+              >
+                <Close className={classes.modalClose} />
+              </Button>
+              <DialogContent
+                id="formMailAddressNewBody"
+                className={`${classes.modalBody} ${classes.modalSmallBody}`}
+              >
+                <WizardViewBlog
+                  mailAccount={this.state.targetAccount}
+                  color="primary"
+                  createBlogAccount={this.props.createBlogAccount}
+                  cancelAccount={this.handleCloseFormBlogNew}
                 />
               </DialogContent>
             </Dialog>

@@ -586,7 +586,7 @@ class Steps00 extends React.Component<Props, State> {
                   inputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Tooltip title="ランダムアカウントIDを再取得" position="bottom">
+                        <Tooltip title="ランダムアカウントIDを再取得">
                           <Button
                             justIcon
                             size="sm"
@@ -616,7 +616,7 @@ class Steps00 extends React.Component<Props, State> {
                   inputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Tooltip title="ランダムパスワードを再取得" position="bottom">
+                        <Tooltip title="ランダムパスワードを再取得">
                           <Button
                             justIcon
                             size="sm"
@@ -672,7 +672,7 @@ class Steps00 extends React.Component<Props, State> {
                   />
                 </GridItem>
                 <GridItem xs={12} sm={2} md={2}>
-                  <Tooltip title="ランダムな個人情報を再取得します。" positions="bottom">
+                  <Tooltip title="ランダムな個人情報を再取得します。">
                     <Button color="primary" onClick={() => this.handleSetRandomData()}>
                       <Refresh />
                       ランダムデータ再取得
@@ -728,7 +728,7 @@ class Steps00 extends React.Component<Props, State> {
                   />
                 </GridItem>
                 <GridItem xs={12} sm={2} md={2}>
-                  <Tooltip title="設定画面で保存した個人情報を読込ます。" positions="bottom">
+                  <Tooltip title="設定画面で保存した個人情報を読込ます。">
                     <Button color="primary" onClick={() => this.handleSetDefaultData()}>
                       <FolderShared />
                       既定のデータを使用

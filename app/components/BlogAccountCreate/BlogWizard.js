@@ -10,12 +10,17 @@ import Card from '@material-ui/core/Card';
 
 // core components
 import Button from '../../ui/CustomButtons/Button';
-
+import Table from '../../ui/Table/Table';
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
+
+const errorStyles = {
+  fontWeight: 'bold',
+  color: '#f00'
+};
 
 type StepsType = {
   stepName: string,
-  stepComponent: Object,
+  stepComponent: React.Node,
   stepId: string
 };
 
@@ -42,11 +47,12 @@ type State = {
   currentStep: number,
   color: 'primary' | 'warning' | 'danger' | 'success' | 'info' | 'rose',
   nextButton: boolean,
-  cancelButton: boolean,
   previousButton: boolean,
   finishButton: boolean,
   width: string,
-  movingTabStyle: Object
+  movingTabStyle: Object,
+  accountInfo: Object,
+  sweetAlert: Object
 };
 
 class BlogWizard extends React.Component<Props, State> {
@@ -60,10 +66,12 @@ class BlogWizard extends React.Component<Props, State> {
       nextButton: this.props.steps.length > 1,
       previousButton: false,
       finishButton: this.props.steps.length === 1,
-      // width: '50%',
+      width: '50%',
       movingTabStyle: {
         transition: 'transform 0s'
-      }
+      },
+      accountInfo: {},
+      sweetAlert: ''
     };
   }
 
@@ -80,7 +88,38 @@ class BlogWizard extends React.Component<Props, State> {
     this.refreshAnimation(this.state.currentStep);
   }
 
+  /**
+   *  click cancel or finish button
+   */
   cancelButtonClick = () => {
+    // 全てのフォームのstateを初期化
+    // 本体
+    this.setState({
+      currentStep: 0,
+      cancelButton: true,
+      nextButton: this.props.steps.length > 1,
+      previousButton: false,
+      finishButton: this.props.steps.length === 1,
+      accountInfo: {},
+      sweetAlert: ''
+    });
+    // steps0-13
+    this[this.props.steps[0].stepId].initState();
+    this[this.props.steps[1].stepId].initState();
+    this[this.props.steps[2].stepId].initState();
+    this[this.props.steps[3].stepId].initState();
+    this[this.props.steps[4].stepId].initState();
+    this[this.props.steps[5].stepId].initState();
+    this[this.props.steps[6].stepId].initState();
+    this[this.props.steps[7].stepId].initState();
+    this[this.props.steps[8].stepId].initState();
+    this[this.props.steps[9].stepId].initState();
+    this[this.props.steps[10].stepId].initState();
+    this[this.props.steps[11].stepId].initState();
+    this[this.props.steps[12].stepId].initState();
+    this[this.props.steps[13].stepId].initState();
+    // tab move to init location
+    this.refreshAnimation(0);
     this.props.cancelButtonClick();
   };
 
@@ -89,65 +128,81 @@ class BlogWizard extends React.Component<Props, State> {
    */
   nextButtonClick = () => {
     if (this[this.props.steps[0].stepId].isValidated()) {
-      console.log('step0 validate true');
       const selectedProvider = this[this.props.steps[0].stepId].getProvider();
       let nextStep = 0;
       switch (selectedProvider) {
         case 'fc2':
-        nextStep = 1;
-        break;
+          nextStep = 1;
+          break;
         case 'webnode':
-        nextStep = 2;
-        break;
+          nextStep = 2;
+          break;
         case 'livedoor':
-        nextStep = 3;
-        break;
+          nextStep = 3;
+          break;
         case 'seesaa':
-        nextStep = 4;
-        break;
+          nextStep = 4;
+          break;
         case 'ameba':
-        nextStep = 5;
-        break;
+          nextStep = 5;
+          break;
         case 'rakuten':
-        nextStep = 6;
-        break;
+          nextStep = 6;
+          break;
         case 'kokolog':
-        nextStep = 7;
-        break;
+          nextStep = 7;
+          break;
         case 'yaplog':
-        nextStep = 8;
-        break;
+          nextStep = 8;
+          break;
         case 'ninjya':
-        nextStep = 9;
-        break;
+          nextStep = 9;
+          break;
         case 'hatena':
-        nextStep = 10;
-        break;
-        case 'webryBlog':
-        nextStep = 11;
-        break;
+          nextStep = 10;
+          break;
+        case 'webryblog':
+          nextStep = 11;
+          break;
         case 'wpcom':
-        nextStep = 12;
-        break;
+          nextStep = 12;
+          break;
         case 'goo':
-        nextStep = 13;
-        break;
+          nextStep = 13;
+          break;
         default:
       }
+      const steps00State = this[this.props.steps[0].stepId].sendState();
       this.setState({
         cancelButton: false,
         currentStep: nextStep,
         nextButton: false,
         previousButton: true,
-        finishButton: true
+        finishButton: true,
+        accountInfo: {
+          provider: steps00State.provider,
+          accountId: steps00State.accountId,
+          password: steps00State.password,
+          lastName: steps00State.lastName,
+          lastNameKana: steps00State.lastNameKana,
+          firstName: steps00State.firstName,
+          firstNameKana: steps00State.firstNameKana,
+          gender: steps00State.gender,
+          birthDate: steps00State.birthDate,
+          postalCode: steps00State.postalCode
+        }
       });
       this.refreshAnimation(nextStep);
     }
   };
 
+  /**
+   *  previous button click on step2
+   */
   previousButtonClick = () => {
     this.setState({
       currentStep: 0,
+      cancelButton: true,
       nextButton: true,
       previousButton: false,
       finishButton: false
@@ -197,7 +252,13 @@ class BlogWizard extends React.Component<Props, State> {
     }
     return (
       <li className={classes.steps} key={-1} style={{ width: '50%' }}>
-        <a className={classes.stepsAnchor} onClick={() => this.previousButtonClick()}>
+        <a
+          className={classes.stepsAnchor}
+          onClick={() => this.previousButtonClick()}
+          role="button"
+          tabIndex="0"
+          onKeyPress={() => this.previousButtonClick()}
+        >
           ブログ追加情報
         </a>
       </li>

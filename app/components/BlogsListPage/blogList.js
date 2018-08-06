@@ -442,7 +442,6 @@ class BlogList extends React.Component<Props, State> {
                       id={row.original.id}
                       title={row.original.description}
                       placement="right-start"
-                      className={classes.toolTip}
                     >
                       <div>{row.original.title}</div>
                     </Tooltip>

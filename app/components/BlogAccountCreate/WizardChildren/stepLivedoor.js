@@ -68,6 +68,39 @@ class StepLivedoor extends React.Component<Props, State> {
   }
 
   /**
+   * ブログ作成時に必要な情報を親フォームに送る
+   */
+  sendState = () => {
+    const blogParams = [];
+    blogParams.title = this.state.title;
+    blogParams.description = this.state.description;
+    blogParams.remark = this.state.remark;
+    blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
+    blogParams.useDomain = this.state.useDomain;
+    blogParams.domain = this.state.domain;
+
+    return blogParams;
+  };
+
+  /**
+   * キャンセル、完了時にstateを初期化
+   */
+  initState = () => {
+    this.setState({
+      title: '',
+      titleState: '',
+      description: '',
+      descriptionState: '',
+      remark: '',
+      useDomain: false,
+      domain: 'livedoor.jp',
+      tags: [],
+      errorMessage: '',
+      openErrorSnackbar: false
+    });
+  };
+
+  /**
    * ドメイン選択枝作成
    *
    * @returns {any[]}
@@ -287,23 +320,21 @@ class StepLivedoor extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="center">
-            <GridContainer xs={12} sm={10} md={10}>
-              <GridItem xs={12} sm={2} md={2}>
-                <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
-              </GridItem>
-              <GridItem xs={12} sm={4} md={4}>
-                <TagsInput
-                  value={this.state.tags}
-                  tagProps={{ className: 'react-tagsinput-tag info' }}
-                  onChange={this.handleTags}
-                  inputProps={{
-                    className: 'react-tagsinput-input-top-padding',
-                    placeholder: 'ここへタグを追加'
-                  }}
-                />
-              </GridItem>
-            </GridContainer>
+          <GridContainer container justify="left">
+            <GridItem xs={12} sm={2} md={2}>
+              <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
+            </GridItem>
+            <GridItem xs={12} sm={4} md={4}>
+              <TagsInput
+                value={this.state.tags}
+                tagProps={{ className: 'react-tagsinput-tag info' }}
+                onChange={this.handleTags}
+                inputProps={{
+                  className: 'react-tagsinput-input-top-padding',
+                  placeholder: 'ここへタグを追加'
+                }}
+              />
+            </GridItem>
           </GridContainer>
           <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>

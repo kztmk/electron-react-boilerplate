@@ -43,12 +43,7 @@ class LogoutButton extends React.Component<Props> {
     const { classes } = this.props;
     return (
       <div>
-        <Tooltip
-          className={classes.toolTip}
-          id="nav-icon-logout"
-          title="ログアウト"
-          placement="bottom"
-        >
+        <Tooltip id="nav-icon-logout" title="ログアウト" placement="bottom">
           <IconButton
             className={classes.iconButton}
             onClick={this.handleOpenModal}
