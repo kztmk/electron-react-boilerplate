@@ -13,7 +13,6 @@ import webpack from 'webpack';
 import chalk from 'chalk';
 import merge from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from './internals/scripts/CheckNodeEnv';
 
@@ -31,10 +30,10 @@ const requiredByDLLConfig = module.parent.filename.includes('webpack.config.rend
 if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
   console.log(
     chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
+      'The DLL files are missing. Sit back while we build them for you with "yarn build-dll"'
     )
   );
-  execSync('npm run build-dll');
+  execSync('yarn build-dll');
 }
 
 export default merge.smart(baseConfig, {
@@ -236,10 +235,6 @@ export default merge.smart(baseConfig, {
 
     new webpack.LoaderOptionsPlugin({
       debug: true
-    }),
-
-    new ExtractTextPlugin({
-      filename: '[name].css'
     })
   ],
 

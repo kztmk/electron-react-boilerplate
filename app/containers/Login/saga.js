@@ -71,8 +71,10 @@ function* requestLogin() {
       email: authInfo.mailAddress,
       password: authInfo.password
     });
+    console.log('user:');
+    console.log(user);
 
-    yield put(loginSuccess({ ...authInfo, userId: user.uid }));
+    yield put(loginSuccess({ ...authInfo, userId: user.user.uid }));
     // ログインに成功した場合、profileを取得する。
     // yield put(getProfileRequest());
     // TODO: settingsを取得

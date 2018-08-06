@@ -55,3 +55,6 @@ __snapshots__
 
 # 3rd pirty modules
 app/ui
+# Package.json
+package.json
+.travis.yml

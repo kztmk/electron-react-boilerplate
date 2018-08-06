@@ -2,7 +2,7 @@ import Home from '@material-ui/icons/Home';
 import MailOutline from '@material-ui/icons/MailOutline';
 import Web from '@material-ui/icons/Web';
 import AccountBox from '@material-ui/icons/AccountBox';
-import Settings from '@material-ui/icons/Settings';
+import Settings from '@material-ui/icons/SettingsSharp';
 import HomePage from '../containers/HomePage';
 import BlogsListPage from '../containers/BlogList';
 import MailAddressListPage from '../containers/MailAddressList';
