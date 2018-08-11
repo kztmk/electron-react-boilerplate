@@ -38,7 +38,10 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+if (
+  process.env.NODE_ENV === 'development' ||
+  process.env.DEBUG_PROD === 'true'
+) {
   require('electron-debug')();
   const path = require('path');
   const p = path.join(__dirname, '..', 'app', 'node_modules');
@@ -71,13 +74,15 @@ const openImportMailAccountFile = () => {
  * saveFileDialogの表示
  * 受取ったtextをfileManagerで書込
  */
-const saveAsNewFileToErrorMailAccount = () => {
-  return Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorMailJsonFile()])
+const saveAsNewFileToErrorMailAccount = () =>
+  Promise.all([
+    showSaveAsNewFileDialog(),
+    mainWindow.requestErrorMailJsonFile()
+  ])
     .then(([filePath, text]) => fileManager.saveFile(filePath, text))
     .catch(error => {
       console.log(error);
     });
-};
 
 /**
  * FileOpenDialogの表示
@@ -95,13 +100,15 @@ const openImportBlogAccountFile = () => {
  * saveFileDialogの表示
  * 受取ったtextをfileManagerで書込
  */
-const saveAsNewFileToErrorBlogAccount = () => {
-  return Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorBlogJsonFile()])
+const saveAsNewFileToErrorBlogAccount = () =>
+  Promise.all([
+    showSaveAsNewFileDialog(),
+    mainWindow.requestErrorBlogJsonFile()
+  ])
     .then(([filePath, text]) => fileManager.saveFile(filePath, text))
     .catch(error => {
       console.log(error);
     });
-};
 
 /**
  * Add event listeners...
@@ -117,7 +124,10 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', async () => {
-  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+  if (
+    process.env.NODE_ENV === 'development' ||
+    process.env.DEBUG_PROD === 'true'
+  ) {
     await installExtensions();
   }
 

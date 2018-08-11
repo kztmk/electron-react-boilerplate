@@ -47,7 +47,12 @@ function* passwordReset() {
 
     yield put(resetPasswordSuccess());
   } catch (error) {
-    yield put(resetPasswordFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
+    yield put(
+      resetPasswordFailure({
+        ...authInfo,
+        errorMessage: getErrorMessage(error)
+      })
+    );
   }
 }
 

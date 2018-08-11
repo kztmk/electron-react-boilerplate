@@ -252,7 +252,7 @@ class StepWebryBlog extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="left">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={2} md={2}>
               <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
             </GridItem>

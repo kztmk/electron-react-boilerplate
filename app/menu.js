@@ -129,7 +129,11 @@ function buildDarwinTemplate() {
   const subMenuWindow = {
     label: 'Window',
     submenu: [
-      { label: 'Minimize', accelerator: 'Command+M', selector: 'performMiniaturize:' },
+      {
+        label: 'Minimize',
+        accelerator: 'Command+M',
+        selector: 'performMiniaturize:'
+      },
       { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
       { type: 'separator' },
       { label: 'Bring All to Front', selector: 'arrangeInFront:' }
@@ -164,7 +168,8 @@ function buildDarwinTemplate() {
       }
     ]
   };
-  const subMenuView = process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
+  const subMenuView =
+    process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
 
   return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
 }
@@ -203,7 +208,9 @@ function buildDefaultTemplate() {
                 label: 'Toggle &Full Screen',
                 accelerator: 'F11',
                 click: () => {
-                  this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+                  this.mainWindow.setFullScreen(
+                    !this.mainWindow.isFullScreen()
+                  );
                 }
               },
               {
@@ -219,7 +226,9 @@ function buildDefaultTemplate() {
                 label: 'Toggle &Full Screen',
                 accelerator: 'F11',
                 click: () => {
-                  this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+                  this.mainWindow.setFullScreen(
+                    !this.mainWindow.isFullScreen()
+                  );
                 }
               }
             ]

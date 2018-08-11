@@ -39,6 +39,7 @@ class LogoutButton extends React.Component<Props> {
     this.setState({ modalOpen: false });
     this.props.logoutStart();
   };
+
   render() {
     const { classes } = this.props;
     return (
@@ -59,16 +60,20 @@ class LogoutButton extends React.Component<Props> {
                 <CardHeader text color="primary">
                   <CardText color="primary">
                     <h4 className={classes.cardTitleWhite}>ログアウト</h4>
-                    <h4 className={classes.cardCategoryWhite}>ログアウトしますか？</h4>
+                    <h4 className={classes.cardCategoryWhite}>
+                      ログアウトしますか？
+                    </h4>
                   </CardText>
                 </CardHeader>
                 <CardFooter>
                   <GridItem xs={12} sm={10} md={12} container justify="center">
                     <Button onClick={this.handleCloseModal}>
-                      <Cancel />キャンセル
+                      <Cancel />
+                      キャンセル
                     </Button>
                     <Button color="primary" onClick={this.handleClickLogout}>
-                      <LogoutIcon />ログアウト
+                      <LogoutIcon />
+                      ログアウト
                     </Button>
                   </GridItem>
                 </CardFooter>

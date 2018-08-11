@@ -160,9 +160,13 @@ class BlogList extends React.Component<Props, State> {
               title="削除完了"
               onConfirm={() => this.hideAlert()}
               onCancel={() => this.hideAlert()}
-              confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+              confirmBtnCssClass={`${this.props.classes.button} ${
+                this.props.classes.success
+              }`}
             >
-              ブログ:{this.state.targetAccount.title}を削除しました。
+              ブログ:
+              {this.state.targetAccount.title}
+              を削除しました。
             </SweetAlert>
           )
         });
@@ -177,9 +181,12 @@ class BlogList extends React.Component<Props, State> {
               title="削除失敗"
               onConfirm={() => this.hideAlert()}
               onCancel={() => this.hideAlert()}
-              confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+              confirmBtnCssClass={`${this.props.classes.button} ${
+                this.props.classes.success
+              }`}
             >
-              削除エラー:{nextProps.errorMessage}
+              削除エラー:
+              {nextProps.errorMessage}
             </SweetAlert>
           )
         });
@@ -239,7 +246,9 @@ class BlogList extends React.Component<Props, State> {
                 const account = this.state.data.find(o => o.key === prop.key);
                 if (account) {
                   const restoredTags =
-                    account.groupTags.length > 0 ? account.groupTags.join(',') : '';
+                    account.groupTags.length > 0
+                      ? account.groupTags.join(',')
+                      : '';
                   const target = {
                     ...account,
                     groupTags: restoredTags,
@@ -311,7 +320,9 @@ class BlogList extends React.Component<Props, State> {
           title="キャンセル"
           onConfirm={() => this.hideAlert()}
           onCancel={() => this.hideAlert()}
-          confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+          confirmBtnCssClass={`${this.props.classes.button} ${
+            this.props.classes.success
+          }`}
         >
           ブログ削除をキャンセルしました。
         </SweetAlert>
@@ -343,11 +354,21 @@ class BlogList extends React.Component<Props, State> {
         <SweetAlert
           warning
           style={{ display: 'block', marginTop: '-100px' }}
-          title={<SweetAlertTitle row1="ブログ:" elmWord={account.title} row2="を削除しますか？" />}
+          title={
+            <SweetAlertTitle
+              row1="ブログ:"
+              elmWord={account.title}
+              row2="を削除しますか？"
+            />
+          }
           onConfirm={() => this.proceedDelete(account)}
           onCancel={() => this.cancelDelete()}
-          confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
-          cancelBtnCssClass={`${this.props.classes.button} ${this.props.classes.danger}`}
+          confirmBtnCssClass={`${this.props.classes.button} ${
+            this.props.classes.success
+          }`}
+          cancelBtnCssClass={`${this.props.classes.button} ${
+            this.props.classes.danger
+          }`}
           confirmBtnText="はい、削除します。"
           cancelBtnText="キャンセル"
           showCancel
@@ -382,7 +403,11 @@ class BlogList extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <Loadable active={this.state.mode === 'delete'} spinner text="サーバーと通信中・・・・">
+      <Loadable
+        active={this.state.mode === 'delete'}
+        spinner
+        text="サーバーと通信中・・・・"
+      >
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <ReactTable
@@ -402,7 +427,11 @@ class BlogList extends React.Component<Props, State> {
                   accessor: 'provider',
                   Cell: row => (
                     <div>
-                      <img height={24} src={getBlogProviderImage(row.original.provider)} alt="" />
+                      <img
+                        height={24}
+                        src={getBlogProviderImage(row.original.provider)}
+                        alt=""
+                      />
                     </div>
                   ),
                   width: 60,
@@ -551,7 +580,10 @@ class BlogList extends React.Component<Props, State> {
                   <Close className={classes.modalClose} />
                 </Button>
               </DialogTitle>
-              <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
+              <DialogContent
+                id="notice-modal-slide-description"
+                className={classes.modalBody}
+              >
                 <FormBlogEdit
                   mode={this.props.mode}
                   errorMessage={this.props.errorMessage}

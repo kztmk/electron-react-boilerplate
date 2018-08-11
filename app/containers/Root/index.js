@@ -6,7 +6,10 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/';
 import { ConnectedRouter } from 'react-router-redux';
 import { Router, Switch, Route } from 'react-router-dom';
 import defRoute from '../../routes/defRoute';
-import { primaryColor, dangerColor } from '../../assets/jss/material-dashboard-pro-react';
+import {
+  primaryColor,
+  dangerColor
+} from '../../assets/jss/material-dashboard-pro-react';
 
 type Props = {
   store: {},
@@ -39,7 +42,11 @@ export default class Root extends Component<Props> {
             <Router history={this.props.history}>
               <Switch>
                 {defRoute.map((prop, key) => (
-                  <Route path={prop.path} component={prop.component} key={key} />
+                  <Route
+                    path={prop.path}
+                    component={prop.component}
+                    key={key}
+                  />
                 ))}
               </Switch>
             </Router>

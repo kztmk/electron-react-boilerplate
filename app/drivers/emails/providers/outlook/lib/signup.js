@@ -295,7 +295,10 @@ const signup = async (user, opts) => {
       do {
         // in case of left previous input
         await page.focus('#hipTemplateContainer input');
-        const inputCaptcha = await page.$eval('#hipTemplateContainer input', elm => elm.value);
+        const inputCaptcha = await page.$eval(
+          '#hipTemplateContainer input',
+          elm => elm.value
+        );
         if (inputCaptcha && inputCaptcha.length > 0) {
           await page.focus('#hipTemplateContainer input');
           // eslint-disable-next-line no-plusplus
@@ -343,7 +346,9 @@ const signup = async (user, opts) => {
         text: '${captchaValue.value}を入力' 
       }).show();
     `);
-        await page.type('#hipTemplateContainer input', captchaValue.value, { delay: 40 });
+        await page.type('#hipTemplateContainer input', captchaValue.value, {
+          delay: 40
+        });
 
         log.info(`input:[画像認証]-${captchaValue.value}`);
         await page.evaluate(`
@@ -391,7 +396,9 @@ const signup = async (user, opts) => {
     // -----------------
 
     await delay(500);
-    await page.goto('https://www.outlook.com/?refd=account.microsoft.com&fref=home.banner.profile');
+    await page.goto(
+      'https://www.outlook.com/?refd=account.microsoft.com&fref=home.banner.profile'
+    );
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -413,7 +420,7 @@ const signup = async (user, opts) => {
 
     // keep pressing next...
     while (true) {
-      if (!await page.$('.dialog button.nextButton')) break;
+      if (!(await page.$('.dialog button.nextButton'))) break;
       await page.evaluate(`
     new Noty({
         type: 'success',

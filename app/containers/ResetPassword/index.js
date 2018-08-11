@@ -17,4 +17,7 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(FormResetPassword);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FormResetPassword);

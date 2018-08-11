@@ -41,9 +41,7 @@ type State = {
   remark: string,
   tags: Array<string>,
   occupation: string,
-  occupationValue: string,
   category: string,
-  categoryValue: string,
   nickName: string,
   nickNameState: string,
   spouse: string,
@@ -67,9 +65,7 @@ class StepSeesaa extends React.Component<Props, State> {
       remark: '',
       tags: [],
       occupation: '',
-      occupationValue: '',
       category: '',
-      categoryValue: '',
       nickName: '',
       nickNameState: '',
       spouse: 'S',
@@ -109,9 +105,7 @@ class StepSeesaa extends React.Component<Props, State> {
       remark: '',
       tags: [],
       occupation: '',
-      occupationValue: '',
       category: '',
-      categoryValue: '',
       nickName: '',
       nickNameState: '',
       spouse: 'S',
@@ -148,7 +142,7 @@ class StepSeesaa extends React.Component<Props, State> {
           root: classes.selectMenuItem,
           selected: classes.selectMenuItemSelected
         }}
-        value={q}
+        value={q.val}
       >
         {q.occupation}
       </MenuItem>
@@ -213,7 +207,7 @@ class StepSeesaa extends React.Component<Props, State> {
           root: classes.selectMenuItem,
           selected: classes.selectMenuItemSelected
         }}
-        value={j}
+        value={j.val}
       >
         {j.category}
       </MenuItem>
@@ -227,8 +221,7 @@ class StepSeesaa extends React.Component<Props, State> {
    */
   handleOccupationSelected = event => {
     this.setState({
-      occupation: event.target.value.occupation,
-      occupationValue: event.target.value.val
+      occupation: event.target.value
     });
   };
 
@@ -238,8 +231,7 @@ class StepSeesaa extends React.Component<Props, State> {
    */
   handleCategorySelected = event => {
     this.setState({
-      category: event.target.value.category,
-      categoryValue: event.target.value.val
+      category: event.target.value
     });
   };
 
@@ -422,7 +414,7 @@ class StepSeesaa extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="left">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={2} md={2}>
               <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
             </GridItem>

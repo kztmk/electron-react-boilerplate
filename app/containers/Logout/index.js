@@ -10,4 +10,7 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   }
 });
 
-export default connect(null, mapDispatchToProps)(LogoutButton);
+export default connect(
+  null,
+  mapDispatchToProps
+)(LogoutButton);

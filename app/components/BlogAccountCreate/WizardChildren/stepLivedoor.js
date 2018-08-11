@@ -320,7 +320,7 @@ class StepLivedoor extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="left">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={2} md={2}>
               <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
             </GridItem>
@@ -336,7 +336,7 @@ class StepLivedoor extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="center">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={4} md={4}>
               <div className={`${classes.checkboxAndRadio} ${classes.checkboxAndRadioHorizontal}`}>
                 <FormControlLabel

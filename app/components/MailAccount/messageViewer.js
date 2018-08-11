@@ -18,8 +18,14 @@ import CardText from '../../ui/Card/CardText';
 import CardBody from '../../ui/Card/CardBody';
 import text2Html from '../../utils/text2html';
 
-import type { ImapFlagsArgsType, MailRowMessageType } from '../../types/mailMessageType';
-import { cardTitle, primaryColor } from '../../assets/jss/material-dashboard-pro-react';
+import type {
+  ImapFlagsArgsType,
+  MailRowMessageType
+} from '../../types/mailMessageType';
+import {
+  cardTitle,
+  primaryColor
+} from '../../assets/jss/material-dashboard-pro-react';
 
 // eslint-disable-next-line prefer-destructuring
 const MailParser = require('mailparser-mit').MailParser;
@@ -126,7 +132,9 @@ class MessageViewer extends Component<Props, State> {
   componentWillReceiveProps = nextProps => {
     // page更新 or path更新
     console.log(`now-seq:${this.state.seqFrom}-path:${this.state.boxPath}`);
-    console.log(`new-seq:${nextProps.imapSeqFrom}-path:${nextProps.imapSelectMailBoxPath}`);
+    console.log(
+      `new-seq:${nextProps.imapSeqFrom}-path:${nextProps.imapSelectMailBoxPath}`
+    );
     // select mailbox path or paging change
     if (
       this.state.seqFrom !== nextProps.imapSeqFrom ||
@@ -194,7 +202,9 @@ class MessageViewer extends Component<Props, State> {
   getSender = senders => {
     let addressFormat = '';
     if (senders.length > 0) {
-      const arraySenders = senders.map(sender => `${sender.name}<${sender.address}>`);
+      const arraySenders = senders.map(
+        sender => `${sender.name}<${sender.address}>`
+      );
       addressFormat = arraySenders.join(',');
     }
     return addressFormat;
@@ -309,7 +319,10 @@ class MessageViewer extends Component<Props, State> {
       newPageTopSeq = 25 * selectedPage;
     }
     const newSeqFrom = this.state.mailCount - newPageTopSeq;
-    this.props.selectImapMailBoxPage({ path: this.state.boxPath, seqFrom: newSeqFrom });
+    this.props.selectImapMailBoxPage({
+      path: this.state.boxPath,
+      seqFrom: newSeqFrom
+    });
   };
 
   /**
@@ -349,7 +362,9 @@ class MessageViewer extends Component<Props, State> {
             }
 
             // attachment.contentId名で、該当コンテンツを取得
-            const attachment = mail.attachments.find(attach => attach.contentId === fileName);
+            const attachment = mail.attachments.find(
+              attach => attach.contentId === fileName
+            );
             // コンテンツが見つかった場合
             if (attachment) {
               // コンテンツの位置がinline
@@ -358,7 +373,9 @@ class MessageViewer extends Component<Props, State> {
                 const base64 = attachment.content.toString('base64');
                 const type = attachment.contentType;
                 // 正規表現キャプチャで元htmlが消えているため、key: contentID, value: 置き換えコンテンツを作成
-                inlineFiles[`src="cid:${fileName}"`] = `src="data:${type};base64,${base64}" `;
+                inlineFiles[
+                  `src="cid:${fileName}"`
+                ] = `src="data:${type};base64,${base64}" `;
               }
             }
           }
@@ -372,9 +389,9 @@ class MessageViewer extends Component<Props, State> {
 
         this.setState({
           displaySubject: message.subject,
-          displaySubtitle: `送信元:${this.getSender(message.from)}    受信日時:${moment(
-            message.date
-          ).format('YYYY/MM/DD HH:mm')}`,
+          displaySubtitle: `送信元:${this.getSender(
+            message.from
+          )}    受信日時:${moment(message.date).format('YYYY/MM/DD HH:mm')}`,
           displayMessage: mailBody
         });
 
@@ -472,7 +489,9 @@ class MessageViewer extends Component<Props, State> {
                   this.isSeenMessage(row.original.uid) ? (
                     <span style={{ fontSize: 12 }}>{row.original.subject}</span>
                   ) : (
-                    <span style={{ fontSize: 12, fontWeight: 'bold' }}>{row.original.subject}</span>
+                    <span style={{ fontSize: 12, fontWeight: 'bold' }}>
+                      {row.original.subject}
+                    </span>
                   ),
                 minWidth: 200,
                 filterable: true,
@@ -505,7 +524,8 @@ class MessageViewer extends Component<Props, State> {
                     style={{ fontSize: 12 }}
                   />
                 ),
-                filterMethod: (filter, rows) => matchSorter(rows, filter.value, { keys: ['from'] }),
+                filterMethod: (filter, rows) =>
+                  matchSorter(rows, filter.value, { keys: ['from'] }),
                 filterAll: true
               },
               {
@@ -522,7 +542,8 @@ class MessageViewer extends Component<Props, State> {
                     style={{ fontSize: 12 }}
                   />
                 ),
-                filterMethod: (filter, rows) => matchSorter(rows, filter.value, { keys: ['date'] }),
+                filterMethod: (filter, rows) =>
+                  matchSorter(rows, filter.value, { keys: ['date'] }),
                 filterAll: true
               },
               {
@@ -558,12 +579,22 @@ class MessageViewer extends Component<Props, State> {
           <Card>
             <CardHeader>
               <CardText color="rose">
-                <h4 className={classes.cardTitleWhite}>{this.state.displaySubject}</h4>
-                <h4 className={classes.cardCategoryWhite}>{this.state.displaySubtitle}</h4>
+                <h4 className={classes.cardTitleWhite}>
+                  {this.state.displaySubject}
+                </h4>
+                <h4 className={classes.cardCategoryWhite}>
+                  {this.state.displaySubtitle}
+                </h4>
               </CardText>
             </CardHeader>
             <CardBody>
-              {<div dangerouslySetInnerHTML={{ __html: this.state.displayMessage }} />}
+              {
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: this.state.displayMessage
+                  }}
+                />
+              }
             </CardBody>
           </Card>
         </GridItem>

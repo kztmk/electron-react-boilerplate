@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unused-state */
+/* eslint-disable react/no-unused-state,react/destructuring-assignment */
 // @flow
 import React from 'react';
 import TagsInput from 'react-tagsinput';
@@ -229,7 +229,7 @@ class StepGoo extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="left">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={2} md={2}>
               <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
             </GridItem>

@@ -14,7 +14,9 @@ test('handle SET_AUTH_INFO', () => {
     mailAddress: 'example@example.com',
     password: 'abc123'
   };
-  expect(reducer(initialState, actions.setAuthInfo(logInInfo))).toMatchSnapshot();
+  expect(
+    reducer(initialState, actions.setAuthInfo(logInInfo))
+  ).toMatchSnapshot();
 });
 
 test('handle LOGIN_REQUEST', () => {

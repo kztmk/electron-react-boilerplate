@@ -62,7 +62,9 @@ class FormMailAddressEdit extends Component<Props, State> {
     super(props);
 
     const tagArray =
-      this.props.targetAccount.tags.length > 0 ? this.props.targetAccount.tags.split(',') : [];
+      this.props.targetAccount.tags.length > 0
+        ? this.props.targetAccount.tags.split(',')
+        : [];
     this.state = {
       password: this.props.targetAccount.password,
       tags: tagArray,
@@ -85,7 +87,9 @@ class FormMailAddressEdit extends Component<Props, State> {
     if (nextProps.mode === 'update' && this.state.isUpdated) {
       // propsのtargetAccountが持つtagsは文字列のため、「,」で区切り、配列を取得
       const tagArray =
-        nextProps.targetAccount.tags.length > 0 ? nextProps.targetAccount.tags.split(',') : [];
+        nextProps.targetAccount.tags.length > 0
+          ? nextProps.targetAccount.tags.split(',')
+          : [];
 
       // 表示処理、更新 成功、更新失敗でdialogの表示・非表示の切り分け
       let isUpdateSuccess = false;
@@ -138,7 +142,9 @@ class FormMailAddressEdit extends Component<Props, State> {
                 title="更新完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+                confirmBtnCssClass={`${this.props.classes.button} ${
+                  this.props.classes.success
+                }`}
               >
                 {msg}
               </SweetAlert>
@@ -158,7 +164,9 @@ class FormMailAddressEdit extends Component<Props, State> {
                 title="更新失敗"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+                confirmBtnCssClass={`${this.props.classes.button} ${
+                  this.props.classes.success
+                }`}
               >
                 {msg}
               </SweetAlert>
@@ -170,7 +178,9 @@ class FormMailAddressEdit extends Component<Props, State> {
       }
     } else if (this.props.formStatus) {
       const tagArray =
-        nextProps.targetAccount.tags.length > 0 ? nextProps.targetAccount.tags.split(',') : [];
+        nextProps.targetAccount.tags.length > 0
+          ? nextProps.targetAccount.tags.split(',')
+          : [];
       this.setState({
         password: nextProps.targetAccount.password,
         tags: tagArray,
@@ -227,15 +237,25 @@ class FormMailAddressEdit extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <Loadable active={this.state.isUpdated} spinner text="サーバーと通信中・・・・">
+      <Loadable
+        active={this.state.isUpdated}
+        spinner
+        text="サーバーと通信中・・・・"
+      >
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
               <CardHeader color="primary" text>
                 <CardText color="primary">
-                  <h4 className={classes.cardTitle}>メールアカウント情報　編集</h4>
+                  <h4 className={classes.cardTitle}>
+                    メールアカウント情報　編集
+                  </h4>
                 </CardText>
-                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
+                <GridItem
+                  xs={12}
+                  sm={6}
+                  className={classes.labelHorizontalLessUpperSpace}
+                >
                   <div className={classes.buttonGroupStyle}>
                     <div className={classes.buttonGroup}>
                       <Button
@@ -263,7 +283,9 @@ class FormMailAddressEdit extends Component<Props, State> {
                   <form>
                     <GridContainer>
                       <GridItem xs={12} sm={3}>
-                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                        <FormLabel
+                          className={classes.labelHorizontalLessUpperSpace}
+                        >
                           メールアドレス:
                         </FormLabel>
                       </GridItem>
@@ -284,14 +306,18 @@ class FormMailAddressEdit extends Component<Props, State> {
                       <GridItem xs={12} sm={1}>
                         <img
                           style={providerImageStyle}
-                          src={getProviderImage(this.props.targetAccount.provider)}
+                          src={getProviderImage(
+                            this.props.targetAccount.provider
+                          )}
                           alt={this.props.targetAccount.provider}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={3}>
-                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                        <FormLabel
+                          className={classes.labelHorizontalLessUpperSpace}
+                        >
                           パスワード:
                         </FormLabel>
                       </GridItem>
@@ -312,7 +338,9 @@ class FormMailAddressEdit extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={3}>
-                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                        <FormLabel
+                          className={classes.labelHorizontalLessUpperSpace}
+                        >
                           作成日時:
                         </FormLabel>
                       </GridItem>
@@ -328,7 +356,9 @@ class FormMailAddressEdit extends Component<Props, State> {
                             placeholder: 'Disabled',
                             disabled: true,
                             // eslint-disable-next-line function-paren-newline
-                            value: moment(this.props.targetAccount.createDate).format(
+                            value: moment(
+                              this.props.targetAccount.createDate
+                            ).format(
                               'YYYY/MM/DD HH:mm'
                               // eslint-disable-next-line function-paren-newline
                             )
@@ -336,7 +366,9 @@ class FormMailAddressEdit extends Component<Props, State> {
                         />
                       </GridItem>
                       <GridItem xs={12} sm={3}>
-                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                        <FormLabel
+                          className={classes.labelHorizontalLessUpperSpace}
+                        >
                           最終ログイン:
                         </FormLabel>
                       </GridItem>
@@ -354,9 +386,9 @@ class FormMailAddressEdit extends Component<Props, State> {
                             value:
                               this.props.targetAccount.lastLogin === 0
                                 ? 'ログインなし'
-                                : moment(this.props.targetAccount.lastLogin).format(
-                                    'YYYY/MM/DD HH:mm'
-                                  )
+                                : moment(
+                                    this.props.targetAccount.lastLogin
+                                  ).format('YYYY/MM/DD HH:mm')
                           }}
                         />
                       </GridItem>
@@ -378,7 +410,10 @@ class FormMailAddressEdit extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem>
-                        <Table tableHead={['---詳細情報---']} tableData={this.state.data} />
+                        <Table
+                          tableHead={['---詳細情報---']}
+                          tableData={this.state.data}
+                        />
                       </GridItem>
                     </GridContainer>
                   </form>

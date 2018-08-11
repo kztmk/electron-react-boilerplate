@@ -38,6 +38,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginForm);
 
 // export default connector(LoginForm);

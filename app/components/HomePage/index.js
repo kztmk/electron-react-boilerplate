@@ -99,7 +99,9 @@ class HomePage extends React.Component<Props, State> {
           {(() =>
             this.state.isRequestPasswordReset ? (
               <FormResetPassword
-                cancelRequestPasswordReset={this.handleCancelRequestPasswordReset}
+                cancelRequestPasswordReset={
+                  this.handleCancelRequestPasswordReset
+                }
                 openLoginSuccessSnackbar={this.handleSuccessSnackbarOpen}
               />
             ) : (

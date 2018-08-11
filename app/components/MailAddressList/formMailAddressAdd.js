@@ -95,8 +95,16 @@ class FormMailAddressAdd extends Component<Props, State> {
 
   componentWillReceiveProps = nextProps => {
     // eslint-disable-next-line function-paren-newline
-    console.log(`add formState- this:${this.props.formStatus}-next:${nextProps.formStatus}`);
-    console.log(`add form issFailure-this:${this.props.isFailure}--next:${nextProps.isFailure}`);
+    console.log(
+      `add formState- this:${this.props.formStatus}-next:${
+        nextProps.formStatus
+      }`
+    );
+    console.log(
+      `add form issFailure-this:${this.props.isFailure}--next:${
+        nextProps.isFailure
+      }`
+    );
     console.log(`this-mode:${this.props.mode}--nextMode::${nextProps.mode}`);
     console.log(`next errorMessage:${nextProps.metaMessage}`);
     // formを開くときに初期化
@@ -236,7 +244,10 @@ class FormMailAddressAdd extends Component<Props, State> {
     }
 
     if (this.state.provider !== 'Yahoo' && this.state.provider !== 'Outlook') {
-      this.setState({ errorMessage: 'メール提供元を選択してください。', openErrorDialog: true });
+      this.setState({
+        errorMessage: 'メール提供元を選択してください。',
+        openErrorDialog: true
+      });
       return;
     }
 
@@ -276,7 +287,11 @@ class FormMailAddressAdd extends Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・・">
+      <Loadable
+        active={this.state.isLoading}
+        spinner
+        text="サーバーと通信中・・・・"
+      >
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
@@ -284,7 +299,11 @@ class FormMailAddressAdd extends Component<Props, State> {
                 <CardText color="primary">
                   <h4 className={classes.cardTitle}>メールアドレス追加</h4>
                 </CardText>
-                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
+                <GridItem
+                  xs={12}
+                  sm={6}
+                  className={classes.labelHorizontalLessUpperSpace}
+                >
                   <div className={classes.buttonGroupStyle}>
                     <div className={classes.buttonGroup}>
                       <Button
@@ -313,8 +332,14 @@ class FormMailAddressAdd extends Component<Props, State> {
                     <GridContainer>
                       <GridItem xs={12} sm={2} />
                       <GridItem xs={12} sm={4}>
-                        <FormControl fullWidth className={classes.selectFormControl}>
-                          <InputLabel htmlFor="select-provider" className={classes.selectLabel}>
+                        <FormControl
+                          fullWidth
+                          className={classes.selectFormControl}
+                        >
+                          <InputLabel
+                            htmlFor="select-provider"
+                            className={classes.selectLabel}
+                          >
                             提供元：
                           </InputLabel>
                           <Select
@@ -340,7 +365,11 @@ class FormMailAddressAdd extends Component<Props, State> {
                               value="Yahoo"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="Yahoo" src={Yahoo} className={classes.avatar} />
+                                <Avatar
+                                  alt="Yahoo"
+                                  src={Yahoo}
+                                  className={classes.avatar}
+                                />
                                 Yahoo!メール
                               </div>
                             </MenuItem>
@@ -352,7 +381,11 @@ class FormMailAddressAdd extends Component<Props, State> {
                               value="Outlook"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="Yahoo" src={Outlook} className={classes.avatar} />
+                                <Avatar
+                                  alt="Yahoo"
+                                  src={Outlook}
+                                  className={classes.avatar}
+                                />
                                 Outlook
                               </div>
                             </MenuItem>
@@ -362,7 +395,9 @@ class FormMailAddressAdd extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>E-mail</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          E-mail
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={10}>
                         <CustomInput
@@ -375,7 +410,8 @@ class FormMailAddressAdd extends Component<Props, State> {
                           }}
                           inputProps={{
                             value: this.state.mailAddress,
-                            onChange: event => this.inputFormChange(event, 'email'),
+                            onChange: event =>
+                              this.inputFormChange(event, 'email'),
                             type: 'email'
                           }}
                         />
@@ -383,7 +419,9 @@ class FormMailAddressAdd extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>アカウントID:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          アカウントID:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={4}>
                         <CustomInput
@@ -397,12 +435,15 @@ class FormMailAddressAdd extends Component<Props, State> {
                             value: this.state.accountId,
                             type: 'text',
                             placeholder: 'アカウントID',
-                            onChange: event => this.inputFormChange(event, 'accountId')
+                            onChange: event =>
+                              this.inputFormChange(event, 'accountId')
                           }}
                         />
                       </GridItem>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>パスワード:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          パスワード:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={4}>
                         <CustomInput
@@ -416,14 +457,17 @@ class FormMailAddressAdd extends Component<Props, State> {
                             value: this.state.password,
                             type: 'text',
                             placeholder: 'パスワード',
-                            onChange: event => this.inputFormChange(event, 'password')
+                            onChange: event =>
+                              this.inputFormChange(event, 'password')
                           }}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>作成日:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          作成日:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={4}>
                         <Datetime
@@ -435,12 +479,16 @@ class FormMailAddressAdd extends Component<Props, State> {
                           inputProps={{ placeholder: '作成日' }}
                           direction="up"
                           locale="ja"
-                          onChange={value => this.setState({ createDate: value })}
+                          onChange={value =>
+                            this.setState({ createDate: value })
+                          }
                           value={this.state.createDate}
                         />
                       </GridItem>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          タグ:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={4}>
                         <TagsInput
@@ -464,7 +512,9 @@ class FormMailAddressAdd extends Component<Props, State> {
               icon={AddAlert}
               message={this.state.errorMessage}
               open={this.state.openErrorDialog}
-              closeNotification={() => this.setState({ openErrorDialog: false })}
+              closeNotification={() =>
+                this.setState({ openErrorDialog: false })
+              }
               close
             />
             <Snackbar

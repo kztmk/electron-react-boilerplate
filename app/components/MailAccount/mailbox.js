@@ -20,7 +20,10 @@ import FolderIcon from '@material-ui/icons/Folder';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 import type MailAccountType from '../../types/mailAccount';
-import type { MailBoxesType, MailRowMessageType } from '../../types/mailMessageType';
+import type {
+  MailBoxesType,
+  MailRowMessageType
+} from '../../types/mailMessageType';
 
 import baseMailBoxes from './defaultMailboxes';
 import {
@@ -251,7 +254,11 @@ class MailBox extends Component<Props, State> {
       if (selectedPath === myBox.path) {
         if (unseenCount > 0) {
           return (
-            <Badge className={classes.padding} color="secondary" badgeContent={unseenCount}>
+            <Badge
+              className={classes.padding}
+              color="secondary"
+              badgeContent={unseenCount}
+            >
               ({mailCount})
             </Badge>
           );
@@ -313,10 +320,23 @@ class MailBox extends Component<Props, State> {
                   <ListItemIcon style={itemIconStyles}>
                     <FolderIcon />
                   </ListItemIcon>
-                  <ListItemText primary={childBox.name} style={listItemTextStyle} />
-                  {this.unseenCountBadge(childBox, selectedPath, mailCount, unseenCount)}
+                  <ListItemText
+                    primary={childBox.name}
+                    style={listItemTextStyle}
+                  />
+                  {this.unseenCountBadge(
+                    childBox,
+                    selectedPath,
+                    mailCount,
+                    unseenCount
+                  )}
                 </ListItem>
-                {this.renderChild(childBox, selectedPath, mailCount, unseenCount)}
+                {this.renderChild(
+                  childBox,
+                  selectedPath,
+                  mailCount,
+                  unseenCount
+                )}
               </List>
             );
           }
@@ -332,7 +352,12 @@ class MailBox extends Component<Props, State> {
                 <FolderIcon />
               </ListItemIcon>
               <ListItemText primary={childBox.name} style={listItemTextStyle} />
-              {this.unseenCountBadge(childBox, selectedPath, mailCount, unseenCount)}
+              {this.unseenCountBadge(
+                childBox,
+                selectedPath,
+                mailCount,
+                unseenCount
+              )}
             </ListItem>
           );
         });
@@ -450,7 +475,9 @@ class MailBox extends Component<Props, State> {
             }}
             // className={this.isSelected(inbox, selectedPath) ? classes.selectedList : ''}
             className={
-              inbox.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
+              inbox.path.toLowerCase() === selectedPath.toLowerCase()
+                ? classes.selectedList
+                : ''
             }
             style={listItemStyles}
           >
@@ -469,7 +496,9 @@ class MailBox extends Component<Props, State> {
               this.handleSelectBox(sent.path);
             }}
             className={
-              sent.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
+              sent.path.toLowerCase() === selectedPath.toLowerCase()
+                ? classes.selectedList
+                : ''
             }
             style={listItemStyles}
           >
@@ -485,7 +514,9 @@ class MailBox extends Component<Props, State> {
               this.handleSelectBox(draft.path);
             }}
             className={
-              draft.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
+              draft.path.toLowerCase() === selectedPath.toLowerCase()
+                ? classes.selectedList
+                : ''
             }
             style={listItemStyles}
           >
@@ -501,7 +532,9 @@ class MailBox extends Component<Props, State> {
               this.handleSelectBox(trash.path);
             }}
             className={
-              trash.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
+              trash.path.toLowerCase() === selectedPath.toLowerCase()
+                ? classes.selectedList
+                : ''
             }
             style={listItemStyles}
           >
@@ -517,7 +550,9 @@ class MailBox extends Component<Props, State> {
               this.handleSelectBox(bulkMail.path);
             }}
             className={
-              bulkMail.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
+              bulkMail.path.toLowerCase() === selectedPath.toLowerCase()
+                ? classes.selectedList
+                : ''
             }
             style={listItemStyles}
           >
@@ -525,7 +560,12 @@ class MailBox extends Component<Props, State> {
               <ReportIcon />
             </ListItemIcon>
             <ListItemText primary="迷惑メール" style={listItemTextStyle} />
-            {this.unseenCountBadge(bulkMail, selectedPath, mailCount, unseenCount)}
+            {this.unseenCountBadge(
+              bulkMail,
+              selectedPath,
+              mailCount,
+              unseenCount
+            )}
           </ListItem>
         </div>
       );

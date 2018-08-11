@@ -1,5 +1,5 @@
 // @flow
-import type { UserAccountType } from "../../types/userAccount";
+import type { UserAccountType } from '../../types/userAccount';
 
 import {
   SET_PROFILE,
@@ -16,7 +16,7 @@ import {
   DELETE_PROFILE_REQUEST,
   DELETE_PROFILE_SUCCESS,
   DELETE_PROFILE_FAILURE
-} from "./actionTypes";
+} from './actionTypes';
 import type {
   SetProfile,
   UpdateProfileInfo,
@@ -32,7 +32,7 @@ import type {
   DeleteProfileRequest,
   DeleteProfileSuccess,
   DeleteProfileFailure
-} from "./actionTypes";
+} from './actionTypes';
 
 export function setProfile(payload: UserAccountType): SetProfile {
   return {

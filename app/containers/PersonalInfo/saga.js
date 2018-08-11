@@ -1,14 +1,18 @@
 // @flow
 import type Saga from 'redux-saga';
 import moment from 'moment';
-import { put, call, takeEvery, select } from 'redux-saga/effects';
+import { put, call, takeEvery, select, delay } from 'redux-saga/effects';
 import {
   getPersonalInfoSuccess,
   getPersonalInfoFailure,
+  getPersonalInfoForBlogSuccess,
+  getPersonalInfoForBlogFailure,
   getRandomPersonalInfoSuccess,
   getRandomPersonalInfoFailure,
   savePersonalInfoSuccess,
-  savePersonalInfoFailure
+  savePersonalInfoFailure,
+  savePersonalInfoForBlogSuccess,
+  savePersonalInfoForBlogFailure
 } from './actions';
 import { Actions } from './actionTypes';
 import { firebaseDbSet, firebaseDbRead } from '../../database/db';
@@ -129,10 +133,90 @@ function* getPersonalInfo() {
   }
 }
 
+function* getPersonalInfoForBlog(action) {
+  try {
+    yield put(getPersonalInfoForBlogSuccess(...action.payload));
+  } catch (error) {
+    yield put(getPersonalInfoForBlogFailure({ errorMessage: error.toString() }));
+  }
+}
+
+/**
+ * 新規ブログアカウント作成時に、使用するメールアドレスの個人情報をstateに格納
+ *
+ * @param action
+ * @returns {IterableIterator<*>}
+ */
+function* savePersonalInfoForBlog(action) {
+  try {
+    const personalInfo: PersonalInfoType = yield select(state => state.PersonalInfo.personalInfo);
+    console.log('start ready personal data for blog');
+    let randomPersonalInfo = initialPersonalInfo;
+    console.log('initialize data');
+    // detailInfoを持たない場合、
+    //  ---> useDefaultをチェック
+    if (!personalInfo.useDefault) {
+      console.log('use random data');
+      console.log(`meta:${action.payload.address1}`);
+      // use random
+      if (action.payload.lastName.length === 0 || action.payload.prefecture.length === 0) {
+        console.log('no detail so get data from server');
+        // detailInfoを持たないため、ランダムを取得
+        console.log('start to get random personal data');
+        randomPersonalInfo = yield fetch(
+          'https://us-central1-yoriki5-prod.cloudfunctions.net/getPersonalData'
+        )
+          .then(response => response.json())
+          .then(data => {
+            let postCode = '00';
+            if (data.postalCode.length < 7) {
+              postCode += data.postalCode;
+              postCode = postCode.substr(1, 7);
+            } else {
+              postCode = data.postalCode;
+            }
+            const personalData = {
+              lastName: data.lname,
+              firstName: data.fname,
+              lastNameKana: data.lnameFurigana,
+              firstNameKana: data.fnameFurigana,
+              lastNameKatakana: data.lnameKatakana,
+              firstNameKatakana: data.fnameKatakana,
+              lastNameHepburn: data.lnameRome,
+              firstNameHepburn: data.fnameRome,
+              gender: data.gender,
+              birthDate: moment(data.birthDate, 'MM/DD/YYYY').format('YYYY/MM/DD'),
+              postalCode: postCode,
+              prefecture: data.prefectName,
+              address1: action.payload.address1,
+              useDefault: false
+            };
+            return personalData;
+          })
+          .catch(error => {
+            throw new Error(error.toString());
+          });
+      } else {
+        // detailInfo exists
+        randomPersonalInfo = { ...action.payload };
+      }
+    } else {
+      // use default
+      console.log('have detailInfo so just transfer');
+      randomPersonalInfo = { ...personalInfo, address1: action.payload.address1 };
+    }
+    yield put(savePersonalInfoForBlogSuccess(randomPersonalInfo));
+  } catch (error) {
+    yield put(savePersonalInfoForBlogFailure({ errorMessage: error.toString() }));
+  }
+}
+
 function* rootSaga(): Saga {
   yield takeEvery(Actions.GET_PERSONAL_INFO_REQUEST, getPersonalInfo);
   yield takeEvery(Actions.GET_RANDOM_PERSONAL_INFO_REQUEST, getRandomPersonalInfo);
   yield takeEvery(Actions.SAVE_PERSONAL_INFO_REQUEST, savePersonalInfo);
+  yield takeEvery(Actions.SAVE_PERSONAL_INFO_FOR_BLOG_REQUEST, savePersonalInfoForBlog);
+  yield takeEvery(Actions.GET_PERSONAL_INFO_FOR_BLOG_REQUEST, getPersonalInfoForBlog);
 }
 
 export default rootSaga;

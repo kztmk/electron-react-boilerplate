@@ -135,7 +135,7 @@ class StepKokolog extends React.Component<Props, State> {
           root: classes.selectMenuItem,
           selected: classes.selectMenuItemSelected
         }}
-        value={q}
+        value={q.val}
       >
         {q.question}
       </MenuItem>
@@ -149,8 +149,7 @@ class StepKokolog extends React.Component<Props, State> {
    */
   handleQuestionSelected = event => {
     this.setState({
-      question: event.target.value.question,
-      questionValue: event.target.value.val
+      question: event.target.value
     });
   };
 
@@ -334,7 +333,7 @@ class StepKokolog extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="left">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={2} md={2}>
               <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
             </GridItem>

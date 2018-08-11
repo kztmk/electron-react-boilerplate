@@ -18,7 +18,8 @@ const switchRoutes = auth => (
       if (!auth && prop.path !== '/home') {
         isRedirect = true;
       }
-      if (isRedirect) return <Redirect from={prop.path} to={prop.to} key={key} />;
+      if (isRedirect)
+        return <Redirect from={prop.path} to={prop.to} key={key} />;
       return <Route path={prop.path} component={prop.component} key={key} />;
     })}
   </Switch>

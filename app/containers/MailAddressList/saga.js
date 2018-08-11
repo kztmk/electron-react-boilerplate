@@ -52,7 +52,10 @@ function* importMailAccounts(action) {
 
     if (mailAccounts.length > 0) {
       // stateから現在のmailAccoutsを取得
-      const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/mailAccount`);
+      const snapshot = yield call(
+        firebaseDbRead,
+        `/users/${userAuth.userId}/mailAccount`
+      );
       const existsMailAccounts: Array<MailAccountType> = [];
 
       snapshot.forEach(childSnapshot => {
@@ -66,7 +69,8 @@ function* importMailAccounts(action) {
       // 現在のmailAccountsに存在しないimport用mailAccounts
       const importAccounts = mailAccounts.filter(importAccount => {
         const notDupAccounts = existsMailAccounts.filter(
-          existsAccount => importAccount.mailAddress !== existsAccount.mailAddress
+          existsAccount =>
+            importAccount.mailAddress !== existsAccount.mailAddress
         );
         return notDupAccounts.length === existsMailAccounts.length;
       });
@@ -74,7 +78,8 @@ function* importMailAccounts(action) {
       // 現在のmailAccountsに存在するdup mailAccounts
       const errorAccounts = mailAccounts.filter(importAccount => {
         const notDupAccounts = existsMailAccounts.filter(
-          existsMailAccount => importAccount.mailAddress !== existsMailAccount.mailAddress
+          existsMailAccount =>
+            importAccount.mailAddress !== existsMailAccount.mailAddress
         );
         return notDupAccounts.length !== existsMailAccounts.length;
       });
@@ -101,7 +106,9 @@ function* importMailAccounts(action) {
             lastLogin: m.lastLogin,
             tags: m.tags,
             detailInfo:
-              m.detailInfo === undefined || m.detailInfo === null || m.detailInfo.length === 0
+              m.detailInfo === undefined ||
+              m.detailInfo === null ||
+              m.detailInfo.length === 0
                 ? ['詳細情報なし']
                 : m.detailInfo
           })
@@ -109,7 +116,10 @@ function* importMailAccounts(action) {
       );
 
       // firebaseから現在のmailAccountsを取得
-      const snapshotLatest = yield call(firebaseDbRead, `/users/${userAuth.userId}/mailAccount`);
+      const snapshotLatest = yield call(
+        firebaseDbRead,
+        `/users/${userAuth.userId}/mailAccount`
+      );
       const latestMailAccounts: Array<MailAccountType> = [];
 
       snapshotLatest.forEach(childSnapshot => {
@@ -160,7 +170,9 @@ function* createMailAccount(action) {
         ? ['詳細情報なし']
         : action.payload.detailInfo
   };
-  const currentAccounts = yield select(state => state.MailAddressList.mailAccounts);
+  const currentAccounts = yield select(
+    state => state.MailAddressList.mailAccounts
+  );
 
   try {
     // dup check
@@ -173,14 +185,20 @@ function* createMailAccount(action) {
 
     if (!dupAccount) {
       console.log('not dup');
-      const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, newAccount);
+      const ref = yield call(
+        firebaseDbInsert,
+        `/users/${userAuth.userId}/mailAccount`,
+        newAccount
+      );
       const addAccount = { ...newAccount, key: ref.key };
       currentAccounts.push(addAccount);
 
       yield put(createMailAddressSuccess(currentAccounts));
     } else {
       console.log('found dup');
-      yield put(createMailAddressFailure('このメールアドレスは、既に登録されています。'));
+      yield put(
+        createMailAddressFailure('このメールアドレスは、既に登録されています。')
+      );
     }
   } catch (error) {
     yield put(createMailAddressFailure(error.toString()));
@@ -197,7 +215,10 @@ function* getMailAccounts() {
 
   try {
     const mailAccounts: Array<MailAccountType> = [];
-    const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/mailAccount`);
+    const snapshot = yield call(
+      firebaseDbRead,
+      `/users/${userAuth.userId}/mailAccount`
+    );
 
     snapshot.forEach(childSnapshot => {
       mailAccounts.push({
@@ -224,11 +245,15 @@ function* updateMailAccount(action) {
   const userAuth = yield select(state => state.Login);
   try {
     // firebaseをアップデート
-    yield call(firebaseDbUpdate, `/users/${userAuth.userId}/mailAccount/${action.payload.key}`, {
-      password: action.payload.password,
-      lastLogin: action.payload.lastLogin,
-      tags: action.payload.tags
-    });
+    yield call(
+      firebaseDbUpdate,
+      `/users/${userAuth.userId}/mailAccount/${action.payload.key}`,
+      {
+        password: action.payload.password,
+        lastLogin: action.payload.lastLogin,
+        tags: action.payload.tags
+      }
+    );
     // 更新前のmailAccountsを取得
     const mailAccounts: Array<MailAccountType> = yield select(
       state => state.MailAddressList.mailAccounts
@@ -255,12 +280,17 @@ function* deleteMailAccount(action) {
 
   try {
     // firebaseから削除
-    yield call(firebaseDbDelete, `/users/${userAuth.userId}/mailAccount/${action.payload.key}`);
+    yield call(
+      firebaseDbDelete,
+      `/users/${userAuth.userId}/mailAccount/${action.payload.key}`
+    );
     const mailAccounts: Array<MailAccountType> = yield select(
       state => state.MailAddressList.mailAccounts
     );
     // 現在のmailAccountsから対象を削除
-    const deletedAccounts = mailAccounts.filter(acc => acc.key !== action.payload.key);
+    const deletedAccounts = mailAccounts.filter(
+      acc => acc.key !== action.payload.key
+    );
     deletedAccounts.sort(mailAccountSort);
     yield put(deleteMailAddressSuccess(deletedAccounts));
   } catch (error) {

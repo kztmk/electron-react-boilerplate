@@ -10,7 +10,11 @@ const showOpenFileDialog = () =>
     if (files && files.length > 0) {
       resolve(files[0]);
     } else {
-      reject(new Error('error:-:キャンセル、または、インポート用ファイル名の取得に失敗しました。'));
+      reject(
+        new Error(
+          'error:-:キャンセル、または、インポート用ファイル名の取得に失敗しました。'
+        )
+      );
     }
   });
 

@@ -324,9 +324,14 @@ class FormBlogAdd extends Component<Props, State> {
       'goo',
       'domain'
     ];
-    const providerCheck = blogProvider.find(provider => provider === this.state.provider);
+    const providerCheck = blogProvider.find(
+      provider => provider === this.state.provider
+    );
     if (providerCheck === undefined) {
-      this.setState({ errorMessage: 'ブログ提供元を選択してください。', openErrorDialog: true });
+      this.setState({
+        errorMessage: 'ブログ提供元を選択してください。',
+        openErrorDialog: true
+      });
       return;
     }
 
@@ -374,7 +379,11 @@ class FormBlogAdd extends Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・・">
+      <Loadable
+        active={this.state.isLoading}
+        spinner
+        text="サーバーと通信中・・・・"
+      >
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
@@ -382,7 +391,11 @@ class FormBlogAdd extends Component<Props, State> {
                 <CardText color="primary">
                   <h4 className={classes.cardTitle}>ブログ追加</h4>
                 </CardText>
-                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
+                <GridItem
+                  xs={12}
+                  sm={6}
+                  className={classes.labelHorizontalLessUpperSpace}
+                >
                   <div className={classes.buttonGroupStyle}>
                     <div className={classes.buttonGroup}>
                       <Button
@@ -411,8 +424,14 @@ class FormBlogAdd extends Component<Props, State> {
                     <GridContainer>
                       <GridItem xs={12} sm={2} />
                       <GridItem xs={12} sm={3}>
-                        <FormControl fullWidth className={classes.selectFormControl}>
-                          <InputLabel htmlFor="select-provider" className={classes.selectLabel}>
+                        <FormControl
+                          fullWidth
+                          className={classes.selectFormControl}
+                        >
+                          <InputLabel
+                            htmlFor="select-provider"
+                            className={classes.selectLabel}
+                          >
                             提供元：
                           </InputLabel>
                           <Select
@@ -437,7 +456,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="fc2"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="FC2" src={Fc2} className={classes.avatar} />
+                                <Avatar
+                                  alt="FC2"
+                                  src={Fc2}
+                                  className={classes.avatar}
+                                />
                                 FC2
                               </div>
                             </MenuItem>
@@ -449,7 +472,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="webnode"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="webnode" src={Webnode} className={classes.avatar} />
+                                <Avatar
+                                  alt="webnode"
+                                  src={Webnode}
+                                  className={classes.avatar}
+                                />
                                 webnode
                               </div>
                             </MenuItem>
@@ -461,7 +488,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="livedoor"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="Livedoor" src={Livedoor} className={classes.avatar} />
+                                <Avatar
+                                  alt="Livedoor"
+                                  src={Livedoor}
+                                  className={classes.avatar}
+                                />
                                 Livedoor
                               </div>
                             </MenuItem>
@@ -473,7 +504,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="seesaa"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="Seesaa" src={Seesaa} className={classes.avatar} />
+                                <Avatar
+                                  alt="Seesaa"
+                                  src={Seesaa}
+                                  className={classes.avatar}
+                                />
                                 Seesaa
                               </div>
                             </MenuItem>
@@ -485,7 +520,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="ameba"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="アメーバ" src={Ameba} className={classes.avatar} />
+                                <Avatar
+                                  alt="アメーバ"
+                                  src={Ameba}
+                                  className={classes.avatar}
+                                />
                                 アメーバー
                               </div>
                             </MenuItem>
@@ -497,7 +536,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="rakuten"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="楽天" src={Rakuten} className={classes.avatar} />
+                                <Avatar
+                                  alt="楽天"
+                                  src={Rakuten}
+                                  className={classes.avatar}
+                                />
                                 楽天
                               </div>
                             </MenuItem>
@@ -509,7 +552,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="kokolog"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="ココログ" src={Kokolog} className={classes.avatar} />
+                                <Avatar
+                                  alt="ココログ"
+                                  src={Kokolog}
+                                  className={classes.avatar}
+                                />
                                 ココログ
                               </div>
                             </MenuItem>
@@ -521,7 +568,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="yaplog"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="Yaplog" src={Yaplog} className={classes.avatar} />
+                                <Avatar
+                                  alt="Yaplog"
+                                  src={Yaplog}
+                                  className={classes.avatar}
+                                />
                                 Yaplog
                               </div>
                             </MenuItem>
@@ -533,7 +584,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="jugem"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="Jugem" src={Jugem} className={classes.avatar} />
+                                <Avatar
+                                  alt="Jugem"
+                                  src={Jugem}
+                                  className={classes.avatar}
+                                />
                                 Jugem
                               </div>
                             </MenuItem>
@@ -545,7 +600,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="ninja"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="忍者" src={Ninjya} className={classes.avatar} />
+                                <Avatar
+                                  alt="忍者"
+                                  src={Ninjya}
+                                  className={classes.avatar}
+                                />
                                 忍者
                               </div>
                             </MenuItem>
@@ -557,7 +616,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="hatena"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="はてな" src={Hatena} className={classes.avatar} />
+                                <Avatar
+                                  alt="はてな"
+                                  src={Hatena}
+                                  className={classes.avatar}
+                                />
                                 はてな
                               </div>
                             </MenuItem>
@@ -601,7 +664,11 @@ class FormBlogAdd extends Component<Props, State> {
                               value="goo"
                             >
                               <div style={selectAvatarStyle}>
-                                <Avatar alt="gooブログ" src={Goo} className={classes.avatar} />
+                                <Avatar
+                                  alt="gooブログ"
+                                  src={Goo}
+                                  className={classes.avatar}
+                                />
                                 gooブログ
                               </div>
                             </MenuItem>
@@ -611,7 +678,9 @@ class FormBlogAdd extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>E-mail</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          E-mail
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={8}>
                         <CustomInput
@@ -624,7 +693,8 @@ class FormBlogAdd extends Component<Props, State> {
                           }}
                           inputProps={{
                             value: this.state.mailAddress,
-                            onChange: event => this.inputFormChange(event, 'email'),
+                            onChange: event =>
+                              this.inputFormChange(event, 'email'),
                             type: 'email'
                           }}
                         />
@@ -632,7 +702,9 @@ class FormBlogAdd extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>アカウントID:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          アカウントID:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={3}>
                         <CustomInput
@@ -646,12 +718,15 @@ class FormBlogAdd extends Component<Props, State> {
                             value: this.state.accountId,
                             type: 'text',
                             placeholder: 'アカウントID',
-                            onChange: event => this.inputFormChange(event, 'accountId')
+                            onChange: event =>
+                              this.inputFormChange(event, 'accountId')
                           }}
                         />
                       </GridItem>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>パスワード:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          パスワード:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={3}>
                         <CustomInput
@@ -665,14 +740,17 @@ class FormBlogAdd extends Component<Props, State> {
                             value: this.state.password,
                             type: 'text',
                             placeholder: 'パスワード',
-                            onChange: event => this.inputFormChange(event, 'password')
+                            onChange: event =>
+                              this.inputFormChange(event, 'password')
                           }}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>タイトル:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          タイトル:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={8}>
                         <CustomInput
@@ -686,14 +764,17 @@ class FormBlogAdd extends Component<Props, State> {
                             value: this.state.title,
                             type: 'text',
                             placeholder: 'タイトル',
-                            onChange: event => this.inputFormChange(event, 'title')
+                            onChange: event =>
+                              this.inputFormChange(event, 'title')
                           }}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>URL:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          URL:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={8}>
                         <CustomInput
@@ -707,14 +788,17 @@ class FormBlogAdd extends Component<Props, State> {
                             value: this.state.url,
                             type: 'text',
                             placeholder: 'URL',
-                            onChange: event => this.inputFormChange(event, 'url')
+                            onChange: event =>
+                              this.inputFormChange(event, 'url')
                           }}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>ブログの説明:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          ブログの説明:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={8}>
                         <CustomInput
@@ -726,14 +810,17 @@ class FormBlogAdd extends Component<Props, State> {
                             value: this.state.description,
                             type: 'text',
                             placeholder: 'ブログの説明',
-                            onChange: event => this.inputFormChange(event, 'description')
+                            onChange: event =>
+                              this.inputFormChange(event, 'description')
                           }}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>備考:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          備考:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={8}>
                         <CustomInput
@@ -745,14 +832,17 @@ class FormBlogAdd extends Component<Props, State> {
                             value: this.state.remark,
                             type: 'text',
                             placeholder: '備考',
-                            onChange: event => this.inputFormChange(event, 'remark')
+                            onChange: event =>
+                              this.inputFormChange(event, 'remark')
                           }}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>作成日:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          作成日:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={3}>
                         <Datetime
@@ -762,13 +852,17 @@ class FormBlogAdd extends Component<Props, State> {
                           inputProps={{ placeholder: '作成日' }}
                           direction="up"
                           locale="ja"
-                          onChange={value => this.setState({ createDate: value })}
+                          onChange={value =>
+                            this.setState({ createDate: value })
+                          }
                           value={this.state.createDate}
-                          closeOnSelect={true}
+                          closeOnSelect
                         />
                       </GridItem>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
+                        <FormLabel className={classes.labelHorizontal}>
+                          タグ:
+                        </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={3}>
                         <TagsInput

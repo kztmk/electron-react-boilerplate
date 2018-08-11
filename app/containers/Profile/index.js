@@ -16,4 +16,7 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(FormProfile);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FormProfile);

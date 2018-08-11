@@ -6,7 +6,6 @@ import { routerMiddleware } from 'react-router-redux';
 import rootReducer from '../reducer';
 import mySaga from '../sagas';
 
-
 const history = createBrowserHistory();
 
 const configureStore = (initialState: Object = {}) => {

@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unused-state */
+/* eslint-disable react/no-unused-state,react/destructuring-assignment */
 // @flow
 import React from 'react';
 import TagsInput from 'react-tagsinput';
@@ -68,12 +68,9 @@ class StepFc2 extends React.Component<Props, State> {
       remark: '',
       tags: [],
       fc2Question: '',
-      fc2QuestionValue: '',
       fc2Answer: '',
       mainJunre: '',
-      mainJunreValue: '',
       subJunre: '',
-      subJunreValue: '',
       nickName: '',
       nickNameState: '',
       answerState: '',
@@ -88,9 +85,10 @@ class StepFc2 extends React.Component<Props, State> {
    */
   sendState = () => {
     const blogParams = [];
-    blogParams.title = this.state.title;
-    blogParams.description = this.state.description;
-    blogParams.remark = this.state.remark;
+    blogParams.title = this.state;
+    blogParams.description = this.state;
+    blogParams.remark = this.state;
+
     blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
     blogParams.nickName = this.state.nickName;
     blogParams.questionValue = this.state.fc2QuestionValue;
@@ -113,12 +111,9 @@ class StepFc2 extends React.Component<Props, State> {
       remark: '',
       tags: [],
       fc2Question: '',
-      fc2QuestionValue: '',
       fc2Answer: '',
       mainJunre: '',
-      mainJunreValue: '',
       subJunre: '',
-      subJunreValue: '',
       nickName: '',
       nickNameState: '',
       answerState: '',
@@ -143,6 +138,7 @@ class StepFc2 extends React.Component<Props, State> {
       { val: '101', question: '保険証番号の下５桁' },
       { val: '102', question: 'クレジットカード番号の下５桁' }
     ];
+
     const { classes } = this.props;
 
     return fc2Questions.map(q => (
@@ -152,7 +148,7 @@ class StepFc2 extends React.Component<Props, State> {
           root: classes.selectMenuItem,
           selected: classes.selectMenuItemSelected
         }}
-        value={q}
+        value={q.val}
       >
         {q.question}
       </MenuItem>
@@ -172,7 +168,7 @@ class StepFc2 extends React.Component<Props, State> {
           root: classes.selectMenuItem,
           selected: classes.selectMenuItemSelected
         }}
-        value={j}
+        value={j.mainJunre}
       >
         {j.text}
       </MenuItem>
@@ -187,18 +183,22 @@ class StepFc2 extends React.Component<Props, State> {
   getSubJunre = mainJunre => {
     if (mainJunre) {
       const { classes } = this.props;
-      return mainJunre.sub.map(j => (
-        <MenuItem
-          key={j.subJunre}
-          classes={{
-            root: classes.selectMenuItem,
-            selected: classes.selectMenuItemSelected
-          }}
-          value={j}
-        >
-          {j.text}
-        </MenuItem>
-      ));
+      const targetJunre = fc2Junre.find(mj => mj.mainJunre === mainJunre);
+
+      if (targetJunre) {
+        return targetJunre.sub.map(j => (
+          <MenuItem
+            key={j.subJunre}
+            classes={{
+              root: classes.selectMenuItem,
+              selected: classes.selectMenuItemSelected
+            }}
+            value={j.subJunre}
+          >
+            {j.text}
+          </MenuItem>
+        ));
+      }
     }
   };
 
@@ -209,8 +209,7 @@ class StepFc2 extends React.Component<Props, State> {
    */
   handleQuestionSelected = event => {
     this.setState({
-      fc2Question: event.target.value.question,
-      fc2QuestionValue: event.target.value.val
+      fc2Question: event.target.value
     });
   };
 
@@ -222,8 +221,7 @@ class StepFc2 extends React.Component<Props, State> {
   handleMainJunreSelected = event => {
     this.setState({
       subJunreData: this.getSubJunre(event.target.value),
-      mainJunre: event.target.value.text,
-      mainJunreValue: event.target.value.mainJunre
+      mainJunre: event.target.value
     });
   };
 
@@ -233,8 +231,7 @@ class StepFc2 extends React.Component<Props, State> {
    */
   handleSubJunreSelected = event => {
     this.setState({
-      subJunre: event.target.value.text,
-      subJunreValue: event.target.value.subJunre
+      subJunre: event.target.value
     });
   };
 
@@ -423,7 +420,7 @@ class StepFc2 extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="left">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={2} md={2}>
               <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
             </GridItem>
@@ -456,7 +453,7 @@ class StepFc2 extends React.Component<Props, State> {
           <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>
               <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="FC2-Question-select" className={classes.selectLabel}>
+                <InputLabel htmlFor="fc2Question-select" className={classes.selectLabel}>
                   秘密の質問を選択
                 </InputLabel>
                 <Select
@@ -468,10 +465,6 @@ class StepFc2 extends React.Component<Props, State> {
                   }}
                   value={this.state.fc2Question}
                   onChange={this.handleQuestionSelected}
-                  inputProps={{
-                    name: 'fc2QuestionSelect',
-                    id: 'fc2Question-select'
-                  }}
                 >
                   <MenuItem
                     disabled
@@ -505,7 +498,7 @@ class StepFc2 extends React.Component<Props, State> {
           <GridContainer container justify="center">
             <GridItem xs={12} sm={4} md={4}>
               <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel htmlFor="FC2-junre-select" className={classes.selectLabel}>
+                <InputLabel htmlFor="fc2Mainjunre-select" className={classes.selectLabel}>
                   ジャンル
                 </InputLabel>
                 <Select

@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 // @flow
 import React from 'react';
 import ReactTable from 'react-table';
@@ -39,6 +40,7 @@ import SweetAlertTitle from '../SweetAlertTitle';
 import MailAccount from '../../containers/MailAccount';
 import WizardViewBlog from '../BlogAccountCreate';
 import type BlogAccountType from '../../types/blogAccount';
+import type PersonalInfoType from '../../types/personalInfo';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -65,7 +67,8 @@ type Props = {
   editAccount: () => void,
   closeConnection: () => void,
   closeEditForm: () => void,
-  createBlogAccount: (blogAccout: BlogAccountType) => void
+  createBlogAccount: (blogAccout: BlogAccountType) => void,
+  savePersonalInfoForBlog: (personalInfo: PersonalInfoType) => void
 };
 
 const initialMailAccount = {
@@ -159,7 +162,9 @@ class MailAddressList extends React.Component<Props, State> {
               onCancel={() => this.hideAlert()}
               confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
             >
-              メールアドレス:{this.state.targetAccount.mailAddress}を削除しました。
+              メールアドレス:
+              {this.state.targetAccount.mailAddress}
+              を削除しました。
             </SweetAlert>
           )
         });
@@ -175,7 +180,8 @@ class MailAddressList extends React.Component<Props, State> {
               onCancel={() => this.hideAlert()}
               confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
             >
-              削除エラー:{nextProps.errorMessage}
+              削除エラー:
+              {nextProps.errorMessage}
             </SweetAlert>
           )
         });
@@ -450,9 +456,88 @@ class MailAddressList extends React.Component<Props, State> {
     this.props.closeConnection();
   };
 
+  findPersonalInfoField = (personalDetails, rowContains) =>
+    personalDetails.filter(row => row.indexOf(rowContains) !== -1);
+
+  getUserName = row => {
+    console.log('row');
+    console.log(row);
+    if (row.length > 0) {
+      const userName = row[0].split(':');
+      if (userName.length === 2) {
+        return userName[1].split(' ');
+      }
+    }
+    return ['', ''];
+  };
+
+  getUserDetail = row => {
+    if (row.length > 0) {
+      const userInfo = row[0].split(':');
+      if (userInfo.length === 2) {
+        return userInfo[1];
+      }
+    }
+    return '';
+  };
+
+  /**
+   * mailAccount行のcreateBlogボタンクリック
+   *
+   * @param account
+   */
   createBlogAccount = account => {
+    // mail account情報のdetailInfoから個人情報を作成
+    const { detailInfo } = account;
+    let userNameLast = '';
+    let userNameFirst = '';
+    let userNameKanaLast = '';
+    let userNameKanaFirst = '';
+    let userGender = 0;
+    let userPostalCode = '';
+    let userPrefecture = '';
+    let userBirthDate = '';
+
+    if (detailInfo.length > 1) {
+      let userName = this.findPersonalInfoField(detailInfo, '氏名(漢字)');
+      let uName = this.getUserName(userName);
+      userNameLast = uName[0];
+      userNameFirst = uName[1];
+
+      userName = this.findPersonalInfoField(detailInfo, 'しめい(ふりがな)');
+      uName = this.getUserName(userName);
+      userNameKanaLast = uName[0];
+      userNameKanaFirst = uName[1];
+
+      const birthDate = this.findPersonalInfoField(detailInfo, '生年月日');
+      userBirthDate = this.getUserDetail(birthDate);
+      const gender = this.findPersonalInfoField(detailInfo, '性別');
+      userGender = gender === '性別:男' ? 0 : 1;
+      const postalCode = this.findPersonalInfoField(detailInfo, '郵便番号');
+      userPostalCode = this.getUserDetail(postalCode);
+      const prefecture = this.findPersonalInfoField(detailInfo, '都道府県');
+      userPrefecture = this.getUserDetail(prefecture);
+    }
+
+    const personalInfo = {
+      lastName: userNameLast,
+      firstName: userNameFirst,
+      lastNameKana: userNameKanaLast,
+      firstNameKana: userNameKanaFirst,
+      lastNameKatakana: '',
+      firstNameKatakana: '',
+      lastNameHepburn: '',
+      firstNameHepburn: '',
+      gender: userGender,
+      birthDate: userBirthDate,
+      postalCode: userPostalCode,
+      prefecture: userPrefecture,
+      address1: `${account.accountId}:${account.password}:${account.mailAddress}`,
+      useDefault: false
+    };
+
+    this.props.savePersonalInfoForBlog(personalInfo);
     this.setState({
-      targetAccount: account,
       openFormBlogAccountNew: true
     });
   };
@@ -597,7 +682,8 @@ class MailAddressList extends React.Component<Props, State> {
                   filterMethod: (filter, row) => {
                     if (row[filter.id].length === 0) {
                       return row[filter.id];
-                    } else if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                    }
+                    if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
                   }
                 },
                 {
@@ -635,7 +721,7 @@ class MailAddressList extends React.Component<Props, State> {
               disableBackdropClick
             >
               <DialogTitle
-                id="notice-modal-slide-title"
+                id="notice-modal-mailAddress-edit"
                 disableTypography
                 className={classes.modalHeader}
               >
@@ -650,7 +736,7 @@ class MailAddressList extends React.Component<Props, State> {
                   <Close className={classes.modalClose} />
                 </Button>
               </DialogTitle>
-              <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
+              <DialogContent id="notice-modal-mailAddress-edit-form" className={classes.modalBody}>
                 <FormMailAddressEdit
                   mode={this.props.mode}
                   formStatus={this.state.openEditForm}
@@ -676,7 +762,7 @@ class MailAddressList extends React.Component<Props, State> {
               disableBackdropClick
             >
               <DialogTitle
-                id="notice-modal-slide-title"
+                id="notice-modal-mailAddress-login"
                 disableTypography
                 className={classes.modalHeader}
               >
@@ -691,7 +777,7 @@ class MailAddressList extends React.Component<Props, State> {
                   <Close className={classes.modalClose} />
                 </Button>
               </DialogTitle>
-              <DialogContent id="notice-modal-slide-description" className={classes.modalBody}>
+              <DialogContent id="notice-modal-mailAddress-login" className={classes.modalBody}>
                 <MailAccount
                   formStatus={this.state.openMailAccount}
                   targetAccount={this.state.targetAccount}

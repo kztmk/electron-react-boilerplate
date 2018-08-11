@@ -147,7 +147,8 @@ class MailWizard extends React.Component<Props, State> {
           firstNameKana: steps00State.firstNameKana,
           gender: steps00State.gender,
           birthDate: steps00State.birthDate,
-          postalCode: steps00State.postalCode
+          postalCode: steps00State.postalCode,
+          prefecture: steps00State.prefecture
         }
       });
       this.refreshAnimation(nextStep);
@@ -234,11 +235,16 @@ class MailWizard extends React.Component<Props, State> {
           <p>以下の情報でメールアカウントの作成を開始します。 </p>
           {message}
           <p>
-            メールアドレス一覧への登録を最初に行います。<br />途中で
+            メールアドレス一覧への登録を最初に行います。
+            <br />
+            途中で
             <span style={errorStyles}>エラー</span>
-            が発生した場合には、<br />
-            ・可能な場合は、失敗時点から手動で継続<br />
-            ・ブラウザを閉じて、メール一覧から削除<br />
+            が発生した場合には、
+            <br />
+            ・可能な場合は、失敗時点から手動で継続
+            <br />
+            ・ブラウザを閉じて、メール一覧から削除
+            <br />
             で、対処してください。
           </p>
         </SweetAlert>
@@ -294,6 +300,7 @@ class MailWizard extends React.Component<Props, State> {
         gender = '女';
       }
       detailInfo.push(`性別:${gender}`);
+      detailInfo.push(`都道府県:${this.state.accountInfo.prefecture}`);
 
       let accId = '';
       let mailAddress = '';

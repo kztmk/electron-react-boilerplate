@@ -22,4 +22,7 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PreferencesPage);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PreferencesPage);

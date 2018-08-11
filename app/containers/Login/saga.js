@@ -11,7 +11,10 @@ import {
 } from './actions';
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
-import { firebaseSignInWithEmailAndPassword, firebaseSignOut } from '../../database/db';
+import {
+  firebaseSignInWithEmailAndPassword,
+  firebaseSignOut
+} from '../../database/db';
 
 /**
  * firebae error.codeからerror内容を日本語化する
@@ -83,7 +86,9 @@ function* requestLogin() {
     // blogAccountsを取得
     // yield put(getBlogsRequest());
   } catch (error) {
-    yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
+    yield put(
+      loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) })
+    );
   }
 }
 

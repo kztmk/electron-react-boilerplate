@@ -1,5 +1,7 @@
 // @flow
-import reducer, { initialState } from '../../app/containers/ResetPassword/reducer';
+import reducer, {
+  initialState
+} from '../../app/containers/ResetPassword/reducer';
 import * as actions from '../../app/containers/ResetPassword/actions';
 
 test('provide the initial state', () => {

@@ -46,7 +46,8 @@ class FormResetPassword extends Component<Props, State> {
   componentWillReceiveProps = nextProps => {
     const isError = nextProps.userAuth.isLoginFailure;
     const isResetRequestSuccess =
-      !nextProps.userAuth.isLoginFailure && nextProps.userAuth.errorMessage.length === 0;
+      !nextProps.userAuth.isLoginFailure &&
+      nextProps.userAuth.errorMessage.length === 0;
 
     console.log(isResetRequestSuccess ? 'yes' : 'no');
     this.setState({
@@ -121,7 +122,10 @@ class FormResetPassword extends Component<Props, State> {
                   name="mailAddress"
                   value={this.state.userAuth.mailAddress}
                   validators={['required', 'isEmail']}
-                  errorMessages={['必須項目です。', '有効なメールアドレスを入力してください。']}
+                  errorMessages={[
+                    '必須項目です。',
+                    '有効なメールアドレスを入力してください。'
+                  ]}
                   helperText="登録メールアドレスを入力します。"
                   fullWidth
                 />
@@ -130,7 +134,11 @@ class FormResetPassword extends Component<Props, State> {
                   <Cancel />
                   キャンセル
                 </Button>
-                <Button color="primary" type="submit" onClick={this.handleResetPassword}>
+                <Button
+                  color="primary"
+                  type="submit"
+                  onClick={this.handleResetPassword}
+                >
                   <PasswordResetIcon />
                   パスワードをリセット
                 </Button>
@@ -143,7 +151,9 @@ class FormResetPassword extends Component<Props, State> {
                   closeNotification={this.handleErrorSnackbarClose}
                   close
                   message={
-                    <span id="password_reset_error">{this.state.userAuth.errorMessage}</span>
+                    <span id="password_reset_error">
+                      {this.state.userAuth.errorMessage}
+                    </span>
                   }
                 />
                 <Snackbar

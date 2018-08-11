@@ -102,6 +102,7 @@ class StepRakuten extends React.Component<Props, State> {
       openErrorSnackbar: false
     });
   };
+
   /**
    * カテゴリ選択枝の作成
    *
@@ -138,7 +139,7 @@ class StepRakuten extends React.Component<Props, State> {
           root: classes.selectMenuItem,
           selected: classes.selectMenuItemSelected
         }}
-        value={q}
+        value={q.val}
       >
         {q.text}
       </MenuItem>
@@ -152,8 +153,7 @@ class StepRakuten extends React.Component<Props, State> {
    */
   handleJunreSelected = event => {
     this.setState({
-      junre: event.target.value.text,
-      junreValue: event.target.value.val
+      junre: event.target.value
     });
   };
 
@@ -320,7 +320,7 @@ class StepRakuten extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="left">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={2} md={2}>
               <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
             </GridItem>

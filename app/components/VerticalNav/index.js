@@ -14,7 +14,14 @@ import LogoutButton from '../../containers/Logout';
 /* eslint-disable react/require-default-props */
 type Props = {
   classes: Object,
-  color?: 'primary' | 'info' | 'success' | 'warning' | 'danger' | 'rose' | 'purple',
+  color?:
+    | 'primary'
+    | 'info'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'rose'
+    | 'purple',
   logo?: string,
   routes: Object,
   location: Object
@@ -46,7 +53,12 @@ const VerticalNav = (props: Props) => {
         });
         return (
           // eslint-disable-next-line react/no-array-index-key
-          <NavLink to={prop.path} className={classes.item} activeClassName="active" key={key}>
+          <NavLink
+            to={prop.path}
+            className={classes.item}
+            activeClassName="active"
+            key={key}
+          >
             <ListItem button className={classes.itemLink + listItemClasses}>
               <Tooltip id={prop.id} title={prop.navName} placement="bottom">
                 <ListItemIcon className={classes.itemIcon + whiteFontClasses}>

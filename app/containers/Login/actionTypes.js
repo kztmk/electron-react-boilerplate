@@ -1,17 +1,17 @@
 // @flow
-import type { AuthType } from "../../types/auth";
+import type { AuthType } from '../../types/auth';
 
-export const SET_AUTH_INFO: "Login/SET_AUTH_INFO" = "Login/SET_AUTH_INFO";
-export const LOGIN_REQUEST: "Login/LOGIN_REQUEST" = "Login/LOGIN_REQUEST";
-export const LOGIN_SUCCESS: "Login/LOGIN_SUCCESS" = "Login/LOGIN_SUCCESS";
-export const LOGIN_FAILURE: "Login/LOGIN_FAILURE" = "Login/LOGIN_FAILURE";
-export const LOGIN_DONE: "Login/LOGIN_DONE" = "Login/LOGIN_DONE";
-export const LOGOUT_REQUEST: "Login/LOGOUT_REQUEST" = "Login/LOGOUT_REQUEST";
-export const LOGOUT_SUCCESS: "Login/LOGOUT_SUCCESS" = "Login/LOGOUT_SUCCESS";
-export const LOGOUT_FAILURE: "Login/LOGOUT_FAILURE" = "Login/LOGOUT_FAILURE";
-export const CLEAR_AUTH_INFO: "Login/CLEAR_AUTH_INFO" = "Login/CLEAR_AUTH_INFO";
-export const UPDATE_AUTH_INFO: "Login/UPDATE_AUTH_INFO" =
-  "Login/UPDATE_AUTH_INFO";
+export const SET_AUTH_INFO: 'Login/SET_AUTH_INFO' = 'Login/SET_AUTH_INFO';
+export const LOGIN_REQUEST: 'Login/LOGIN_REQUEST' = 'Login/LOGIN_REQUEST';
+export const LOGIN_SUCCESS: 'Login/LOGIN_SUCCESS' = 'Login/LOGIN_SUCCESS';
+export const LOGIN_FAILURE: 'Login/LOGIN_FAILURE' = 'Login/LOGIN_FAILURE';
+export const LOGIN_DONE: 'Login/LOGIN_DONE' = 'Login/LOGIN_DONE';
+export const LOGOUT_REQUEST: 'Login/LOGOUT_REQUEST' = 'Login/LOGOUT_REQUEST';
+export const LOGOUT_SUCCESS: 'Login/LOGOUT_SUCCESS' = 'Login/LOGOUT_SUCCESS';
+export const LOGOUT_FAILURE: 'Login/LOGOUT_FAILURE' = 'Login/LOGOUT_FAILURE';
+export const CLEAR_AUTH_INFO: 'Login/CLEAR_AUTH_INFO' = 'Login/CLEAR_AUTH_INFO';
+export const UPDATE_AUTH_INFO: 'Login/UPDATE_AUTH_INFO' =
+  'Login/UPDATE_AUTH_INFO';
 
 export const Actions = {
   SET_AUTH_INFO,

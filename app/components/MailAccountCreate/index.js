@@ -35,7 +35,11 @@ class WizardViewMail extends React.Component<Props> {
                 stepId: 'start'
               },
               { stepName: 'Yahoo', stepComponent: StepYahoo, stepId: 'yahoo' },
-              { stepName: 'Outlook', stepComponent: StepOutlook, stepId: 'outlook' }
+              {
+                stepName: 'Outlook',
+                stepComponent: StepOutlook,
+                stepId: 'outlook'
+              }
             ]}
             title="新規メールアカウント作成"
             cancelButtonText="キャンセル"

@@ -1,5 +1,5 @@
 // @flow
-import type { BlogAccountType } from "../../types/blogAccount";
+import type { BlogAccountType } from '../../types/blogAccount';
 
 import {
   GET_BLOGS_REQUEST,
@@ -17,7 +17,7 @@ import {
   IMPORT_BLOGS_REQUEST,
   IMPORT_BLOGS_SUCCESS,
   IMPORT_BLOGS_FAILURE
-} from "./actionTypes";
+} from './actionTypes';
 import type {
   GetBlogsRequest,
   GetBlogsSuccess,
@@ -34,7 +34,7 @@ import type {
   ImportBlogsRequest,
   ImportBlogsSuccess,
   ImportBlogsFailure
-} from "./actionTypes";
+} from './actionTypes';
 
 export function getBlogsRequest(): GetBlogsRequest {
   return {

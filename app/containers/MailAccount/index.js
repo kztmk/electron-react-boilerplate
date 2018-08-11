@@ -41,4 +41,7 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(MailAccount);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MailAccount);

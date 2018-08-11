@@ -39,7 +39,6 @@ type State = {
   remark: string,
   tags: Array<string>,
   domain: string,
-  domainValue: string,
   errorMessage: string,
   openErrorSnackbar: boolean
 };
@@ -59,7 +58,6 @@ class StepNinjya extends React.Component<Props, State> {
       remark: '',
       tags: [],
       domain: '',
-      domainValue: '',
       errorMessage: '',
       openErrorSnackbar: false
     };
@@ -91,7 +89,6 @@ class StepNinjya extends React.Component<Props, State> {
       remark: '',
       tags: [],
       domain: '',
-      domainValue: '',
       errorMessage: '',
       openErrorSnackbar: false
     });
@@ -126,8 +123,7 @@ class StepNinjya extends React.Component<Props, State> {
    */
   handleDomainSelected = event => {
     this.setState({
-      domain: event.target.value.text,
-      domainValue: event.target.value.val
+      domain: event.target.value
     });
   };
 
@@ -278,11 +274,11 @@ class StepNinjya extends React.Component<Props, State> {
               />
             </GridItem>
           </GridContainer>
-          <GridContainer container justify="left">
+          <GridContainer container justify="flex-start">
             <GridItem xs={12} sm={2} md={2}>
               <FormLabel className={classes.labelHorizontal}>タグ:</FormLabel>
             </GridItem>
-            <GridItem xs={12} sm={6} md={6}>
+            <GridItem xs={12} sm={4} md={4}>
               <TagsInput
                 value={this.state.tags}
                 tagProps={{ className: 'react-tagsinput-tag info' }}
@@ -293,8 +289,6 @@ class StepNinjya extends React.Component<Props, State> {
                 }}
               />
             </GridItem>
-          </GridContainer>
-          <GridContainer container justify="left">
             <GridItem xs={12} sm={4} md={4}>
               <FormControl fullWidth className={classes.selectFormControl}>
                 <InputLabel htmlFor="domain-select" className={classes.selectLabel}>

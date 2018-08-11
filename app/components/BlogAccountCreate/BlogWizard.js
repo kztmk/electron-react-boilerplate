@@ -12,6 +12,7 @@ import Card from '@material-ui/core/Card';
 import Button from '../../ui/CustomButtons/Button';
 import Table from '../../ui/Table/Table';
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
+import type MailAccountType from '../../types/mailAccount';
 
 const errorStyles = {
   fontWeight: 'bold',
@@ -71,7 +72,8 @@ class BlogWizard extends React.Component<Props, State> {
         transition: 'transform 0s'
       },
       accountInfo: {},
-      sweetAlert: ''
+      sweetAlert: '',
+      baseMailAccount: this.props.initialAccount
     };
   }
 

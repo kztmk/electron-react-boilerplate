@@ -1,6 +1,9 @@
 // @flow
 import type MailAccountType from '../../types/mailAccount';
-import type { ImapFlagsArgsType, ImapManagerPropertyType } from '../../types/mailMessageType';
+import type {
+  ImapFlagsArgsType,
+  ImapManagerPropertyType
+} from '../../types/mailMessageType';
 
 export const OPEN_CONNECTION_REQUEST: 'MailAccount/OPEN_CONNECTION_REQUEST' =
   'MailAccount/OPEN_CONNECTION_REQUEST';

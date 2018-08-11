@@ -16,7 +16,10 @@ const signin = async (user, opts) => {
   await page.waitFor('input[type=checkbox]', { visible: true });
   await page.click('input[type=checkbox]');
 
-  await Promise.all([page.waitForNavigation(), page.click('input[type=submit]')]);
+  await Promise.all([
+    page.waitForNavigation(),
+    page.click('input[type=submit]')
+  ]);
 
   await page.waitFor('.c-action-menu');
   await delay(500);

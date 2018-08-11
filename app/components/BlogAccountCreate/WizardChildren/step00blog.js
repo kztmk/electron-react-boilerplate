@@ -1,12 +1,12 @@
-/* eslint-disable react/no-unused-state */
+/* eslint-disable react/no-unused-state,prefer-destructuring */
 // @flow
 import React from 'react';
 import Loadable from 'react-loading-overlay';
 import moment from 'moment';
 import generatePassword from 'password-generator';
+
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import InputLabel from '@material-ui/core/InputLabel';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -15,12 +15,11 @@ import FormControl from '@material-ui/core/FormControl';
 import Switch from '@material-ui/core/Switch';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import Avatar from '@material-ui/core/Avatar';
 // @material-ui/icons
 import FolderShared from '@material-ui/icons/FolderShared';
 import AddAlert from '@material-ui/icons/AddAlert';
 import Refresh from '@material-ui/icons/Refresh';
-
 // core components
 import GridContainer from '../../../ui/Grid/GridContainer';
 import GridItem from '../../../ui/Grid/GridItem';
@@ -29,11 +28,20 @@ import CustomInput from '../../../ui/CustomInput/CustomInput';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import formAddStyle from '../../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
-import type PersonalInfoType from '../../../types/personalInfo';
 
-import Yahoo from '../../../assets/img/providerImage/y64.png';
-import Outlook from '../../../assets/img/providerImage/outlook64.png';
-
+import Fc2 from '../../../assets/img/blogs/fc2.png';
+import Webnode from '../../../assets/img/blogs/webnode.png';
+import Livedoor from '../../../assets/img/blogs/livedoor.png';
+import Seesaa from '../../../assets/img/blogs/seesaa.png';
+import Ameba from '../../../assets/img/blogs/ameba.png';
+import Rakuten from '../../../assets/img/blogs/rakuten.png';
+import Kokolog from '../../../assets/img/blogs/kokolog.png';
+import Yaplog from '../../../assets/img/blogs/yaplog.png';
+import Ninjya from '../../../assets/img/blogs/ninja.png';
+import Hatena from '../../../assets/img/blogs/hatena.png';
+import Webryblog from '../../../assets/img/blogs/webryblog.png';
+import Wpcom from '../../../assets/img/blogs/wpcom.png';
+import Goo from '../../../assets/img/blogs/goo.png';
 import prefectures from '../../Commons/prefecture';
 
 const stepContent = {
@@ -59,6 +67,11 @@ const selectAvatarStyle = {
   alignItems: 'center'
 };
 
+const legendStyle = {
+  margin: '10px 0 10px 60px',
+  fontWeight: 'bold'
+};
+
 type Props = {
   classes: Object,
   isLoading: boolean,
@@ -71,6 +84,7 @@ type Props = {
 
 type State = {
   provider: string,
+  mailAddress: string,
   accountId: string,
   accountIdState: string,
   password: string,
@@ -85,21 +99,22 @@ type State = {
   postalCode: string,
   postalCodeState: string,
   prefecture: string,
-  errorMessage: string,
-  openErrorSnackbar: false,
   forceUseDefault: boolean,
-  forceUseRandom: boolean
+  forceUseRAndom: boolean,
+  errorMessage: string,
+  openErrorSnackbar: boolean
 };
 
 /**
- * mailAccount自動取得のWizard画面 Step0
+ * blogAccount自動取得のWizard画面 Step0
  */
-class Steps00 extends React.Component<Props, State> {
+class Steps00blog extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
     this.state = {
       provider: '',
+      mailAddress: '',
       accountId: '',
       accountIdState: '',
       password: '',
@@ -110,7 +125,7 @@ class Steps00 extends React.Component<Props, State> {
       firstName: '',
       firstNameState: '',
       firstNameKana: '',
-      gender: false,
+      gender: true,
       birthDate: '',
       birthDateState: '',
       postalCode: '',
@@ -124,15 +139,51 @@ class Steps00 extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps = nextProps => {
-    if (this.props.isLoading && !nextProps.isLoading && !nextProps.isFailure) {
-      this.handleGenerateAccountId();
-      this.handleGeneratePassword();
+    console.log('got new props on blog steps00');
+    console.log(
+      `isLoading:${
+        this.props.isLoading
+      }:nextLoading:${!nextProps.isLoading}:nextFailure:${!nextProps.isFailure}`
+    );
+    if (!nextProps.isLoading && !nextProps.isFailure) {
+      console.log('use random on blog steps00');
+      const accountMeta = nextProps.randomPersonalInfo.address1;
+      console.log(`accountMeta:${accountMeta}`);
+      let accountMetaData = [];
+      let mailAddress = '';
+      let accountId = '';
+      let password = '';
+
+      if (accountMeta.length > 0) {
+        accountMetaData = accountMeta.split(':');
+        console.log(accountMetaData);
+      }
+      if (accountMetaData.length === 3) {
+        mailAddress = accountMetaData[2];
+        accountId = accountMetaData[0];
+        password = accountMetaData[1];
+      }
+
+      if (this.state.mailAddress.length > 0) {
+        mailAddress = this.state.mailAddress;
+      }
+
+      if (this.state.accountId.length > 0) {
+        accountId = this.state.accountId;
+      }
+
+      if (this.state.password.length > 0) {
+        password = this.state.password;
+      }
 
       if (
         (!this.state.forceUseDefault && !nextProps.personalInfo.useDefault) ||
         this.state.forceUseRandom
       ) {
         this.setState({
+          mailAddress,
+          accountId,
+          password,
           lastName: nextProps.randomPersonalInfo.lastName,
           lastNameKana: nextProps.randomPersonalInfo.lastNameKana,
           firstName: nextProps.randomPersonalInfo.firstName,
@@ -143,7 +194,11 @@ class Steps00 extends React.Component<Props, State> {
           prefecture: nextProps.randomPersonalInfo.prefecture
         });
       } else {
+        console.log('use default blog steps00');
         this.setState({
+          mailAddress,
+          accountId,
+          password,
           lastName: nextProps.personalInfo.lastName,
           lastNameKana: nextProps.personalInfo.lastNameKana,
           firstName: nextProps.personalInfo.firstName,
@@ -157,7 +212,7 @@ class Steps00 extends React.Component<Props, State> {
     }
 
     // error get random personalInfo
-    if (this.props.isLoading && !nextProps.isLoading && nextProps.isFailure) {
+    if (!nextProps.isLoading && nextProps.isFailure) {
       this.setState({
         errorMessage: nextProps.errorMessage,
         openErrorSnackbar: true
@@ -176,6 +231,7 @@ class Steps00 extends React.Component<Props, State> {
    */
   initState = () => {
     this.setState({
+      mailAddress: '',
       provider: '',
       accountId: '',
       accountIdState: '',
@@ -228,15 +284,14 @@ class Steps00 extends React.Component<Props, State> {
    * 文字列長をaccountId欄に入力すれば優先、default length 8
    */
   handleGenerateAccountId = () => {
-    let acLength = 7;
+    let acLength = 8;
     const newAcLength = parseInt(this.state.accountId, 10);
     if (!Number.isNaN(newAcLength)) {
       if (newAcLength > 8) {
-        acLength = newAcLength - 1;
+        acLength = newAcLength;
       }
     }
-    const newAccountId =
-      generatePassword(1, false, /[a-z]/) + generatePassword(acLength, false, /[a-z0-9]/);
+    const newAccountId = generatePassword(acLength, false, /[a-zA-Z0-9]/);
     if (this.isRequiredLength(newAccountId, 8)) {
       this.setState({
         accountId: newAccountId.toLowerCase(),
@@ -344,13 +399,11 @@ class Steps00 extends React.Component<Props, State> {
         if (event.target.value.length > 0) {
           this.setState({
             lastName: event.target.value,
-            lastNameKana: '',
             lastNameState: 'success'
           });
         } else {
           this.setState({
             lastName: event.target.value,
-            lastNameKana: '',
             lastNameState: 'error'
           });
         }
@@ -359,13 +412,11 @@ class Steps00 extends React.Component<Props, State> {
         if (event.target.value.length > 0) {
           this.setState({
             firstName: event.target.value,
-            firstNameKana: '',
             firstNameState: 'success'
           });
         } else {
           this.setState({
             firstName: event.target.value,
-            firstNameKana: '',
             firstNameState: 'error'
           });
         }
@@ -420,41 +471,55 @@ class Steps00 extends React.Component<Props, State> {
   isValidated = () => {
     let errorMsg = '';
     if (this.state.provider.length === 0) {
-      errorMsg += 'メール提供元を選択してください。\n';
+      errorMsg += 'ブログ提供元を選択してください。\n';
     }
+
     if (!this.isRequiredLength(this.state.accountId, 8)) {
       this.setState({ accountIdState: 'error' });
       errorMsg += 'アカウントIDは8文字以上です。\n';
+    } else {
+      this.setState({ accountIdState: 'success' });
     }
 
     if (!this.isRequiredLength(this.state.password, 8)) {
       this.setState({ passwordState: 'error' });
       errorMsg += 'パスワードは8文字以上です。\n';
+    } else {
+      this.setState({ passwordState: 'success' });
     }
 
     if (this.state.lastName.length === 0) {
       this.setState({ lastNameState: 'error' });
       errorMsg += '姓は必須です。\n';
+    } else {
+      this.setState({ lastNameState: 'success' });
     }
 
     if (this.state.firstName.length === 0) {
       this.setState({ firstNameState: 'error' });
       errorMsg += '名は必須です。\n';
+    } else {
+      this.setState({ firstNameState: 'success' });
     }
 
     if (!moment(this.state.birthDate, ['YYYY/MM/DD'], true).isValid()) {
       this.setState({ birthDateState: 'error' });
       errorMsg += '生年月日(西暦/月/日)を正しく入力してください。\n';
+    } else {
+      this.setState({ birthDateState: 'success' });
     }
 
     if (!/^[0-9]{7}$/.test(this.state.postalCode)) {
       this.setState({ postalCodeState: 'error' });
       errorMsg += '郵便番号は、7桁の数字でハイフンは不要です。\n';
+    } else {
+      this.setState({ postalCodeState: 'success' });
     }
 
-    if (this.state.prefecture.length === 0) {
-      errorMsg += '都道府県を選択してください。\n';
+    if (this.state.prefecture.length > 2) {
+      errorMsg += '都道府県を選択してください。';
     }
+
     if (errorMsg.length > 0) {
       this.setState({
         errorMessage: errorMsg,
@@ -490,39 +555,6 @@ class Steps00 extends React.Component<Props, State> {
   };
 
   /**
-   * ランダム個人情報をセット
-   */
-  handleSetRandomData = () => {
-    this.setState({
-      forceUseDefault: false,
-      forceUseRandom: true
-    });
-    this.props.startGetRandomPersonalInfo();
-  };
-
-  /**
-   * 既定の個人情報をセット
-   */
-  handleSetDefaultData = () => {
-    if (this.props.personalInfo.lastName.length > 0) {
-      this.setState({
-        lastName: this.props.personalInfo.lastName,
-        firstName: this.props.personalInfo.firstName,
-        gender: this.props.personalInfo.gender === 1,
-        birthDate: this.props.personalInfo.birthDate,
-        postalCode: this.props.personalInfo.postalCode,
-        forceUseDefault: true,
-        forceUseRandom: false
-      });
-    } else {
-      this.setState({
-        errorMessage: '既定の個人情報は設定されていません。設定画面で設定してください。',
-        openErrorSnackbar: true
-      });
-    }
-  };
-
-  /**
    * 都道府県選択用オプション作成
    * @returns {any[]}
    */
@@ -551,17 +583,46 @@ class Steps00 extends React.Component<Props, State> {
     this.setState({ prefecture: event.target.value });
   };
 
+  handleSetRandomData = () => {
+    this.props.startGetRandomPersonalInfo();
+  };
+
+  /**
+   * 既定の個人情報をセット
+   */
+  handleSetDefaultData = () => {
+    if (this.props.personalInfo.lastName.length > 0) {
+      this.setState({
+        lastName: this.props.personalInfo.lastName,
+        firstName: this.props.personalInfo.firstName,
+        gender: this.props.personalInfo.gender === 1,
+        birthDate: this.props.personalInfo.birthDate,
+        postalCode: this.props.personalInfo.postalCode,
+        forceUseDefault: true,
+        forceUseRandom: false
+      });
+    } else {
+      this.setState({
+        errorMessage: '既定の個人情報は設定されていません。設定画面で設定してください。',
+        openErrorSnackbar: true
+      });
+    }
+  };
+
   render() {
     const { classes } = this.props;
     return (
       <Loadable active={this.props.isLoading} spinner text="個人情報取得中・・・・">
         <div>
           <GridContainer style={stepContent}>
+            <GridContainer>
+              <legend style={legendStyle}>使用メールアドレス:{this.state.mailAddress}</legend>
+            </GridContainer>
             <GridContainer container justify="center" style={groupBoxTop}>
               <GridItem xs={12} sm={3} md={3}>
                 <FormControl fullWidth className={classes.selectFormControl}>
                   <InputLabel htmlFor="provider-select" className={classes.selectLabel}>
-                    メール提供元
+                    ブログ提供元
                   </InputLabel>
                   <Select
                     MenuProps={{
@@ -583,18 +644,18 @@ class Steps00 extends React.Component<Props, State> {
                         root: classes.selectMenuItem
                       }}
                     >
-                      メール提供元
+                      ブログ提供元
                     </MenuItem>
                     <MenuItem
                       classes={{
                         root: classes.selectMenuItem,
                         selected: classes.selectMenuItemSelected
                       }}
-                      value="Yahoo"
+                      value="fc2"
                     >
                       <div style={selectAvatarStyle}>
-                        <Avatar alt="Yahoo" src={Yahoo} className={classes.avatar} />
-                        Yahoo!メール
+                        <Avatar alt="FC2" src={Fc2} className={classes.avatar} />
+                        FC2
                       </div>
                     </MenuItem>
                     <MenuItem
@@ -602,11 +663,143 @@ class Steps00 extends React.Component<Props, State> {
                         root: classes.selectMenuItem,
                         selected: classes.selectMenuItemSelected
                       }}
-                      value="Outlook"
+                      value="webnode"
                     >
                       <div style={selectAvatarStyle}>
-                        <Avatar alt="Yahoo" src={Outlook} className={classes.avatar} />
-                        Outlook
+                        <Avatar alt="webnode" src={Webnode} className={classes.avatar} />
+                        webnode
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="livedoor"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="Livedoor" src={Livedoor} className={classes.avatar} />
+                        Livedoor
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="seesaa"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="Seesaa" src={Seesaa} className={classes.avatar} />
+                        Seesaa
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="ameba"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="アメーバ" src={Ameba} className={classes.avatar} />
+                        アメーバー
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="rakuten"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="楽天" src={Rakuten} className={classes.avatar} />
+                        楽天
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="kokolog"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="ココログ" src={Kokolog} className={classes.avatar} />
+                        ココログ
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="yaplog"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="Yaplog" src={Yaplog} className={classes.avatar} />
+                        Yaplog
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="ninjya"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="忍者" src={Ninjya} className={classes.avatar} />
+                        忍者
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="hatena"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="はてな" src={Hatena} className={classes.avatar} />
+                        はてな
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="webryblog"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="ウェブリブログ" src={Webryblog} className={classes.avatar} />
+                        ウェブリブログ
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="wpcom"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="WordPress.com" src={Wpcom} className={classes.avatar} />
+                        WordPress.com
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="goo"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="gooブログ" src={Goo} className={classes.avatar} />
+                        gooブログ
                       </div>
                     </MenuItem>
                   </Select>
@@ -626,7 +819,6 @@ class Steps00 extends React.Component<Props, State> {
                       <InputAdornment position="end">
                         <Tooltip title="ランダムアカウントIDを再取得">
                           <Button
-                            justIcon
                             size="sm"
                             color="primary"
                             onClick={() => this.handleGenerateAccountId()}
@@ -656,7 +848,6 @@ class Steps00 extends React.Component<Props, State> {
                       <InputAdornment position="end">
                         <Tooltip title="ランダムパスワードを再取得">
                           <Button
-                            justIcon
                             size="sm"
                             color="primary"
                             onClick={() => this.handleGeneratePassword()}
@@ -750,8 +941,8 @@ class Steps00 extends React.Component<Props, State> {
                   />
                 </GridItem>
                 <GridItem xs={12} sm={2} md={2}>
-                  <Tooltip title="設定画面で保存した個人情報を読込みます。" placement="bottom">
-                    <Button color="primary">
+                  <Tooltip title="設定画面で保存した個人情報を読込ます。" placement="bottom">
+                    <Button color="primary" onClick={() => this.handleSetDefaultData()}>
                       <FolderShared />
                       既存のデータを使用
                     </Button>
@@ -825,4 +1016,4 @@ class Steps00 extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(formAddStyle)(Steps00);
+export default withStyles(formAddStyle)(Steps00blog);

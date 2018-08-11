@@ -20,7 +20,11 @@
     "flowtype/delimiter-dangle": ["error", "never"],
     "flowtype/generic-spacing": ["error", "never"],
     "flowtype/no-primitive-constructor-types": "error",
-    "flowtype/no-weak-types": "warn",
+    "flowtype/no-weak-types": ["warn", {
+        "any" : true,
+        "Object": false,
+        "Function" : false
+    }],
     "flowtype/object-type-delimiter": ["error", "comma"],
     "flowtype/require-parameter-type": "off",
     "flowtype/require-return-type": "off",
@@ -62,7 +66,8 @@
       "error",
       { "extensions": [".js", ".jsx"] }
     ],
-    "react/prefer-stateless-function": "off"
+    "react/prefer-stateless-function": "off",
+    "react/destructuring-assignment": ["off", "always"]
   },
   "plugins": ["flowtype", "import", "promise", "compat", "react"],
   "settings": {

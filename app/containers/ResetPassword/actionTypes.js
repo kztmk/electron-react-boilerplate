@@ -1,16 +1,16 @@
 // @flow
-import type { AuthType } from "../../types/auth";
+import type { AuthType } from '../../types/auth';
 
-export const SET_AUTH_INFO: "ResetPassword/SET_AUTH_INFO" =
-  "ResetPassword/SET_AUTH_INFO";
-export const RESET_PASSWORD_REQUEST: "ResetPassword/RESET_PASSWORD_REQUEST" =
-  "ResetPassword/RESET_PASSWORD_REQUEST";
-export const RESET_PASSWORD_SUCCESS: "ResetPassword/RESET_PASSWORD_SUCCESS" =
-  "ResetPassword/RESET_PASSWORD_SUCCESS";
-export const RESET_PASSWORD_FAILURE: "ResetPassword/RESET_PASSWORD_FAILURE" =
-  "ResetPassword/RESET_PASSWORD_FAILURE";
-export const CLEAR_FIELDS: "ResetPassword/CLEAR_FIELDS" =
-  "ResetPassword/CLEAR_FIELDS";
+export const SET_AUTH_INFO: 'ResetPassword/SET_AUTH_INFO' =
+  'ResetPassword/SET_AUTH_INFO';
+export const RESET_PASSWORD_REQUEST: 'ResetPassword/RESET_PASSWORD_REQUEST' =
+  'ResetPassword/RESET_PASSWORD_REQUEST';
+export const RESET_PASSWORD_SUCCESS: 'ResetPassword/RESET_PASSWORD_SUCCESS' =
+  'ResetPassword/RESET_PASSWORD_SUCCESS';
+export const RESET_PASSWORD_FAILURE: 'ResetPassword/RESET_PASSWORD_FAILURE' =
+  'ResetPassword/RESET_PASSWORD_FAILURE';
+export const CLEAR_FIELDS: 'ResetPassword/CLEAR_FIELDS' =
+  'ResetPassword/CLEAR_FIELDS';
 
 export const Actions = {
   SET_AUTH_INFO,

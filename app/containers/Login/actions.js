@@ -1,5 +1,5 @@
 // @flow
-import type { AuthType } from "../../types/auth";
+import type { AuthType } from '../../types/auth';
 
 import {
   SET_AUTH_INFO,
@@ -12,7 +12,7 @@ import {
   LOGOUT_FAILURE,
   CLEAR_AUTH_INFO,
   UPDATE_AUTH_INFO
-} from "./actionTypes";
+} from './actionTypes';
 import type {
   SetAuthInfo,
   LoginRequest,
@@ -24,7 +24,7 @@ import type {
   LogoutFailure,
   ClearAuthInfo,
   UpdateAuthInfo
-} from "./actionTypes";
+} from './actionTypes';
 
 export function setAuthInfo(payload: AuthType): SetAuthInfo {
   return {

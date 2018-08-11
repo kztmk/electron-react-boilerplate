@@ -12,7 +12,10 @@ import {
 
 import MailAddressListPage from '../../components/MailAddressList';
 import { closeConnectionRequest } from '../MailAccount/actions';
-import { getRandomPersonalInfoRequest } from '../PersonalInfo/actions';
+import {
+  getRandomPersonalInfoRequest,
+  savePersonalInfoForBlogRequest
+} from '../PersonalInfo/actions';
 import { createBlogRequest } from '../BlogList/actions';
 
 const mapStateToProps = (state: State) => ({
@@ -51,6 +54,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startCreateBlogAccount(blogAccount) {
     dispatch(createBlogRequest(blogAccount));
+  },
+  startSavePersonalInfoForBlog(personalInfo) {
+    dispatch(savePersonalInfoForBlogRequest(personalInfo));
   }
 });
 

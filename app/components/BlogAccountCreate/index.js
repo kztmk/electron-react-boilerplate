@@ -6,7 +6,7 @@ import BlogWizard from './BlogWizard';
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
 
-import Steps00 from './WizardChildren/step00';
+import Steps00 from '../../containers/BlogAccountCreate/WizardChildren/step00blog';
 import StepFc2 from './WizardChildren/stepFc2';
 import StepWebNode from './WizardChildren/stepWebNode';
 import StepLivedoor from './WizardChildren/stepLivedoor';
@@ -41,17 +41,57 @@ class WizardViewBlog extends React.Component<Props> {
                 stepId: 'start'
               },
               { stepName: 'Fc2', stepComponent: StepFc2, stepId: 'fc2' },
-              { stepName: 'WebNode', stepComponent: StepWebNode, stepId: 'webnode' },
-              { stepName: 'Livedoor', stepComponent: StepLivedoor, stepId: 'livedoor' },
-              { stepName: 'Seesaa', stepComponent: StepSeesaa, stepId: 'seesaa' },
+              {
+                stepName: 'WebNode',
+                stepComponent: StepWebNode,
+                stepId: 'webnode'
+              },
+              {
+                stepName: 'Livedoor',
+                stepComponent: StepLivedoor,
+                stepId: 'livedoor'
+              },
+              {
+                stepName: 'Seesaa',
+                stepComponent: StepSeesaa,
+                stepId: 'seesaa'
+              },
               { stepName: 'Ameba', stepComponent: StepAmeba, stepId: 'ameba' },
-              { stepName: 'Rakuten', stepComponent: StepRakuten, stepId: 'rakuten' },
-              { stepName: 'Kokolog', stepComponent: StepKokolog, stepId: 'kokolog' },
-              { stepName: 'Yaplog', stepComponent: StepYaplog, stepId: 'yaplog' },
-              { stepName: 'Ninjya', stepComponent: StepNinjya, stepId: 'ninjya' },
-              { stepName: 'Hatena', stepComponent: StepHatena, stepId: 'hatena' },
-              { stepName: 'WebryBlog', stepComponent: StepWebryBlog, stepId: 'webryblog' },
-              { stepName: 'WordPress.com', stepComponent: StepWpcom, stepId: 'wpcom' },
+              {
+                stepName: 'Rakuten',
+                stepComponent: StepRakuten,
+                stepId: 'rakuten'
+              },
+              {
+                stepName: 'Kokolog',
+                stepComponent: StepKokolog,
+                stepId: 'kokolog'
+              },
+              {
+                stepName: 'Yaplog',
+                stepComponent: StepYaplog,
+                stepId: 'yaplog'
+              },
+              {
+                stepName: 'Ninjya',
+                stepComponent: StepNinjya,
+                stepId: 'ninjya'
+              },
+              {
+                stepName: 'Hatena',
+                stepComponent: StepHatena,
+                stepId: 'hatena'
+              },
+              {
+                stepName: 'WebryBlog',
+                stepComponent: StepWebryBlog,
+                stepId: 'webryblog'
+              },
+              {
+                stepName: 'WordPress.com',
+                stepComponent: StepWpcom,
+                stepId: 'wpcom'
+              },
               { stepName: 'Goo', stepComponent: StepGoo, stepId: 'goo' }
             ]}
             title="新規ブログ作成"

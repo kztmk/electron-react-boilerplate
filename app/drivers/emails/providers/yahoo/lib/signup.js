@@ -13,7 +13,7 @@ const signup = async (user, opts) => {
   const { browser } = opts;
 
   let scriptDir = './app';
-  log.info(`appPath:${process.env.NODE_APPPATH}`)
+  log.info(`appPath:${process.env.NODE_APPPATH}`);
   if (process.env.NODE_ENV === 'production') {
     scriptDir = process.env.NODE_APPPATH;
     scriptDir = scriptDir.replace('app.asar', 'app.asar.unpacked');
@@ -196,7 +196,9 @@ const signup = async (user, opts) => {
         text:'名前入力開始' 
       }).show();
     `);
-    await page.type('#dispname', `${user.lastName} ${user.firstName}`, { delay: 50 }); // user lastName firstName
+    await page.type('#dispname', `${user.lastName} ${user.firstName}`, {
+      delay: 50
+    }); // user lastName firstName
     log.info(`input:[名前]-${user.lastName} ${user.firstName}`);
     await page.evaluate(`
     new Noty({
@@ -334,7 +336,7 @@ const signup = async (user, opts) => {
       }).show();
     `);
 
-      await page.type('#secword', captchaValue.value);
+      await page.type('#secword', captchaValue.value, { delay: 100 });
       log.info(`input:画像認証へ-${captchaValue.value}-を入力`);
       await page.evaluate(`
     new Noty({

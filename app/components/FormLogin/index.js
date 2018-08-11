@@ -98,7 +98,10 @@ class LoginForm extends Component<Props, State> {
       // getMailAccounts
       this.setState({ step: 'getPersonalInfo' });
       this.props.startGetPersonalInfo();
-    } else if (this.state.step === 'getProfile' && nextProps.profile.isFailure) {
+    } else if (
+      this.state.step === 'getProfile' &&
+      nextProps.profile.isFailure
+    ) {
       this.setState({
         isOpenErrorSnackbar: nextProps.profile.isFailure,
         errorMessage: nextProps.profile.errorMessage
@@ -114,7 +117,10 @@ class LoginForm extends Component<Props, State> {
       // getPersonalInfo
       this.setState({ step: 'getMailAccount' });
       this.props.startGetMailAccounts();
-    } else if (this.state.step === 'getPersonalInfo' && nextProps.personalInfoState.isFailure) {
+    } else if (
+      this.state.step === 'getPersonalInfo' &&
+      nextProps.personalInfoState.isFailure
+    ) {
       this.setState({
         isOpenErrorSnackbar: nextProps.personalInfoState.isFailure,
         errorMessage: nextProps.personalInfoState.errorMessage
@@ -130,7 +136,10 @@ class LoginForm extends Component<Props, State> {
       // getBlogAccounts
       this.setState({ step: 'getBlogAccount' });
       this.props.startGetBlogAccounts();
-    } else if (this.state.step === 'getMailAccount' && nextProps.mailAccountState.isFailure) {
+    } else if (
+      this.state.step === 'getMailAccount' &&
+      nextProps.mailAccountState.isFailure
+    ) {
       this.setState({
         isOpenErrorSnackbar: nextProps.mailAccountState.isFailure,
         errorMessage: nextProps.mailAccountState.metaMessage
@@ -145,7 +154,10 @@ class LoginForm extends Component<Props, State> {
     ) {
       this.setState({ isLogin: true, step: '' });
       this.props.isLoginDone(true);
-    } else if (this.state.step === 'getBlogAccount' && nextProps.blogAccountState.isFailure) {
+    } else if (
+      this.state.step === 'getBlogAccount' &&
+      nextProps.blogAccountState.isFailure
+    ) {
       this.setState({
         isOpenErrorSnackbar: nextProps.blogAccountState.isFailure,
         errorMessage: nextProps.blogAccountState.errorMessage
@@ -222,21 +234,29 @@ class LoginForm extends Component<Props, State> {
           <Card>
             <CardHeader text color="primary">
               <CardText color="primary">
-                <h4 className={classes.cardTitleWhite}>寄騎 version5　ログイン</h4>
+                <h4 className={classes.cardTitleWhite}>
+                  寄騎 version5　ログイン
+                </h4>
                 <h4 className={classes.cardCategoryWhite}>
                   登録済みのメールアドレス、パスワードでログイン
                 </h4>
               </CardText>
             </CardHeader>
             <CardBody>
-              <ValidatorForm onSubmit={this.handleSubmit} onError={errors => console.log(errors)}>
+              <ValidatorForm
+                onSubmit={this.handleSubmit}
+                onError={errors => console.log(errors)}
+              >
                 <TextValidator
                   label="メールアドレス"
                   onChange={this.handleChangeMailAddress}
                   name="mailAddress"
                   value={this.state.userAuth.mailAddress}
                   validators={['required', 'isEmail']}
-                  errorMessages={['必須項目です。', '有効なメールアドレスを入力してください。']}
+                  errorMessages={[
+                    '必須項目です。',
+                    '有効なメールアドレスを入力してください。'
+                  ]}
                   helperText="登録メールアドレスを入力します。"
                   fullWidth
                 />
@@ -263,7 +283,9 @@ class LoginForm extends Component<Props, State> {
                   ログイン
                 </Button>
                 <br />
-                <Button onClick={this.props.requestPasswordReset}>パスワードを忘れた場合</Button>
+                <Button onClick={this.props.requestPasswordReset}>
+                  パスワードを忘れた場合
+                </Button>
                 <Snackbar
                   color="warning"
                   place="bc"
@@ -271,7 +293,9 @@ class LoginForm extends Component<Props, State> {
                   open={this.state.isOpenErrorSnackbar}
                   closeNotification={this.handleErrorSnackbarClose}
                   close
-                  message={<span id="login_error">{this.state.errorMessage}</span>}
+                  message={
+                    <span id="login_error">{this.state.errorMessage}</span>
+                  }
                 />
               </ValidatorForm>
             </CardBody>
