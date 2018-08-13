@@ -218,3 +218,33 @@ test('handle GET_PERSONAL_INFO_FOR_BLOG_FAILURE', () => {
     randomPersonalInfo: initialPersonalInfo
   });
 });
+
+test('handle CLEAR_PERSONAL_INFO_REQUEST', () => {
+  expect(reducer(initialState, actions.clearPersonalInfoRequest())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    personalInfo: initialPersonalInfo,
+    randomPersonalInfo: initialPersonalInfo
+  });
+});
+
+test('handle CLEAR_PERSONAL_INFO_SUCCESS', () => {
+  expect(reducer(initialState, actions.clearPersonalInfoSuccess())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    personalInfo: initialPersonalInfo,
+    randomPersonalInfo: initialPersonalInfo
+  });
+});
+
+test('handle CLEAR_PERSONAL_INFO_FAILURE', () => {
+  expect(reducer(initialState, actions.clearPersonalInfoFailure())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    personalInfo: initialPersonalInfo,
+    randomPersonalInfo: initialPersonalInfo
+  });
+});

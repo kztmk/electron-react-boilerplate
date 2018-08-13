@@ -6,7 +6,7 @@ import BlogWizard from './BlogWizard';
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
 
-import Steps00 from '../../containers/BlogAccountCreate/WizardChildren/step00blog';
+import Steps00blog from '../../containers/BlogAccountCreate/WizardChildren/step00blog';
 import StepFc2 from './WizardChildren/stepFc2';
 import StepWebNode from './WizardChildren/stepWebNode';
 import StepLivedoor from './WizardChildren/stepLivedoor';
@@ -37,7 +37,7 @@ class WizardViewBlog extends React.Component<Props> {
             steps={[
               {
                 stepName: 'ブログ取得-個人情報',
-                stepComponent: Steps00,
+                stepComponent: Steps00blog,
                 stepId: 'start'
               },
               { stepName: 'Fc2', stepComponent: StepFc2, stepId: 'fc2' },
@@ -100,7 +100,7 @@ class WizardViewBlog extends React.Component<Props> {
             previousButtonText="戻る"
             nextButtonText="次へ"
             finishButtonText="ブログ取得"
-            finishButtonClick={this.props.createMailAccount}
+            finishButtonClick={this.props.createBlogAccount}
           />
         </GridItem>
       </GridContainer>

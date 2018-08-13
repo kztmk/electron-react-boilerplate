@@ -16,7 +16,10 @@ import {
   SAVE_PERSONAL_INFO_FAILURE,
   SAVE_PERSONAL_INFO_FOR_BLOG_REQUEST,
   SAVE_PERSONAL_INFO_FOR_BLOG_SUCCESS,
-  SAVE_PERSONAL_INFO_FOR_BLOG_FAILURE
+  SAVE_PERSONAL_INFO_FOR_BLOG_FAILURE,
+  CLEAR_PERSONAL_INFO_REQUEST,
+  CLEAR_PERSONAL_INFO_SUCCESS,
+  CLEAR_PERSONAL_INFO_FAILURE
 } from './actionTypes';
 import type {
   GetPersonalInfoRequest,
@@ -33,7 +36,10 @@ import type {
   SavePersonalInfoFailure,
   SavePersonalInfoForBlogRequest,
   SavePersonalInfoForBlogSuccess,
-  SavePersonalInfoForBlogFailure
+  SavePersonalInfoForBlogFailure,
+  ClearPersonalInfoRequest,
+  ClearPersonalInfoSuccess,
+  ClearPersonalInfoFailure
 } from './actionTypes';
 
 export function getPersonalInfoRequest(): GetPersonalInfoRequest {
@@ -41,17 +47,13 @@ export function getPersonalInfoRequest(): GetPersonalInfoRequest {
     type: GET_PERSONAL_INFO_REQUEST
   };
 }
-export function getPersonalInfoSuccess(
-  payload: PersonalInfoType
-): GetPersonalInfoSuccess {
+export function getPersonalInfoSuccess(payload: PersonalInfoType): GetPersonalInfoSuccess {
   return {
     type: GET_PERSONAL_INFO_SUCCESS,
     payload
   };
 }
-export function getPersonalInfoFailure(meta: {
-  errorMessage: string
-}): GetPersonalInfoFailure {
+export function getPersonalInfoFailure(meta: { errorMessage: string }): GetPersonalInfoFailure {
   return {
     type: GET_PERSONAL_INFO_FAILURE,
     meta
@@ -99,25 +101,19 @@ export function getRandomPersonalInfoFailure(meta: {
     meta
   };
 }
-export function savePersonalInfoRequest(
-  payload: PersonalInfoType
-): SavePersonalInfoRequest {
+export function savePersonalInfoRequest(payload: PersonalInfoType): SavePersonalInfoRequest {
   return {
     type: SAVE_PERSONAL_INFO_REQUEST,
     payload
   };
 }
-export function savePersonalInfoSuccess(
-  payload: PersonalInfoType
-): SavePersonalInfoSuccess {
+export function savePersonalInfoSuccess(payload: PersonalInfoType): SavePersonalInfoSuccess {
   return {
     type: SAVE_PERSONAL_INFO_SUCCESS,
     payload
   };
 }
-export function savePersonalInfoFailure(meta: {
-  errorMessage: string
-}): SavePersonalInfoFailure {
+export function savePersonalInfoFailure(meta: { errorMessage: string }): SavePersonalInfoFailure {
   return {
     type: SAVE_PERSONAL_INFO_FAILURE,
     meta
@@ -144,6 +140,23 @@ export function savePersonalInfoForBlogFailure(meta: {
 }): SavePersonalInfoForBlogFailure {
   return {
     type: SAVE_PERSONAL_INFO_FOR_BLOG_FAILURE,
+    meta
+  };
+}
+export function clearPersonalInfoRequest(): ClearPersonalInfoRequest {
+  return {
+    type: CLEAR_PERSONAL_INFO_REQUEST
+  };
+}
+export function clearPersonalInfoSuccess(payload: PersonalInfoType): ClearPersonalInfoSuccess {
+  return {
+    type: CLEAR_PERSONAL_INFO_SUCCESS,
+    payload
+  };
+}
+export function clearPersonalInfoFailure(meta: { errorMessage: string }): ClearPersonalInfoFailure {
+  return {
+    type: CLEAR_PERSONAL_INFO_FAILURE,
     meta
   };
 }

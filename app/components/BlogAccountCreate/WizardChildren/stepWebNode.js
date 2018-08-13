@@ -2,6 +2,8 @@
 // @flow
 import React from 'react';
 import TagsInput from 'react-tagsinput';
+import generatePassword from 'password-generator';
+
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -14,6 +16,10 @@ import CustomInput from '../../../ui/CustomInput/CustomInput';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import extendedFormsStyle from '../../../assets/jss/material-dashboard-pro-react/views/extendedFormsStyle';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Tooltip from '@material-ui/core/Tooltip';
+import Button from '../../../ui/CustomButtons/Button';
+import Refresh from '../../../../node_modules/@material-ui/icons/Refresh';
 
 const groupBox = {
   border: '1px solid #333',
@@ -33,6 +39,8 @@ type State = {
   descriptionState: string,
   remark: string,
   tags: Array<string>,
+  subdomain: string,
+  subdomainState: string,
   errorMessage: string,
   openErrorSnackbar: boolean
 };
@@ -51,6 +59,8 @@ class StepWebNode extends React.Component<Props, State> {
       descriptionState: '',
       remark: '',
       tags: [],
+      subdomain: '',
+      subdomainState: '',
       errorMessage: '',
       openErrorSnackbar: false
     };
@@ -64,7 +74,9 @@ class StepWebNode extends React.Component<Props, State> {
     blogParams.title = this.state.title;
     blogParams.description = this.state.description;
     blogParams.remark = this.state.remark;
-    blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
+    blogParams.tags = this.state.tags.length > 0 ? this.state.tags.join(',') : '';
+    blogParams.subdomain = `サブドメイン:${this.state.subdomain}`;
+    blogParams.subdomainValue = this.state.subdomain;
 
     return blogParams;
   };
@@ -89,12 +101,14 @@ class StepWebNode extends React.Component<Props, State> {
    * 入力完了時(フォーム移動時)に全入力項目をチェック
    * @returns {boolean}
    */
-  isValidate = () => {
+  isValidated = () => {
     let errorMsg = '';
     if (this.state.titleState !== 'success') {
+      this.setState({ titleState: 'error' });
       errorMsg = 'ブログタイトルを確認してください。\n';
     }
     if (this.state.descriptionState !== 'success') {
+      this.setState({ descriptionState: 'error' });
       errorMsg += 'ブログの説明の入力を確認してください。\n';
     }
     if (errorMsg.length > 0) {
@@ -151,6 +165,9 @@ class StepWebNode extends React.Component<Props, State> {
       case 'remark':
         this.setState({ remark: event.target.value });
         break;
+      case 'subdomain':
+        this.setState({ subdomain: event.target.value });
+        break;
       default:
     }
   };
@@ -165,6 +182,42 @@ class StepWebNode extends React.Component<Props, State> {
       tags: currentTags
     });
   };
+
+  /**
+   * ランダムな文字列でaccountIdを作成
+   *
+   * 文字列長をaccountId欄に入力すれば優先、default length 8
+   */
+  handleGenerateAccountId = () => {
+    let acLength = 8;
+    const newAcLength = parseInt(this.state.subdomain, 10);
+    if (!Number.isNaN(newAcLength)) {
+      if (newAcLength > 8) {
+        acLength = newAcLength;
+      }
+    }
+    const newAccountId = generatePassword(acLength, false, /[a-z0-9]/);
+    if (this.isRequiredLength(newAccountId, 8)) {
+      this.setState({
+        subdomain: newAccountId.toLowerCase(),
+        subdomainState: 'success'
+      });
+    } else {
+      this.setState({
+        subdomain: newAccountId.toLowerCase(),
+        subdomainState: 'error'
+      });
+    }
+  };
+
+  /**
+   * 文字列長確認メソッド
+   *
+   * @param value
+   * @param length
+   * @returns {boolean}
+   */
+  isRequiredLength = (value, length) => value.length >= length;
 
   /**
    * 描画
@@ -239,6 +292,35 @@ class StepWebNode extends React.Component<Props, State> {
                 inputProps={{
                   className: 'react-tagsinput-input-top-padding',
                   placeholder: 'ここへタグを追加'
+                }}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={4} md={4}>
+              <CustomInput
+                success={this.state.subdomainState === 'success'}
+                error={this.state.subdomainState === 'error'}
+                labelText="サブドメイン:"
+                id="subdomain"
+                formControlProps={{
+                  fullWidth: true
+                }}
+                inputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Tooltip title="ランダムなIDを再取得">
+                        <Button
+                          size="sm"
+                          color="primary"
+                          onClick={() => this.handleGenerateAccountId()}
+                        >
+                          <Refresh />
+                        </Button>
+                      </Tooltip>
+                    </InputAdornment>
+                  ),
+                  value: this.state.subdomain,
+                  onChange: event => this.formFieldChange(event, 'subdomain'),
+                  type: 'text'
                 }}
               />
             </GridItem>

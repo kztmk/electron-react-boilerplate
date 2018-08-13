@@ -334,8 +334,8 @@ class MailWizard extends React.Component<Props, State> {
           break;
         case 'Outlook':
           user.provider = 'outlook';
-          accId = `${this.state.accountInfo.accountId}@${additionalInfo[0].domain}`;
-          mailAddress = accId;
+          accId = this.state.accountInfo.accountId;
+          mailAddress = `${this.state.accountInfo.accountId}@${additionalInfo[0].domain}`;
           user.domain = additionalInfo[0].domain;
 
           // birthday check -- outlook do not accept MM, DD

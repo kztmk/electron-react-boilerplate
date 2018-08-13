@@ -27,6 +27,16 @@ const groupBox = {
   margin: '20px 0'
 };
 
+const fc2Questions = [
+  { val: '11', question: '母の出生地' },
+  { val: '12', question: '父の出生地' },
+  { val: '20', question: '初恋の人の名前' },
+  { val: '30', question: '最初に飼ったペットの名前' },
+  { val: '40', question: '卒業した小学校の名前' },
+  { val: '101', question: '保険証番号の下５桁' },
+  { val: '102', question: 'クレジットカード番号の下５桁' }
+];
+
 type Props = {
   classes: Object
 };
@@ -84,17 +94,24 @@ class StepFc2 extends React.Component<Props, State> {
    * ブログ作成時に必要な情報を親フォームに送る
    */
   sendState = () => {
-    const blogParams = [];
-    blogParams.title = this.state;
-    blogParams.description = this.state;
-    blogParams.remark = this.state;
-
-    blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
-    blogParams.nickName = this.state.nickName;
-    blogParams.questionValue = this.state.fc2QuestionValue;
-    blogParams.answer = this.state.fc2Answer;
-    blogParams.mainJunre = this.state.mainJunreValue;
-    blogParams.subJunre = this.state.subJunreValue;
+    const blogParams = {};
+    blogParams.title = this.state.title;
+    blogParams.description = this.state.description;
+    blogParams.remark = this.state.remark;
+    blogParams.tags = this.state.tags.length > 0 ? this.state.tags.join(',') : '';
+    blogParams.nickName = `ニックネーム:${this.state.nickName}`;
+    blogParams.nickNameValue = this.state.nickName;
+    blogParams.question = `秘密の質問:${this.getFc2QuestionLabel(this.state.fc2Question)}`;
+    blogParams.questionValue = this.state.fc2Question;
+    blogParams.answer = `質問の答え:${this.state.fc2Answer}`;
+    blogParams.answerValue = this.state.fc2Answer;
+    blogParams.mainJunre = `メインジャンル:${this.getMainJunreLabel(this.state.mainJunre)}`;
+    blogParams.mainJunreValue = this.state.mainJunre;
+    blogParams.subJunre = `サブジャンル:${this.getSubJunreLabel(
+      this.state.mainJunre,
+      this.state.subJunre
+    )}`;
+    blogParams.subJunreValue = this.state.subJunre;
 
     return blogParams;
   };
@@ -129,16 +146,6 @@ class StepFc2 extends React.Component<Props, State> {
    * @returns {any[]}
    */
   getFc2Questions = () => {
-    const fc2Questions = [
-      { val: '11', question: '母の出生地' },
-      { val: '12', question: '父の出生地' },
-      { val: '20', question: '初恋の人の名前' },
-      { val: '30', question: '最初に飼ったペットの名前' },
-      { val: '40', question: '卒業した小学校の名前' },
-      { val: '101', question: '保険証番号の下５桁' },
-      { val: '102', question: 'クレジットカード番号の下５桁' }
-    ];
-
     const { classes } = this.props;
 
     return fc2Questions.map(q => (
@@ -153,6 +160,17 @@ class StepFc2 extends React.Component<Props, State> {
         {q.question}
       </MenuItem>
     ));
+  };
+
+  getFc2QuestionLabel = value => {
+    const question = fc2Questions.find(q => q.val === value);
+    console.log('question');
+    console.log(question);
+    if (question) {
+      return question.question;
+    } else {
+      return '';
+    }
   };
 
   /**
@@ -173,6 +191,25 @@ class StepFc2 extends React.Component<Props, State> {
         {j.text}
       </MenuItem>
     ));
+  };
+
+  getMainJunreLabel = value => {
+    if (value) {
+      const fc2mainJunre = fc2Junre.find(j => j.mainJunre === value);
+      return fc2mainJunre.text;
+    } else {
+      return '';
+    }
+  };
+
+  getSubJunreLabel = (mainJunreValue, subJunreValue) => {
+    if (mainJunreValue && subJunreValue) {
+      const fc2mainJunre = fc2Junre.find(j => j.mainJunre === mainJunreValue);
+      const subJunre = fc2mainJunre.sub.find(s => s.subJunre === subJunreValue);
+      return subJunre.text;
+    } else {
+      return '';
+    }
   };
 
   /**
@@ -239,7 +276,8 @@ class StepFc2 extends React.Component<Props, State> {
    * 入力完了時(フォーム移動時)に全入力項目をチェック
    * @returns {boolean}
    */
-  isValidate = () => {
+  isValidated = () => {
+    console.log('fc2 start validate');
     let errorMsg = '';
     if (this.state.fc2Question.length === 0) {
       errorMsg = '秘密の質問を選択してください。\n';
@@ -249,12 +287,16 @@ class StepFc2 extends React.Component<Props, State> {
       errorMsg += '秘密の質問の答えを3文字以上、入力してください。';
     }
     if (this.state.titleState !== 'success') {
+      this.setState({ titleState: 'error' });
       errorMsg += 'ブログタイトルの入力を確認してください。。\n';
     }
+
     if (this.state.descriptionState !== 'success') {
+      this.setState({ descriptionState: 'error' });
       errorMsg += 'ブログの説明の入力を確認してください。\n';
     }
     if (this.state.nickNameState !== 'success') {
+      this.setState({ nickNameState: 'error' });
       errorMsg += 'ニックネームの入力を確認してください。\n';
     }
     if (this.state.mainJunre.length === 0) {

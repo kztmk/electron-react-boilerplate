@@ -31,6 +31,12 @@ export const SAVE_PERSONAL_INFO_FOR_BLOG_SUCCESS: 'PersonalInfo/SAVE_PERSONAL_IN
   'PersonalInfo/SAVE_PERSONAL_INFO_FOR_BLOG_SUCCESS';
 export const SAVE_PERSONAL_INFO_FOR_BLOG_FAILURE: 'PersonalInfo/SAVE_PERSONAL_INFO_FOR_BLOG_FAILURE' =
   'PersonalInfo/SAVE_PERSONAL_INFO_FOR_BLOG_FAILURE';
+export const CLEAR_PERSONAL_INFO_REQUEST: 'PersonalInfo/CLEAR_PERSONAL_INFO_REQUEST' =
+  'PersonalInfo/CLEAR_PERSONAL_INFO_REQUEST';
+export const CLEAR_PERSONAL_INFO_SUCCESS: 'PersonalInfo/CLEAR_PERSONAL_INFO_SUCCESS' =
+  'PersonalInfo/CLEAR_PERSONAL_INFO_SUCCESS';
+export const CLEAR_PERSONAL_INFO_FAILURE: 'PersonalInfo/CLEAR_PERSONAL_INFO_FAILURE' =
+  'PersonalInfo/CLEAR_PERSONAL_INFO_FAILURE';
 
 export const Actions = {
   GET_PERSONAL_INFO_REQUEST,
@@ -47,7 +53,10 @@ export const Actions = {
   SAVE_PERSONAL_INFO_FAILURE,
   SAVE_PERSONAL_INFO_FOR_BLOG_REQUEST,
   SAVE_PERSONAL_INFO_FOR_BLOG_SUCCESS,
-  SAVE_PERSONAL_INFO_FOR_BLOG_FAILURE
+  SAVE_PERSONAL_INFO_FOR_BLOG_FAILURE,
+  CLEAR_PERSONAL_INFO_REQUEST,
+  CLEAR_PERSONAL_INFO_SUCCESS,
+  CLEAR_PERSONAL_INFO_FAILURE
 };
 
 export type GetPersonalInfoRequest = {
@@ -111,6 +120,18 @@ export type SavePersonalInfoForBlogFailure = {
   meta: { errorMessage: string }
 };
 
+export type ClearPersonalInfoRequest = {
+  type: typeof CLEAR_PERSONAL_INFO_REQUEST
+};
+export type ClearPersonalInfoSuccess = {
+  type: typeof CLEAR_PERSONAL_INFO_SUCCESS,
+  payload: PersonalInfoType
+};
+export type ClearPersonalInfoFailure = {
+  type: typeof CLEAR_PERSONAL_INFO_FAILURE,
+  meta: { errorMessage: string }
+};
+
 export type Action =
   | GetPersonalInfoRequest
   | GetPersonalInfoSuccess
@@ -126,4 +147,7 @@ export type Action =
   | SavePersonalInfoFailure
   | SavePersonalInfoForBlogRequest
   | SavePersonalInfoForBlogSuccess
-  | SavePersonalInfoForBlogFailure;
+  | SavePersonalInfoForBlogFailure
+  | ClearPersonalInfoRequest
+  | ClearPersonalInfoSuccess
+  | ClearPersonalInfoFailure;

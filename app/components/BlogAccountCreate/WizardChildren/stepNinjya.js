@@ -71,8 +71,9 @@ class StepNinjya extends React.Component<Props, State> {
     blogParams.title = this.state.title;
     blogParams.description = this.state.description;
     blogParams.remark = this.state.remark;
-    blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
-    blogParams.domain = this.state.domainValue;
+    blogParams.tags = this.state.tags.length > 0 ? this.state.tags.join(',') : '';
+    blogParams.domain = `ドメイン:${this.state.domain}`;
+    blogParams.domainValue = this.state.domain;
 
     return blogParams;
   };
@@ -131,12 +132,14 @@ class StepNinjya extends React.Component<Props, State> {
    * 入力完了時(フォーム移動時)に全入力項目をチェック
    * @returns {boolean}
    */
-  isValidate = () => {
+  isValidated = () => {
     let errorMsg = '';
     if (this.state.titleState !== 'success') {
+      this.setState({ titleState: 'error' });
       errorMsg += 'ブログタイトルの入力を確認してください。\n';
     }
     if (this.state.descriptionState !== 'success') {
+      this.setState({ descriptionState: 'error' });
       errorMsg += 'ブログの説明の入力を確認してください。\n';
     }
     if (this.state.domain.length === 0) {

@@ -29,6 +29,64 @@ const groupBox = {
   margin: '20px 0'
 };
 
+const occupations = [
+  { val: '01', occupation: '公務員/団体職員' },
+  { val: '02', occupation: '会社員' },
+  { val: '03', occupation: '会社役員' },
+  { val: '04', occupation: '個人事業主' },
+  { val: '05', occupation: '専業主婦' },
+  { val: '06', occupation: 'フリーター' },
+  { val: '07', occupation: '学生' },
+  { val: '08', occupation: 'タレント業' },
+  { val: '09', occupation: '休職中/無職' },
+  { val: '99', occupation: 'その他' }
+];
+
+const categories = [
+  { val: '1', category: '生活' },
+  { val: '3', category: '地域' },
+  { val: '4', category: 'ペット' },
+  { val: '5', category: 'ベビー/子育て' },
+  { val: '6', category: '恋愛/結婚' },
+  { val: '7', category: 'ヘルス/ビューティー' },
+  { val: '8', category: 'ダイエット' },
+  { val: '9', category: 'ショッピング' },
+  { val: '10', category: 'ファッション' },
+  { val: '42', category: 'エコロジー' },
+  { val: '43', category: 'ボランティア' },
+  { val: '11', category: 'グルメ' },
+  { val: '12', category: '芸能' },
+  { val: '13', category: '音楽/ポッドキャスト' },
+  { val: '14', category: 'テレビ/映画/DVD' },
+  { val: '15', category: 'ゲーム' },
+  { val: '16', category: 'コミック/アニメ' },
+  { val: '44', category: '動画' },
+  { val: '41', category: 'IT/インターネット' },
+  { val: '17', category: 'テクノロジー/科学' },
+  { val: '18', category: '本/雑誌' },
+  { val: '19', category: '小説/文学' },
+  { val: '20', category: '写真/アート' },
+  { val: '21', category: '自動車/バイク/自転車' },
+  { val: '22', category: '旅行/アウトドア' },
+  { val: '23', category: 'スポーツ' },
+  { val: '24', category: 'ニュース/時事' },
+  { val: '25', category: 'ビジネス' },
+  { val: '26', category: '就職/転職' },
+  { val: '27', category: 'マネー/ファイナンス' },
+  { val: '28', category: 'サークル/部活/学校' },
+  { val: '29', category: '留学/海外生活' },
+  { val: '30', category: 'ショップ' },
+  { val: '31', category: 'サロン' },
+  { val: '40', category: 'ギャンブル' },
+  { val: '32', category: 'アーティスト' },
+  { val: '33', category: '劇団/俳優/女優' },
+  { val: '34', category: 'お笑い/タレント' },
+  { val: '35', category: 'アイドル/グラビア' },
+  { val: '36', category: 'ドクモ/モデル' },
+  { val: '37', category: 'アスリート' },
+  { val: '39', category: 'age嬢/ホスト' }
+];
+
 type Props = {
   classes: Object
 };
@@ -44,8 +102,8 @@ type State = {
   category: string,
   nickName: string,
   nickNameState: string,
-  spouse: string,
-  children: string,
+  spouse: boolean,
+  children: boolean,
   errorMessage: string,
   openErrorSnackbar: boolean
 };
@@ -68,8 +126,8 @@ class StepSeesaa extends React.Component<Props, State> {
       category: '',
       nickName: '',
       nickNameState: '',
-      spouse: 'S',
-      children: 'N',
+      spouse: false,
+      children: false,
       errorMessage: '',
       openErrorSnackbar: false
     };
@@ -83,12 +141,17 @@ class StepSeesaa extends React.Component<Props, State> {
     blogParams.title = this.state.title;
     blogParams.description = this.state.description;
     blogParams.remark = this.state.remark;
-    blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
-    blogParams.nickName = this.state.nickName;
-    blogParams.occupation = this.state.occupationValue;
-    blogParams.category = this.state.categoryValue;
-    blogParams.spouse = this.state.spouse;
-    blogParams.children = this.state.children;
+    blogParams.tags = this.state.tags.length > 0 ? this.state.tags.join(',') : '';
+    blogParams.nickName = `${this.state.nickName}`;
+    blogParams.nickNameValue = this.state.nickName;
+    blogParams.occupation = `職業:${this.state.occupation}`;
+    blogParams.occupationValue = this.state.occupation;
+    blogParams.category = `カテゴリ:${this.state.category}`;
+    blogParams.categoryValue = this.state.category;
+    blogParams.spouse = `配偶者:${this.state.spouse ? 'あり' : 'なし'}`;
+    blogParams.spouseValue = this.state.spouse;
+    blogParams.children = `子ども:${this.state.children ? 'あり' : 'なし'}`;
+    blogParams.childrenValue = this.state.children;
 
     return blogParams;
   };
@@ -108,8 +171,8 @@ class StepSeesaa extends React.Component<Props, State> {
       category: '',
       nickName: '',
       nickNameState: '',
-      spouse: 'S',
-      children: 'N',
+      spouse: false,
+      children: false,
       errorMessage: '',
       openErrorSnackbar: false
     });
@@ -121,18 +184,6 @@ class StepSeesaa extends React.Component<Props, State> {
    * @returns {any[]}
    */
   getOccupations = () => {
-    const occupations = [
-      { val: '01', occupation: '公務員/団体職員' },
-      { val: '02', occupation: '会社員' },
-      { val: '03', occupation: '会社役員' },
-      { val: '04', occupation: '個人事業主' },
-      { val: '05', occupation: '専業主婦' },
-      { val: '06', occupation: 'フリーター' },
-      { val: '07', occupation: '学生' },
-      { val: '08', occupation: 'タレント業' },
-      { val: '09', occupation: '休職中/無職' },
-      { val: '99', occupation: 'その他' }
-    ];
     const { classes } = this.props;
 
     return occupations.map(q => (
@@ -149,56 +200,20 @@ class StepSeesaa extends React.Component<Props, State> {
     ));
   };
 
+  getOccupationLabel = value => {
+    if (value) {
+      const o = occupations.find(occ => occ.val === value);
+      return o.occupation;
+    } else {
+      return '';
+    }
+  };
+
   /**
    * カテゴリ選択枝作成
    * @returns {any[]}
    */
   getCategories = () => {
-    const categories = [
-      { val: '1', category: '生活' },
-      { val: '3', category: '地域' },
-      { val: '4', category: 'ペット' },
-      { val: '5', category: 'ベビー/子育て' },
-      { val: '6', category: '恋愛/結婚' },
-      { val: '7', category: 'ヘルス/ビューティー' },
-      { val: '8', category: 'ダイエット' },
-      { val: '9', category: 'ショッピング' },
-      { val: '10', category: 'ファッション' },
-      { val: '42', category: 'エコロジー' },
-      { val: '43', category: 'ボランティア' },
-      { val: '11', category: 'グルメ' },
-      { val: '12', category: '芸能' },
-      { val: '13', category: '音楽/ポッドキャスト' },
-      { val: '14', category: 'テレビ/映画/DVD' },
-      { val: '15', category: 'ゲーム' },
-      { val: '16', category: 'コミック/アニメ' },
-      { val: '44', category: '動画' },
-      { val: '41', category: 'IT/インターネット' },
-      { val: '17', category: 'テクノロジー/科学' },
-      { val: '18', category: '本/雑誌' },
-      { val: '19', category: '小説/文学' },
-      { val: '20', category: '写真/アート' },
-      { val: '21', category: '自動車/バイク/自転車' },
-      { val: '22', category: '旅行/アウトドア' },
-      { val: '23', category: 'スポーツ' },
-      { val: '24', category: 'ニュース/時事' },
-      { val: '25', category: 'ビジネス' },
-      { val: '26', category: '就職/転職' },
-      { val: '27', category: 'マネー/ファイナンス' },
-      { val: '28', category: 'サークル/部活/学校' },
-      { val: '29', category: '留学/海外生活' },
-      { val: '30', category: 'ショップ' },
-      { val: '31', category: 'サロン' },
-      { val: '40', category: 'ギャンブル' },
-      { val: '32', category: 'アーティスト' },
-      { val: '33', category: '劇団/俳優/女優' },
-      { val: '34', category: 'お笑い/タレント' },
-      { val: '35', category: 'アイドル/グラビア' },
-      { val: '36', category: 'ドクモ/モデル' },
-      { val: '37', category: 'アスリート' },
-      { val: '39', category: 'age嬢/ホスト' }
-    ];
-
     const { classes } = this.props;
     return categories.map(j => (
       <MenuItem
@@ -212,6 +227,15 @@ class StepSeesaa extends React.Component<Props, State> {
         {j.category}
       </MenuItem>
     ));
+  };
+
+  getCategoryLabel = value => {
+    if (value) {
+      const c = categories.find(t => t.val === value);
+      return c.category;
+    } else {
+      return '';
+    }
   };
 
   /**
@@ -240,7 +264,7 @@ class StepSeesaa extends React.Component<Props, State> {
    * @param event
    */
   handleChangeSpouse = event => {
-    this.setState({ spouse: event.target.value });
+    this.setState({ spouse: event.target.value === 'M' });
   };
 
   /**
@@ -248,19 +272,21 @@ class StepSeesaa extends React.Component<Props, State> {
    * @param event
    */
   handleChangeChildren = event => {
-    this.setState({ children: event.target.value });
+    this.setState({ children: event.target.value === 'Y' });
   };
 
   /**
    * 入力完了時(フォーム移動時)に全入力項目をチェック
    * @returns {boolean}
    */
-  isValidate = () => {
+  isValidated = () => {
     let errorMsg = '';
     if (this.state.titleState !== 'success') {
+      this.setState({ titleState: 'error' });
       errorMsg += 'ブログタイトルの入力を確認してください。。\n';
     }
     if (this.state.descriptionState !== 'success') {
+      this.setState({ descriptionState: 'error' });
       errorMsg += 'ブログの説明の入力を確認してください。\n';
     }
     if (this.state.category.length === 0) {

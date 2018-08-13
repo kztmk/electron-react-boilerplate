@@ -83,15 +83,15 @@ class StepOutlook extends React.Component<Props, State> {
   /**
    * フォーム移動時、又は親から呼ばれるvalidation
    */
-  isValidate = () => {
-    if (this.state.domain.length > 0) {
+  isValidated = () => {
+    if (this.state.domain.length === 0) {
       this.setState({
         errorMessage: 'メールアドレスのドメインを選択してください。',
         openErrorSnackbar: true
       });
-      return true;
+      return false;
     }
-    return false;
+    return true;
   };
 
   /**
@@ -109,10 +109,7 @@ class StepOutlook extends React.Component<Props, State> {
           <GridContainer container justify="center">
             <GridItem xs={12} sm={8} md={8}>
               <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel
-                  htmlFor="outlookDomain-select"
-                  className={classes.selectLabel}
-                >
+                <InputLabel htmlFor="outlookDomain-select" className={classes.selectLabel}>
                   ドメインを選択
                 </InputLabel>
                 <Select

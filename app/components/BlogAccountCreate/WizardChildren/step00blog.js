@@ -79,7 +79,8 @@ type Props = {
   errorMessage: string,
   personalInfo: PersonalInfoType,
   randomPersonalInfo: PersonalInfoType,
-  startGetRandomPersonalInfo: () => void
+  startGetRandomPersonalInfo: () => void,
+  startClearPersonalInfo: () => void
 };
 
 type State = {
@@ -102,7 +103,8 @@ type State = {
   forceUseDefault: boolean,
   forceUseRAndom: boolean,
   errorMessage: string,
-  openErrorSnackbar: boolean
+  openErrorSnackbar: boolean,
+  init: boolean
 };
 
 /**
@@ -134,7 +136,8 @@ class Steps00blog extends React.Component<Props, State> {
       errorMessage: '',
       openErrorSnackbar: false,
       forceUseDefault: false,
-      forceUseRandom: false
+      forceUseRandom: false,
+      init: true
     };
   }
 
@@ -164,15 +167,15 @@ class Steps00blog extends React.Component<Props, State> {
         password = accountMetaData[1];
       }
 
-      if (this.state.mailAddress.length > 0) {
+      if (this.state.mailAddress.length > 0 && !this.state.init) {
         mailAddress = this.state.mailAddress;
       }
 
-      if (this.state.accountId.length > 0) {
+      if (this.state.accountId.length > 0 && !this.state.init) {
         accountId = this.state.accountId;
       }
 
-      if (this.state.password.length > 0) {
+      if (this.state.password.length > 0 && !this.state.init) {
         password = this.state.password;
       }
 
@@ -230,6 +233,7 @@ class Steps00blog extends React.Component<Props, State> {
    * stateを初期化する
    */
   initState = () => {
+    this.props.startClearPersonalInfo();
     this.setState({
       mailAddress: '',
       provider: '',
@@ -248,10 +252,12 @@ class Steps00blog extends React.Component<Props, State> {
       birthDateState: '',
       postalCode: '',
       postalCodeState: '',
+      prefecture: '',
       errorMessage: '',
       openErrorSnackbar: false,
       forceUseDefault: false,
-      forceUseRandom: false
+      forceUseRandom: false,
+      init: true
     });
   };
 
@@ -516,7 +522,7 @@ class Steps00blog extends React.Component<Props, State> {
       this.setState({ postalCodeState: 'success' });
     }
 
-    if (this.state.prefecture.length > 2) {
+    if (this.state.prefecture.length < 3) {
       errorMsg += '都道府県を選択してください。';
     }
 
@@ -584,6 +590,7 @@ class Steps00blog extends React.Component<Props, State> {
   };
 
   handleSetRandomData = () => {
+    this.setState({ init: false });
     this.props.startGetRandomPersonalInfo();
   };
 

@@ -1,8 +1,9 @@
-/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/anchor-has-content */
+/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/anchor-has-content,react/no-unused-state */
 /* eslint-disable no-return-assign */
 // @flow
 import React from 'react';
 import cx from 'classnames';
+import SweetAlert from 'react-bootstrap-sweetalert';
 
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
@@ -12,7 +13,6 @@ import Card from '@material-ui/core/Card';
 import Button from '../../ui/CustomButtons/Button';
 import Table from '../../ui/Table/Table';
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
-import type MailAccountType from '../../types/mailAccount';
 
 const errorStyles = {
   fontWeight: 'bold',
@@ -72,8 +72,7 @@ class BlogWizard extends React.Component<Props, State> {
         transition: 'transform 0s'
       },
       accountInfo: {},
-      sweetAlert: '',
-      baseMailAccount: this.props.initialAccount
+      sweetAlert: ''
     };
   }
 
@@ -183,6 +182,7 @@ class BlogWizard extends React.Component<Props, State> {
         finishButton: true,
         accountInfo: {
           provider: steps00State.provider,
+          mailAddress: steps00State.mailAddress,
           accountId: steps00State.accountId,
           password: steps00State.password,
           lastName: steps00State.lastName,
@@ -191,7 +191,8 @@ class BlogWizard extends React.Component<Props, State> {
           firstNameKana: steps00State.firstNameKana,
           gender: steps00State.gender,
           birthDate: steps00State.birthDate,
-          postalCode: steps00State.postalCode
+          postalCode: steps00State.postalCode,
+          prefecture: steps00State.prefecture
         }
       });
       this.refreshAnimation(nextStep);
@@ -212,6 +213,9 @@ class BlogWizard extends React.Component<Props, State> {
     this.refreshAnimation(0);
   };
 
+  /**
+   * finish button click
+   */
   finishButtonClick = () => {
     if (
       this.props.validate &&
@@ -220,8 +224,121 @@ class BlogWizard extends React.Component<Props, State> {
         this[this.props.steps[this.state.currentStep].stepId].isValidated === undefined) &&
       this.props.finishButtonClick !== undefined
     ) {
-      this.props.finishButtonClick();
+      const additionalInfo = this[this.props.steps[this.state.currentStep].stepId].sendState();
+      // ブログアカウント作成に必要な情報(driverへ)
+      const blogInfo = {};
+
+      // 共通のデータ
+      blogInfo.accountId = this.state.accountInfo.accountId;
+      blogInfo.password = this.state.accountInfo.password;
+      blogInfo.mailAddress = this.state.accountInfo.mailAddress;
+      blogInfo.provider = this.state.accountInfo.provider;
+      blogInfo.title = additionalInfo.title;
+      blogInfo.description = additionalInfo.description;
+      blogInfo.remark = additionalInfo.remark;
+      blogInfo.groupTags = additionalInfo.tags;
+      blogInfo.detailInfo = [];
+      // 追加情報から最上位情報に保存したものを重複回避のため削除
+      delete additionalInfo.title;
+      delete additionalInfo.description;
+      delete additionalInfo.remark;
+      delete additionalInfo.tags;
+
+      // db保存用とブログアカウント作成用に追加情報を分ける
+      const dbFields = [];
+      const userFields = [];
+
+      for (const key in additionalInfo) {
+        if (key.indexOf('Value') === -1) {
+          dbFields.push(additionalInfo[key]);
+        } else {
+          userFields[key] = additionalInfo[key];
+        }
+      }
+      // 確認ダイアログ用の情報
+      const dialogInfo = [];
+      dbFields.forEach(row => {
+        dialogInfo.push(row);
+      });
+      dialogInfo.unshift(`メールアドレス:${this.state.accountInfo.mailAddress}`);
+      dialogInfo.unshift(
+        `アカウントID:${this.state.accountInfo.accountId}, パスワード:${
+          this.state.accountInfo.password
+        }`
+      );
+
+      // db保存用情報に個人情報を追加
+      dbFields.unshift(`都道府県:${this.state.accountInfo.prefecture}`);
+      dbFields.unshift(`郵便番号:${this.state.accountInfo.postalCode}`);
+      if (this.state.accountInfo.gender === 0) {
+        dbFields.unshift(`性別:男`);
+      } else {
+        dbFields.unshift(`性別:女`);
+      }
+      dbFields.unshift(
+        `しめい(ふりがな):${this.state.accountInfo.lastNameKana} ${
+          this.state.accountInfo.firstNameKana
+        }`
+      );
+      dbFields.unshift(
+        `氏名(漢字):${this.state.accountInfo.lastName} ${this.state.accountInfo.firstName}`
+      );
+      console.log('start dialog');
+      this.showFinishDialog(blogInfo, dbFields, userFields, dialogInfo);
     }
+  };
+
+  showFinishDialog = (blogInfo, dbFields, userFields, dialogInfo) => {
+    console.log('show dialog');
+    this.setState({
+      sweetAlert: (
+        <SweetAlert
+          style={{ display: 'block', marginTop: '-280px', width: '620px' }}
+          title="ブログ作成開始"
+          onConfirm={() => this.createBlogAccount(blogInfo, dbFields, userFields)}
+          onCancel={() => this.hideAlert()}
+          confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.btnSuccess}`}
+          cancelBtnCssClass={`${this.props.classes.button} ${this.props.classes.btnDanger}`}
+          confirmBtnText="作成"
+          cancelBtnText="キャンセル"
+          showCancel
+        >
+          <p>以下の情報でメールアカウントの作成を開始します。 </p>
+          {this.getDialogMessage(dialogInfo)}
+          <p>
+            ブログ一覧への登録を最初に行います。
+            <br />
+            途中で
+            <span style={errorStyles}>エラー</span>
+            が発生した場合には、
+            <br />
+            ・可能な場合は、失敗時点から手動で継続
+            <br />
+            ・ブラウザを閉じて、ブログ一覧から削除
+            <br />
+            で、対処してください。
+          </p>
+        </SweetAlert>
+      )
+    });
+  };
+
+  getDialogMessage = info => {
+    const rows = [];
+
+    let str = '';
+    info.forEach(row => {
+      const tableRow = [];
+      tableRow.push(row);
+      rows.push(tableRow);
+    });
+    console.log(rows);
+    return <Table tableData={rows} />;
+  };
+
+  hideAlert = () => {
+    this.setState({ sweetAlert: '' });
+    this.cancelButtonClick();
   };
 
   refreshAnimation = index => {
@@ -265,6 +382,58 @@ class BlogWizard extends React.Component<Props, State> {
         </a>
       </li>
     );
+  };
+
+  createBlogAccount = (blogInfo, dbFields, userFields) => {
+    // save to database
+    let url = 'https://';
+    switch (blogInfo.provider) {
+      case 'fc2':
+        url += `${blogInfo.accountId.blog}.fc2.com/`;
+        break;
+      case 'webnode':
+        break;
+      case 'livedoor':
+        nextStep = 3;
+        break;
+      case 'seesaa':
+        nextStep = 4;
+        break;
+      case 'ameba':
+        nextStep = 5;
+        break;
+      case 'rakuten':
+        nextStep = 6;
+        break;
+      case 'kokolog':
+        nextStep = 7;
+        break;
+      case 'yaplog':
+        nextStep = 8;
+        break;
+      case 'ninjya':
+        nextStep = 9;
+        break;
+      case 'hatena':
+        nextStep = 10;
+        break;
+      case 'webryblog':
+        nextStep = 11;
+        break;
+      case 'wpcom':
+        nextStep = 12;
+        break;
+      case 'goo':
+        nextStep = 13;
+        break;
+      default:
+    }
+    const saveBlogInfo = { ...blogInfo, detailInfo: dbFields };
+    this.props.finishButtonClick(saveBlogInfo);
+
+    const createBlogInfo = { ...blogInfo, detailInfo: userFields };
+    this.hideAlert();
+    // puppeteerBlog.signup(createBlogInfo);
   };
 
   render() {
@@ -347,6 +516,7 @@ class BlogWizard extends React.Component<Props, State> {
             <div className={classes.clearfix} />
           </div>
         </Card>
+        {this.state.sweetAlert}
       </div>
     );
   }

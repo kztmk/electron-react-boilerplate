@@ -37,6 +37,27 @@ export const initialState: State = {
 
 export default function(state: State = initialState, action: Action): Exact<State> {
   switch (action.type) {
+    case Actions.CLEAR_PERSONAL_INFO_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
+
+    case Actions.CLEAR_PERSONAL_INFO_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        randomPersonalInfo: initialPersonalInfo
+      };
+
+    case Actions.CLEAR_PERSONAL_INFO_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+        isFailure: true,
+        errorMessage: action.meta.errorMessage
+      };
+
     case Actions.SAVE_PERSONAL_INFO_FOR_BLOG_REQUEST:
       return {
         ...state,

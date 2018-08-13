@@ -12,7 +12,9 @@ import {
   savePersonalInfoSuccess,
   savePersonalInfoFailure,
   savePersonalInfoForBlogSuccess,
-  savePersonalInfoForBlogFailure
+  savePersonalInfoForBlogFailure,
+  clearPersonalInfoSuccess,
+  clearPersonalInfoFailure
 } from './actions';
 import { Actions } from './actionTypes';
 import { firebaseDbSet, firebaseDbRead } from '../../database/db';
@@ -211,12 +213,21 @@ function* savePersonalInfoForBlog(action) {
   }
 }
 
+function* clearRandomPersonalInfo() {
+  try {
+    yield put(clearPersonalInfoSuccess(initialPersonalInfo));
+  } catch (error) {
+    yield put(clearPersonalInfoFailure({ errorMessage: error.toString() }));
+  }
+}
+
 function* rootSaga(): Saga {
   yield takeEvery(Actions.GET_PERSONAL_INFO_REQUEST, getPersonalInfo);
   yield takeEvery(Actions.GET_RANDOM_PERSONAL_INFO_REQUEST, getRandomPersonalInfo);
   yield takeEvery(Actions.SAVE_PERSONAL_INFO_REQUEST, savePersonalInfo);
   yield takeEvery(Actions.SAVE_PERSONAL_INFO_FOR_BLOG_REQUEST, savePersonalInfoForBlog);
   yield takeEvery(Actions.GET_PERSONAL_INFO_FOR_BLOG_REQUEST, getPersonalInfoForBlog);
+  yield takeEvery(Actions.CLEAR_PERSONAL_INFO_REQUEST, clearRandomPersonalInfo);
 }
 
 export default rootSaga;

@@ -26,6 +26,17 @@ const groupBox = {
   margin: '20px 0'
 };
 
+const questions = [
+  { val: '1', question: '好きな食べ物は？' },
+  { val: '2', question: '嫌いな食べ物は？' },
+  { val: '3', question: '初恋の相手の名前は？' },
+  { val: '4', question: '尊敬する人の名前は？' },
+  { val: '5', question: '一番印象に残っている学校の先生の名前は？' },
+  { val: '6', question: '初めて飼ったペットの名前は？' },
+  { val: '7', question: '両親の結婚記念日は？' },
+  { val: '8', question: '愛用する腕時計のシリアル番号は？' }
+];
+
 type Props = {
   classes: Object
 };
@@ -80,10 +91,13 @@ class StepKokolog extends React.Component<Props, State> {
     blogParams.title = this.state.title;
     blogParams.description = this.state.description;
     blogParams.remark = this.state.remark;
-    blogParams.tags = this.state.tags.length === 0 ? this.state.tags.join(',') : '';
-    blogParams.question = this.state.questionValue;
-    blogParams.answer = this.state.answer;
-    blogParams.nickName = this.state.nickName;
+    blogParams.tags = this.state.tags.length > 0 ? this.state.tags.join(',') : '';
+    blogParams.question = `秘密の質問:${this.getQuestionLabel(this.state.question)}`;
+    blogParams.questionValue = this.state.question;
+    blogParams.answer = `質問の答:${this.state.answer}`;
+    blogParams.anserValue = this.state.answer;
+    blogParams.nickName = `ニックネーム:${this.state.nickName}`;
+    blogParams.nickNameValue = this.state.nickName;
 
     return blogParams;
   };
@@ -116,16 +130,6 @@ class StepKokolog extends React.Component<Props, State> {
    * @returns {any[]}
    */
   getQuestions = () => {
-    const questions = [
-      { val: '1', question: '好きな食べ物は？' },
-      { val: '2', question: '嫌いな食べ物は？' },
-      { val: '3', question: '初恋の相手の名前は？' },
-      { val: '4', question: '尊敬する人の名前は？' },
-      { val: '5', question: '一番印象に残っている学校の先生の名前は？' },
-      { val: '6', question: '初めて飼ったペットの名前は？' },
-      { val: '7', question: '両親の結婚記念日は？' },
-      { val: '8', question: '愛用する腕時計のシリアル番号は？' }
-    ];
     const { classes } = this.props;
 
     return questions.map(q => (
@@ -140,6 +144,13 @@ class StepKokolog extends React.Component<Props, State> {
         {q.question}
       </MenuItem>
     ));
+  };
+
+  getQuestionLabel = value => {
+    if (value) {
+      const q = questions.find(qq => qq.val === value);
+      return q.question;
+    }
   };
 
   /**
@@ -157,7 +168,7 @@ class StepKokolog extends React.Component<Props, State> {
    * 入力完了時(フォーム移動時)に全入力項目をチェック
    * @returns {boolean}
    */
-  isValidate = () => {
+  isValidated = () => {
     let errorMsg = '';
     if (this.state.question.length === 0) {
       errorMsg = '秘密の質問を選択してください。\n';
@@ -167,12 +178,15 @@ class StepKokolog extends React.Component<Props, State> {
       errorMsg += '秘密の質問の答えを3文字以上、入力してください。';
     }
     if (this.state.titleState !== 'success') {
+      this.setState({ titleState: 'error' });
       errorMsg += 'ブログタイトルの入力を確認してください。。\n';
     }
     if (this.state.descriptionState !== 'success') {
+      this.setState({ descriptionState: 'error' });
       errorMsg += 'ブログの説明の入力を確認してください。\n';
     }
     if (this.state.nickNameState !== 'success') {
+      this.setState({ nickNameState: 'error' });
       errorMsg += 'ニックネームの入力を確認してください。\n';
     }
     if (errorMsg.length > 0) {
