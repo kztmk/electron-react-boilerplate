@@ -1,13 +1,7 @@
 /* eslint-disable no-await-in-loop */
-import fs from 'fs';
 import delay from 'delay';
 import tempy from 'tempy';
 import log from 'electron-log';
-
-async function base64Encode(imgPath) {
-  const bitmap = fs.readFileSync(imgPath);
-  return Buffer.from(bitmap).toString('base64');
-}
 
 const signup = async (user, opts) => {
   const { browser } = opts;
@@ -283,17 +277,10 @@ const signup = async (user, opts) => {
         text:'お知らせメール配信希望入力完了' 
       }).show();
     `);
+    await page.evaluate(`Noty.closeAll();`);
     do {
-      const captchaPath = tempy.file({ extension: 'png' });
       if (await page.$('#cimg')) {
         await page.waitFor('#cimg', { visible: true });
-
-        const $img = await page.$('#cimg');
-        await $img.screenshot({
-          path: captchaPath
-        });
-        log.info('画像認証-画像キャプチャ');
-        console.log({ captchaPath });
       }
 
       await delay(2000);
@@ -316,16 +303,14 @@ const signup = async (user, opts) => {
           '.captchaImage{border:1px solid rgba(51,51,51,0.3);border-radius:12px;padding:10px 15px;'
       });
       await page.addScriptTag({ path: swa2Js });
-
-      const imageData = await base64Encode(captchaPath);
+      await page.evaluate('Noty.closeAll();');
       const captchaValue = await page.evaluate(`swal({
       title: '画像認証',
       text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
-      imageUrl: 'data:image/jpg;base64,${imageData}',
-      imageClass: 'captchaImage',
       input: 'text',
       inputPlaceholder: '画像にある文字・数字を入力',
-      confirmButtonText: '認証'
+      confirmButtonText: '認証',
+      position: 'top-start'
     })`);
 
       await page.evaluate(`

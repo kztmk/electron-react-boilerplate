@@ -3,6 +3,7 @@
 // @flow
 import React from 'react';
 import cx from 'classnames';
+import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 // material-ui components
@@ -13,6 +14,7 @@ import Card from '@material-ui/core/Card';
 import Button from '../../ui/CustomButtons/Button';
 import Table from '../../ui/Table/Table';
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
+import PuppeteerBlog from './puppeteerBlog';
 
 const errorStyles = {
   fontWeight: 'bold',
@@ -55,6 +57,9 @@ type State = {
   accountInfo: Object,
   sweetAlert: Object
 };
+
+// TODO: when select provider, check allow multi site
+// TODO: livedoor blog 2つめは強制的にサブドメイン使用をONーメールアドレスでLivedoorをチェック
 
 class BlogWizard extends React.Component<Props, State> {
   constructor(props) {
@@ -192,7 +197,8 @@ class BlogWizard extends React.Component<Props, State> {
           gender: steps00State.gender,
           birthDate: steps00State.birthDate,
           postalCode: steps00State.postalCode,
-          prefecture: steps00State.prefecture
+          prefecture: steps00State.prefecture,
+          mailAccount: steps00State.mailAccount
         }
       });
       this.refreshAnimation(nextStep);
@@ -237,6 +243,7 @@ class BlogWizard extends React.Component<Props, State> {
       blogInfo.description = additionalInfo.description;
       blogInfo.remark = additionalInfo.remark;
       blogInfo.groupTags = additionalInfo.tags;
+      blogInfo.mailAccount = this.state.accountInfo.mailAccount;
       blogInfo.detailInfo = [];
       // 追加情報から最上位情報に保存したものを重複回避のため削除
       delete additionalInfo.title;
@@ -389,51 +396,75 @@ class BlogWizard extends React.Component<Props, State> {
     let url = 'https://';
     switch (blogInfo.provider) {
       case 'fc2':
-        url += `${blogInfo.accountId.blog}.fc2.com/`;
+        url += `${blogInfo.accountId}.blog.fc2.com/`;
         break;
       case 'webnode':
+        url += `${userFields.subdomain}.webnode.jp`;
         break;
       case 'livedoor':
-        nextStep = 3;
+        url += ``;
         break;
       case 'seesaa':
-        nextStep = 4;
+        url += ``;
         break;
       case 'ameba':
-        nextStep = 5;
+        url += ``;
         break;
       case 'rakuten':
-        nextStep = 6;
+        url += ``;
         break;
       case 'kokolog':
-        nextStep = 7;
+        url += ``;
         break;
       case 'yaplog':
-        nextStep = 8;
+        url += ``;
         break;
       case 'ninjya':
-        nextStep = 9;
+        url += ``;
         break;
       case 'hatena':
-        nextStep = 10;
+        url += ``;
         break;
       case 'webryblog':
-        nextStep = 11;
+        url += ``;
         break;
       case 'wpcom':
-        nextStep = 12;
+        url += ``;
         break;
       case 'goo':
-        nextStep = 13;
+        url += ``;
         break;
       default:
     }
-    const saveBlogInfo = { ...blogInfo, detailInfo: dbFields };
-    this.props.finishButtonClick(saveBlogInfo);
+    const newAccount = {
+      key: '',
+      accountId: blogInfo.accountId,
+      password: blogInfo.password,
+      mailAddress: blogInfo.mailAddress,
+      provider: blogInfo.provider,
+      title: blogInfo.title,
+      description: blogInfo.description,
+      url,
+      remark: blogInfo.remark,
+      createDate: moment().valueOf(),
+      apiId: '',
+      apiPass: '',
+      blogId: '',
+      endPoint: '',
+      groupTags: blogInfo.groupTags,
+      affiliateTags: '',
+      detailInfo: dbFields
+    };
 
+    console.log('---new blog account ----');
+    console.log(newAccount);
+    // this.props.finishButtonClick(saveBlogInfo);
+    console.log('---------userFields--------');
+    console.log(userFields);
     const createBlogInfo = { ...blogInfo, detailInfo: userFields };
     this.hideAlert();
-    // puppeteerBlog.signup(createBlogInfo);
+    const puppeteerBlog = new PuppeteerBlog(createBlogInfo);
+    puppeteerBlog.signup(createBlogInfo);
   };
 
   render() {

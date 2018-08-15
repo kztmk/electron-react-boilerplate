@@ -322,7 +322,7 @@ class StepFc2 extends React.Component<Props, State> {
     this.setState({ openErrorSnackbar: false });
   };
 
-  requiredField = value => value.length > 3;
+  requiredField = value => value.length > 2;
 
   /**
    * フォーム入力があった場合にフィールド毎の処理
@@ -479,6 +479,8 @@ class StepFc2 extends React.Component<Props, State> {
             </GridItem>
             <GridItem xs={12} sm={4} md={4}>
               <CustomInput
+                success={this.state.nickNameState === 'success'}
+                error={this.state.nickNameState === 'error'}
                 labelText="ニックネーム"
                 id="nickName"
                 formControlProps={{

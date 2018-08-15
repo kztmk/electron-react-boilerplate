@@ -43,6 +43,7 @@ import Webryblog from '../../../assets/img/blogs/webryblog.png';
 import Wpcom from '../../../assets/img/blogs/wpcom.png';
 import Goo from '../../../assets/img/blogs/goo.png';
 import prefectures from '../../Commons/prefecture';
+import type MailAccountType from "../../../types/mailAccount";
 
 const stepContent = {
   padding: '5px'
@@ -104,7 +105,8 @@ type State = {
   forceUseRAndom: boolean,
   errorMessage: string,
   openErrorSnackbar: boolean,
-  init: boolean
+  init: boolean,
+  mailAccount: MailAccountType
 };
 
 /**
@@ -137,21 +139,14 @@ class Steps00blog extends React.Component<Props, State> {
       openErrorSnackbar: false,
       forceUseDefault: false,
       forceUseRandom: false,
-      init: true
+      init: true,
+      mailAccount: {}
     };
   }
 
   componentWillReceiveProps = nextProps => {
-    console.log('got new props on blog steps00');
-    console.log(
-      `isLoading:${
-        this.props.isLoading
-      }:nextLoading:${!nextProps.isLoading}:nextFailure:${!nextProps.isFailure}`
-    );
     if (!nextProps.isLoading && !nextProps.isFailure) {
-      console.log('use random on blog steps00');
       const accountMeta = nextProps.randomPersonalInfo.address1;
-      console.log(`accountMeta:${accountMeta}`);
       let accountMetaData = [];
       let mailAddress = '';
       let accountId = '';
@@ -194,10 +189,10 @@ class Steps00blog extends React.Component<Props, State> {
           gender: nextProps.randomPersonalInfo.gender === 1,
           birthDate: nextProps.randomPersonalInfo.birthDate,
           postalCode: nextProps.randomPersonalInfo.postalCode,
-          prefecture: nextProps.randomPersonalInfo.prefecture
+          prefecture: nextProps.randomPersonalInfo.prefecture,
+          mailAccount: nextProps.randomPersonalInfo.mailAccount
         });
       } else {
-        console.log('use default blog steps00');
         this.setState({
           mailAddress,
           accountId,
@@ -209,7 +204,8 @@ class Steps00blog extends React.Component<Props, State> {
           gender: nextProps.personalInfo.gender === 1,
           birthDate: nextProps.personalInfo.birthDate,
           postalCode: nextProps.personalInfo.postalCode,
-          prefecture: nextProps.personalInfo.prefecture
+          prefecture: nextProps.personalInfo.prefecture,
+          mailAccount: nextProps.randomPersonalInfo.mailAccount
         });
       }
     }

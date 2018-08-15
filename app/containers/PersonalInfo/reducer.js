@@ -2,6 +2,7 @@
 import type { Action } from './actionTypes';
 import { Actions } from './actionTypes';
 import type PersonalInfoType from '../../types/personalInfo';
+import type MailAccountType from '../../types/mailAccount';
 
 export type State = {
   isLoading: boolean,
@@ -9,6 +10,18 @@ export type State = {
   errorMessage: string,
   personalInfo: PersonalInfoType,
   randomPersonalInfo: PersonalInfoType
+};
+
+export const initialMailAccount = {
+  key: '',
+  accountId: '',
+  password: '',
+  mailAddress: '',
+  provider: '',
+  createDate: 0,
+  lastLogin: 0,
+  tags: '',
+  detailInfo: []
 };
 
 const initialPersonalInfo = {
@@ -25,7 +38,8 @@ const initialPersonalInfo = {
   postalCode: '',
   prefecture: '',
   address1: '',
-  useDefault: false
+  useDefault: false,
+  mailAccount: initialMailAccount
 };
 export const initialState: State = {
   isLoading: false,

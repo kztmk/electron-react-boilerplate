@@ -1,4 +1,6 @@
 // @flow
+import type MailAccountType from './mailAccount';
+
 type PersonalInfoType = {
   lastName: string,
   firstName: string,
@@ -13,7 +15,8 @@ type PersonalInfoType = {
   postalCode: string,
   prefecture: string,
   address1: string,
-  useDefault: boolean
+  useDefault: boolean,
+  mailAccount: MailAccountType
 };
 
 export default PersonalInfoType;

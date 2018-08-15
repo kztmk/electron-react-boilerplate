@@ -41,6 +41,7 @@ import MailAccount from '../../containers/MailAccount';
 import WizardViewBlog from '../BlogAccountCreate';
 import type BlogAccountType from '../../types/blogAccount';
 import type PersonalInfoType from '../../types/personalInfo';
+import getValidationLink from '../../drivers/emails/imap';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -282,7 +283,16 @@ class MailAddressList extends React.Component<Props, State> {
                     lastLogin: moment(account.lastLogin).valueOf()
                   };
                   // 削除処理
-                  this.handleDeleteMailAccount(target);
+                  // this.handleDeleteMailAccount(target);
+                  const mailacc = {};
+                  mailacc.accountId = account.accountId;
+                  mailacc.mailAddress = account.mailAddress;
+                  mailacc.password = account.password;
+                  mailacc.sender = 'noreply@id.fc2.com';
+                  mailacc.provider = account.provider;
+                  console.log('---mail criteria---');
+                  console.log(mailacc);
+                  const result = getValidationLink(mailacc);
                 } else {
                   alert('削除対象のメールアカウントの取得に失敗しました。');
                 }
@@ -533,7 +543,8 @@ class MailAddressList extends React.Component<Props, State> {
       postalCode: userPostalCode,
       prefecture: userPrefecture,
       address1: `${account.accountId}:${account.password}:${account.mailAddress}`,
-      useDefault: false
+      useDefault: false,
+      mailAccount: account
     };
 
     this.props.savePersonalInfoForBlog(personalInfo);

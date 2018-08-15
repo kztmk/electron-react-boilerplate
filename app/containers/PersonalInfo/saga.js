@@ -19,6 +19,7 @@ import {
 import { Actions } from './actionTypes';
 import { firebaseDbSet, firebaseDbRead } from '../../database/db';
 import type PersonalInfoType from '../../types/personalInfo';
+import { initialMailAccount } from './reducer';
 
 const initialPersonalInfo = {
   isLoading: false,
@@ -87,7 +88,8 @@ function* getRandomPersonalInfo() {
           postalCode: postCode,
           prefecture: data.prefectName,
           address1: data.address1,
-          useDefault: false
+          useDefault: false,
+          mailAccount: initialMailAccount
         };
         return personalData;
       })
@@ -126,7 +128,8 @@ function* getPersonalInfo() {
         postalCode: snapshot.child('postalCode').val(),
         prefecture: snapshot.child('prefecture').val(),
         address1: snapshot.child('address1').val(),
-        useDefault: snapshot.child('useDefault').val()
+        useDefault: snapshot.child('useDefault').val(),
+        mailAccount: initialMailAccount
       };
     }
     yield put(getPersonalInfoSuccess(personalInfo));
@@ -152,19 +155,13 @@ function* getPersonalInfoForBlog(action) {
 function* savePersonalInfoForBlog(action) {
   try {
     const personalInfo: PersonalInfoType = yield select(state => state.PersonalInfo.personalInfo);
-    console.log('start ready personal data for blog');
     let randomPersonalInfo = initialPersonalInfo;
-    console.log('initialize data');
     // detailInfoを持たない場合、
     //  ---> useDefaultをチェック
     if (!personalInfo.useDefault) {
-      console.log('use random data');
-      console.log(`meta:${action.payload.address1}`);
       // use random
       if (action.payload.lastName.length === 0 || action.payload.prefecture.length === 0) {
-        console.log('no detail so get data from server');
         // detailInfoを持たないため、ランダムを取得
-        console.log('start to get random personal data');
         randomPersonalInfo = yield fetch(
           'https://us-central1-yoriki5-prod.cloudfunctions.net/getPersonalData'
         )
@@ -191,7 +188,8 @@ function* savePersonalInfoForBlog(action) {
               postalCode: postCode,
               prefecture: data.prefectName,
               address1: action.payload.address1,
-              useDefault: false
+              useDefault: false,
+              mailAccount: action.payload.mailAccount
             };
             return personalData;
           })
@@ -204,7 +202,6 @@ function* savePersonalInfoForBlog(action) {
       }
     } else {
       // use default
-      console.log('have detailInfo so just transfer');
       randomPersonalInfo = { ...personalInfo, address1: action.payload.address1 };
     }
     yield put(savePersonalInfoForBlogSuccess(randomPersonalInfo));
