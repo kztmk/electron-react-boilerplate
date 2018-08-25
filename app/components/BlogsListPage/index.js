@@ -112,8 +112,7 @@ class BlogListPage extends React.Component<Props, State> {
       if (!this.checkBlogDataObject(mAccounts[0])) {
         this.setState({
           openErrorNotification: true,
-          metaMessage:
-            '寄騎V5用のブログデータファイルではありません。ファイルを確認してください。'
+          metaMessage: '寄騎V5用のブログデータファイルではありません。ファイルを確認してください。'
         });
         return;
       }
@@ -194,9 +193,9 @@ class BlogListPage extends React.Component<Props, State> {
     let notificationMsg = '';
 
     console.log(
-      `imp:${nextProps.isImporting}--cre:${nextProps.isCreating}--Get:${
-        nextProps.isGetting
-      }--up:${nextProps.isUpdating}--del:${nextProps.isDeleting}`
+      `imp:${nextProps.isImporting}--cre:${nextProps.isCreating}--Get:${nextProps.isGetting}--up:${
+        nextProps.isUpdating
+      }--del:${nextProps.isDeleting}`
     );
     console.log(`my-mode:${this.state.mode}`);
 
@@ -218,6 +217,10 @@ class BlogListPage extends React.Component<Props, State> {
               isSuccessButDup = true;
             } else {
               // import完全成功
+              const fields = nextProps.metaMessage.split('/');
+              if (fields.length === 3) {
+                notificationMsg = `${fields[0]}を全件インポートしました。`;
+              }
               isSuccess = true;
             }
           } else {
@@ -226,6 +229,7 @@ class BlogListPage extends React.Component<Props, State> {
           }
           // import操作完了時のstate更新
           this.setState({
+            isLoading: false,
             transAccounts: nextProps.transAccounts,
             openSuccessNotification: isSuccess,
             openErrorNotification: isFailure,
@@ -432,11 +436,7 @@ class BlogListPage extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <Loadable
-        active={this.state.isLoading}
-        spinner
-        text="サーバーと通信中・・・"
-      >
+      <Loadable active={this.state.isLoading} spinner text="サーバーと通信中・・・">
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
@@ -445,10 +445,7 @@ class BlogListPage extends React.Component<Props, State> {
                   <Web />
                 </CardIcon>
                 <h4 className={classes.cardIconTitle}>ブログ一覧</h4>
-                <GridContainer
-                  justify="flex-end"
-                  className={classes.cardContentRight}
-                >
+                <GridContainer justify="flex-end" className={classes.cardContentRight}>
                   <div className={classes.buttonGroupStyle}>
                     <Tooltip title="新規ブログを追加" placement="bottom">
                       <Button
@@ -460,10 +457,7 @@ class BlogListPage extends React.Component<Props, State> {
                         追加
                       </Button>
                     </Tooltip>
-                    <Tooltip
-                      title="寄騎形式のファイルからブログをインポート"
-                      placement="bottom"
-                    >
+                    <Tooltip title="寄騎形式のファイルからブログをインポート" placement="bottom">
                       <Button
                         color="primary"
                         className={classes.lastButton}
@@ -496,7 +490,7 @@ class BlogListPage extends React.Component<Props, State> {
               open={this.state.openErrorNotification}
               closeNotification={this.handleErrorNotificationClose}
               close
-              message={<span id="login_error">{this.state.errorMessage}</span>}
+              message={<span id="login_error">{this.state.metaMessage}</span>}
             />
             <Snackbar
               color="success"
@@ -505,7 +499,7 @@ class BlogListPage extends React.Component<Props, State> {
               open={this.state.openSuccessNotification}
               closeNotification={this.handleSuccessNotificationClose}
               close
-              message={<span id="login_error">{this.state.errorMessage}</span>}
+              message={<span id="login_error">{this.state.metaMessage}</span>}
             />
             <Dialog
               classes={{
@@ -530,15 +524,9 @@ class BlogListPage extends React.Component<Props, State> {
                 id="small-modal-slide-description"
                 className={`${classes.modalBody} ${classes.modalSmallBody}`}
               >
-                <h5>
-                  重複のためインポートされなかったブログアカウントをファイルに書出しますか？
-                </h5>
+                <h5>重複のためインポートされなかったブログアカウントをファイルに書出しますか？</h5>
               </DialogContent>
-              <DialogActions
-                className={`${classes.modalFooter} ${
-                  classes.modalFooterCenter
-                }`}
-              >
+              <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
                 <Button
                   onClick={() => this.handleCloseModal('doNotNeedSave')}
                   color="danger"

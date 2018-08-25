@@ -50,11 +50,9 @@ function* importBlogAccounts(action) {
     const blogAccounts: Array<BlogAccountType> = action.payload;
 
     if (blogAccounts.length > 0) {
-      const existsBlogAccounts = yield select(
-        state => state.BlogList.blogAccounts
-      );
+      const existsBlogAccounts = yield select(state => state.BlogList.blogAccounts);
 
-      // blogAccounts内のaccoutを現在のstateにあるかチェック
+      // blogAccounts内のaccountを現在のstateにあるかチェック
       const importAccounts = blogAccounts.filter(importAccount => {
         const notDupAccounts = existsBlogAccounts.filter(
           existsAccount => importAccount.url !== existsAccount.url
@@ -95,9 +93,7 @@ function* importBlogAccounts(action) {
             remark: b.remark,
             createDate: b.createDate,
             detailInfo:
-              b.detailInfo === undefined ||
-              b.detailInfo === null ||
-              b.detailInfo.length === 0
+              b.detailInfo === undefined || b.detailInfo === null || b.detailInfo.length === 0
                 ? ['詳細情報なし']
                 : b.detailInfo,
             apiId: b.apiId,
@@ -116,10 +112,7 @@ function* importBlogAccounts(action) {
       );
 
       // firebaseから最新のblogAccountsを取得
-      const snapshot = yield call(
-        firebaseDbRead,
-        `/users/${userAuth.userId}/blogAccount`
-      );
+      const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/blogAccount`);
       const latestBlogAccounts: Array<BlogAccountType> = [];
 
       snapshot.forEach(childSnapshot => {
@@ -192,11 +185,7 @@ function* createBlogAccount(action) {
     );
 
     if (!dupAccount) {
-      const ref = yield call(
-        firebaseDbInsert,
-        `/users/${userAuth.userId}/blogAccount`,
-        newAccount
-      );
+      const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/blogAccount`, newAccount);
       const addAccount = { ...newAccount, key: ref.key };
       currentAccounts.push(addAccount);
       yield put(createBlogSuccess(currentAccounts));
@@ -216,10 +205,7 @@ function* getBlogAccounts() {
   const userAuth = yield select(state => state.Login);
 
   try {
-    const snapshot = yield call(
-      firebaseDbRead,
-      `/users/${userAuth.userId}/blogAccount`
-    );
+    const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/blogAccount`);
     const blogAccounts: Array<BlogAccountType> = [];
 
     snapshot.forEach(childSnapshot => {
@@ -246,28 +232,22 @@ function* updateBlogAccount(action) {
   const userAuth = yield select(state => state.Login);
   try {
     // firebaseをアップデート
-    yield call(
-      firebaseDbUpdate,
-      `/users/${userAuth.userId}/blogAccount/${action.payload.key}`,
-      {
-        password: action.payload.password,
-        mailAddress: action.payload.mailAddress,
-        title: action.payload.title,
-        description: action.payload.description,
-        remark: action.payload.remark,
-        apiId: action.payload.apiId,
-        apiPass: action.payload.apiPass,
-        blogId: action.payload.blogId,
-        endPoint: action.payload.endPoint,
-        groupTags: action.payload.groupTags,
-        affiliateTags: action.payload.affiliateTags
-      }
-    );
+    yield call(firebaseDbUpdate, `/users/${userAuth.userId}/blogAccount/${action.payload.key}`, {
+      password: action.payload.password,
+      mailAddress: action.payload.mailAddress,
+      title: action.payload.title,
+      description: action.payload.description,
+      remark: action.payload.remark,
+      apiId: action.payload.apiId,
+      apiPass: action.payload.apiPass,
+      blogId: action.payload.blogId,
+      endPoint: action.payload.endPoint,
+      groupTags: action.payload.groupTags,
+      affiliateTags: action.payload.affiliateTags
+    });
 
     // 更新前のblogAccouts
-    const blogAccounts: Array<BlogAccountType> = yield select(
-      state => state.BlogList.blogAccounts
-    );
+    const blogAccounts: Array<BlogAccountType> = yield select(state => state.BlogList.blogAccounts);
     // 更新対象の位置を取得
     const updatedList = blogAccounts.filter(b => b.key !== action.payload.key);
 
@@ -289,17 +269,10 @@ function* deleteBlogAccount(action) {
   const userAuth: AuthType = yield select(state => state.Login);
 
   try {
-    yield call(
-      firebaseDbDelete,
-      `/users/${userAuth.userId}/blogAccount/${action.payload.key}`
-    );
-    const blogAccounts: Array<BlogAccountType> = yield select(
-      state => state.BlogList.blogAccounts
-    );
+    yield call(firebaseDbDelete, `/users/${userAuth.userId}/blogAccount/${action.payload.key}`);
+    const blogAccounts: Array<BlogAccountType> = yield select(state => state.BlogList.blogAccounts);
 
-    const deletedAccounts = blogAccounts.filter(
-      acc => acc.key !== action.payload.key
-    );
+    const deletedAccounts = blogAccounts.filter(acc => acc.key !== action.payload.key);
     deletedAccounts.sort(blogAccountSort);
     yield put(deleteBlogSuccess(deletedAccounts));
   } catch (error) {

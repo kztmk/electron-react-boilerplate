@@ -241,10 +241,13 @@ class BlogWizard extends React.Component<Props, State> {
       blogInfo.provider = this.state.accountInfo.provider;
       blogInfo.title = additionalInfo.title;
       blogInfo.description = additionalInfo.description;
+      blogInfo.birthDate = this.state.accountInfo.birthDate;
+      blogInfo.postalCode = this.state.accountInfo.postalCode;
+      blogInfo.prefecture = this.state.accountInfo.prefecture;
       blogInfo.remark = additionalInfo.remark;
       blogInfo.groupTags = additionalInfo.tags;
       blogInfo.mailAccount = this.state.accountInfo.mailAccount;
-      blogInfo.detailInfo = [];
+      blogInfo.detailInfo = {};
       // 追加情報から最上位情報に保存したものを重複回避のため削除
       delete additionalInfo.title;
       delete additionalInfo.description;
@@ -461,8 +464,12 @@ class BlogWizard extends React.Component<Props, State> {
     // this.props.finishButtonClick(saveBlogInfo);
     console.log('---------userFields--------');
     console.log(userFields);
-    const createBlogInfo = { ...blogInfo, detailInfo: userFields };
+    const blogAdditionalInfo = { ...userFields };
+    const createBlogInfo = { ...blogInfo, detailInfo: blogAdditionalInfo };
+    console.log('-----create blog info');
+    console.log(createBlogInfo);
     this.hideAlert();
+
     const puppeteerBlog = new PuppeteerBlog(createBlogInfo);
     puppeteerBlog.signup(createBlogInfo);
   };

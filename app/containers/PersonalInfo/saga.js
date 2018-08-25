@@ -38,7 +38,8 @@ const initialPersonalInfo = {
   postalCode: '',
   prefecture: '',
   address1: '',
-  useDefault: false
+  useDefault: false,
+  mailAccount: initialMailAccount
 };
 
 function* savePersonalInfo(action) {

@@ -297,6 +297,7 @@ const signup = async (user, opts) => {
       }).show();
     `);
 
+      await page.focus('#secword');
       await page.addStyleTag({ path: swa2Css });
       await page.addStyleTag({
         content:

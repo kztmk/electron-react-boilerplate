@@ -1,5 +1,6 @@
 import ImapClient from 'emailjs-imap-client';
 import text2Html from '../../utils/text2html';
+import confirmMails from '../blogs/providers/providerConfirmInfo';
 
 // eslint-disable-next-line prefer-destructuring
 const MailParser = require('mailparser-mit').MailParser;
@@ -96,37 +97,55 @@ async function getValidationLink(mailCriteria) {
       useSecureTransport: true
     });
 
-    const validationLink = [];
+    let validationLink;
     await imapClient.connect();
     const boxes = await getPathToInbox(imapClient);
 
     // check boxex
     if (boxes.inbox) {
       console.log(`get messages from:${boxes.inbox}`);
-      let messageUids = await searchMessages(imapClient, boxes.inbox, mailCriteria.sender);
+
+      const confirmInfo = confirmMails.find(c => {
+        return c.provider === mailCriteria.blogProvider;
+      });
+
+      const sender = confirmInfo.sender;
+      const mailLink = confirmInfo.link;
+
+      console.log(`sender:${sender}`);
+      console.log(`link:${mailLink}`);
+
+      console.log(`===sender==${sender}`);
+      let messageUids = await searchMessages(boxes.inbox, sender);
       console.log('--search result----');
       console.log(messageUids);
       console.log('--search result----');
-      let messages = await getMessages(imapClient, boxes.inbox, messageUids);
+      let messages = await getMessages(boxes.inbox, messageUids);
       messages.sort(mailSortBySequence);
       console.log('---after sort');
       console.log(messages);
       console.log(`mailCount:${messages.length}`);
-      if (messages) {
-        messageUids = await searchMessages(imapClient, boxes.junk, mailCriteria.sender);
+      if (!messages) {
+        messageUids = await searchMessages(boxes.junk, sender);
         if (!messageUids) {
           throw new Error('mail not found inbox/junk');
         }
-        messages = await getMessages(imapClient, boxes.junk, mailCriteria.sender);
+        messages = await getMessages(boxes.junk, messageUids);
       }
       // const bodies = [];
       // messages.forEach(m => {
       let mailBody = '';
       const message = messages[0];
+      console.log('-----------body-----------');
+      console.log(message['body[]']);
+
+      validationLink = message['body[]'].match(/https:\/\/secure\.id\.fc2\.com\/signup.*$/gm);
+
+      /*
       if (message !== undefined) {
         const mailparser = new MailParser();
-        mailparser.end(message['body[]']);
-        mailparser.on('end', mail => {
+        await mailparser.end(message['body[]']);
+        await mailparser.on('end', mail => {
           if (!mail.hasOwnProperty('html')) {
             if (mail.hasOwnProperty('text')) {
               console.log('----mail text');
@@ -198,13 +217,20 @@ async function getValidationLink(mailCriteria) {
           });
         });
       }
+      */
+      console.log('---done---');
+      imapClient.close().then(() => {
+        console.log('---------imap server disconnected.------');
+      });
+
+      return validationLink;
     } else {
       console.log('---done else---');
       imapClient.close().then(() => {
         console.log('---------imap server disconnected.------');
       });
+      return [];
     }
-    return validationLink;
   } catch (error) {
     imapClient.close().then(() => {
       console.log('---------error occurd imap server disconnected.------');
