@@ -57,6 +57,7 @@ type Props = {
   startGetRandomPersonalInfo: () => void,
   startSavePersonalInfoForBlog: () => void,
   startCreateBlogAccount: (blogAccount: BlogAccountType) => void,
+  startUpdateLastLogin: (mailAccount: MailAccountType) => void,
   mailAccounts: Array<MailAccountType>,
   isGetting: boolean,
   isCreating: boolean,
@@ -494,6 +495,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                   closeConnection={this.props.startCloseConnection}
                   createBlogAccount={this.props.startCreateBlogAccount}
                   savePersonalInfoForBlog={this.props.startSavePersonalInfoForBlog}
+                  updateLastLogin={this.props.startUpdateLastLogin}
                 />
               </CardBody>
             </Card>

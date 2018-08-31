@@ -21,18 +21,11 @@ import { firebaseDbSet, firebaseDbRead } from '../../database/db';
 import type PersonalInfoType from '../../types/personalInfo';
 import { initialMailAccount } from './reducer';
 
-const initialPersonalInfo = {
-  isLoading: false,
-  isFailure: false,
-  errorMessage: '',
+const initialPersonalInfo: PersonalInfoType = {
   lastName: '',
   firstName: '',
   lastNameKana: '',
   firstNameKana: '',
-  lastNameKatakana: '',
-  firstNameKatakana: '',
-  lastNameHepburn: '',
-  firstNameHepburn: '',
   gender: 0,
   birthDate: '',
   postalCode: '',
@@ -45,9 +38,8 @@ const initialPersonalInfo = {
 function* savePersonalInfo(action) {
   try {
     // check personalInfo exists
-    let personalInfo: PersonalInfoType = yield select(state => state.PersonalInfo.personalInfo);
     const userAuth = yield select(state => state.Login);
-    personalInfo = {
+    const personalInfo = {
       ...action.payload
     };
     // save
@@ -80,10 +72,6 @@ function* getRandomPersonalInfo() {
           firstName: data.fname,
           lastNameKana: data.lnameFurigana,
           firstNameKana: data.fnameFurigana,
-          lastNameKatakana: data.lnameKatakana,
-          firstNameKatakana: data.fnameKatakana,
-          lastNameHepburn: data.lnameRome,
-          firstNameHepburn: data.fnameRome,
           gender: data.gender,
           birthDate: moment(data.birthDate, 'MM/DD/YYYY').format('YYYY/MM/DD'),
           postalCode: postCode,
@@ -106,32 +94,27 @@ function* getRandomPersonalInfo() {
 function* getPersonalInfo() {
   try {
     const userAuth = yield select(state => state.Login);
-    if (userAuth.userId.length === 0) throw new Error('ログインが完了していません。');
-    const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/personalInfo`);
+    let personalInfo: PersonalInfoType = {
+      ...initialPersonalInfo
+    };
 
-    let personalInfo;
-    if (snapshot.child('lastName').val() === null) {
-      personalInfo = {
-        ...initialPersonalInfo
-      };
-    } else {
-      personalInfo = {
-        lastName: snapshot.child('lastName').val(),
-        firstName: snapshot.child('firstName').val(),
-        lastNameKana: snapshot.child('lastNameKana').val(),
-        firstNameKana: snapshot.child('firstNameKana').val(),
-        lastNameKatakana: snapshot.child('lastNameKatakana').val(),
-        firstNameKatakana: snapshot.child('firstNameKatakana').val(),
-        lastNameHepburn: snapshot.child('lastNameHepburn').val(),
-        firstNameHepburn: snapshot.child('firstNameHepburn').val(),
-        gender: snapshot.child('gender').val(),
-        birthDate: snapshot.child('birthDate').val(),
-        postalCode: snapshot.child('postalCode').val(),
-        prefecture: snapshot.child('prefecture').val(),
-        address1: snapshot.child('address1').val(),
-        useDefault: snapshot.child('useDefault').val(),
-        mailAccount: initialMailAccount
-      };
+    if (userAuth.userId.length !== 0) {
+      const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/personalInfo`);
+      if (snapshot.child('lastName').val() !== null) {
+        personalInfo = {
+          lastName: snapshot.child('lastName').val(),
+          firstName: snapshot.child('firstName').val(),
+          lastNameKana: snapshot.child('lastNameKana').val(),
+          firstNameKana: snapshot.child('firstNameKana').val(),
+          gender: snapshot.child('gender').val(),
+          birthDate: snapshot.child('birthDate').val(),
+          postalCode: snapshot.child('postalCode').val(),
+          prefecture: snapshot.child('prefecture').val(),
+          address1: snapshot.child('address1').val(),
+          useDefault: snapshot.child('useDefault').val(),
+          mailAccount: initialMailAccount
+        };
+      }
     }
     yield put(getPersonalInfoSuccess(personalInfo));
   } catch (error) {
@@ -180,10 +163,6 @@ function* savePersonalInfoForBlog(action) {
               firstName: data.fname,
               lastNameKana: data.lnameFurigana,
               firstNameKana: data.fnameFurigana,
-              lastNameKatakana: data.lnameKatakana,
-              firstNameKatakana: data.fnameKatakana,
-              lastNameHepburn: data.lnameRome,
-              firstNameHepburn: data.fnameRome,
               gender: data.gender,
               birthDate: moment(data.birthDate, 'MM/DD/YYYY').format('YYYY/MM/DD'),
               postalCode: postCode,

@@ -65,3 +65,87 @@ test('handle CLOSE_CONNECTION_SUCCESS', () => {
 test('handle CLOSE_CONNECTION_FAILURE', () => {
   expect(reducer(initialState, actions.closeConnectionFailure())).toEqual({});
 });
+
+test('handle MOVE_MAILS_REQUEST', () => {
+  expect(reducer(initialState, actions.moveMailsRequest())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});
+
+test('handle MOVE_MAILS_SUCCESS', () => {
+  expect(reducer(initialState, actions.moveMailsSuccess())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});
+
+test('handle MOVE_MAILS_FAILURE', () => {
+  expect(reducer(initialState, actions.moveMailsFailure())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});
+
+test('handle UPDATE_LAST_LOGIN_REQUEST', () => {
+  expect(reducer(initialState, actions.updateLastLoginRequest())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});
+
+test('handle UPDATE_LAST_LOGIN_SUCCESS', () => {
+  expect(reducer(initialState, actions.updateLastLoginSuccess())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});
+
+test('handle UPDATE_LAST_LOGIN_FAILURE', () => {
+  expect(reducer(initialState, actions.updateLastLoginFailure())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});

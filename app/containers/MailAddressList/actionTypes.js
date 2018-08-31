@@ -33,6 +33,12 @@ export const IMPORT_MAIL_ADDRESS_FAILURE: 'MailAddressList/IMPORT_MAIL_ADDRESS_F
   'MailAddressList/IMPORT_MAIL_ADDRESS_FAILURE';
 export const CLEAR_MAIL_ADDRESS: 'MailAddressList/CLEAR_MAIL_ADDRESS' =
   'MailAddressList/CLEAR_MAIL_ADDRESS';
+export const UPDATE_LAST_LOGIN_REQUEST: 'MailAddressList/UPDATE_LAST_LOGIN_REQUEST' =
+  'MailAddressList/UPDATE_LAST_LOGIN_REQUEST';
+export const UPDATE_LAST_LOGIN_SUCCESS: 'MailAddressList/UPDATE_LAST_LOGIN_SUCCESS' =
+  'MailAddressList/UPDATE_LAST_LOGIN_SUCCESS';
+export const UPDATE_LAST_LOGIN_FAILURE: 'MailAddressList/UPDATE_LAST_LOGIN_FAILURE' =
+  'MailAddressList/UPDATE_LAST_LOGIN_FAILURE';
 
 export const Actions = {
   GET_MAIL_ADDRESS_REQUEST,
@@ -50,7 +56,10 @@ export const Actions = {
   IMPORT_MAIL_ADDRESS_REQUEST,
   IMPORT_MAIL_ADDRESS_SUCCESS,
   IMPORT_MAIL_ADDRESS_FAILURE,
-  CLEAR_MAIL_ADDRESS
+  CLEAR_MAIL_ADDRESS,
+  UPDATE_LAST_LOGIN_REQUEST,
+  UPDATE_LAST_LOGIN_SUCCESS,
+  UPDATE_LAST_LOGIN_FAILURE
 };
 
 export type GetMailAddressRequest = {
@@ -124,6 +133,21 @@ export type ClearMailAddress = {
   type: typeof CLEAR_MAIL_ADDRESS
 };
 
+export type UpdateLastLoginRequest = {
+  type: typeof UPDATE_LAST_LOGIN_REQUEST,
+  payload: MailAccountType
+};
+export type UpdateLastLoginSuccess = {
+  type: typeof UPDATE_LAST_LOGIN_SUCCESS,
+  payload: Array<MailAccountType>
+};
+export type UpdateLastLoginFailure = {
+  type: typeof UPDATE_LAST_LOGIN_FAILURE,
+  meta: {
+    errorMessage: string
+  }
+};
+
 export type Action =
   | GetMailAddressRequest
   | GetMailAddressSuccess
@@ -140,4 +164,7 @@ export type Action =
   | ImportMailAddressRequest
   | ImportMailAddressSuccess
   | ImportMailAddressFailure
-  | ClearMailAddress;
+  | ClearMailAddress
+  | UpdateLastLoginRequest
+  | UpdateLastLoginSuccess
+  | UpdateLastLoginFailure;

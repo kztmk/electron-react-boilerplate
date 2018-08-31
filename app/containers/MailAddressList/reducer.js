@@ -55,6 +55,27 @@ export const initialState: State = {
 // eslint-disable-next-line space-before-function-paren
 export default function(state: State = initialState, action: Action): State {
   switch (action.type) {
+    case Actions.UPDATE_LAST_LOGIN_REQUEST:
+      return {
+        ...state,
+        isUpdating: true
+      };
+
+    case Actions.UPDATE_LAST_LOGIN_SUCCESS:
+      return {
+        ...state,
+        mailAccounts: action.payload,
+        isUpdating: false
+      };
+
+    case Actions.UPDATE_LAST_LOGIN_FAILURE:
+      return {
+        ...state,
+        isUpdating: false,
+        isFailure: true,
+        metaMessage: action.payload
+      };
+
     case Actions.CLEAR_MAIL_ADDRESS:
       return {
         ...state

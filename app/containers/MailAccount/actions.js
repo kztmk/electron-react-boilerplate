@@ -1,9 +1,6 @@
 // @flow
 import type MailAccountType from '../../types/mailAccount';
-import type {
-  ImapFlagsArgsType,
-  ImapManagerPropertyType
-} from '../../types/mailMessageType';
+import type { ImapFlagsArgsType, ImapManagerPropertyType } from '../../types/mailMessageType';
 
 import {
   OPEN_CONNECTION_REQUEST,
@@ -46,25 +43,19 @@ import type {
   CloseConnectionFailure
 } from './actionTypes';
 
-export function openConnectionRequest(
-  payload: MailAccountType
-): OpenConnectionRequest {
+export function openConnectionRequest(payload: MailAccountType): OpenConnectionRequest {
   return {
     type: OPEN_CONNECTION_REQUEST,
     payload
   };
 }
-export function openConnectionSuccess(
-  payload: ImapManagerPropertyType
-): OpenConnectionSuccess {
+export function openConnectionSuccess(payload: ImapManagerPropertyType): OpenConnectionSuccess {
   return {
     type: OPEN_CONNECTION_SUCCESS,
     payload
   };
 }
-export function openConnectionFailure(meta: {
-  errorMessage: string
-}): OpenConnectionFailure {
+export function openConnectionFailure(meta: { errorMessage: string }): OpenConnectionFailure {
   return {
     type: OPEN_CONNECTION_FAILURE,
     meta
@@ -79,17 +70,13 @@ export function selectMailBoxRequest(payload: {
     payload
   };
 }
-export function selectMailBoxSuccess(
-  payload: ImapManagerPropertyType
-): SelectMailBoxSuccess {
+export function selectMailBoxSuccess(payload: ImapManagerPropertyType): SelectMailBoxSuccess {
   return {
     type: SELECT_MAIL_BOX_SUCCESS,
     payload
   };
 }
-export function selectMailBoxFailure(meta: {
-  errorMessage: string
-}): SelectMailBoxFailure {
+export function selectMailBoxFailure(meta: { errorMessage: string }): SelectMailBoxFailure {
   return {
     type: SELECT_MAIL_BOX_FAILURE,
     meta
@@ -101,41 +88,31 @@ export function deleteMessageRequest(payload: string): DeleteMessageRequest {
     payload
   };
 }
-export function deleteMessageSuccess(
-  payload: ImapManagerPropertyType
-): DeleteMessageSuccess {
+export function deleteMessageSuccess(payload: ImapManagerPropertyType): DeleteMessageSuccess {
   return {
     type: DELETE_MESSAGE_SUCCESS,
     payload
   };
 }
-export function deleteMessageFailure(meta: {
-  errorMessage: string
-}): DeleteMessageFailure {
+export function deleteMessageFailure(meta: { errorMessage: string }): DeleteMessageFailure {
   return {
     type: DELETE_MESSAGE_FAILURE,
     meta
   };
 }
-export function updateFlagsRequest(
-  payload: ImapFlagsArgsType
-): UpdateFlagsRequest {
+export function updateFlagsRequest(payload: ImapFlagsArgsType): UpdateFlagsRequest {
   return {
     type: UPDATE_FLAGS_REQUEST,
     payload
   };
 }
-export function updateFlagsSuccess(
-  payload: ImapManagerPropertyType
-): UpdateFlagsSuccess {
+export function updateFlagsSuccess(payload: ImapManagerPropertyType): UpdateFlagsSuccess {
   return {
     type: UPDATE_FLAGS_SUCCESS,
     payload
   };
 }
-export function updateFlagsFailure(meta: {
-  errorMessage: string
-}): UpdateFlagsFailure {
+export function updateFlagsFailure(meta: { errorMessage: string }): UpdateFlagsFailure {
   return {
     type: UPDATE_FLAGS_FAILURE,
     meta
@@ -147,17 +124,13 @@ export function moveMailsRequest(payload: ImapFlagsArgsType): MoveMailsRequest {
     payload
   };
 }
-export function moveMailsSuccess(
-  payload: ImapManagerPropertyType
-): MoveMailsSuccess {
+export function moveMailsSuccess(payload: ImapManagerPropertyType): MoveMailsSuccess {
   return {
     type: MOVE_MAILS_SUCCESS,
     payload
   };
 }
-export function moveMailsFailure(meta: {
-  errorMessage: string
-}): MoveMailsFailure {
+export function moveMailsFailure(meta: { errorMessage: string }): MoveMailsFailure {
   return {
     type: MOVE_MAILS_FAILURE,
     meta
@@ -173,9 +146,7 @@ export function closeConnectionSuccess(): CloseConnectionSuccess {
     type: CLOSE_CONNECTION_SUCCESS
   };
 }
-export function closeConnectionFailure(meta: {
-  errorMessage: string
-}): CloseConnectionFailure {
+export function closeConnectionFailure(meta: { errorMessage: string }): CloseConnectionFailure {
   return {
     type: CLOSE_CONNECTION_FAILURE,
     meta

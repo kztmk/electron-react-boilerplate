@@ -1,11 +1,7 @@
 // @flow
 import type { Action } from './actionTypes';
 import { Actions } from './actionTypes';
-import {
-  MailBoxesType,
-  MailBoxInfoType,
-  MailRowMessageType
-} from '../../types/mailMessageType';
+import { MailBoxesType, MailBoxInfoType, MailRowMessageType } from '../../types/mailMessageType';
 
 export type State = {
   isLoading: boolean,

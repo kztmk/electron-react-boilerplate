@@ -41,7 +41,7 @@ import MailAccount from '../../containers/MailAccount';
 import WizardViewBlog from '../BlogAccountCreate';
 import type BlogAccountType from '../../types/blogAccount';
 import type PersonalInfoType from '../../types/personalInfo';
-import getValidationLink from '../../drivers/emails/imap';
+import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -69,7 +69,8 @@ type Props = {
   closeConnection: () => void,
   closeEditForm: () => void,
   createBlogAccount: (blogAccout: BlogAccountType) => void,
-  savePersonalInfoForBlog: (personalInfo: PersonalInfoType) => void
+  savePersonalInfoForBlog: (personalInfo: PersonalInfoType) => void,
+  updateLastLogin: (mailAccount: MailAccountType) => void
 };
 
 const initialMailAccount = {
@@ -443,10 +444,23 @@ class MailAddressList extends React.Component<Props, State> {
   };
 
   showMailAccount = account => {
-    this.setState({
-      targetAccount: account,
-      openMailAccount: true
-    });
+    this.props.updateLastLogin({ ...account, lastLogin: moment().valueOf() });
+    const user = {};
+    user.username = account.accountId;
+    user.password = account.password;
+    user.email = account.mailAddress;
+    user.provider = account.provider.toLowerCase();
+
+    console.log('---mail-login');
+    console.log(user);
+
+    const puppeteerEmail = new PuppeteerEmail(user);
+    puppeteerEmail.signin(user);
+
+    // this.setState({
+    //   targetAccount: account,
+    //   openMailAccount: true
+    // });
   };
 
   handleCloseMailAccount = () => {
@@ -669,6 +683,28 @@ class MailAddressList extends React.Component<Props, State> {
                 {
                   Header: () => <span style={{ fontSize: 12 }}>最終ログイン</span>,
                   accessor: 'lastLogin',
+                  width: 150,
+                  filterable: true,
+                  sortable: true,
+                  Filter: ({ filter, onChange }) => (
+                    <input
+                      type="text"
+                      placeholder="YYYY/MM/DDより以前"
+                      value={filter ? filter.value : ''}
+                      onChange={event => onChange(event.target.value)}
+                      style={{ fontSize: 12 }}
+                    />
+                  ),
+                  filterMethod: (filter, row) => {
+                    if (row[filter.id].length === 0) {
+                      return row[filter.id];
+                    }
+                    if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                  }
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }}>作成日</span>,
+                  accessor: 'createDate',
                   width: 150,
                   filterable: true,
                   sortable: true,

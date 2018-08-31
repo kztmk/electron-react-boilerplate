@@ -186,3 +186,45 @@ test('handle CLEAR_MAIL_ADDRESS', () => {
     importFilePath: ''
   });
 });
+
+test('handle UPDATE_LAST_LOGIN_REQUEST', () => {
+  expect(reducer(initialState, actions.updateLastLoginRequest())).toEqual({
+    mailAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: []
+  });
+});
+
+test('handle UPDATE_LAST_LOGIN_SUCCESS', () => {
+  expect(reducer(initialState, actions.updateLastLoginSuccess())).toEqual({
+    mailAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: []
+  });
+});
+
+test('handle UPDATE_LAST_LOGIN_FAILURE', () => {
+  expect(reducer(initialState, actions.updateLastLoginFailure())).toEqual({
+    mailAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: []
+  });
+});

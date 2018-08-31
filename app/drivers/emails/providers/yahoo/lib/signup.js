@@ -1,6 +1,5 @@
 /* eslint-disable no-await-in-loop */
 import delay from 'delay';
-import tempy from 'tempy';
 import log from 'electron-log';
 
 const signup = async (user, opts) => {

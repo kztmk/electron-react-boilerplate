@@ -8,13 +8,17 @@ import { getProfileRequest } from '../Profile/actions';
 import { getMailAddressRequest } from '../MailAddressList/actions';
 import { getBlogsRequest } from '../BlogList/actions';
 import { getPersonalInfoRequest } from '../PersonalInfo/actions';
+import { getGmailInfoRequest } from '../Gmail/actions';
+import { getGmailSequenceRequest } from '../GmailSequence/actions';
 
 const mapStateToProps = (state: State) => ({
   userAuth: state.Login,
   profile: state.Profile,
   mailAccountState: state.MailAddressList,
   blogAccountState: state.BlogList,
-  personalInfoState: state.PersonalInfo
+  personalInfoState: state.PersonalInfo,
+  gmailInfoState: state.Gmail,
+  gmailSequencesState: state.GmailSequence
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
@@ -35,12 +39,15 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startGetPersonalInfo() {
     dispatch(getPersonalInfoRequest());
+  },
+  startGetGmailInfo() {
+    dispatch(getGmailInfoRequest());
+  },
+  startGetGmailSequences() {
+    dispatch(getGmailSequenceRequest());
   }
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LoginForm);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginForm);
 
 // export default connector(LoginForm);

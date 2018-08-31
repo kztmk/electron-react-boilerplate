@@ -115,11 +115,25 @@ class EmailDriver {
    * @return {Promise<EmailSession>}
    */
   async signin(user, opts = {}) {
-    const browser = opts.browser || (await puppeteer.launch(opts.puppeteer));
-
     if (!user) {
       throw new Error('ログイン情報は必須です。');
     }
+
+    // path:/Users/inabakazuya/Documents/Devs/ProjectsRoot/yoriki5/release/mac/Yorikiv5.app/Contents/Resources/app.asar/node_modules/puppeteer/.local-chromium/mac-564778/chrome-mac/Chromium.app/Contents/MacOS/Chromium
+    let exePath = await puppeteer.executablePath();
+    console.log(`puppeteer exe path:${exePath}`);
+    if (process.env.NODE_ENV === 'production') {
+      exePath = exePath.replace('app.asar', 'app.asar.unpacked');
+    }
+    console.log(`sliced path:${exePath}`);
+
+    const browser =
+      opts.browser ||
+      (await puppeteer.launch({
+        executablePath: exePath,
+        headless: false,
+        slowMo: 20
+      }));
 
     return this.emailProvider.signin(user, {
       browser,

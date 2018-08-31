@@ -23,6 +23,18 @@ import setAppMenu from './menu';
 let mainWindow = null;
 let fileManager = null;
 
+const shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  }
+});
+
+if (shouldQuit) {
+  app.quit();
+}
+
 // autoUpdater.logger = log;
 // autoUpdater.logger.transports.file.level = 'info';
 log.transports.file.level = 'info';
@@ -38,10 +50,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
   require('electron-debug')();
   const path = require('path');
   const p = path.join(__dirname, '..', 'app', 'node_modules');
@@ -75,10 +84,7 @@ const openImportMailAccountFile = () => {
  * 受取ったtextをfileManagerで書込
  */
 const saveAsNewFileToErrorMailAccount = () =>
-  Promise.all([
-    showSaveAsNewFileDialog(),
-    mainWindow.requestErrorMailJsonFile()
-  ])
+  Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorMailJsonFile()])
     .then(([filePath, text]) => fileManager.saveFile(filePath, text))
     .catch(error => {
       console.log(error);
@@ -101,10 +107,7 @@ const openImportBlogAccountFile = () => {
  * 受取ったtextをfileManagerで書込
  */
 const saveAsNewFileToErrorBlogAccount = () =>
-  Promise.all([
-    showSaveAsNewFileDialog(),
-    mainWindow.requestErrorBlogJsonFile()
-  ])
+  Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorBlogJsonFile()])
     .then(([filePath, text]) => fileManager.saveFile(filePath, text))
     .catch(error => {
       console.log(error);
@@ -124,10 +127,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
 

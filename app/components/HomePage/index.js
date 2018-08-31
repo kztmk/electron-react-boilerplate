@@ -10,6 +10,7 @@ import FormResetPassword from '../../containers/ResetPassword';
 import type { AuthType } from '../../types/auth';
 
 import Snackbar from '../../ui/Snackbar/Snackbar';
+import { ValidatorForm } from '../FormLogin';
 
 const styles = {
   sliderItem: {
@@ -92,16 +93,14 @@ class HomePage extends React.Component<Props, State> {
 
   render() {
     // eslint-disable-next-line
-    const isLogin = this.props.userAuth.userId.length > 0;
+    // const isLogin = this.props.userAuth.userId.length > 0;
     return (
       <GridContainer container justify="center">
-        <Slide in={!isLogin}>
+        <Slide in={!this.state.isLoginDone}>
           {(() =>
             this.state.isRequestPasswordReset ? (
               <FormResetPassword
-                cancelRequestPasswordReset={
-                  this.handleCancelRequestPasswordReset
-                }
+                cancelRequestPasswordReset={this.handleCancelRequestPasswordReset}
                 openLoginSuccessSnackbar={this.handleSuccessSnackbarOpen}
               />
             ) : (
@@ -111,7 +110,7 @@ class HomePage extends React.Component<Props, State> {
               />
             ))()}
         </Slide>
-        {isLogin && <h3>ホームページ</h3>}
+        {this.state.isLoginDone && <h3>ホームページ</h3>}
         <Snackbar
           color="success"
           place="bc"

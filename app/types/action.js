@@ -1,5 +1,7 @@
 // @flow
 import type { Action as BlogListAction } from '../containers/BlogList/actionTypes';
+import type { Action as GmailAction } from '../containers/Gmail/actionTypes';
+import type { Action as GmailSequenceAction } from '../containers/GmailSequence/actionTypes';
 import type { Action as LoginAction } from '../containers/Login/actionTypes';
 import type { Action as MailAccountAction } from '../containers/MailAccount/actionTypes';
 import type { Action as MailAddressListAction } from '../containers/MailAddressList/actionTypes';
@@ -14,6 +16,8 @@ export type ReduxInitAction = {
 export type Action =
   | ReduxInitAction
   | BlogListAction
+  | GmailAction
+  | GmailSequenceAction
   | LoginAction
   | MailAccountAction
   | MailAddressListAction

@@ -1,5 +1,5 @@
 // @flow
-import PersonalInfoType from '../../types/personalInfo';
+import type PersonalInfoType from '../../types/personalInfo';
 
 import {
   GET_PERSONAL_INFO_REQUEST,

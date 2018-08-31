@@ -16,10 +16,7 @@ import {
   moveMailsSuccess,
   moveMailsFailure
 } from './actions';
-import type {
-  ImapManagerPropertyType,
-  MailRowMessageType
-} from '../../types/mailMessageType';
+import type { ImapManagerPropertyType, MailRowMessageType } from '../../types/mailMessageType';
 import { firebaseDbUpdate } from '../../database/db';
 
 let imapClient = null;
@@ -99,9 +96,7 @@ function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
   // client.selectMailbox(boxPath).then(mailbox => mailbox);
   // mailbox情報を取得
   // mailBoxInfo = yield call(getMailboxInfo, imapClient, path);
-  const mailBoxInfo = yield imapClient
-    .selectMailbox(path)
-    .then(mailbox => mailbox);
+  const mailBoxInfo = yield imapClient.selectMailbox(path).then(mailbox => mailbox);
   console.log('-----------------------------------');
   console.log(`now mailCount:${imapProperty.mailCount}`);
   console.log(`now unseen:${imapProperty.selectMailBoxPath}`);
@@ -124,9 +119,7 @@ function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
   const messages: Array<MailRowMessageType> = [];
 
   // 未読数の取得
-  const unseen = yield imapClient
-    .search(path, { unseen: true })
-    .then(result => result);
+  const unseen = yield imapClient.search(path, { unseen: true }).then(result => result);
   imapProperty.unseenCount = unseen.length;
   // 取得範囲が正常かをチェック
   if (seq.length > 0) {
@@ -136,12 +129,16 @@ function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
       .then(boxMessages => boxMessages);
 
     mailMessages.forEach(mailMessage => {
+      let recieveDate = mailMessage.envelope.date;
+      if (!recieveDate) {
+        recieveDate = '';
+      }
       messages.push({
         key: mailMessage['#'],
         uid: mailMessage.uid,
         flags: mailMessage.flags,
         subject: mailMessage.envelope.subject,
-        date: mailMessage.envelope.date,
+        date: recieveDate,
         from: mailMessage.envelope.from,
         mime: parse(mailMessage['body[]'])
       });
@@ -212,13 +209,9 @@ function* openImapConnection(action) {
     const userAuth = yield select(state => state.Login);
     try {
       // firebaseをアップデート
-      yield call(
-        firebaseDbUpdate,
-        `/users/${userAuth.userId}/mailAccount/${action.payload.key}`,
-        {
-          lastLogin: Date.now()
-        }
-      );
+      yield call(firebaseDbUpdate, `/users/${userAuth.userId}/mailAccount/${action.payload.key}`, {
+        lastLogin: Date.now()
+      });
     } catch (error) {
       throw new Error({ errorMessage: error.toString() });
     }
@@ -262,11 +255,7 @@ function* openImapConnection(action) {
 function* selectMailbox(action) {
   try {
     // pathを指定してmailBox内のメールを取得
-    yield call(
-      getSelectMailboxInfoAndMessages,
-      action.payload.path,
-      action.payload.seqFrom
-    );
+    yield call(getSelectMailboxInfoAndMessages, action.payload.path, action.payload.seqFrom);
 
     yield put(selectMailBoxSuccess(imapProperty));
   } catch (error) {
@@ -314,9 +303,7 @@ function* updateFlags(action) {
       );
 
       // 現在のImapServerPropertyを取得
-      const currentImapManagerProperty = yield select(
-        state => state.MailAccount
-      );
+      const currentImapManagerProperty = yield select(state => state.MailAccount);
       // messagesを取得
       const workingMessages = { ...currentImapManagerProperty.messages };
       let workingUnseenCount = currentImapManagerProperty.unseenCount;
@@ -335,9 +322,7 @@ function* updateFlags(action) {
           Object.keys(workingMessages).forEach(k => {
             workingSequences.forEach(s => {
               if (workingMessages[k].uid === s) {
-                const flagSeen = workingMessages[k].flags.find(
-                  f => f === '\\Seen'
-                );
+                const flagSeen = workingMessages[k].flags.find(f => f === '\\Seen');
                 if (flagSeen === undefined) {
                   workingMessages[k].flags.push('\\Seen');
                   updateMessages.push(workingMessages[k]);
@@ -358,13 +343,9 @@ function* updateFlags(action) {
               if (workingMessages[k].uid === s) {
                 console.log('before remove');
                 console.log(workingMessages[k].flags);
-                const flagSeen = workingMessages[k].flags.find(
-                  f => f === '\\Seen'
-                );
+                const flagSeen = workingMessages[k].flags.find(f => f === '\\Seen');
                 if (flagSeen !== undefined) {
-                  const updatedFlags = workingMessages[k].flags.filter(
-                    f => f !== '\\Seen'
-                  );
+                  const updatedFlags = workingMessages[k].flags.filter(f => f !== '\\Seen');
                   workingMessages[k].flags = updatedFlags;
                   updateMessages.push(workingMessages[k]);
                   workingUnseenCount += 1;
@@ -430,10 +411,7 @@ function* moveMails(action) {
       // pathを指定してmailBox内のメールを取得
       let boxPath = action.payload.moveDestination;
 
-      if (
-        boxPath.toLowerCase() === 'trash' ||
-        boxPath.toLowerCase() === 'deleted'
-      ) {
+      if (boxPath.toLowerCase() === 'trash' || boxPath.toLowerCase() === 'deleted') {
         yield call(getSelectMailboxInfoAndMessages, boxPath, 0, true);
         boxPath = 'INBOX';
       }

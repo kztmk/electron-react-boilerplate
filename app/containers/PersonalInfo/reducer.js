@@ -12,7 +12,7 @@ export type State = {
   randomPersonalInfo: PersonalInfoType
 };
 
-export const initialMailAccount = {
+export const initialMailAccount: MailAccountType = {
   key: '',
   accountId: '',
   password: '',
@@ -24,15 +24,11 @@ export const initialMailAccount = {
   detailInfo: []
 };
 
-const initialPersonalInfo = {
+const initialPersonalInfo: PersonalInfoType = {
   lastName: '',
   firstName: '',
   lastNameKana: '',
   firstNameKana: '',
-  lastNameKatakana: '',
-  firstNameKatakana: '',
-  lastNameHepburn: '',
-  firstNameHepburn: '',
   gender: 0,
   birthDate: '',
   postalCode: '',
@@ -49,7 +45,7 @@ export const initialState: State = {
   randomPersonalInfo: initialPersonalInfo
 };
 
-export default function(state: State = initialState, action: Action): Exact<State> {
+export default function(state: State = initialState, action: Action): State {
   switch (action.type) {
     case Actions.CLEAR_PERSONAL_INFO_REQUEST:
       return {

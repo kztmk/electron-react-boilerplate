@@ -7,7 +7,8 @@ import {
   createMailAddressRequest,
   updateMailAddressRequest,
   deleteMailAddressRequest,
-  getMailAddressRequest
+  getMailAddressRequest,
+  updateLastLoginRequest
 } from './actions';
 
 import MailAddressListPage from '../../components/MailAddressList';
@@ -57,6 +58,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startSavePersonalInfoForBlog(personalInfo) {
     dispatch(savePersonalInfoForBlogRequest(personalInfo));
+  },
+  startUpdateLastLogin(mailAccount) {
+    dispatch(updateLastLoginRequest(mailAccount));
   }
 });
 

@@ -14,16 +14,11 @@ class EmailSession {
     if (!opts.user) throw new Error('ログイン情報は必須です。');
     if (!opts.user.username) throw new Error('ログインIDは必須です。');
     if (!opts.user.email) throw new Error('メールアドレスは必須です。');
-    if (!opts.browser)
-      throw new Error('セッションに必要なブラウザがありません。');
+    if (!opts.browser) throw new Error('セッションに必要なブラウザがありません。');
     if (!opts.provider) throw new Error('メール提供元は必須です。');
 
     this.sessionProperty = opts;
-    this.isAuthenticated = true;
-  }
-
-  set isAuthenticated(status) {
-    this.isAuthenticated = status;
+    this._isAuthenticated = true;
   }
 
   /**
@@ -69,7 +64,7 @@ class EmailSession {
    * @member {boolean}
    */
   get isAuthenticated() {
-    return this.isAuthenticated;
+    return this._isAuthenticated;
   }
 
   /**
@@ -83,7 +78,7 @@ class EmailSession {
     }
 
     await this.provider.signout(this);
-    this.isAuthenticated = false;
+    this._isAuthenticated = false;
   }
 
   /**
