@@ -213,6 +213,12 @@ class MailWizard extends React.Component<Props, State> {
         }
       });
       this.refreshAnimation(nextStep);
+      if (nextStep === 3) {
+        this[this.props.steps[3].stepId].getInfo(
+          steps00State.lastNameKana,
+          steps00State.firstNameKana
+        );
+      }
     }
   };
 

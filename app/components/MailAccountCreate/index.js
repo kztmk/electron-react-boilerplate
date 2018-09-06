@@ -7,7 +7,7 @@ import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
 
 import Steps00 from '../../containers/MailAccountCreate/WizardChildren/step00';
-import StepOutlook from './WizardChildren/stepOutlook';
+import StepYandex from './WizardChildren/stepYandex';
 import StepYahoo from './WizardChildren/stepYahoo';
 import StepGmail from '../../containers/MailAccountCreate/WizardChildren/stepGmail';
 import type MailAccountType from '../../types/mailAccount';
@@ -42,7 +42,8 @@ class WizardViewMail extends React.Component<Props> {
                 stepName: 'Gmail',
                 stepComponent: StepGmail,
                 stepId: 'gmail'
-              }
+              },
+              { stepName: 'Yandex', stepComponent: StepYandex, stepId: 'yandex' }
             ]}
             title="新規メールアカウント作成"
             cancelButtonText="キャンセル"
