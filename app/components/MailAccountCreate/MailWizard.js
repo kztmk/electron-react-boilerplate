@@ -15,6 +15,7 @@ import PuppeteerEmail from './puppeteerEmail';
 import Button from '../../ui/CustomButtons/Button';
 import Table from '../../ui/Table/Table';
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
+import type MailAccountType from '../../types/mailAccount';
 
 const errorStyles = {
   fontWeight: 'bold',
@@ -42,7 +43,11 @@ type Props = {
   // finishButtonClasses?: string,
   finishButtonText: string,
   finishButtonClick: () => void,
-  validate: boolean
+  validate: boolean,
+  mailAccounts: Array<MailAccountType>,
+  isCreating: boolean,
+  isCreatingFailure: boolean,
+  errorMessage: string
 };
 
 type State = {
@@ -54,7 +59,8 @@ type State = {
   width: string,
   movingTabStyle: Object,
   accountInfo: Object,
-  sweetAlert: Object
+  sweetAlert: Object,
+  targetMailAccount: MailAccountType
 };
 
 class MailWizard extends React.Component<Props, State> {
@@ -72,7 +78,8 @@ class MailWizard extends React.Component<Props, State> {
         transition: 'transform 0s'
       },
       accountInfo: {},
-      sweetAlert: ''
+      sweetAlert: '',
+      targetMailAccount: {}
     };
   }
 
@@ -80,6 +87,57 @@ class MailWizard extends React.Component<Props, State> {
     this.refreshAnimation(0);
     window.addEventListener('resize', this.updateWidth.bind(this));
   }
+
+  componentWillReceiveProps = nextProps => {
+    // target gmail
+    console.log(`--MailWizard--loading:${this.props.isCreating}--next:${nextProps.isCreating}`);
+    if (this.state.accountInfo.provider === 'Gmail') {
+      // loading status change true to false
+      // if (this.props.isCreating && !nextProps.isCreating) {
+      // error status check
+      const { mailAddress } = this.state.targetMailAccount;
+      console.log(
+        `===MailWizard--fail:${this.props.isCreatingFailure}--next:${nextProps.isCreatingFailure}`
+      );
+      if (!nextProps.isCreatingFailure) {
+        console.log('=======gmail create success=======');
+        // success
+        this.setState({
+          sweetAlert: (
+            <SweetAlert
+              success
+              style={{ display: 'block', marginTop: '-100px' }}
+              title="Gmail登録完了"
+              onConfirm={() => this.hideAlert()}
+              onCancel={() => this.hideAlert()}
+              confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+            >
+              メールアドレス: {mailAddress} <br />
+              の登録が完了しました。
+            </SweetAlert>
+          )
+        });
+      } else {
+        // gmail create fail
+        this.setState({
+          sweetAlert: (
+            <SweetAlert
+              warning
+              style={{ display: 'block', marginTop: '-100px' }}
+              title="エラー発生"
+              onConfirm={() => this.closeAlert()}
+              onCancel={() => this.closeAlert()}
+              confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.warning}
+            >
+              メールアドレス: {mailAddress} <br />
+              の登録中にエラーが発生しました。
+            </SweetAlert>
+          )
+        });
+      }
+      // }
+    }
+  };
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateWidth.bind(this), true);
@@ -124,8 +182,11 @@ class MailWizard extends React.Component<Props, State> {
         case 'Yahoo':
           nextStep = 1;
           break;
-        case 'Outlook':
+        case 'Gmail':
           nextStep = 2;
+          break;
+        case 'Yandex':
+          nextStep = 3;
           break;
         default:
       }
@@ -211,6 +272,21 @@ class MailWizard extends React.Component<Props, State> {
             ]}
           />
         );
+      case 'gmail':
+        return (
+          <Table
+            tableData={[
+              ['作成メールアドレス:', user.email, ,],
+              ['アカウントID：', user.username, 'パスワード：', user.password],
+              ['氏名：', `${user.lastName} ${user.firstName}`, '性別:', gender],
+              ['生年月日:', `${user.birthday.year}/${user.birthday.month}/${user.birthday.day}`, ,]
+            ]}
+          />
+        );
+
+      case 'yandex':
+        console.log('TODO: generateDisplayMessage');
+        break;
       default:
         break;
     }
@@ -252,20 +328,48 @@ class MailWizard extends React.Component<Props, State> {
     });
   };
 
+  showErrorDialog = email => {
+    this.setState({
+      sweetAlert: (
+        <SweetAlert
+          style={{ display: 'block', marginTop: '-100px' }}
+          title="既にメールアドレスは存在します。"
+          onConfirm={() => this.hideAlert()}
+          onCancel={() => this.hideAlert()}
+          confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+        >
+          作成しようとしたメールアドレス<br />
+          {email}
+          <br />
+          は、すでにリストに存在しています。
+        </SweetAlert>
+      )
+    });
+  };
+
   createEmailAccount = (user, newMailAccount) => {
     // save to database
     console.log('save to db');
+    this.setState({ sweetAlert: null });
     this.props.finishButtonClick(newMailAccount);
-    // close dialog and create form
-    this.hideAlert();
-    // create account
-    const puppeteerEmail = new PuppeteerEmail(user);
-    puppeteerEmail.signup(user);
+    if (user.provider !== 'gmail') {
+      // close dialog and create form
+      this.hideAlert();
+      // create account
+      const puppeteerEmail = new PuppeteerEmail(user);
+      puppeteerEmail.signup(user);
+    } else {
+      this.setState({ targetMailAccount: newMailAccount });
+    }
   };
 
   hideAlert = () => {
     this.setState({ sweetAlert: '' });
     this.cancelButtonClick();
+  };
+
+  closeAlert = () => {
+    this.setState({ sweetAlert: null });
   };
 
   finishButtonClick = () => {
@@ -304,6 +408,7 @@ class MailWizard extends React.Component<Props, State> {
 
       let accId = '';
       let mailAddress = '';
+      let userKey = '';
       user.username = this.state.accountInfo.accountId;
       user.password = this.state.accountInfo.password;
       // birthday スラッシュは自動で入るので、4桁-yyyy、2桁-MM、2桁-DD
@@ -342,24 +447,41 @@ class MailWizard extends React.Component<Props, State> {
           user.birthday.month = this.zeroSuppress(user.birthday.month);
           user.birthday.day = this.zeroSuppress(user.birthday.day);
           break;
+        case 'Gmail':
+          user.provider = 'gmail';
+          user.email = `${additionalInfo.accountName}@${additionalInfo.domain}`;
+          mailAddress = user.email;
+          accId = additionalInfo.accountName;
+          userKey = additionalInfo.sequenceKey;
+          break;
+        case 'Yandex':
+          break;
         default:
       }
 
-      const newMailAccount = {
-        key: '',
-        accountId: accId,
-        password: this.state.accountInfo.password,
-        mailAddress,
-        provider: this.state.accountInfo.provider,
-        createDate: Date.now(),
-        lastLogin: 0,
-        tags: '',
-        detailInfo
-      };
+      const existsEmail = this.props.mailAccounts.find(
+        mailAccount => mailAccount.mailAddress === user.email
+      );
 
-      // show dialog
-      this.showFinishDialog(user, newMailAccount);
-      // create account
+      if (!existsEmail) {
+        const newMailAccount = {
+          key: userKey,
+          accountId: accId,
+          password: this.state.accountInfo.password,
+          mailAddress,
+          provider: this.state.accountInfo.provider,
+          createDate: Date.now(),
+          lastLogin: 0,
+          tags: '',
+          detailInfo
+        };
+
+        // show dialog
+        this.showFinishDialog(user, newMailAccount);
+        // create account
+      } else {
+        this.showErrorDialog(user.email);
+      }
     }
   };
 

@@ -29,7 +29,7 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         isGmailSequencesLoading: false,
-        payload: action.payload
+        gmailSequences: action.payload
       };
 
     case Actions.CREATE_GMAIL_SEQUENCE_FAILURE:
@@ -50,7 +50,7 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         isGmailSequencesLoading: false,
-        payload: action.payload
+        gmailSequences: action.payload
       };
 
     case Actions.UPDATE_GMAIL_SEQUENCE_FAILURE:
@@ -71,7 +71,7 @@ export default function(state: State = initialState, action: Action): State {
       return {
         ...state,
         isGmailSequencesLoading: false,
-        payload: action.payload
+        gmailSequences: action.payload
       };
 
     case Actions.GET_GMAIL_SEQUENCE_FAILURE:
@@ -85,15 +85,14 @@ export default function(state: State = initialState, action: Action): State {
     case Actions.DELETE_GMAIL_SEQUENCE_REQUEST:
       return {
         ...state,
-        isGmailSequencesLoading: true,
-        payload: action.payload
+        isGmailSequencesLoading: true
       };
 
     case Actions.DELETE_GMAIL_SEQUENCE_SUCCESS:
       return {
         ...state,
         isGmailSequencesLoading: false,
-        payload: action.payload
+        gmailSequences: action.payload
       };
 
     case Actions.DELETE_GMAIL_SEQUENCE_FAILURE:

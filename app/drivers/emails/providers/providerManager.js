@@ -1,11 +1,15 @@
 import EmailProviderOutlook from './outlook';
 import EmailProviderYahoo from './yahoo';
+import EmailProviderGmail from './gmail';
+// import EmailProviderYandex from './yandex';
 
 class EmailProviderManager {
   constructor() {
     this.providers = {
       outlook: EmailProviderOutlook,
-      yahoo: EmailProviderYahoo
+      yahoo: EmailProviderYahoo,
+      gmail: EmailProviderGmail
+      // yandex: EmailProviderYandex
     };
   }
 
@@ -16,8 +20,7 @@ class EmailProviderManager {
 
     const Provider = this.providers[name.toLowerCase()];
 
-    if (!Provider)
-      throw new Error(`現在登録されているメール提供元ではありません。`);
+    if (!Provider) throw new Error(`現在登録されているメール提供元ではありません。`);
     return new Provider(opts);
   }
 
@@ -37,10 +40,11 @@ class EmailProviderManager {
       Provider = this.providers.yahoo;
     }
 
-    if (!Provider)
-      throw new Error(
-        `"${email}"では、登録されているメール提供元が判断出来ません。`
-      );
+    if (/@gmail\.com/i.test(email)) {
+      Provider = this.providers.gmail;
+    }
+
+    if (!Provider) throw new Error(`"${email}"では、登録されているメール提供元が判断出来ません。`);
     return new Provider(opts);
   }
 }

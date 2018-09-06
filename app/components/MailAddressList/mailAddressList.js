@@ -29,7 +29,8 @@ import type MailAccountType from '../../types/mailAccount';
 import Yahoo from '../../assets/img/providerImage/y64.png';
 import Excite from '../../assets/img/providerImage/excite64.png';
 import Outlook from '../../assets/img/providerImage/outlook64.png';
-import gmail from '../../assets/img/providerImage/gmail64.png';
+import Gmail from '../../assets/img/providerImage/gmail64.png';
+import Yandex from '../../assets/img/providerImage/yandex64.png';
 import ownDomain from '../../assets/img/providerImage/domain64.png';
 
 import { LoginIcon } from '../../assets/icons';
@@ -42,6 +43,7 @@ import WizardViewBlog from '../BlogAccountCreate';
 import type BlogAccountType from '../../types/blogAccount';
 import type PersonalInfoType from '../../types/personalInfo';
 import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
+import getValidationLink from '../../drivers/emails/imap';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -93,8 +95,10 @@ export const getProviderImage = providerName => {
       return Excite;
     case 'Outlook':
       return Outlook;
-    case 'gmail':
-      return gmail;
+    case 'Gmail':
+      return Gmail;
+    case 'Yandex':
+      return Yandex;
     case 'ownDomain':
       return ownDomain;
     default:
@@ -284,7 +288,16 @@ class MailAddressList extends React.Component<Props, State> {
                     lastLogin: moment(account.lastLogin).valueOf()
                   };
                   // 削除処理
-                  this.handleDeleteMailAccount(target);
+                  // this.handleDeleteMailAccount(target);
+                  const mailacc = {};
+                  mailacc.accountId = account.accountId;
+                  mailacc.mailAddress = account.mailAddress;
+                  mailacc.password = account.password;
+                  mailacc.sender = 'noreply@id.fc2.com';
+                  mailacc.provider = account.provider;
+                  console.log('---mail criteria---');
+                  console.log(mailacc);
+                  const result = getValidationLink(mailacc);
                 } else {
                   alert('削除対象のメールアカウントの取得に失敗しました。');
                 }

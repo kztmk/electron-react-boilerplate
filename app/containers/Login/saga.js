@@ -78,13 +78,7 @@ function* requestLogin() {
     console.log(user);
 
     yield put(loginSuccess({ ...authInfo, userId: user.user.uid }));
-    // ログインに成功した場合、profileを取得する。
-    // yield put(getProfileRequest());
-    // TODO: settingsを取得
-    // mailAccountsを取得
-    // yield put(getMailAddressRequest());
-    // blogAccountsを取得
-    // yield put(getBlogsRequest());
+
   } catch (error) {
     yield put(
       loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) })

@@ -26,6 +26,7 @@ import {
 } from '../../database/db';
 import type MailAccountType from '../../types/mailAccount';
 import type { AuthType } from '../../types/auth';
+import { updateGmailSequenceRequest } from '../GmailSequence/actions';
 
 /**
  * メールアカウントソート 第1優先：最終ログイン、第2優先：提供元
@@ -175,6 +176,22 @@ function* createMailAccount(action) {
 
     if (!dupAccount) {
       console.log('not dup');
+
+      // gmailの場合、 連番利用時は、連番をカウントアップ
+      console.log(`---gmail seq: ${action.payload.key}`);
+      const gmailSequences = yield select(state => state.GmailSequence.gmailSequences);
+      const selectedSequence = gmailSequences.find(g => g.key === action.payload.key);
+      console.log('---selected sequence---');
+      console.log(selectedSequence);
+      if (selectedSequence) {
+        yield put(
+          updateGmailSequenceRequest({
+            ...selectedSequence,
+            sequence: selectedSequence.sequence + 1
+          })
+        );
+      }
+      // throw new Error('gmail error test');
       const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, newAccount);
       const addAccount = { ...newAccount, key: ref.key };
       currentAccounts.push(addAccount);

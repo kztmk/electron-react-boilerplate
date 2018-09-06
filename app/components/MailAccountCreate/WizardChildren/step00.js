@@ -33,8 +33,11 @@ import type PersonalInfoType from '../../../types/personalInfo';
 
 import Yahoo from '../../../assets/img/providerImage/y64.png';
 import Outlook from '../../../assets/img/providerImage/outlook64.png';
+import Gmail from '../../../assets/img/providerImage/gmail64.png';
+import Yandex from '../../../assets/img/providerImage/yandex64.png';
 
 import prefectures from '../../Commons/prefecture';
+import type GmailType from '../../../types/gmail';
 
 const stepContent = {
   padding: '5px'
@@ -66,7 +69,8 @@ type Props = {
   errorMessage: string,
   personalInfo: PersonalInfoType,
   randomPersonalInfo: PersonalInfoType,
-  startGetRandomPersonalInfo: () => void
+  startGetRandomPersonalInfo: () => void,
+  gmailInfo: GmailType
 };
 
 type State = {
@@ -214,7 +218,15 @@ class Steps00 extends React.Component<Props, State> {
    * @param event
    */
   handleSelectProvider = event => {
-    this.setState({ provider: event.target.value });
+    if (event.target.value === 'Gmail') {
+      this.setState({
+        provider: event.target.value,
+        accountId: this.props.gmailInfo.accountId,
+        password: this.props.gmailInfo.password
+      });
+    } else {
+      this.setState({ provider: event.target.value });
+    }
   };
 
   isInteger = digits => {
@@ -602,11 +614,23 @@ class Steps00 extends React.Component<Props, State> {
                         root: classes.selectMenuItem,
                         selected: classes.selectMenuItemSelected
                       }}
-                      value="Outlook"
+                      value="Gmail"
                     >
                       <div style={selectAvatarStyle}>
-                        <Avatar alt="Yahoo" src={Outlook} className={classes.avatar} />
-                        Outlook
+                        <Avatar alt="Gmail" src={Gmail} className={classes.avatar} />
+                        Gmail
+                      </div>
+                    </MenuItem>
+                    <MenuItem
+                      classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                      }}
+                      value="Yandex"
+                    >
+                      <div style={selectAvatarStyle}>
+                        <Avatar alt="Yandex" src={Yandex} className={classes.avatar} />
+                        Yandex
                       </div>
                     </MenuItem>
                   </Select>

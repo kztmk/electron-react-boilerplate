@@ -43,7 +43,7 @@ import Webryblog from '../../../assets/img/blogs/webryblog.png';
 import Wpcom from '../../../assets/img/blogs/wpcom.png';
 import Goo from '../../../assets/img/blogs/goo.png';
 import prefectures from '../../Commons/prefecture';
-import type MailAccountType from "../../../types/mailAccount";
+import type MailAccountType from '../../../types/mailAccount';
 
 const stepContent = {
   padding: '5px'
@@ -540,7 +540,7 @@ class Steps00blog extends React.Component<Props, State> {
    */
   getProvider = () => {
     if (this.state.provider.length === 0) {
-      console.log('not selecte provider');
+      console.log('not select provider');
     } else {
       console.log(`selected provider:${this.state.provider}`);
       return this.state.provider;

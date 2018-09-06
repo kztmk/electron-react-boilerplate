@@ -39,14 +39,11 @@ function* getGmailInfo() {
           accountId: snapshot.child('accountId').val(),
           domain: snapshot.child('domain').val(),
           password: snapshot.child('password').val(),
-          random: snapshot.child('random').val(),
-          sequence: snapshot.child('sequence').val(),
-          sequenceDigit: snapshot.child('sequenceDigit').val(),
-          prefix: snapshot.child('prefix').val(),
-          suffix: snapshot.child('suffix').val()
+          random: snapshot.child('random').val()
         };
       }
     }
+
     yield put(getGmailInfoSuccess(gmailInfo));
   } catch (error) {
     yield put(getGmailInfoFailure({ errorMessage: error.toString() }));

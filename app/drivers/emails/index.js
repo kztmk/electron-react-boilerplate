@@ -87,7 +87,8 @@ class EmailDriver {
       (await puppeteer.launch({
         executablePath: exePath,
         headless: false,
-        slowMo: 20
+        slowMo: 20,
+        args: ['--no-sandbox', '--disable-web-security']
       }));
 
     return this.emailProvider.signup(user, {

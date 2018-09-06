@@ -11,8 +11,7 @@ type GmailType = {
   accountId: string,
   domain: string,
   password: string,
-  random: boolean,
-  sequences: Array<GmailSequenceType>
+  random: boolean
 };
 
 export default GmailType;

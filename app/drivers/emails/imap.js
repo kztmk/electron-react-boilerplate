@@ -39,6 +39,12 @@ const getImapConfig = provider => {
         port: 993
       };
       break;
+    case 'Gmail':
+      config = {
+        host: 'imap.gmail.com',
+        port: 993
+      };
+      break;
     default:
       throw new Error('imap serverの設定取得に失敗しました。');
   }
@@ -83,8 +89,12 @@ async function getValidationLink(mailCriteria) {
     const config = getImapConfig(mailCriteria.provider);
 
     let { accountId } = mailCriteria;
-    if (mailCriteria.provider === 'outlook') {
+    if (mailCriteria.provider === 'Outlook') {
       accountId = mailCriteria.mailAddress;
+    }
+
+    if (mailCriteria.provider === 'Gmail') {
+      accountId = mailCriteria.mailAddress.replace(/\+.*@/, '@');
     }
 
     console.log(`accountId:${accountId}`);
@@ -109,7 +119,7 @@ async function getValidationLink(mailCriteria) {
         return c.provider === mailCriteria.blogProvider;
       });
 
-      const sender = confirmInfo.sender;
+      const { sender } = confirmInfo;
       const mailLink = confirmInfo.link;
 
       console.log(`sender:${sender}`);
@@ -139,7 +149,7 @@ async function getValidationLink(mailCriteria) {
       console.log('-----------body-----------');
       console.log(message['body[]']);
 
-      validationLink = message['body[]'].match(/https:\/\/secure\.id\.fc2\.com\/signup.*$/gm);
+      validationLink = message['body[]'].match(confirmInfo.regx);
 
       /*
       if (message !== undefined) {

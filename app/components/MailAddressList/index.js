@@ -609,6 +609,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                   color="primary"
                   createMailAccount={this.props.startCreateMailAccount}
                   cancelAccount={this.handleCloseFormMailAddressNew}
+                  mailAccounts={this.props.mailAccounts}
                 />
               </DialogContent>
             </Dialog>

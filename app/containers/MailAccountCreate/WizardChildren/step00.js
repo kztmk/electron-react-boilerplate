@@ -10,7 +10,8 @@ const mapStateToProps = (state: State) => ({
   isFailure: state.PersonalInfo.isFailure,
   errorMessage: state.PersonalInfo.errorMessage,
   personalInfo: state.PersonalInfo.personalInfo,
-  randomPersonalInfo: state.PersonalInfo.randomPersonalInfo
+  randomPersonalInfo: state.PersonalInfo.randomPersonalInfo,
+  gmailInfo: state.Gmail.gmailInfo
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
@@ -19,7 +20,4 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   }
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Steps00);
+export default connect(mapStateToProps, mapDispatchToProps)(Steps00);

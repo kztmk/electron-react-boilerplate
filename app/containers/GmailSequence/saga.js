@@ -53,11 +53,12 @@ function* createGmailSequence(action) {
     const userAuth = yield select(state => state.Login);
     const currentSequences = yield select(state => state.GmailSequence.gmailSequences);
 
-    const ref = yield call(
-      firebaseDbInsert,
-      `/users/${userAuth.userId}/gmailInfo/sequences`,
-      action.payload
-    );
+    const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/sequences`, {
+      sequence: action.payload.sequence,
+      sequenceDigit: action.payload.sequenceDigit,
+      prefix: action.payload.prefix,
+      suffix: action.payload.suffix
+    });
     const newSequence = { ...action.payload, key: ref.key };
     currentSequences.push(newSequence);
     currentSequences.sort(sequenceSort);
@@ -75,16 +76,12 @@ function* createGmailSequence(action) {
 function* updateGmailSequence(action) {
   try {
     const userAuth = yield select(state => state.Login);
-    yield call(
-      firebaseDbUpdate,
-      `/users/${userAuth.userId}/gmailInfo/sequences/${action.payload.key}`,
-      {
-        sequence: action.payload.sequence,
-        sequenceDigit: action.payload.sequenceDigit,
-        prefix: action.payload.prefix,
-        suffix: action.payload.suffix
-      }
-    );
+    yield call(firebaseDbUpdate, `/users/${userAuth.userId}/sequences/${action.payload.key}`, {
+      sequence: action.payload.sequence,
+      sequenceDigit: action.payload.sequenceDigit,
+      prefix: action.payload.prefix,
+      suffix: action.payload.suffix
+    });
 
     const currentSequences = yield select(state => state.GmailSequence.gmailSequences);
     const updatedSequences = currentSequences.filter(s => s.key !== action.payload.key);
@@ -104,10 +101,10 @@ function* getGmailSequence() {
   try {
     const userAuth = yield select(state => state.Login);
     const gmailInfo = yield select(state => state.Gmail.gmailInfo);
-    const sequences = [];
+    const sequences: Array<GmailSequenceType> = [];
 
     if (gmailInfo && gmailInfo.accountId.length > 0) {
-      const snapshot = yield call(firebaseDbRead(`/users/${userAuth.userId}/gmailInfo/sequences`));
+      const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/sequences`);
 
       snapshot.forEach(childSnapshot => {
         sequences.push({
@@ -132,10 +129,7 @@ function* getGmailSequence() {
 function* deleteGmailSequence(action) {
   try {
     const userAuth = yield select(state => state.Login);
-    yield call(
-      firebaseDbDelete,
-      `/users/${userAuth.userId}/gmailInfo/sequences/${action.payload.key}`
-    );
+    yield call(firebaseDbDelete, `/users/${userAuth.userId}/sequences/${action.payload.key}`);
 
     const currentSequences = yield select(state => state.GmailSequence.gmailSequences);
     const deletedSequences = currentSequences.filter(s => s.key !== action.payload.key);

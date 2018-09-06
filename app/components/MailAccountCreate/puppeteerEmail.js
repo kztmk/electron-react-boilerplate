@@ -10,6 +10,12 @@ class PuppeteerEmail {
       case 'outlook':
         this.client = new EmailDriver('outlook');
         break;
+      case 'gmail':
+        this.client = new EmailDriver('gmail');
+        break;
+      case 'yandex':
+        this.client = new EmailDriver('yandex');
+        break;
       default:
     }
   }

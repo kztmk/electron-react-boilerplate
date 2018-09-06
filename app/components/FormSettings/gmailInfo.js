@@ -27,6 +27,7 @@ type Props = {
   isLoading: boolean,
   isFailure: boolean,
   errorMessage: string,
+  gmailInfo: GmailType,
   startSaveGmailInfo: (gmailInfo: GmailType) => void
 };
 
@@ -47,9 +48,9 @@ class GmailSettings extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      accountId: '',
-      domain: '',
-      password: '',
+      accountId: this.props.gmailInfo.accountId,
+      domain: this.props.gmailInfo.domain,
+      password: this.props.gmailInfo.password,
       errorMessage: '',
       openErrorSnackbar: false,
       openSuccessSnackbar: false
@@ -91,7 +92,7 @@ class GmailSettings extends React.Component<Props, State> {
         }
         break;
       case 'domain':
-        if (this.isRequired(event.target.value) && this.isAlphabet(event.target.value)) {
+        if (this.isRequired(event.target.value) && this.isDomain(event.target.value)) {
           this.setState({
             domain: event.target.value,
             domainState: 'success'
@@ -135,6 +136,9 @@ class GmailSettings extends React.Component<Props, State> {
    */
   isAlphabet = checkString => !checkString.match(/[^A-Za-z0-9]+/);
 
+  isDomain = checkString =>
+    checkString.match(/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/);
+
   /**
    * データ保存
    *
@@ -171,7 +175,7 @@ class GmailSettings extends React.Component<Props, State> {
       random: true,
       sequences: []
     };
-    this.props.startSaveGmailInfo(gmaillInfo);
+    this.props.startSaveGmailInfo(gmailInfo);
   };
 
   /**
@@ -285,7 +289,7 @@ class GmailSettings extends React.Component<Props, State> {
           open={this.state.openSuccessSnackbar}
           closeNotification={this.handleSuccessSnackbarClose}
           close
-          message={<span id="login_error">既定の個人情報を保存しました。</span>}
+          message={<span id="login_error">Gmail情報を保存しました。</span>}
         />
         <Snackbar
           color="warning"
