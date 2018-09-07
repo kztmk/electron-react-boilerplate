@@ -284,7 +284,7 @@ class StepFc2 extends React.Component<Props, State> {
     }
     if (this.state.fc2Answer.length < 3) {
       this.setState({ answerState: 'error' });
-      errorMsg += '秘密の質問の答えを3文字以上、入力してください。';
+      errorMsg += '秘密の質問の答えを3文字以上、入力してください。\n';
     }
     if (this.state.titleState !== 'success') {
       this.setState({ titleState: 'error' });

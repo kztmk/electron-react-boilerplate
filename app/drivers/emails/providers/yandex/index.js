@@ -4,9 +4,9 @@ import EmailSession from '../../session';
 
 import signup from './lib/signup';
 import signin from './lib/signin';
-import signout from './lib/signout';
-import sendEmail from './lib/send-email';
-import getEmails from './lib/get-emails';
+// import signout from './lib/signout';
+// import sendEmail from './lib/send-email';
+// import getEmails from './lib/get-emails';
 
 /**
  * email provider for [Yahoo! Japan](https://www.yahoo.co.jp).
@@ -54,11 +54,6 @@ class EmailProviderYandex extends EmailProvider {
     if (!user.password) throw new Error('パスワードは必須です。');
     if (!user.firstName) throw new Error('姓は必須です。');
     if (!user.lastName) throw new Error('名は必須です。');
-    if (!user.postalCode) throw new Error('郵便番号は必須です。');
-    if (!user.birthday) throw new Error('生年月日は必須です。');
-    if (!user.birthday.year) throw new Error('生年月日の年がありません。');
-    if (!user.birthday.month) throw new Error('生年月日の月がありません。');
-    if (!user.birthday.day) throw new Error('生年月日の日がありません。');
     if (!user.secret) throw new Error('秘密の質問・答えは必須です。');
     if (!user.secret.question) throw new Error('秘密の質問は必須です。');
     if (!user.secret.answer) throw new Error('秘密の答えは必須です。');
@@ -68,7 +63,7 @@ class EmailProviderYandex extends EmailProvider {
     return new EmailSession({
       user: {
         username: user.username,
-        email: `${user.username}@yahoo.co.jp`
+        email: `${user.username}@yandex.com`
       },
       browser: opts.browser,
       provider: this
@@ -107,56 +102,6 @@ class EmailProviderYandex extends EmailProvider {
       },
       browser: opts.browser,
       provider: this
-    });
-  }
-
-  /**
-   * Sign out of an authenticated session
-   *
-   * @param {EmailSession} session
-   *
-   * @return {Promise}
-   */
-  async signout(session) {
-    if (!session) throw new Error('ログイン中のセッションは必須です。');
-
-    return signout({
-      browser: session.browser
-    });
-  }
-
-  /**
-   *
-   * @param {EmailSession} session
-   * @param {object} email
-   * @param {object} opts - Options
-   *
-   * @return {Promise}
-   */
-  async sendEmail(session, email, opts = {}) {
-    if (!session) throw new Error('ログイン中のセッションは必須です。');
-    if (!email) throw new Error('送信用メールは必須です。');
-
-    return sendEmail(email, {
-      browser: session.browser,
-      ...opts
-    });
-  }
-
-  /**
-   *
-   * @param {EmailSession} session
-   * @param {object} [opts] - Options
-   * @param {object} [opts.query] - Search query to narrow down results
-   *
-   * @return {Promise<Array<Object>>}
-   */
-  async getEmails(session, opts = {}) {
-    if (!session) throw new Error('ログイン中のセッションは必須です。');
-
-    return getEmails({
-      browser: session.browser,
-      ...opts
     });
   }
 }

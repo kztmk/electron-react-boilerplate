@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-
+import jconv from 'jaconv';
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -37,7 +37,7 @@ const questions = [
   { question: 'The street you grew up on', jp: '子どもの頃済んでいた町名', key: 1 },
   { question: 'Your favorite actor or actress', jp: '好きな俳優', key: 2 },
   { question: "Your grandmother's date of birth", jp: '祖母の誕生日', key: 3 },
-  { question: 'Your parents post code', jp: '両親の郵便番号', key: 4 },
+  { question: "Your parents' post code", jp: '両親の郵便番号', key: 4 },
   { question: 'The brand of your first car', jp: '最初に購入した車名', key: 5 },
   { question: "Your favorite teacher's surname", jp: '好きな先生の姓', key: 6 },
   { question: 'Your favorite childhood book', jp: '子どもの頃好きだった本', key: 7 },
@@ -147,7 +147,9 @@ class StepYandex extends React.Component<Props, State> {
   isRequiredLength = (value, length) => value.length >= length;
 
   getInfo = (lastNameKana: string, firstNameKana: string) => {
-    this.setState({ firstName: firstNameKana, lastName: lastNameKana });
+    const firstNameHepburn = jconv.toHebon(firstNameKana);
+    const lastNameHepburn = jconv.toHebon(lastNameKana);
+    this.setState({ firstName: firstNameHepburn, lastName: lastNameHepburn });
   };
 
   /**
@@ -156,9 +158,9 @@ class StepYandex extends React.Component<Props, State> {
    */
   sendState = () => {
     const plusInfo = [];
-    plusInfo.firstNameHepburn = '';
-    plusInfo.lastNameHepburn = '';
-    plusInfo.question = this.state.questionSelect;
+    plusInfo.firstNameHepburn = this.state.firstName;
+    plusInfo.lastNameHepburn = this.state.lastName;
+    plusInfo.question = this.state.question;
     plusInfo.answer = this.state.answer;
 
     return plusInfo;
@@ -191,21 +193,28 @@ class StepYandex extends React.Component<Props, State> {
   isValidated = () => {
     let errorMsg = '';
 
-    if (this.state.lastName.length === 0) {
+    if (this.state.lastName.length < 1 || !this.isAlfa(this.state.lastName)) {
       this.setState({ lastNameState: 'error' });
-      errorMsg += '姓は必須です。\n';
+      errorMsg += '姓は必須で、尚且つ半角英字です。\n';
+    } else {
+      this.setState({ lastNameState: 'success' });
     }
 
-    if (this.state.firstName.length === 0) {
+    if (this.state.firstName.length < 1 || !this.isAlfa(this.state.firstName)) {
       this.setState({ firstNameState: 'error' });
-      errorMsg += '名は必須です。\n';
+      errorMsg += '名は必須で、尚且つ半角英字です。\n';
+    } else {
+      this.setState({ firstNameState: 'success' });
     }
 
-    if (!/^[0-9]{7}$/.test(this.state.postalCode)) {
-      this.setState({ postalCodeState: 'error' });
-      errorMsg += '郵便番号は、7桁の数字でハイフンは不要です。\n';
+    if (this.state.questionSelect.length === 0) {
+      errorMsg += '秘密の質問を選択してください。\n';
     }
 
+    if (this.state.answer.length < 4 || !this.isAlfaNumeric(this.state.answer)) {
+      errorMsg += '質問の答えは必須です。4文字以上、尚且つ半角英数字と「-」「/」「_」です。';
+      this.setState({ answerState: 'error' });
+    }
     if (errorMsg.length > 0) {
       this.setState({
         errorMessage: errorMsg,
@@ -216,6 +225,10 @@ class StepYandex extends React.Component<Props, State> {
 
     return true;
   };
+
+  isAlfa = value => /^[A-Za-z]+$/.test(value);
+
+  isAlfaNumeric = value => /^[A-Za-z0-9 -/_]+$/.test(value);
 
   /**
    * フォーム移動時の入力チェックでエラーがあった場合のエラー表示

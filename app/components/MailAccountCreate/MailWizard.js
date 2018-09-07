@@ -1,4 +1,4 @@
-/* eslint-disable prefer-template,jsx-a11y/anchor-is-valid,jsx-a11y/anchor-has-content,jsx-a11y/anchor-has-content */
+/* eslint-disable prefer-template,jsx-a11y/anchor-is-valid,jsx-a11y/anchor-has-content,jsx-a11y/anchor-has-content,react/require-default-props */
 /* eslint-disable no-return-assign */
 // @flow
 import React from 'react';
@@ -49,6 +49,30 @@ type Props = {
   isCreatingFailure: boolean,
   errorMessage: string
 };
+
+/*
+MailWizard.defaultProps = {
+  steps: [],
+  color: 'primary',
+  title: '',
+  subtitle: '',
+  cancelButtonClasses: '',
+  cancelButtonText: '',
+  cancelButtonClick: '',
+  previousButtonClasses: '',
+  previousButtonText: '',
+  nextButtonClasses: '',
+  nextButtonText: '',
+  finishButtonClasses: '',
+  finishButtonText: '',
+  finishButtonClick: '',
+  validate: true,
+  mailAccounts: [],
+  isCreating: false,
+  isCreatingFailure: false,
+  errorMessage: ''
+};
+*/
 
 type State = {
   currentStep: number,
@@ -130,7 +154,8 @@ class MailWizard extends React.Component<Props, State> {
               confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.warning}
             >
               メールアドレス: {mailAddress} <br />
-              の登録中にエラーが発生しました。
+              の登録中に以下のエラーが発生しました。<br />
+              エラー: {this.props.errorMessage}
             </SweetAlert>
           )
         });
@@ -166,6 +191,7 @@ class MailWizard extends React.Component<Props, State> {
     this[this.props.steps[0].stepId].initState();
     this[this.props.steps[1].stepId].initState();
     this[this.props.steps[2].stepId].initState();
+    this[this.props.steps[3].stepId].initState();
     // tab move to init location
     this.refreshAnimation(0);
     this.props.cancelButtonClick();
@@ -282,17 +308,26 @@ class MailWizard extends React.Component<Props, State> {
         return (
           <Table
             tableData={[
-              ['作成メールアドレス:', user.email, ,],
+              ['作成メールアドレス:', user.email],
               ['アカウントID：', user.username, 'パスワード：', user.password],
               ['氏名：', `${user.lastName} ${user.firstName}`, '性別:', gender],
-              ['生年月日:', `${user.birthday.year}/${user.birthday.month}/${user.birthday.day}`, ,]
+              ['生年月日:', `${user.birthday.year}/${user.birthday.month}/${user.birthday.day}`]
             ]}
           />
         );
 
       case 'yandex':
-        console.log('TODO: generateDisplayMessage');
-        break;
+        return (
+          <Table
+            tableData={[
+              ['作成メールアドレス:', user.email],
+              ['アカウントID：', user.username, 'パスワード：', user.password],
+              ['氏名：', `${user.lastName} ${user.firstName}`, '性別:', gender],
+              ['秘密の質問:', `${user.secret.question}`],
+              ['質問の答:', `${user.secret.answer}`]
+            ]}
+          />
+        );
       default:
         break;
     }
@@ -461,6 +496,21 @@ class MailWizard extends React.Component<Props, State> {
           userKey = additionalInfo.sequenceKey;
           break;
         case 'Yandex':
+          user.provider = 'yandex';
+          accId = this.state.accountInfo.accountId;
+          mailAddress = `${accId}@yandex.com`;
+          user.email = mailAddress;
+          detailInfo.push(`姓(ローマ字)${additionalInfo.lastNameHepburn}`);
+          detailInfo.push(`名(ローマ字)${additionalInfo.firstNameHepburn}`);
+          detailInfo.push(`秘密の質問:${additionalInfo.question}`);
+          detailInfo.push(`質問の答え:${additionalInfo.answer}`);
+
+          user.secret = {};
+          user.secret.question = additionalInfo.question;
+          user.secret.answer = additionalInfo.answer;
+          user.firstName = additionalInfo.firstNameHepburn;
+          user.lastName = additionalInfo.lastNameHepburn;
+          console.log();
           break;
         default:
       }
@@ -499,8 +549,9 @@ class MailWizard extends React.Component<Props, State> {
     moveDistance *= indexTemp;
     moveDistance -= 8;
 
+    const { width } = this.state.width;
     const movingTabStyle = {
-      width: this.state.width,
+      width,
       transform: `translate3d(${moveDistance}px, 0, 0)`,
       transition: 'all 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)'
     };
@@ -636,23 +687,5 @@ class MailWizard extends React.Component<Props, State> {
     );
   }
 }
-
-MailWizard.defaultProps = {
-  steps: [],
-  color: 'primary',
-  title: '',
-  subtitle: '',
-  cancelButtonClasses: '',
-  cancelButtonText: '',
-  cancelButtonClick: '',
-  previousButtonClasses: '',
-  previousButtonText: '',
-  nextButtonClasses: '',
-  nextButtonText: '',
-  finishButtonClasses: '',
-  finishButtonText: '',
-  finishButtonClick: '',
-  validate: true
-};
 
 export default withStyles(wizardStyle)(MailWizard);

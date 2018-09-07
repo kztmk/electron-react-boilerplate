@@ -288,16 +288,16 @@ class MailAddressList extends React.Component<Props, State> {
                     lastLogin: moment(account.lastLogin).valueOf()
                   };
                   // 削除処理
-                  // this.handleDeleteMailAccount(target);
-                  const mailacc = {};
-                  mailacc.accountId = account.accountId;
-                  mailacc.mailAddress = account.mailAddress;
-                  mailacc.password = account.password;
-                  mailacc.sender = 'noreply@id.fc2.com';
-                  mailacc.provider = account.provider;
-                  console.log('---mail criteria---');
-                  console.log(mailacc);
-                  const result = getValidationLink(mailacc);
+                  this.handleDeleteMailAccount(target);
+                  // const mailacc = {};
+                  // mailacc.accountId = account.accountId;
+                  // mailacc.mailAddress = account.mailAddress;
+                  // mailacc.password = account.password;
+                  // mailacc.sender = 'noreply@id.fc2.com';
+                  // mailacc.provider = account.provider;
+                  // console.log('---mail criteria---');
+                  // console.log(mailacc);
+                  // const result = getValidationLink(mailacc);
                 } else {
                   alert('削除対象のメールアカウントの取得に失敗しました。');
                 }
@@ -623,8 +623,9 @@ class MailAddressList extends React.Component<Props, State> {
                     >
                       <option value="">全て</option>
                       <option value="Yahoo">Yahoo!メール</option>
-                      <option value="Excite">Exciteメール</option>
                       <option value="Outlook">Outlook</option>
+                      <option value="Gmail">Gmail</option>
+                      <option value="Yandex">Yandex</option>
                     </select>
                   ),
                   filterAll: true

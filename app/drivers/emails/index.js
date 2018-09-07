@@ -81,14 +81,15 @@ class EmailDriver {
       exePath = exePath.replace('app.asar', 'app.asar.unpacked');
     }
     console.log(`sliced path:${exePath}`);
-
+    const width = 1024;
+    const height = 748;
     const browser =
       opts.browser ||
       (await puppeteer.launch({
         executablePath: exePath,
         headless: false,
         slowMo: 20,
-        args: ['--no-sandbox', '--disable-web-security']
+        args: [`--window-size=${ width },${ height }`]
       }));
 
     return this.emailProvider.signup(user, {
@@ -127,13 +128,15 @@ class EmailDriver {
       exePath = exePath.replace('app.asar', 'app.asar.unpacked');
     }
     console.log(`sliced path:${exePath}`);
-
+    const width = 1024;
+    const height = 748;
     const browser =
       opts.browser ||
       (await puppeteer.launch({
         executablePath: exePath,
         headless: false,
-        slowMo: 20
+        slowMo: 20,
+        args: [`--window-size=${ width },${ height }`]
       }));
 
     return this.emailProvider.signin(user, {

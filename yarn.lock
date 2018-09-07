@@ -6585,6 +6585,10 @@ isurl@^1.0.0-alpha5:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
 
+jaconv@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/jaconv/-/jaconv-1.0.1.tgz#5ea3808c2c3652b7256bd0931fca50014f592710"
+
 jest-changed-files@^23.4.2:
   version "23.4.2"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-23.4.2.tgz#1eed688370cd5eebafe4ae93d34bb3b64968fe83"

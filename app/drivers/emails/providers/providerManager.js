@@ -1,15 +1,15 @@
 import EmailProviderOutlook from './outlook';
 import EmailProviderYahoo from './yahoo';
 import EmailProviderGmail from './gmail';
-// import EmailProviderYandex from './yandex';
+import EmailProviderYandex from './yandex';
 
 class EmailProviderManager {
   constructor() {
     this.providers = {
       outlook: EmailProviderOutlook,
       yahoo: EmailProviderYahoo,
-      gmail: EmailProviderGmail
-      // yandex: EmailProviderYandex
+      gmail: EmailProviderGmail,
+      yandex: EmailProviderYandex
     };
   }
 

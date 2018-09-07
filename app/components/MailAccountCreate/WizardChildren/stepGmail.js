@@ -152,7 +152,7 @@ class StepGmail extends React.Component<Props, State> {
   isValidated = () => {
     if (this.props.gmailInfo.accountId.length === 0) {
       this.setState({
-        errorMessage: '設定画面でGmailの登録を行ってください。',
+        errorMessage: '設定画面でGmailの登録を行ってください。\n',
         openErrorSnackbar: true
       });
       return false;

@@ -62,7 +62,7 @@ const signin = async (user, opts) => {
         text:'gmailアドレス入力完了' 
       }).show();
     `);
-    log.info('input: yahoo ID');
+    log.info('input: gmail address');
     await page.evaluate(`
     new Noty({
         type: 'success',

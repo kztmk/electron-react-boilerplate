@@ -296,7 +296,7 @@ class GmailSequences extends Component<Props, State> {
         this.setState({ prefixState: 'success' });
       } else {
         this.setState({ prefixState: 'error' });
-        errorMsg += '接頭語は半角英数字のみ使用できます。';
+        errorMsg += '接頭語は半角英数字のみ使用できます。\n';
       }
     }
 
@@ -305,7 +305,7 @@ class GmailSequences extends Component<Props, State> {
         this.setState({ suffixState: 'success' });
       } else {
         this.setState({ suffixState: 'error' });
-        errorMsg += '接尾語は半角英数字のみ使用できます。';
+        errorMsg += '接尾語は半角英数字のみ使用できます。\n';
       }
     }
 
