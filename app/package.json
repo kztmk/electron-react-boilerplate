@@ -19,7 +19,7 @@
     "iconv": "^2.3.0",
     "mailparser-mit": "^0.6.2",
     "noty": "^3.2.0-beta",
-    "puppeteer": "^1.7.0",
+    "puppeteer": "^1.8.0",
     "react-contextmenu": "^2.9.3",
     "sweetalert2": "^7.25.6"
   }

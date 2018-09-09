@@ -67,7 +67,8 @@
       { "extensions": [".js", ".jsx"] }
     ],
     "react/prefer-stateless-function": "off",
-    "react/destructuring-assignment": ["off", "always"]
+    "react/destructuring-assignment": ["off", "always"],
+    "allowForLoopAfterthoughts": true
   },
   "plugins": ["flowtype", "import", "promise", "compat", "react"],
   "settings": {

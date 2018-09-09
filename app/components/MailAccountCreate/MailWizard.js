@@ -551,7 +551,7 @@ class MailWizard extends React.Component<Props, State> {
 
     const { width } = this.state.width;
     const movingTabStyle = {
-      width,
+      width: '50%',
       transform: `translate3d(${moveDistance}px, 0, 0)`,
       transition: 'all 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)'
     };

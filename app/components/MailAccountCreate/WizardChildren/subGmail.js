@@ -401,7 +401,7 @@ class GmailSequences extends Component<Props, State> {
             <Card>
               <CardHeader color="primary" text>
                 <CardText color="primary">
-                  <h4 className={classes.cardTitle}>Gmail連番編集</h4>
+                  <h4 className={classes.cardTitle}>エイリアス連番編集</h4>
                 </CardText>
                 <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
                   <div className={classes.buttonGroupStyle}>

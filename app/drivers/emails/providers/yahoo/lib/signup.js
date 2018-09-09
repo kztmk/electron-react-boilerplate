@@ -22,7 +22,7 @@ const signup = async (user, opts) => {
   log.info(user);
   log.info('-------------------------');
   const page = await browser.newPage();
-  await page.setViewport({ width: 1200, height: 800 });
+  await page.setViewport({ width: 1024, height: 748 });
 
   log.info('create: browser page');
   try {

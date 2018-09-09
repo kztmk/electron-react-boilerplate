@@ -62,12 +62,16 @@ class BlogDriver {
       exePath = exePath.replace('app.asar', 'app.asar.unpacked');
     }
 
+    const width = 1024;
+    const height = 748;
+
     const browser =
       opts.browser ||
       (await puppeteer.launch({
         executablePath: exePath,
         headless: false,
-        slowMo: 20
+        slowMo: 20,
+        args: [`--window-size=${width},${height}`]
       }));
 
     return this.blogProvider.signup(blogInfo, {

@@ -23,7 +23,7 @@ const signup = async (blogInfo, opts) => {
   log.info(blogInfo);
   log.info('-------------------------');
   const page = await browser.newPage();
-  await page.setViewport({ width: 1200, height: 800 });
+  await page.setViewport({ width: 1024, height: 748 });
 
   log.info('create: browser page');
   try {
@@ -77,6 +77,7 @@ const signup = async (blogInfo, opts) => {
     // captcha
     let isCapchaError = true;
     do {
+      await page.evaluate('window.scrollTo(0, 200)');
       if (await page.$('.image-auth > img')) {
         await page.waitFor('.image-auth > img', { visible: true });
       }

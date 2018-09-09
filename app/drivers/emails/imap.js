@@ -45,6 +45,12 @@ const getImapConfig = provider => {
         port: 993
       };
       break;
+    case 'Yandex':
+      config = {
+        host: 'imap.yandex.com',
+        port: 993
+      };
+      break;
     default:
       throw new Error('imap serverの設定取得に失敗しました。');
   }
@@ -78,7 +84,7 @@ async function searchMessages(path, sender) {
 }
 
 async function getMessages(path, seq) {
-  return imapClient.listMessages(path, seq, ['uid', 'body.peek[]']);
+  return imapClient.listMessages(path, seq, ['uid', 'body.peek[]', { byUid: true }]);
 }
 
 async function getValidationLink(mailCriteria) {

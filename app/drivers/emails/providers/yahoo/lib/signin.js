@@ -22,7 +22,7 @@ const signin = async (user, opts) => {
   log.info('-------------------------');
 
   const page = await browser.newPage();
-  await page.setViewport({ width: 1200, height: 800 });
+  await page.setViewport({ width: 1024, height: 748 });
 
   try {
     await page.goto('https://www.yahoo.co.jp/');

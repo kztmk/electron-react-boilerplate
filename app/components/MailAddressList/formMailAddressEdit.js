@@ -7,8 +7,13 @@ import Loadable from 'react-loading-overlay';
 
 import { withStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
-
+import Dialog from '@material-ui/core/Dialog/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import Close from '@material-ui/icons/Close';
+import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Cancel from '@material-ui/icons/Cancel';
+import AlternateEmail from '@material-ui/icons/AlternateEmail';
+import Slide from '@material-ui/core/Slide/Slide';
 
 import type MailAccountType from '../../types/mailAccount';
 import GridContainer from '../../ui/Grid/GridContainer';
@@ -26,6 +31,8 @@ import { SaveAltIcon } from '../../assets/icons';
 
 import { getProviderImage } from './mailAddressList';
 
+import YandexAlias from '../../containers/MailAccountCreate/WizardChildren/subYandex';
+
 export type Props = {
   classes: Object,
   errorMessage: string,
@@ -42,7 +49,9 @@ type State = {
   data: Array<Array<string>>,
   sweetAlert: ?Object,
   isUpdated: boolean,
-  readyToClose: boolean
+  readyToClose: boolean,
+  hasAlias: boolean,
+  openAliasForm: boolean
 };
 
 const providerImageStyle = {
@@ -57,21 +66,26 @@ const iconStyle = {
   height: '18px'
 };
 
+function Transition(props) {
+  return <Slide direction="down" {...props} />;
+}
+
 class FormMailAddressEdit extends Component<Props, State> {
   constructor(props) {
     super(props);
 
     const tagArray =
-      this.props.targetAccount.tags.length > 0
-        ? this.props.targetAccount.tags.split(',')
-        : [];
+      this.props.targetAccount.tags.length > 0 ? this.props.targetAccount.tags.split(',') : [];
+
     this.state = {
       password: this.props.targetAccount.password,
       tags: tagArray,
       data: this.convertTableData(this.props.targetAccount.detailInfo),
       sweetAlert: null,
       isUpdated: false,
-      readyToClose: false
+      readyToClose: false,
+      disableAlias: true,
+      openAliasForm: false
     };
   }
 
@@ -83,13 +97,14 @@ class FormMailAddressEdit extends Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
+    const pureYandex = /^[a-z0-9_-]+@yandex\.com$/.test(
+      this.props.targetAccount.mailAddress.toLowerCase()
+    );
     // this.state.isUpdatedがtrueの場合はrequestではなく処理完了通知
     if (nextProps.mode === 'update' && this.state.isUpdated) {
       // propsのtargetAccountが持つtagsは文字列のため、「,」で区切り、配列を取得
       const tagArray =
-        nextProps.targetAccount.tags.length > 0
-          ? nextProps.targetAccount.tags.split(',')
-          : [];
+        nextProps.targetAccount.tags.length > 0 ? nextProps.targetAccount.tags.split(',') : [];
 
       // 表示処理、更新 成功、更新失敗でdialogの表示・非表示の切り分け
       let isUpdateSuccess = false;
@@ -125,7 +140,8 @@ class FormMailAddressEdit extends Component<Props, State> {
             password: nextProps.targetAccount.password,
             tags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
-            sweetAlert: null
+            sweetAlert: null,
+            disableAlias: !pureYandex
           });
           break;
         // 更新・成功
@@ -135,6 +151,7 @@ class FormMailAddressEdit extends Component<Props, State> {
             tags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
             readyToClose: true,
+            disableAlias: !pureYandex,
             sweetAlert: (
               <SweetAlert
                 success
@@ -142,9 +159,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                 title="更新完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={`${this.props.classes.button} ${
-                  this.props.classes.success
-                }`}
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 {msg}
               </SweetAlert>
@@ -157,6 +172,7 @@ class FormMailAddressEdit extends Component<Props, State> {
             password: nextProps.targetAccount.password,
             tags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
+            disableAlias: !pureYandex,
             sweetAlert: (
               <SweetAlert
                 danger
@@ -164,9 +180,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                 title="更新失敗"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={`${this.props.classes.button} ${
-                  this.props.classes.success
-                }`}
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 {msg}
               </SweetAlert>
@@ -178,14 +192,13 @@ class FormMailAddressEdit extends Component<Props, State> {
       }
     } else if (this.props.formStatus) {
       const tagArray =
-        nextProps.targetAccount.tags.length > 0
-          ? nextProps.targetAccount.tags.split(',')
-          : [];
+        nextProps.targetAccount.tags.length > 0 ? nextProps.targetAccount.tags.split(',') : [];
       this.setState({
         password: nextProps.targetAccount.password,
         tags: tagArray,
         data: this.convertTableData(nextProps.targetAccount.detailInfo),
-        sweetAlert: null
+        sweetAlert: null,
+        disableAlias: !pureYandex
       });
     }
   };
@@ -234,28 +247,26 @@ class FormMailAddressEdit extends Component<Props, State> {
     }
   };
 
+  openAliasForm = () => {
+    this.setState({ openAliasForm: true });
+  };
+
+  aliasFormClose = () => {
+    this.setState({ openAliasForm: false });
+  };
+
   render() {
     const { classes } = this.props;
     return (
-      <Loadable
-        active={this.state.isUpdated}
-        spinner
-        text="サーバーと通信中・・・・"
-      >
+      <Loadable active={this.state.isUpdated} spinner text="サーバーと通信中・・・・">
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
               <CardHeader color="primary" text>
                 <CardText color="primary">
-                  <h4 className={classes.cardTitle}>
-                    メールアカウント情報　編集
-                  </h4>
+                  <h4 className={classes.cardTitle}>メールアカウント情報　編集</h4>
                 </CardText>
-                <GridItem
-                  xs={12}
-                  sm={6}
-                  className={classes.labelHorizontalLessUpperSpace}
-                >
+                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
                   <div className={classes.buttonGroupStyle}>
                     <div className={classes.buttonGroup}>
                       <Button
@@ -282,14 +293,12 @@ class FormMailAddressEdit extends Component<Props, State> {
                 <div>
                   <form>
                     <GridContainer>
-                      <GridItem xs={12} sm={3}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                      <GridItem xs={12} sm={2}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           メールアドレス:
                         </FormLabel>
                       </GridItem>
-                      <GridItem xs={12} sm={8}>
+                      <GridItem xs={12} sm={7}>
                         <CustomInput
                           id="mailAddress"
                           formControlProps={{
@@ -303,25 +312,21 @@ class FormMailAddressEdit extends Component<Props, State> {
                           }}
                         />
                       </GridItem>
-                      <GridItem xs={12} sm={1}>
+                      <GridItem xs={12} sm={2}>
                         <img
                           style={providerImageStyle}
-                          src={getProviderImage(
-                            this.props.targetAccount.provider
-                          )}
+                          src={getProviderImage(this.props.targetAccount.provider)}
                           alt={this.props.targetAccount.provider}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <GridItem xs={12} sm={3}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                      <GridItem xs={12} sm={2}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           パスワード:
                         </FormLabel>
                       </GridItem>
-                      <GridItem xs={12} sm={9}>
+                      <GridItem xs={12} sm={5}>
                         <CustomInput
                           id="pass"
                           formControlProps={{
@@ -335,12 +340,22 @@ class FormMailAddressEdit extends Component<Props, State> {
                           }}
                         />
                       </GridItem>
+                      <GridItem xs={12} sm={1} md={1} />
+                      <GridItem xs={12} sm={3} md={2}>
+                        <Button
+                          color="primary"
+                          className={classes.lastButton}
+                          onClick={this.openAliasForm}
+                          disabled={this.state.disableAlias}
+                        >
+                          <AlternateEmail style={iconStyle} />
+                          エイリアスを作成
+                        </Button>
+                      </GridItem>
                     </GridContainer>
                     <GridContainer>
-                      <GridItem xs={12} sm={3}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                      <GridItem xs={12} sm={2}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           作成日時:
                         </FormLabel>
                       </GridItem>
@@ -356,19 +371,15 @@ class FormMailAddressEdit extends Component<Props, State> {
                             placeholder: 'Disabled',
                             disabled: true,
                             // eslint-disable-next-line function-paren-newline
-                            value: moment(
-                              this.props.targetAccount.createDate
-                            ).format(
+                            value: moment(this.props.targetAccount.createDate).format(
                               'YYYY/MM/DD HH:mm'
                               // eslint-disable-next-line function-paren-newline
                             )
                           }}
                         />
                       </GridItem>
-                      <GridItem xs={12} sm={3}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                      <GridItem xs={12} sm={2}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           最終ログイン:
                         </FormLabel>
                       </GridItem>
@@ -386,14 +397,14 @@ class FormMailAddressEdit extends Component<Props, State> {
                             value:
                               this.props.targetAccount.lastLogin === 0
                                 ? 'ログインなし'
-                                : moment(
-                                    this.props.targetAccount.lastLogin
-                                  ).format('YYYY/MM/DD HH:mm')
+                                : moment(this.props.targetAccount.lastLogin).format(
+                                    'YYYY/MM/DD HH:mm'
+                                  )
                           }}
                         />
                       </GridItem>
                     </GridContainer>
-                    <GridContainer>
+                    <GridContainer justify="center">
                       <GridItem xs={12} sm={9}>
                         <div className={classes.inputNoLabelLessUpperSpace}>
                           <TagsInput
@@ -408,12 +419,9 @@ class FormMailAddressEdit extends Component<Props, State> {
                         </div>
                       </GridItem>
                     </GridContainer>
-                    <GridContainer>
-                      <GridItem>
-                        <Table
-                          tableHead={['---詳細情報---']}
-                          tableData={this.state.data}
-                        />
+                    <GridContainer justify="center">
+                      <GridItem xs={12} sm={9} md={9}>
+                        <Table tableHead={['---詳細情報---']} tableData={this.state.data} />
                       </GridItem>
                     </GridContainer>
                   </form>
@@ -423,6 +431,34 @@ class FormMailAddressEdit extends Component<Props, State> {
             {this.state.sweetAlert}
           </GridItem>
         </GridContainer>
+        <Dialog
+          classes={{
+            root: classes.formCenter,
+            paper: `${classes.modal} ${classes.modalSmall}`
+          }}
+          maxWidth={false}
+          open={this.state.openAliasForm}
+          TransitionComponent={Transition}
+        >
+          <DialogTitle id="modal-yandex-alias" disableTypography className={classes.modalHeader}>
+            <Button
+              justIcon
+              className={classes.modalCloseButton}
+              key="close"
+              aria-label="Close"
+              color="transparent"
+              onClick={() => this.aliasFormClose()}
+            >
+              <Close className={classes.modalClose} />
+            </Button>
+          </DialogTitle>
+          <DialogContent
+            id="formGmailSequenceseEdit"
+            className={`${classes.modalBody} ${classes.modalSmallBody}`}
+          >
+            <YandexAlias targetAccount={this.props.targetAccount} closeForm={this.aliasFormClose} />
+          </DialogContent>
+        </Dialog>
       </Loadable>
     );
   }

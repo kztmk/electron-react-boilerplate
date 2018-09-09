@@ -23,7 +23,7 @@ const signin = async (user, opts) => {
   log.info('-------------------------');
 
   const page = await browser.newPage();
-  await page.setViewport({ width: 1200, height: 800 });
+  await page.setViewport({ width: 1024, height: 748 });
   await page.setBypassCSP(true);
   try {
     await page.goto('https://mail.google.com/');
