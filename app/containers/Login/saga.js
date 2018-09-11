@@ -9,7 +9,8 @@ import {
   logoutFailure,
   clearAuthInfo,
   loginDoneSuccess,
-  loginDoneFailure
+  loginDoneFailure,
+  loginDoneRequest
 } from './actions';
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
@@ -77,6 +78,7 @@ function* requestLogin() {
     console.log(user);
 
     yield put(loginSuccess({ ...authInfo, userId: user.user.uid }));
+    yield put(loginDoneRequest());
   } catch (error) {
     yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
   }

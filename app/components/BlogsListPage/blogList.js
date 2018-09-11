@@ -245,7 +245,11 @@ class BlogList extends React.Component<Props, State> {
                     groupTags: restoredTags,
                     createDate: moment(account.createDate).valueOf()
                   };
-                  this.loginBlog(target);
+                  if (target.provider !== 'fc2') {
+                    alert('fc2以外はテスト中です。');
+                  } else {
+                    this.loginBlog(target);
+                  }
                 } else {
                   alert('ログイン対象のブログアカウントの取得に失敗しました。');
                 }

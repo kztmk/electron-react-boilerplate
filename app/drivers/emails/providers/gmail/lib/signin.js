@@ -118,6 +118,7 @@ const signin = async (user, opts) => {
     await page.addStyleTag({ path: notyThemePath });
     await page.evaluate(`
     new Noty({
+        timeout:3000,
         type: 'success',
         layout: 'topLeft',
         text:'Gmailログイン完了' 

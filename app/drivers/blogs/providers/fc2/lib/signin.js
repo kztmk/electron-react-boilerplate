@@ -77,6 +77,18 @@ const signin = async (blogInfo, opts) => {
     log.info(`password:${blogInfo.password}入力完了`);
 
     await page.click('input[value=ログイン]');
+
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.evaluate(`
+    new Noty({
+        timeout:3000,
+        type: 'success',
+        layout: 'topLeft',
+        text:'FC2ブログ ログインページアクセス完了' 
+      }).show();
+    `);
   } catch (error) {
     log.error(`error:${error.toString()}`);
     await page.addStyleTag({ path: swa2Css });

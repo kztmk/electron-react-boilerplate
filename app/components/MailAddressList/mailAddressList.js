@@ -7,6 +7,7 @@ import Loadable from 'react-loading-overlay';
 import moment from 'moment';
 import TagsInput from 'react-tagsinput';
 import matchSorter from 'match-sorter';
+import generatePassword from 'password-generator';
 
 import { withStyles } from '@material-ui/core/styles';
 import Slide from '@material-ui/core/Slide';
@@ -43,7 +44,7 @@ import WizardViewBlog from '../BlogAccountCreate';
 import type BlogAccountType from '../../types/blogAccount';
 import type PersonalInfoType from '../../types/personalInfo';
 import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
-import generatePassword from 'password-generator';
+
 // import getValidationLink from '../../drivers/emails/imap';
 
 function Transition(props) {
@@ -650,8 +651,8 @@ class MailAddressList extends React.Component<Props, State> {
                     </Tooltip>
                   ),
                   accessor: 'accountId',
-                  minWidth: 100,
-                  maxWidth: 140,
+                  width: 220,
+                  maxWidth: 160,
                   filterable: true,
                   sortable: true,
                   Filter: ({ filter, onChange }) => (
@@ -705,13 +706,13 @@ class MailAddressList extends React.Component<Props, State> {
                 {
                   Header: () => <span style={{ fontSize: 12 }}>最終ログイン</span>,
                   accessor: 'lastLogin',
-                  width: 150,
+                  width: 120,
                   filterable: true,
                   sortable: true,
                   Filter: ({ filter, onChange }) => (
                     <input
                       type="text"
-                      placeholder="YYYY/MM/DDより以前"
+                      placeholder="YYYY/MM/DDより前"
                       value={filter ? filter.value : ''}
                       onChange={event => onChange(event.target.value)}
                       style={{ fontSize: 12 }}
@@ -727,13 +728,13 @@ class MailAddressList extends React.Component<Props, State> {
                 {
                   Header: () => <span style={{ fontSize: 12 }}>作成日</span>,
                   accessor: 'createDate',
-                  width: 150,
+                  width: 120,
                   filterable: true,
                   sortable: true,
                   Filter: ({ filter, onChange }) => (
                     <input
                       type="text"
-                      placeholder="YYYY/MM/DDより以前"
+                      placeholder="YYYY/MM/DDより前"
                       value={filter ? filter.value : ''}
                       onChange={event => onChange(event.target.value)}
                       style={{ fontSize: 12 }}
@@ -747,6 +748,7 @@ class MailAddressList extends React.Component<Props, State> {
                   }
                 },
                 {
+                  width: 160,
                   Header: '',
                   accessor: 'actions',
                   sortable: false,

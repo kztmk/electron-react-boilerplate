@@ -81,7 +81,6 @@ class HomePage extends React.Component<Props, State> {
    */
   handleSuccessSnackbarClose = () => {
     this.setState({ openSuccessSnackbar: false });
-    this.props.startLoginDone();
   };
 
   /**
@@ -118,12 +117,11 @@ class HomePage extends React.Component<Props, State> {
         </Slide>
         {this.state.isLoginDone && <h3>ホームページ</h3>}
         <Snackbar
-          autoHideDuration={2000}
           color="success"
           place="bc"
           icon={AddAlert}
           open={this.state.openSuccessSnackbar}
-          closeNotification={this.handleSuccessSnackbarClose}
+          closeNotification={() => this.setState({ openSuccessSnackbar: false })}
           close
           message={<span id="login_error">ログイン完了</span>}
         />

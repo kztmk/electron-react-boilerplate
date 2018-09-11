@@ -26,7 +26,7 @@ const signin = async (user, opts) => {
   await page.setViewport({ width: 1024, height: 748 });
   await page.setBypassCSP(true);
   try {
-    await page.goto('https://mail.yandex.com/', { waitUntil: "load" });
+    await page.goto('https://mail.yandex.com/', { waitUntil: 'load' });
     log.info('---access to yandex mail top page ---');
 
     await page.addScriptTag({ path: notyJsPath });
@@ -49,7 +49,7 @@ const signin = async (user, opts) => {
       }).show();
     `);
     await page.click('a[href^="https://passport.yandex.com/auth?"]');
-    log.info("click: login link");
+    log.info('click: login link');
     await page.waitForSelector('input[name=login]');
 
     await page.addScriptTag({ path: notyJsPath });
@@ -73,7 +73,7 @@ const signin = async (user, opts) => {
     `);
     // +移行と@の間を削除
     const yandexBase = user.username.replace(/\+.*$/, '');
-    await page.type('input[name=login]', yandexBase, { delay: 40});
+    await page.type('input[name=login]', yandexBase, { delay: 40 });
     delay(500);
     await page.evaluate(`
     new Noty({
@@ -104,14 +104,14 @@ const signin = async (user, opts) => {
     `);
     log.info(`input: yandex password--${user.password}`);
 
-    let buttons = await page.$$('.passport-Button-Text');
+    const buttons = await page.$$('.passport-Button-Text');
     let didClickButton = false;
     for (let i = 0; i < buttons.length; i++) {
-      const buttonText = await (await buttons[i].getProperty("textContent")).jsonValue();
+      const buttonText = await (await buttons[i].getProperty('textContent')).jsonValue();
       console.log(`button text:${buttonText}`);
 
-      if (buttonText === "Sign in") {
-        log.info("click:[Sign in]ボタン");
+      if (buttonText === 'Sign in') {
+        log.info('click:[Sign in]ボタン');
         buttons[i].click();
         didClickButton = true;
         break;
@@ -119,7 +119,7 @@ const signin = async (user, opts) => {
     }
 
     if (!didClickButton) {
-      throw new Error("can not find Sign in button");
+      throw new Error('can not find Sign in button');
     }
     await page.evaluate(`
     new Noty({
@@ -137,6 +137,7 @@ const signin = async (user, opts) => {
     await page.addStyleTag({ path: notyThemePath });
     await page.evaluate(`
     new Noty({
+        timeout:3000,
         type: 'success',
         layout: 'topLeft',
         text:'Yandexログイン完了' 

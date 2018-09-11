@@ -395,11 +395,14 @@ class BlogWizard extends React.Component<Props, State> {
   };
 
   createBlogAccount = (blogInfo, dbFields, userFields) => {
+    let testPass = false;
+
     // save to database
     let url = 'https://';
     switch (blogInfo.provider) {
       case 'fc2':
         url += `${blogInfo.accountId}.blog.fc2.com/`;
+        testPass = true;
         break;
       case 'webnode':
         url += `${userFields.subdomain}.webnode.jp`;
@@ -438,6 +441,24 @@ class BlogWizard extends React.Component<Props, State> {
         url += ``;
         break;
       default:
+    }
+
+    console.log(`test pass:${testPass}`);
+    if (!testPass) {
+      this.setState({
+        sweetAlert: (
+          <SweetAlert
+            style={{ display: 'block', marginTop: '-100px' }}
+            title="テスト中"
+            onConfirm={() => this.hideAlert()}
+            onCancel={() => this.hideAlert()}
+            confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.info}
+          >
+            {blogInfo.provider}は、現在テスト中です。
+          </SweetAlert>
+        )
+      });
+      return;
     }
     const newAccount = {
       key: '',
