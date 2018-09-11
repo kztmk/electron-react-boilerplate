@@ -483,6 +483,11 @@ class Steps00blog extends React.Component<Props, State> {
       this.setState({ accountIdState: 'success' });
     }
 
+    if (!/^[a-z0-9]+$/.test(this.state.accountId)) {
+      this.setState({ accountIdState: 'error' });
+      errorMsg += 'アカウントIDに半角英数以外が含まれています。\n';
+    }
+
     if (!this.isRequiredLength(this.state.password, 8)) {
       this.setState({ passwordState: 'error' });
       errorMsg += 'パスワードは8文字以上です。\n';

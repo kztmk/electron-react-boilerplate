@@ -1,9 +1,9 @@
+/* eslint-disable promise/catch-or-return,promise/always-return */
 import ImapClient from 'emailjs-imap-client';
-import text2Html from '../../utils/text2html';
 import confirmMails from '../blogs/providers/providerConfirmInfo';
 
 // eslint-disable-next-line prefer-destructuring
-const MailParser = require('mailparser-mit').MailParser;
+// const MailParser = require('mailparser-mit').MailParser;
 
 let imapClient = null;
 
@@ -47,7 +47,7 @@ const getImapConfig = provider => {
       break;
     case 'Yandex':
       config = {
-        host: 'imap.yandex.com',
+        host: 'imap.yandex.ru',
         port: 993
       };
       break;
@@ -84,7 +84,7 @@ async function searchMessages(path, sender) {
 }
 
 async function getMessages(path, seq) {
-  return imapClient.listMessages(path, seq, ['uid', 'body.peek[]', { byUid: true }]);
+  return imapClient.listMessages(path, seq, ['uid', 'body.peek[]'], { byUid: true });
 }
 
 async function getValidationLink(mailCriteria) {
@@ -94,6 +94,8 @@ async function getValidationLink(mailCriteria) {
     // get imap server config from mailaddress
     const config = getImapConfig(mailCriteria.provider);
 
+    console.log('---imap config---');
+    console.log(config);
     let { accountId } = mailCriteria;
     if (mailCriteria.provider === 'Outlook') {
       accountId = mailCriteria.mailAddress;
@@ -101,6 +103,11 @@ async function getValidationLink(mailCriteria) {
 
     if (mailCriteria.provider === 'Gmail') {
       accountId = mailCriteria.mailAddress.replace(/\+.*@/, '@');
+    }
+
+    if (mailCriteria.provider === 'Yandex') {
+      accountId = mailCriteria.mailAddress.replace(/@.*$/, '');
+      accountId = accountId.replace(/\+.*$/, '');
     }
 
     console.log(`accountId:${accountId}`);
@@ -121,9 +128,10 @@ async function getValidationLink(mailCriteria) {
     if (boxes.inbox) {
       console.log(`get messages from:${boxes.inbox}`);
 
-      const confirmInfo = confirmMails.find(c => {
-        return c.provider === mailCriteria.blogProvider;
-      });
+      const confirmInfo = confirmMails.find(c => c.provider === mailCriteria.blogProvider);
+      if (confirmInfo === undefined) {
+        throw new Error('メール検索条件が見つかりません。');
+      }
 
       const { sender } = confirmInfo;
       const mailLink = confirmInfo.link;
@@ -136,7 +144,10 @@ async function getValidationLink(mailCriteria) {
       console.log('--search result----');
       console.log(messageUids);
       console.log('--search result----');
+      console.log('--get messages--');
       let messages = await getMessages(boxes.inbox, messageUids);
+      console.log('---got messages--');
+      console.log('---start sort---');
       messages.sort(mailSortBySequence);
       console.log('---after sort');
       console.log(messages);
@@ -150,12 +161,14 @@ async function getValidationLink(mailCriteria) {
       }
       // const bodies = [];
       // messages.forEach(m => {
-      let mailBody = '';
       const message = messages[0];
       console.log('-----------body-----------');
       console.log(message['body[]']);
 
-      validationLink = message['body[]'].match(confirmInfo.regx);
+      console.log('---confirmInfo regx----');
+      console.log(confirmInfo.regx);
+      const regxLink = new RegExp(confirmInfo.regx, 'gm');
+      validationLink = message['body[]'].match(regxLink);
 
       /*
       if (message !== undefined) {

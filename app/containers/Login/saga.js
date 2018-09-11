@@ -7,14 +7,13 @@ import {
   loginFailure,
   logoutSuccess,
   logoutFailure,
-  clearAuthInfo
+  clearAuthInfo,
+  loginDoneSuccess,
+  loginDoneFailure
 } from './actions';
 import { Actions } from './actionTypes';
 import type { AuthType } from '../../types/auth';
-import {
-  firebaseSignInWithEmailAndPassword,
-  firebaseSignOut
-} from '../../database/db';
+import { firebaseSignInWithEmailAndPassword, firebaseSignOut } from '../../database/db';
 
 /**
  * firebae error.codeからerror内容を日本語化する
@@ -78,11 +77,16 @@ function* requestLogin() {
     console.log(user);
 
     yield put(loginSuccess({ ...authInfo, userId: user.user.uid }));
-
   } catch (error) {
-    yield put(
-      loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) })
-    );
+    yield put(loginFailure({ ...authInfo, errorMessage: getErrorMessage(error) }));
+  }
+}
+
+function* loginDone() {
+  try {
+    yield put(loginDoneSuccess());
+  } catch (error) {
+    yield put(loginDoneFailure(error.toString()));
   }
 }
 
@@ -91,6 +95,7 @@ function* requestLogin() {
  *  logout logoutRequestアクションを待機
  */
 function* rootSaga(): Saga {
+  yield takeEvery(Actions.LOGIN_DONE_REQUEST, loginDone);
   yield takeEvery(Actions.SET_AUTH_INFO, requestLogin);
   yield takeEvery(Actions.LOGOUT_REQUEST, requestLogout);
 }

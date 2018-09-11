@@ -75,22 +75,14 @@ function* createProfile() {
     try {
       // console.log('this is first time save profile');
 
-      const ref = yield call(
-        firebaseDbInsert,
-        `/users/${userAuth.userId}/profile`,
-        {
-          expireDate: profile.expireDate,
-          paymentMethod: profile.paymentMethod,
-          registeredMailAddress: profile.registeredMailAddress
-        }
-      );
-      yield put(
-        createProfileSuccess({ ...profile, key: ref.key, isFailure: false })
-      );
+      const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/profile`, {
+        expireDate: profile.expireDate,
+        paymentMethod: profile.paymentMethod,
+        registeredMailAddress: profile.registeredMailAddress
+      });
+      yield put(createProfileSuccess({ ...profile, key: ref.key, isFailure: false }));
     } catch (error) {
-      yield put(
-        createProfileFailure({ ...profile, errorMessage: error.toString() })
-      );
+      yield put(createProfileFailure({ ...profile, errorMessage: error.toString() }));
     }
   }
 
@@ -109,9 +101,7 @@ function* createProfile() {
         yield call(firebaseUpdateEmail, profile.mailAddress);
         yield put(updateProfileSuccess());
         // user Auth mailAddress update
-        yield put(
-          updateAuthInfo({ ...userAuth, mailAddress: profile.mailAddress })
-        );
+        yield put(updateAuthInfo({ ...userAuth, mailAddress: profile.mailAddress }));
       } catch (error) {
         yield put(
           updateProfileFailure({
@@ -133,9 +123,7 @@ function* createProfile() {
         yield call(firebaseUpdatePassword, profile.password);
         yield put(updateProfileSuccess());
         // userAuth password update
-        yield put(
-          updateAuthInfo({ ...latestAuthInfo, password: profile.password })
-        );
+        yield put(updateAuthInfo({ ...latestAuthInfo, password: profile.password }));
       } catch (error) {
         // console.log('pw error:' + error);
         yield put(
@@ -151,15 +139,11 @@ function* createProfile() {
 
 function* getProfile() {
   const userAuth: AuthType = yield select(state => state.Login);
-  if (userAuth.userId.length === 0)
-    throw new Error('ログインが完了していません。');
+  if (userAuth.userId.length === 0) throw new Error('ログインが完了していません。');
   const userInfo: UserAccountType = yield select(state => state.Profile);
 
   try {
-    const snapshot = yield call(
-      firebaseDbRead,
-      `/users/${userAuth.userId}/profile`
-    );
+    const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/profile`);
     const profiles = [];
 
     snapshot.forEach(childSnapshot => {
@@ -187,7 +171,7 @@ function* getProfile() {
       );
 
       yield call(createProfile);
-      yield put(loginDone());
+      // yield put(loginDone());
 
       return;
     }
@@ -234,7 +218,7 @@ function* getProfile() {
           key: profiles[0].key
         })
       );
-      yield put(loginDone());
+      // yield put(loginDone());
     }
   } catch (error) {
     yield put(getProfileFailure({ ...userInfo, errorMessage: error.message }));

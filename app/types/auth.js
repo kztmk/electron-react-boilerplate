@@ -12,6 +12,7 @@ export type AuthType = {
   userId: string,
   mailAddress: string,
   password: string,
+  login: boolean,
   isLoginFailure: boolean,
   isLoadingIcon: boolean,
   errorMessage: string

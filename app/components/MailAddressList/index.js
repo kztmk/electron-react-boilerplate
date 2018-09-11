@@ -44,7 +44,8 @@ type State = {
   openModalSaveErrorAccounts: boolean,
   openFormMailAddressAdd: boolean,
   openFormMailAddressNew: boolean,
-  mode: string
+  mode: string,
+  importSourceFile: boolean
 };
 type Props = {
   classes: Object,
@@ -76,10 +77,13 @@ const convertProviderName = provider => {
       providerMailV5 = 'Yahoo';
       break;
     case 'Excite':
-      providerMailV5 = 'Excite';
+      providerMailV5 = 'unknown';
       break;
     case 'Outlook':
       providerMailV5 = 'Outlook';
+      break;
+    case 'Yandex':
+      providerMailV5 = 'Yandex';
       break;
     default:
       providerMailV5 = 'unknown';
@@ -133,7 +137,8 @@ class MailAddressListPage extends React.Component<Props, State> {
       openModalSaveErrorAccounts: false,
       openFormMailAddressAdd: false,
       openFormMailAddressNew: false,
-      mode: 'none'
+      mode: 'none',
+      importSourceFile: false
     };
   }
 
@@ -168,7 +173,7 @@ class MailAddressListPage extends React.Component<Props, State> {
         return;
       }
 
-      this.setState({ isLoading: true });
+      this.setState({ isLoading: true, importSourceFile: true });
       // インポート用MainAccountType配列
       const mailAccounts: Array<MailAccountType> = [];
       // 受信object[key, createDate, lastLogin]をMailAccountTypeの型に変換
@@ -257,9 +262,11 @@ class MailAddressListPage extends React.Component<Props, State> {
             notificationMsg = nextProps.metaMessage;
             if (nextProps.transAccounts.length > 0) {
               // import成功 dupあり
-              isSuccessButDup = true;
-            } else {
-              // import完全成功
+              if (this.state.importSourceFile) {
+                isSuccessButDup = true;
+              }
+            } else if (this.state.importSourceFile) {
+              // import成功 dupなし
               isSuccess = true;
             }
           } else {
@@ -274,7 +281,8 @@ class MailAddressListPage extends React.Component<Props, State> {
             openErrorNotification: isFailure,
             metaMessage: notificationMsg,
             openModalSaveErrorAccounts: isSuccessButDup,
-            mode: 'none'
+            mode: 'none',
+            importSourceFile: false
           });
           break;
         default:

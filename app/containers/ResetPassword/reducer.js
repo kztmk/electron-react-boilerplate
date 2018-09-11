@@ -7,6 +7,7 @@ export const initialState: AuthType = {
   userId: '',
   mailAddress: '',
   password: '',
+  login: false,
   isLoginFailure: false,
   isLoadingIcon: false,
   errorMessage: ''
@@ -14,10 +15,7 @@ export const initialState: AuthType = {
 
 export type State = AuthType;
 
-export default function(
-  state: AuthType = initialState,
-  action: Action
-): AuthType {
+export default function(state: AuthType = initialState, action: Action): AuthType {
   switch (action.type) {
     case Actions.SET_AUTH_INFO:
       return {

@@ -147,16 +147,25 @@ class GmailSettings extends React.Component<Props, State> {
   saveSettings = () => {
     let errorMsg = '';
 
-    if (this.state.accountIdState !== 'success') {
+    if (this.state.accountId.length > 0) {
+      this.setState({ accountIdState: 'success' });
+    } else {
+      this.setState({ accountIdState: 'error' });
       errorMsg = 'GmailのアカウントIDを確認してください。';
     }
 
-    if (this.state.domainState !== 'success') {
-      errorMsg += 'Gmailのドメインを確認してください。';
+    if (this.state.domain.length > 0) {
+      this.setState({ domainState: 'success' });
+    } else {
+      this.setState({ domainState: 'error' });
+      errorMsg = 'Gmailのドメインを確認してください。';
     }
 
-    if (this.state.passwordState !== 'success') {
-      errorMsg += 'Gmailのパスワードを確認してください。';
+    if (this.state.password.length > 7) {
+      this.setState({ passwordState: 'success' });
+    } else {
+      this.setState({ passwordState: 'error' });
+      errorMsg = 'Gmailのパスワードを確認してください。8文字以上必要です。';
     }
 
     if (errorMsg.length > 0) {

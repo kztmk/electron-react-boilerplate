@@ -461,7 +461,7 @@ class BlogWizard extends React.Component<Props, State> {
 
     console.log('---new blog account ----');
     console.log(newAccount);
-    // this.props.finishButtonClick(saveBlogInfo);
+    this.props.finishButtonClick(newAccount);
     console.log('---------userFields--------');
     console.log(userFields);
     const blogAdditionalInfo = { ...userFields };

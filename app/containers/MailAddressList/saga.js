@@ -54,7 +54,7 @@ function* importMailAccounts(action) {
     const mailAccounts: Array<MailAccountType> = action.payload;
 
     if (mailAccounts.length > 0) {
-      // stateから現在のmailAccoutsを取得
+      // stateから現在のmailAccountsを取得
       const snapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/mailAccount`);
       const existsMailAccounts: Array<MailAccountType> = [];
 
@@ -123,7 +123,6 @@ function* importMailAccounts(action) {
       });
 
       latestMailAccounts.sort(mailAccountSort);
-
       // import出来なかったerrorAccountsを、state.importAccountsへ
       yield put(
         importMailAddressSuccess(latestMailAccounts, {

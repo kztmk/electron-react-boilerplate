@@ -98,11 +98,26 @@ class BlogDriver {
    * @return {Promise<BlogSession>}
    */
   async signin(user, opts = {}) {
-    const browser = opts.browser || (await puppeteer.launch(opts.puppeteer));
-
     if (!user) {
       throw new Error('ログイン情報は必須です。');
     }
+
+    let exePath = await puppeteer.executablePath();
+    if (process.env.NODE_ENV === 'production') {
+      exePath = exePath.replace('app.asar', 'app.asar.unpacked');
+    }
+
+    const width = 1024;
+    const height = 748;
+
+    const browser =
+      opts.browser ||
+      (await puppeteer.launch({
+        executablePath: exePath,
+        headless: false,
+        slowMo: 20,
+        args: [`--window-size=${width},${height}`]
+      }));
 
     return this.blogProvider.signin(user, {
       browser,

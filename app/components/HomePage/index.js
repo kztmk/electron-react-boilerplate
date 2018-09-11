@@ -19,12 +19,14 @@ const styles = {
 };
 
 export type Props = {
-  userAuth: AuthType
+  userAuth: AuthType,
+  startLoginDone: () => void
 };
 
 type State = {
   isRequestPasswordReset: boolean,
-  isLoginDone: boolean
+  isLoginDone: boolean,
+  openSuccessSnackbar: boolean
 };
 
 /**
@@ -40,7 +42,8 @@ class HomePage extends React.Component<Props, State> {
 
     this.state = {
       isRequestPasswordReset: false,
-      isLoginDone: false
+      isLoginDone: this.props.userAuth.login,
+      openSuccessSnackbar: false
     };
   }
 
@@ -77,18 +80,21 @@ class HomePage extends React.Component<Props, State> {
    * Login完了のSnackbarを閉じる
    */
   handleSuccessSnackbarClose = () => {
-    this.setState({ isLoginDone: false });
+    this.setState({ openSuccessSnackbar: false });
+    this.props.startLoginDone();
   };
 
   /**
    * Login完了のSnackbarを表示
    */
   handleSuccessSnackbarOpen = () => {
-    this.setState({ isLoginDone: true });
+    this.setState({ openSuccessSnackbar: true });
   };
 
   handleLoginDone = (status: boolean) => {
-    this.setState({ isLoginDone: status });
+    if (status) {
+      this.setState({ isLoginDone: status, openSuccessSnackbar: true });
+    }
   };
 
   render() {
@@ -112,10 +118,11 @@ class HomePage extends React.Component<Props, State> {
         </Slide>
         {this.state.isLoginDone && <h3>ホームページ</h3>}
         <Snackbar
+          autoHideDuration={2000}
           color="success"
           place="bc"
           icon={AddAlert}
-          open={this.state.isLoginDone}
+          open={this.state.openSuccessSnackbar}
           closeNotification={this.handleSuccessSnackbarClose}
           close
           message={<span id="login_error">ログイン完了</span>}

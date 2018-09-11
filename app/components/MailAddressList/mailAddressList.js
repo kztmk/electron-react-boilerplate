@@ -43,7 +43,8 @@ import WizardViewBlog from '../BlogAccountCreate';
 import type BlogAccountType from '../../types/blogAccount';
 import type PersonalInfoType from '../../types/personalInfo';
 import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
-import getValidationLink from '../../drivers/emails/imap';
+import generatePassword from 'password-generator';
+// import getValidationLink from '../../drivers/emails/imap';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -157,6 +158,7 @@ class MailAddressList extends React.Component<Props, State> {
     if (nextProps.mode === 'delete' && this.state.mode === 'delete') {
       if (!nextProps.isFailure) {
         // delete success
+        const email = this.state.targetAccount.mailAddress;
         this.setState({
           data: this.convertTableData(nextProps.mailAccounts),
           sweetAlert: (
@@ -169,7 +171,7 @@ class MailAddressList extends React.Component<Props, State> {
               confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
             >
               メールアドレス:
-              {this.state.targetAccount.mailAddress}
+              {email}
               を削除しました。
             </SweetAlert>
           )
@@ -295,6 +297,7 @@ class MailAddressList extends React.Component<Props, State> {
                   // mailacc.password = account.password;
                   // mailacc.sender = 'noreply@id.fc2.com';
                   // mailacc.provider = account.provider;
+                  // mailacc.BlogProvider = 'fc2';
                   // console.log('---mail criteria---');
                   // console.log(mailacc);
                   // const result = getValidationLink(mailacc);
@@ -312,7 +315,7 @@ class MailAddressList extends React.Component<Props, State> {
           <Tooltip title="新規ブログを作成" placement="top-end">
             <Button
               justIcon
-              onClick={() => {
+              onClick /* eslint-disable no-alert */={() => {
                 const account = this.state.data.find(o => o.key === prop.key);
                 if (account) {
                   const target = {
@@ -345,8 +348,8 @@ class MailAddressList extends React.Component<Props, State> {
       const target = {
         ...account,
         tags: restoredTags,
-        createDate: moment(account.createDate).valueOf(),
-        lastLogin: restoredLastLogin
+        lastLogin: restoredLastLogin,
+        createDate: moment(account.createDate).valueOf()
       };
 
       return target;
@@ -547,6 +550,11 @@ class MailAddressList extends React.Component<Props, State> {
       userPrefecture = this.getUserDetail(prefecture);
     }
 
+    let accountId = account.accountId;
+    if (!/^[a-z0-9]+$/.test(accountId)) {
+      accountId = generatePassword(1, false, /[a-z]/) + generatePassword(7, false, /[a-z0-9]/);
+    }
+
     const personalInfo = {
       lastName: userNameLast,
       firstName: userNameFirst,
@@ -560,7 +568,7 @@ class MailAddressList extends React.Component<Props, State> {
       birthDate: userBirthDate,
       postalCode: userPostalCode,
       prefecture: userPrefecture,
-      address1: `${account.accountId}:${account.password}:${account.mailAddress}`,
+      address1: `${accountId}:${account.password}:${account.mailAddress}`,
       useDefault: false,
       mailAccount: account
     };

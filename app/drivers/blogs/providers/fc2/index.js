@@ -75,18 +75,20 @@ class BlogProviderFc2 extends BlogProvider {
    *
    * @return {Promise<EmailSession>}
    */
-  async signin(user, opts) {
-    if (!user) throw new Error('ログイン情報は必須です。');
-    if (!user.username) throw new Error('ログインIDは必須です。');
-    if (!user.password) throw new Error('パスワードは必須です。');
-    if (!user.email) throw new Error('メールアドレスは必須です。');
+  async signin(blogInfo, opts) {
+    if (!blogInfo) throw new Error('ログイン情報は必須です。');
+    if (!blogInfo.accountId) throw new Error('ログインIDは必須です。');
+    if (!blogInfo.password) throw new Error('パスワードは必須です。');
+    if (!blogInfo.mailAddress) throw new Error('メールアドレスは必須です。');
 
-    await signin(user, opts);
+    console.log('--signin to fc2');
+
+    await signin(blogInfo, opts);
 
     return new BlogSession({
       user: {
-        username: user.username,
-        email: user.email
+        username: blogInfo.accountId,
+        email: blogInfo.mailAddress
       },
       browser: opts.browser,
       provider: this

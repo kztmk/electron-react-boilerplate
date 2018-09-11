@@ -340,9 +340,7 @@ const signup = async (blogInfo, opts) => {
 
       // FC2ID登録完了ページ
       await page.waitFor('.sh_heading_main_b');
-      let successMessege = await page.$eval('.sh_heading_main_b', item => {
-        return item.textContent;
-      });
+      let successMessege = await page.$eval('.sh_heading_main_b', item => item.textContent);
 
       if (successMessege === 'FC2IDの登録完了') {
         log.info('FC2ID登録完了');
@@ -369,9 +367,7 @@ const signup = async (blogInfo, opts) => {
         log.info('サービス追加リンクをクリック');
         // サービス追加ページ
         await page.waitFor('.sh_heading_main_b');
-        successMessege = await page.$eval('.sh_heading_main_b', item => {
-          return item.textContent;
-        });
+        successMessege = await page.$eval('.sh_heading_main_b', item => item.textContent);
 
         if (successMessege === 'サービスの追加') {
           log.info('サービス追加ページへアクセス完了');
@@ -508,7 +504,7 @@ const signup = async (blogInfo, opts) => {
     `);
             await page.$eval('#auth_answer_focus', (el, value) => (el.value = value), '');
 
-            await page.type('#auth_answer_focus', captchaValue.value);
+            await page.type('#auth_answer_focus', captchaValue.value, { delay: 240 });
             log.info(`input captcha:${captchaValue.value}`);
             await page.evaluate(`
     new Noty({
@@ -538,7 +534,7 @@ const signup = async (blogInfo, opts) => {
           log.info('ブログ登録完了');
           await page.click('#goto_admin > a');
           log.info('click:管理ページへ');
-          await page.waitFor('#editor_page_head, #editor_area');
+          await page.waitFor('#entry_title');
           log.info('記事ページ');
 
           await page.addStyleTag({ path: swa2Css });

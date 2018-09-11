@@ -6,7 +6,9 @@ import {
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
-  LOGIN_DONE,
+  LOGIN_DONE_REQUEST,
+  LOGIN_DONE_SUCCESS,
+  LOGIN_DONE_FAILURE,
   LOGOUT_REQUEST,
   LOGOUT_SUCCESS,
   LOGOUT_FAILURE,
@@ -18,7 +20,9 @@ import type {
   LoginRequest,
   LoginSuccess,
   LoginFailure,
-  LoginDone,
+  LoginDoneRequest,
+  LoginDoneSuccess,
+  LoginDoneFailure,
   LogoutRequest,
   LogoutSuccess,
   LogoutFailure,
@@ -49,9 +53,20 @@ export function loginFailure(payload: AuthType): LoginFailure {
     payload
   };
 }
-export function loginDone(): LoginDone {
+export function loginDoneRequest(): LoginDoneRequest {
   return {
-    type: LOGIN_DONE
+    type: LOGIN_DONE_REQUEST
+  };
+}
+export function loginDoneSuccess(): LoginDoneSuccess {
+  return {
+    type: LOGIN_DONE_SUCCESS
+  };
+}
+export function loginDoneFailure(meta: { errorMessage: string }): LoginDoneFailure {
+  return {
+    type: LOGIN_DONE_FAILURE,
+    meta
   };
 }
 export function logoutRequest(): LogoutRequest {

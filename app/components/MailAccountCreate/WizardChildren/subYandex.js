@@ -1,6 +1,8 @@
 // @flow
 import React from 'react';
 import generatePassword from 'password-generator';
+import SweetAlert from 'react-bootstrap-sweetalert';
+
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
 import Slide from '@material-ui/core/Slide';
@@ -75,9 +77,18 @@ const iconStyle = {
 type Props = {
   classes: Object,
   targetAccount: MailAccountType,
+  isSequenceLoading: boolean,
+  isSequenceFailure: boolean,
+  sequenceUpdateError: string,
   gmailSequences: Array<GmailSequenceType>,
+  isImporting: boolean,
+  isImportingFailure: boolean,
+  importingError: string,
+  importingErrorAccounts: Array<MailAccountType>,
   mailAccounts: Array<MailAccountType>,
-  closeForm: () => void
+  closeForm: () => void,
+  startImportAliases: (Array<MailAccountType>) => void,
+  startUpdateSequence: () => void
 };
 
 type State = {
@@ -89,7 +100,8 @@ type State = {
   openErrorSnackbar: boolean,
   editSequenceModal: boolean,
   checked: Array<number>,
-  aliases: Array<string>
+  aliases: Array<string>,
+  sweetAlert: React.Node
 };
 
 function Transition(props) {
@@ -112,12 +124,86 @@ class YandexAlias extends React.Component<Props, State> {
       openErrorSnackbar: false,
       editSequenceModal: false,
       checked: [],
-      aliases: []
+      aliases: [],
+      sweetAlert: null
     };
   }
 
   componentDidMount = () => {
     this.generateAliases();
+  };
+
+  componentWillReceiveProps = nextProps => {
+    // sequence update
+    if (this.props.isSequenceLoading && !nextProps.isSequenceLoading) {
+      // error
+      if (nextProps.isSequenceFailure) {
+        // error message show
+        this.setState({
+          sweetAlert: (
+            <SweetAlert
+              style={{ display: 'block', marginTop: '-100px' }}
+              title="連番更新中にエラー発生"
+              onConfirm={() => this.hideAlert()}
+              onCancel={() => this.hideAlert()}
+              confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+            >
+              {nextProps.sequenceUpdateError}
+            </SweetAlert>
+          )
+        });
+      }
+    }
+
+    // import aliases
+    if (this.props.isImporting && !nextProps.isImporting) {
+      if (!nextProps.isImportingFailure) {
+        let htmlMessage = '';
+        let added = '登録：\n';
+        let err = '失敗:\n';
+
+        this.state.checked.forEach(alias => {
+          const errorCheck = nextProps.importingErrorAccounts.find(
+            errorAccount => errorAccount.mailAddress === alias
+          );
+          if (errorCheck === undefined) {
+            added += `${alias}\n`;
+          } else {
+            err += `${alias}\n`;
+          }
+          htmlMessage = `${added}\n${err}`;
+        });
+
+        this.setState({
+          sweetAlert: (
+            <SweetAlert
+              style={{ display: 'block', marginTop: '-100px', whiteSpace: 'pre' }}
+              title="エイリアス登録完了"
+              onConfirm={() => this.hideAlert()}
+              onCancel={() => this.hideAlert()}
+              confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+            >
+              <p>{htmlMessage}</p>
+            </SweetAlert>
+          )
+        });
+      } else {
+        // error
+        this.setState({
+          sweetAlert: (
+            <SweetAlert
+              style={{ display: 'block', marginTop: '-100px' }}
+              title="エラー発生"
+              onConfirm={() => this.hideAlert()}
+              onCancel={() => this.hideAlert()}
+              confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+            >
+              {nextProps.importingError}
+            </SweetAlert>
+          )
+        });
+      }
+    }
   };
 
   generateSequenceValue = () => {
@@ -267,6 +353,32 @@ class YandexAlias extends React.Component<Props, State> {
     });
   };
 
+  saveAliases = () => {
+    const aliases = this.state.checked.map(aliasAddress => ({
+      ...this.props.targetAccount,
+      accountId: aliasAddress,
+      mailAddress: aliasAddress,
+      key: ''
+    }));
+
+    // 連番使用時にsequenceをカウントアップ
+    if (this.state.sequenceSelect.length > 0) {
+      const sequence = this.props.gmailSequences.find(seq => seq.key === this.state.sequenceSelect);
+
+      if (sequence) {
+        const seq = sequence.sequence;
+        this.props.startUpdateSequence({ ...sequence, sequence: seq + 1 });
+      }
+    }
+
+    this.props.startImportAliases(aliases);
+  };
+
+  hideAlert = () => {
+    this.setState({ sweetAlert: null, checked: [] });
+    this.generateAliases(this.state.sequenceValue);
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -285,7 +397,7 @@ class YandexAlias extends React.Component<Props, State> {
                     onClick={this.props.closeForm}
                   >
                     <Cancel style={iconStyle} />
-                    キャンセル
+                    閉じる
                   </Button>
                   <Button color="primary" className={classes.lastButton} onClick={this.saveAliases}>
                     <SaveAltIcon style={iconStyle} />
@@ -463,6 +575,7 @@ class YandexAlias extends React.Component<Props, State> {
             <GmailSequences closeForm={this.editSequencesClose} />
           </DialogContent>
         </Dialog>
+        {this.state.sweetAlert}
         <Snackbar
           color="warning"
           place="bc"

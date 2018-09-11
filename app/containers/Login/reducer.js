@@ -9,17 +9,35 @@ export const initialState: AuthType = {
   userId: '',
   mailAddress: '',
   password: '',
+  login: false,
   isLoginFailure: false,
   isLoadingIcon: false,
   errorMessage: ''
 };
 
 // eslint-disable-next-line space-before-function-paren
-export default function(
-  state: AuthType = initialState,
-  action: Action
-): AuthType {
+export default function(state: AuthType = initialState, action: Action): AuthType {
   switch (action.type) {
+    case Actions.LOGIN_DONE_REQUEST:
+      return {
+        ...state,
+        isLoadingIcon: true
+      };
+
+    case Actions.LOGIN_DONE_SUCCESS:
+      return {
+        ...state,
+        isLoadingIcon: false,
+        login: true
+      };
+
+    case Actions.LOGIN_DONE_FAILURE:
+      return {
+        ...state,
+        isLoadingIcon: false,
+        errorMessage: action.meta.errorMessage
+      };
+
     case Actions.UPDATE_AUTH_INFO:
       return {
         ...state,

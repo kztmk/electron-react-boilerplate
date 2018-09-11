@@ -275,7 +275,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                         onClick={this.props.closeModal}
                       >
                         <Cancel style={iconStyle} />
-                        キャンセル
+                        閉じる
                       </Button>
                       <Button
                         color="primary"

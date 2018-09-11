@@ -5,6 +5,7 @@ class PuppeteerBlog {
     this.client = null;
     switch (blogInfo.provider) {
       case 'fc2':
+        console.log('--create fc2 instance');
         this.client = new BlogDriver('fc2');
         break;
       case 'outlook':
