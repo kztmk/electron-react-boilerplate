@@ -1,9 +1,11 @@
 import BlogProviderFc2 from './fc2';
+import BlogProviderLivedoor from './livedoor';
 
 class BlogProviderManager {
   constructor() {
     this.providers = {
-      fc2: BlogProviderFc2
+      fc2: BlogProviderFc2,
+      livedoor: BlogProviderLivedoor
     };
   }
 

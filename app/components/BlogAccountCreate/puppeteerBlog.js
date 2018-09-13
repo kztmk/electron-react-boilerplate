@@ -8,8 +8,8 @@ class PuppeteerBlog {
         console.log('--create fc2 instance');
         this.client = new BlogDriver('fc2');
         break;
-      case 'outlook':
-        this.client = new BlogDriver('outlook');
+      case 'livedoor':
+        this.client = new BlogDriver('livedoor');
         break;
       default:
     }

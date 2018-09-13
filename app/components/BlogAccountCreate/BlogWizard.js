@@ -409,6 +409,7 @@ class BlogWizard extends React.Component<Props, State> {
         break;
       case 'livedoor':
         url += ``;
+        testPass = true;
         break;
       case 'seesaa':
         url += ``;
