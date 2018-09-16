@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 import generatePassword from 'password-generator';
-import SweetAlert from 'react-bootstrap-sweetalert';
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
 import Slide from '@material-ui/core/Slide';
@@ -27,13 +26,14 @@ import GridItem from '../../../ui/Grid/GridItem';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import extendedFormsStyle from '../../../assets/jss/material-dashboard-pro-react/views/accountListPageStyle';
-import type GmailType, { GmailSequenceType } from '../../../types/gmail';
-
 import CustomInput from '../../../ui/CustomInput/CustomInput';
 
 import Button from '../../../ui/CustomButtons/Button';
 
-import GmailSequences from '../../../containers/MailAccountCreate/WizardChildren/subGmail';
+import Sequences from '../../../containers/MailAccountCreate/WizardChildren/sequences';
+import type AliasMailType from '../../../types/aliasMailInfo';
+import type SequenceType from '../../../types/sequence';
+import { initialGmailBase } from '../../../containers/AliasMailInfo/reducer';
 
 const groupBox = {
   border: '1px solid #333',
@@ -44,8 +44,8 @@ const groupBox = {
 
 type Props = {
   classes: Object,
-  gmailInfo: GmailType,
-  gmailSequences: Array<GmailSequenceType>
+  aliasInfo: Array<AliasMailType>,
+  sequences: Array<SequenceType>
 };
 
 type State = {
@@ -55,6 +55,7 @@ type State = {
   sequenceSelect: string,
   randomAlias: string,
   errorMessage: string,
+  gmailInfo: AliasMailType,
   openErrorSnackbar: boolean,
   editSequenceModal: boolean
 };
@@ -77,20 +78,24 @@ class StepGmail extends React.Component<Props, State> {
       sequenceSelect: '',
       randomAlias: '',
       errorMessage: '',
+      gmailInfo: initialGmailBase,
       openErrorSnackbar: false,
       editSequenceModal: false
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount(){
     this.existsGmailInfo();
   };
 
   existsGmailInfo = () => {
-    if (this.props.gmailInfo.accountId.length > 0 && this.props.gmailInfo.domain.length > 0) {
-      this.setState({ disabled: false });
+    const gmailInfo = this.props.aliasInfo.find(alias => alias.provider === 'gmail');
+
+    if (gmailInfo && gmailInfo.accountId.length > 0) {
+      this.setState({ disabled: false, gmailInfo });
     } else {
       this.setState({
+        gmailInfo: initialGmailBase,
         disabled: true,
         errorMessage: 'Gmailの登録を設定画面から行ってください。',
         openErrorSnackbar: true
@@ -98,10 +103,14 @@ class StepGmail extends React.Component<Props, State> {
     }
   };
 
+  /**
+   * select box用に連番optionを作成
+   * @returns {any[]}
+   */
   generateSequenceValue = () => {
     const { classes } = this.props;
 
-    return this.props.gmailSequences.map(p => (
+    return this.props.sequences.map(p => (
       <MenuItem
         key={p.key}
         classes={{
@@ -115,6 +124,12 @@ class StepGmail extends React.Component<Props, State> {
     ));
   };
 
+  /**
+   * 「0(ゼロ)で桁数を埋める」
+   * @param num
+   * @param digits
+   * @returns {string}
+   */
   zeroPadding = (num, digits) => `00000000000000000000${num}`.slice(-digits);
 
   /**
@@ -123,8 +138,8 @@ class StepGmail extends React.Component<Props, State> {
    */
   sendState = () => {
     const plusInfo = [];
-    plusInfo.accountName = `${this.props.gmailInfo.accountId}+${this.state.sequenceValue}`;
-    plusInfo.domain = this.props.gmailInfo.domain;
+    plusInfo.accountName = `${this.state.gmailInfo.accountId}+${this.state.sequenceValue}`;
+    plusInfo.domain = this.state.gmailInfo.domain;
     plusInfo.sequenceKey = this.state.sequenceSelect;
 
     return plusInfo;
@@ -141,6 +156,7 @@ class StepGmail extends React.Component<Props, State> {
       sequenceSelect: '',
       randomAlias: '',
       errorMessage: '',
+      gmailInfo: initialGmailBase,
       openErrorSnackbar: false,
       editSequenceModal: false
     });
@@ -150,7 +166,7 @@ class StepGmail extends React.Component<Props, State> {
    * フォーム移動時、又は親から呼ばれるvalidation
    */
   isValidated = () => {
-    if (this.props.gmailInfo.accountId.length === 0) {
+    if (this.state.gmailInfo.accountId.length === 0) {
       this.setState({
         errorMessage: '設定画面でGmailの登録を行ってください。\n',
         openErrorSnackbar: true
@@ -167,6 +183,10 @@ class StepGmail extends React.Component<Props, State> {
     return true;
   };
 
+  /**
+   * ランダムエイリアス欄に指定された桁数のランダム英数字を返す
+   * @param event
+   */
   setRandomAlias = event => {
     if (!Number.isNaN(parseInt(event.target.value, 10))) {
       // create random string length
@@ -184,8 +204,12 @@ class StepGmail extends React.Component<Props, State> {
     }
   };
 
+  /**
+   * 連番ドロップダウンから選択
+   * @param event
+   */
   handleSelectSequence = event => {
-    const selectedSequence = this.props.gmailSequences.find(s => s.key === event.target.value);
+    const selectedSequence = this.props.sequences.find(s => s.key === event.target.value);
     if (selectedSequence) {
       const seq = `${selectedSequence.prefix}${this.zeroPadding(
         selectedSequence.sequence,
@@ -196,20 +220,49 @@ class StepGmail extends React.Component<Props, State> {
   };
 
   /**
+   * エイリアス欄が変更時のチェックと処理
+   * @param event
+   */
+  handleChangeAlias = event => {
+    if (event.target.value.length < 21) {
+      if (/^[a-z0-9]+$/.test(event.target.value)) {
+        this.setState({ sequenceValue: event.target.value, randomAlias: '', sequenceSelect: '' });
+        this.generateAliases(event.target.value);
+      } else {
+        this.setState({ errorMessage: '半角英数字のみ使用できます。', openErrorSnackbar: true });
+      }
+    } else {
+      this.setState({
+        errorMessage: 'エイリアスは20桁以内で指定してください。。',
+        openErrorSnackbar: true
+      });
+    }
+  };
+
+  /**
    * エラー表示を閉じる
    */
   handleErrorSnackbarClose = () => {
     this.setState({ errorMessage: '', openErrorSnackbar: false });
   };
 
+  /**
+   * 連番編集フォームを開く
+   */
   editSequences = () => {
     this.setState({ editSequenceModal: true });
   };
 
+  /**
+   * 連番編集フォームを閉じる
+   */
   editSequencesClose = () => {
     this.setState({ editSequenceModal: false });
   };
 
+  /**
+   * ランダムエイリアス欄をクリア
+   */
   clearRandomAlias = () => {
     this.setState({ sequenceValue: '', randomAlias: '', sequenceSelect: '' });
   };
@@ -222,7 +275,7 @@ class StepGmail extends React.Component<Props, State> {
           <GridContainer container justify="center">
             <GridItem xs={12} sm={2} md={3}>
               <FormLabel className={classes.labelHorizontal}>
-                {this.props.gmailInfo.accountId} +{' '}
+                {this.state.gmailInfo.accountId} +{' '}
               </FormLabel>
             </GridItem>
             <GridItem xs={12} sm={3} md={3}>
@@ -236,7 +289,7 @@ class StepGmail extends React.Component<Props, State> {
                 }}
                 lessSpace
                 inputProps={{
-                  onChange: event => this.setState({ sequenceValue: event.target.value }),
+                  onChange: this.handleChangeAlias,
                   type: 'text',
                   disabled: this.state.disabled,
                   value: this.state.sequenceValue
@@ -245,7 +298,7 @@ class StepGmail extends React.Component<Props, State> {
             </GridItem>
             <GridItem xs={12} sm={2} md={3}>
               <FormLabel className={classes.labelHorizontalLeft}>
-                @{this.props.gmailInfo.domain}
+                @{this.state.gmailInfo.domain}
               </FormLabel>
             </GridItem>
           </GridContainer>
@@ -326,7 +379,7 @@ class StepGmail extends React.Component<Props, State> {
           TransitionComponent={Transition}
         >
           <DialogTitle
-            id="modal-gmail-sequence-edit"
+            id="modal-sequence-edit"
             disableTypography
             className={classes.modalHeader}
           >
@@ -345,7 +398,7 @@ class StepGmail extends React.Component<Props, State> {
             id="formGmailSequenceseEdit"
             className={`${classes.modalBody} ${classes.modalSmallBody}`}
           >
-            <GmailSequences closeForm={this.editSequencesClose} />
+            <Sequences closeForm={this.editSequencesClose} />
           </DialogContent>
         </Dialog>
         <Snackbar

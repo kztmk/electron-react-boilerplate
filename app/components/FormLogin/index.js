@@ -19,8 +19,8 @@ import type { UserAccountType } from '../../types/userAccount';
 import type { State as MailAccountState } from '../../containers/MailAddressList/reducer';
 import type { State as BlogAccountState } from '../../containers/BlogList/reducer';
 import type { State as PersonalInfoState } from '../../containers/PersonalInfo/reducer';
-import type { State as GmailInfoState } from '../../containers/Gmail/reducer';
-import type { State as GmailSequencesState } from '../../containers/GmailSequence/reducer';
+import type { State as AliasMailInfoState } from '../../containers/AliasMailInfo/reducer';
+import type { State as SequenceState } from '../../containers/Sequence/reducer';
 
 export type Props = {
   classes: Object,
@@ -29,16 +29,16 @@ export type Props = {
   mailAccountState: MailAccountState,
   blogAccountState: BlogAccountState,
   personalInfoState: PersonalInfoState,
-  gmailInfoState: GmailInfoState,
-  gmailSequencesState: GmailSequencesState,
+  aliasMailInfoState: AliasMailInfoState,
+  sequencesState: SequenceState,
   loginStart: (userAuth: AuthType) => void,
   requestPasswordReset: () => void,
   startGetProfile: () => void,
   startGetMailAccounts: () => void,
   startGetBlogAccounts: () => void,
   startGetPersonalInfo: () => void,
-  startGetGmailInfo: () => void,
-  startGetGmailSequences: () => void,
+  startGetAliasMailInfo: () => void,
+  startGetSequence: () => void,
   isLoginDone: () => void
 };
 
@@ -149,8 +149,8 @@ class LoginForm extends Component<Props, State> {
       !nextProps.blogAccountState.isLoading &&
       !nextProps.blogAccountState.isFailure
     ) {
-      this.setState({ step: 'getGmailInfo' });
-      this.props.startGetGmailInfo();
+      this.setState({ step: 'getAliasMailInfo' });
+      this.props.startGetAliasMailInfo();
     } else if (this.state.step === 'getBlogAccount' && nextProps.blogAccountState.isFailure) {
       this.setState({
         isOpenErrorSnackbar: nextProps.blogAccountState.isFailure,
@@ -160,35 +160,32 @@ class LoginForm extends Component<Props, State> {
     }
 
     if (
-      this.state.step === 'getGmailInfo' &&
-      !nextProps.gmailInfoState.isGmailInfoLoading &&
-      !nextProps.gmailInfoState.isGmailInfoFailure
+      this.state.step === 'getAliasMailInfo' &&
+      !nextProps.aliasMailInfoState.isLoading &&
+      !nextProps.aliasMailInfoState.isFailure
     ) {
-      this.setState({ step: 'getGmailSequences' });
-      this.props.startGetGmailSequences();
-    } else if (this.state.step === 'getGmailInfo' && nextProps.gmailInfoState.isGmailInfoFailure) {
+      this.setState({ step: 'getSequences' });
+      this.props.startGetSequence();
+    } else if (this.state.step === 'getAliasMailInfo' && nextProps.aliasMailInfoState.isFailure) {
       this.setState({
-        isOpenErrorSnackbar: nextProps.gmailInfoState.isGmailInfoFailure,
-        errorMessage: nextProps.gmailInfoState.errorMessage
+        isOpenErrorSnackbar: nextProps.aliasMailInfoState.isFailure,
+        errorMessage: nextProps.aliasMailInfoState.errorMessage
       });
       return;
     }
 
-    if (
-      this.state.step === 'getGmailSequences' &&
-      !nextProps.gmailSequencesState.isGmailSequencesLoading &&
-      !nextProps.gmailSequencesState.isGmailSequencesFailure
+    if(
+      this.state.step === 'getSequences' &&
+      !nextProps.sequencesState.isLoading &&
+      !nextProps.sequencesState.isFailure
     ) {
       this.setState({ isLogin: true, step: '' });
       this.props.isLoginDone(true);
-    } else if (
-      this.state.step === 'getGmailSequences' &&
-      nextProps.gmailSequencesState.isGmailSequencesFailure
-    ) {
+    } else if (this.state.step === 'getSequences' && nextProps.sequencesState.isFailure) {
       this.setState({
-        isOpenErrorSnackbar: nextProps.gmailSequencesState.isGmailSequencesFailure,
-        errorMessage: nextProps.gmailSequencesState.errorMessage
-      });
+        isOpenErrorSnackbar: nextProps.sequencesState.isFailure,
+        errorMessage: nextProps.sequencesState.errorMessage
+      })
     }
   };
 

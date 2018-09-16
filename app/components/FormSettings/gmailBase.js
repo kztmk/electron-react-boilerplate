@@ -4,61 +4,62 @@ import React from 'react';
 import Loadable from 'react-loading-overlay';
 import moment from 'moment';
 import generatePassword from 'password-generator';
+import validator from 'email-validator';
+import SweetAlert from 'react-bootstrap-sweetalert';
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import InputLabel from '@material-ui/core/InputLabel';
 import Tooltip from '@material-ui/core/Tooltip';
 import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
 import Switch from '@material-ui/core/Switch';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-
+import FormControl from '@material-ui/core/FormControl/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import InputLabel from '@material-ui/core/InputLabel/InputLabel';
+import Select from '@material-ui/core/Select/Select';
+import MenuItem from '@material-ui/core/MenuItem/MenuItem';
 // @material-ui/icons
 import FolderShared from '@material-ui/icons/FolderShared';
 import AddAlert from '@material-ui/icons/AddAlert';
 import Refresh from '@material-ui/icons/Refresh';
-
+import Cancel from "@material-ui/icons/Cancel";
+import ContactMail from '@material-ui/icons/ContactMail';
 // core components
-import GridContainer from '../../../ui/Grid/GridContainer';
-import GridItem from '../../../ui/Grid/GridItem';
-import Button from '../../../ui/CustomButtons/Button';
-import CustomInput from '../../../ui/CustomInput/CustomInput';
-import Snackbar from '../../../ui/Snackbar/Snackbar';
+import GridContainer from '../../ui/Grid/GridContainer';
+import GridItem from '../../ui/Grid/GridItem';
+import Button from '../../ui/CustomButtons/Button';
+import CustomInput from '../../ui/CustomInput/CustomInput';
+import Snackbar from '../../ui/Snackbar/Snackbar';
 
-import formAddStyle from '../../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
-import type PersonalInfoType from '../../../types/personalInfo';
+import formAddStyle from '../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
+import type PersonalInfoType from '../../types/personalInfo';
 
-import Yahoo from '../../../assets/img/providerImage/y64.png';
-import Gmail from '../../../assets/img/providerImage/gmail64.png';
-import Yandex from '../../../assets/img/providerImage/yandex64.png';
+import type AliasMailType from '../../types/aliasMailInfo';
+import prefectures from '../Commons/prefecture';
+import { SaveAltIcon } from '../../assets/icons';
 
-import prefectures from '../../Commons/prefecture';
-import type AliasMailType from '../../../types/aliasMailInfo';
 
 const stepContent = {
-  padding: '5px'
+  padding: '5px',
+  marginTop: '-10px'
 };
 
 const groupBoxTop = {
   border: '1px solid #333',
-  padding: '10px 0 20px 0',
+  padding: '10px 0 10px 0',
   borderRadius: '20px',
   margin: '0'
 };
 
 const groupBox = {
   border: '1px solid #333',
-  padding: '20px 0 20px 20px',
+  padding: '20px 0 10px 20px',
   borderRadius: '20px',
   margin: '20px 0 0 0'
 };
 
-const selectAvatarStyle = {
-  display: 'flex',
-  alignItems: 'center'
+const iconStyle = {
+  width: '18px',
+  height: '18px'
 };
 
 type Props = {
@@ -66,71 +67,166 @@ type Props = {
   isLoading: boolean,
   isFailure: boolean,
   errorMessage: string,
+  isAliasLoading: boolean,
+  isAliasFailure: boolean,
+  errorMessageAlias: string,
   personalInfo: PersonalInfoType,
   randomPersonalInfo: PersonalInfoType,
   startGetRandomPersonalInfo: () => void,
-  aliasInfo: Array<AliasMailType>
+  gmailBase: AliasMailType,
+  startSaveAlias: (AliasMailType) => void,
+  startDeleteAlias: (AliasMailType) => void
 };
 
 type State = {
-  provider: string,
   accountId: string,
   accountIdState: string,
   password: string,
   passwordState: string,
+  domain: string,
+  domainState: string,
   lastName: string,
   lastNameState: string,
+  lastNameKana: string,
+  lastNameKanaState: string,
   firstName: string,
   firstNameState: string,
+  firstNameKana: string,
+  firstNameKanaState: string,
   gender: boolean,
   birthDate: string,
   birthDateState: string,
+  contactMail: string,
+  contactMailState: string,
   postalCode: string,
   postalCodeState: string,
   prefecture: string,
+  prefectureState: string,
   errorMessage: string,
   openErrorSnackbar: false,
   forceUseDefault: boolean,
-  forceUseRandom: boolean
+  forceUseRandom: boolean,
+  mode: string,
+  sweetAlert: React.Node
 };
 
 /**
  * mailAccount自動取得のWizard画面 Step0
  */
-class Steps00 extends React.Component<Props, State> {
+class GmailBaseSettings extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
     this.state = {
-      provider: '',
-      accountId: '',
+      accountId: this.props.gmailBase.accountId,
       accountIdState: '',
-      password: '',
+      password: this.props.gmailBase.password,
       passwordState: '',
-      lastName: '',
+      domain: this.props.gmailBase.domain.length > 0 ? this.props.gmailBase.domain : 'gmail.com',
+      domainState: '',
+      lastName: this.props.gmailBase.lastName,
       lastNameState: '',
-      lastNameKana: '',
-      firstName: '',
+      lastNameKana: this.props.gmailBase.lastNameKana,
+      lastNameKanaState: '',
+      firstName: this.props.gmailBase.firstName,
       firstNameState: '',
-      firstNameKana: '',
-      gender: false,
-      birthDate: '',
+      firstNameKana: this.props.gmailBase.firstNameKana,
+      firstNameKanaState: '',
+      gender: this.props.gmailBase.gender,
+      birthDate: this.props.gmailBase.birthDate,
       birthDateState: '',
-      postalCode: '',
+      contactMail: this.props.gmailBase.contactMail,
+      contactMailState: '',
+      postalCode: this.props.gmailBase.postalCode,
       postalCodeState: '',
-      prefecture: '',
+      prefecture: this.props.gmailBase.prefecture,
+      prefectureState: '',
       errorMessage: '',
       openErrorSnackbar: false,
       forceUseDefault: false,
-      forceUseRandom: false
+      forceUseRandom: false,
+      mode: '',
+      sweetAlert: null
     };
   }
 
   componentWillReceiveProps = nextProps => {
-    if (this.props.isLoading && !nextProps.isLoading && !nextProps.isFailure) {
-      this.handleGenerateAccountId();
-      this.handleGeneratePassword();
+    if (this.props.isAliasLoading && !nextProps.isAliasLoading) {
+      if (!nextProps.isAliasFailure) {
+        // gmail save success
+        this.setState({
+          accountId: nextProps.gmailBase.accountId,
+          password: nextProps.gmailBase.password,
+          domain: nextProps.gmailBase.domain,
+          firstName: nextProps.gmailBase.firstName,
+          firstNameKana: nextProps.gmailBase.firstNameKana,
+          lastName: nextProps.gmailBase.lastName,
+          lastNameKana: nextProps.gmailBase.lastNameKana,
+          gender: nextProps.gmailBase.gender,
+          birthDate: nextProps.gmailBase.birthDate,
+          contactMail: nextProps.gmailBase.contactMail,
+          postalCode: nextProps.gmailBase.postalCode,
+          prefecture: nextProps.gmailBase.prefecture
+        });
 
+        if (this.state.mode === 'gmail-save') {
+          // update state
+          this.setState({
+            sweetAlert: (
+              <SweetAlert
+                success
+                style={{ display: 'block', marginTop: '-100px' }}
+                title="登録完了"
+                onConfirm={() => this.hideAlert()}
+                onCancel={() => this.hideAlert()}
+                confirmBtnCssClass={
+                  `${this.props.classes.button} ${this.props.classes.success}`
+                }
+              >
+                Gmailの設定を保存しました。
+              </SweetAlert>
+            )
+          });
+        } else if (this.state.mode === 'gmail-delete') {
+          this.setState({
+            sweetAlert: (
+              <SweetAlert
+                success
+                style={{ display: 'block', marginTop: '-100px' }}
+                title="削除完了"
+                onConfirm={() => this.hideAlert()}
+                onCancel={() => this.hideAlert()}
+                confirmBtnCssClass={
+                  `${this.props.classes.button} ${this.props.classes.success}`
+                }
+              >
+                Gmailの設定を削除しました。
+              </SweetAlert>
+            )
+          });
+        }
+        // message dialog on
+      } else {
+        // gmail save fail
+        this.setState({
+          sweetAlert: (
+            <SweetAlert
+              warning
+              style={{ display: 'block', marginTop: '-100px' }}
+              title="エラー発生"
+              onConfirm={() => this.hideAlert()}
+              onCancel={() => this.hideAlert()}
+              confirmBtnCssClass={
+                `${this.props.classes.button} ${this.props.classes.success}`
+              }
+            >
+              以下のエラーが発生しました:{nextProps.errorMessageAlias}
+            </SweetAlert>
+          )
+        });
+      }
+    }
+    if (this.props.isLoading && !nextProps.isLoading && !nextProps.isFailure) {
       if (
         (!this.state.forceUseDefault && !nextProps.personalInfo.useDefault) ||
         this.state.forceUseRandom
@@ -142,20 +238,31 @@ class Steps00 extends React.Component<Props, State> {
           firstNameKana: nextProps.randomPersonalInfo.firstNameKana,
           gender: nextProps.randomPersonalInfo.gender === 1,
           birthDate: nextProps.randomPersonalInfo.birthDate,
+          contactMail: '',
           postalCode: nextProps.randomPersonalInfo.postalCode,
           prefecture: nextProps.randomPersonalInfo.prefecture
         });
       } else {
         this.setState({
+          accountId: nextProps.personalInfo.accountId,
+          password: nextProps.personalInfo.password,
+          domain: nextProps.personalInfo.domain,
           lastName: nextProps.personalInfo.lastName,
           lastNameKana: nextProps.personalInfo.lastNameKana,
           firstName: nextProps.personalInfo.firstName,
           firstNameKana: nextProps.personalInfo.firstNameKana,
           gender: nextProps.personalInfo.gender === 1,
           birthDate: nextProps.personalInfo.birthDate,
+          contactMail: '',
           postalCode: nextProps.personalInfo.postalCode,
           prefecture: nextProps.personalInfo.prefecture
         });
+      }
+      if (nextProps.gmailBase.accountId.length === 0) {
+        this.handleGenerateAccountId();
+      }
+      if (nextProps.gmailBase.password.length === 0) {
+        this.handleGeneratePassword();
       }
     }
 
@@ -169,40 +276,6 @@ class Steps00 extends React.Component<Props, State> {
   };
 
   /**
-   * 親フォームから呼ばれてstateを返す
-   * @returns {*}
-   */
-  sendState = () => this.state;
-
-  /**
-   * stateを初期化する
-   */
-  initState = () => {
-    this.setState({
-      provider: '',
-      accountId: '',
-      accountIdState: '',
-      password: '',
-      passwordState: '',
-      lastName: '',
-      lastNameState: '',
-      lastNameKana: '',
-      firstName: '',
-      firstNameState: '',
-      firstNameKana: '',
-      gender: false,
-      birthDate: '',
-      birthDateState: '',
-      postalCode: '',
-      postalCodeState: '',
-      errorMessage: '',
-      openErrorSnackbar: false,
-      forceUseDefault: false,
-      forceUseRandom: false
-    });
-  };
-
-  /**
    * 性別switch変更時
    *
    * @param name
@@ -210,63 +283,6 @@ class Steps00 extends React.Component<Props, State> {
    */
   handleChangeGender = name => event => {
     this.setState({ [name]: event.target.checked });
-  };
-
-  /**
-   * Provider選択時
-   * @param event
-   */
-  handleSelectProvider = event => {
-    let gmailInfo={};
-    let yandexInfo={};
-    switch (event.target.value) {
-      case 'Gmail':
-        gmailInfo = this.props.aliasInfo.find(alias => alias.provider === 'gmail');
-        if (gmailInfo && gmailInfo.accountId.length > 0) {
-          this.setState({
-            provider: event.target.value,
-            accountId: gmailInfo.accountId,
-            password: gmailInfo.password,
-            firstName: gmailInfo.firstName,
-            lastName: gmailInfo.lastName,
-            firstNameKana: gmailInfo.firstNameKana,
-            lastNameKana: gmailInfo.lastNameKana,
-            gender: gmailInfo.gender,
-            postalCode: gmailInfo.postalCode,
-            prefecture: gmailInfo.prefecture
-          });
-        } else {
-          this.setState({
-            errorMessage: '基になるGmailを設定画面で登録してください。',
-            openErrorSnackbar: true
-          })
-        }
-        break;
-      case 'Yandex':
-        yandexInfo = this.props.aliasInfo.find(alias => alias.provider === 'yandex');
-        if (yandexInfo && yandexInfo.accountId.length > 0) {
-          this.setState({
-            provider: event.target.value,
-            accountId: yandexInfo.accountId,
-            password: yandexInfo.password,
-            firstName: yandexInfo.firstName,
-            lastName: yandexInfo.lastName,
-            firstNameKana: yandexInfo.firstNameKana,
-            lastNameKana: yandexInfo.lastNameKana,
-            gender: yandexInfo.gender,
-            postalCode: yandexInfo.postalCode,
-            prefecture: yandexInfo.prefecture
-          });
-        } else {
-          this.setState({
-            errorMessage: '基になるYandexメールを設定画面で登録してください。',
-            openErrorSnackbar: true
-          })
-        }
-        break;
-      default:
-        this.setState({ provider: event.target.value });
-    }
   };
 
   /**
@@ -387,6 +403,9 @@ class Steps00 extends React.Component<Props, State> {
           });
         }
         break;
+      case 'domain':
+        this.setState({ domain: event.target.value });
+        break;
       case 'lastName':
         if (event.target.value.length > 0) {
           this.setState({
@@ -417,6 +436,32 @@ class Steps00 extends React.Component<Props, State> {
           });
         }
         break;
+      case 'lastNameKana':
+        if (this.isHiragana(event.target.value)) {
+          this.setState({
+            lastNameKana: event.target.value,
+            lastNameKanaState: 'success'
+          });
+        } else {
+          this.setState({
+            lastNameKana: event.target.value,
+            lastNameKanaState: 'error'
+          });
+        }
+        break;
+      case 'firstNameKana':
+        if (this.isHiragana(event.target.value)) {
+          this.setState({
+            firstNameKana: event.target.value,
+            firstNameKanaState: 'success'
+          });
+        } else {
+          this.setState({
+            firstNameKana: event.target.value,
+            firstNameKanaState: 'error'
+          });
+        }
+        break;
       case 'birthDate':
         if (moment(event.target.value, ['YYYY/MM/DD'], true).isValid()) {
           this.setState({
@@ -430,21 +475,33 @@ class Steps00 extends React.Component<Props, State> {
           });
         }
         break;
-      case 'postalCode':
-        {
-          const myRegx = /^[0-9]{7}$/;
-          if (myRegx.test(event.target.value)) {
-            this.setState({
-              postalCode: event.target.value,
-              postalCodeState: 'success'
-            });
-          } else {
-            this.setState({
-              postalCode: event.target.value,
-              postalCodeState: 'error'
-            });
-          }
+      case 'contactMail':
+        if (validator.validate(event.target.value)) {
+          this.setState({
+            contactMail: event.target.value,
+            contactMailState: 'success'
+          });
+        } else {
+          this.setState({
+            contactMail: event.target.value,
+            contactMailState: 'error'
+          });
         }
+        break;
+      case 'postalCode': {
+        const myRegx = /^[0-9]{7}$/;
+        if (myRegx.test(event.target.value)) {
+          this.setState({
+            postalCode: event.target.value,
+            postalCodeState: 'success'
+          });
+        } else {
+          this.setState({
+            postalCode: event.target.value,
+            postalCodeState: 'error'
+          });
+        }
+      }
         break;
       default:
     }
@@ -460,23 +517,50 @@ class Steps00 extends React.Component<Props, State> {
   isRequiredLength = (value, length) => value.length >= length;
 
   /**
+   * ひらがなチェック
+   *
+   * @param checkString
+   * @returns {*}
+   */
+  isHiragana = checkString => checkString.match(/^[\u3040-\u309f]/);
+
+  /**
    * form移動時に全ての入力項目のチェック
    *
    * @returns {boolean}
    */
   isValidated = () => {
     let errorMsg = '';
-    if (this.state.provider.length === 0) {
-      errorMsg += 'メール提供元を選択してください。\n';
-    }
+
     if (!this.isRequiredLength(this.state.accountId, 8)) {
       this.setState({ accountIdState: 'error' });
       errorMsg += 'アカウントIDは8文字以上です。\n';
+    } else {
+      this.setState({ accountIdState: 'success' });
+    }
+
+    if (!/^[a-z][A-Za-z0-9]+$/.test(this.state.accountId)) {
+      this.setState({ accountIdState: 'error' });
+      errorMsg += 'アカウントIDは1文字目はアルファベット、2文字目移行は英数字です。。\n';
     }
 
     if (!this.isRequiredLength(this.state.password, 8)) {
       this.setState({ passwordState: 'error' });
       errorMsg += 'パスワードは8文字以上です。\n';
+    } else {
+      this.setState({ passwordState: 'success' });
+    }
+
+    if (!/^[A-Za-z0-9]+$/.test(this.state.password)) {
+      this.setState({ passwordState: 'error' });
+      errorMsg += 'パスワードは半角英数字のみ使用できます。\n';
+    }
+
+    if (this.state.domain.length > 3) {
+      this.setState({ domainState: 'success' });
+    } else {
+      this.setState({ domainState: 'error' });
+      errorMsg += 'ドメイン名は必須です。\n';
     }
 
     if (this.state.lastName.length === 0) {
@@ -489,9 +573,30 @@ class Steps00 extends React.Component<Props, State> {
       errorMsg += '名は必須です。\n';
     }
 
+    if (this.isHiragana(this.state.lastNameKana)) {
+      this.setState({ lastNameKanaState: 'success' });
+    } else {
+      this.setState({ lastNameKanaState: 'error' });
+      errorMsg += '姓(かな)は、ひらがなのみ使用できます。\n';
+    }
+
+    if (this.isHiragana(this.state.firstNameKana)) {
+      this.setState({ firstNameKanaState: 'success' });
+    } else {
+      this.setState({ firstNameKanaState: 'error' });
+      errorMsg += '名(かな)は、ひらがなのみ使用できます。\n';
+    }
+
     if (!moment(this.state.birthDate, ['YYYY/MM/DD'], true).isValid()) {
       this.setState({ birthDateState: 'error' });
       errorMsg += '生年月日(西暦/月/日)を正しく入力してください。\n';
+    }
+
+    if (validator.validate(this.state.contactMail)) {
+      this.setState({ contactMailState: 'success' });
+    } else {
+      this.setState({ contactMailState: 'error' });
+      errorMsg += '再設定用メールアドレスを正しく入力してください。';
     }
 
     if (!/^[0-9]{7}$/.test(this.state.postalCode)) {
@@ -502,6 +607,7 @@ class Steps00 extends React.Component<Props, State> {
     if (this.state.prefecture.length === 0) {
       errorMsg += '都道府県を選択してください。\n';
     }
+
     if (errorMsg.length > 0) {
       this.setState({
         errorMessage: errorMsg,
@@ -511,20 +617,6 @@ class Steps00 extends React.Component<Props, State> {
     }
 
     return true;
-  };
-
-  /**
-   * provider選択完了チェック 親から呼ばれるメソッド
-   *
-   * @returns {*}
-   */
-  getProvider = () => {
-    if (this.state.provider.length === 0) {
-      console.log('not selecte provider');
-    } else {
-      console.log(`selected provider:${this.state.provider}`);
-      return this.state.provider;
-    }
   };
 
   /**
@@ -547,6 +639,79 @@ class Steps00 extends React.Component<Props, State> {
     this.props.startGetRandomPersonalInfo();
   };
 
+  handleSaveGmailAlias = () => {
+    if (this.isValidated()) {
+      this.setState({ mode: 'gmail-save' });
+      const gmailAlias: AliasMailType = {
+        provider: 'gmail',
+        accountId: this.state.accountId,
+        password: this.state.password,
+        domain: this.state.domain,
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        firstNameKana: this.state.firstNameKana,
+        lastNameKana: this.state.lastNameKana,
+        gender: this.state.gender,
+        birthDate: this.state.birthDate,
+        contactMail: this.state.contactMail,
+        secretQuestion: '',
+        secretAnswer: '',
+        postalCode: this.state.postalCode,
+        prefecture: this.state.prefecture
+      };
+
+      this.props.startSaveAlias(gmailAlias);
+    }
+  };
+
+  handleDeleteGmailAlias = () => {
+    this.setState({
+      sweetAlert: (
+        <SweetAlert
+          warning
+          style={{ display: 'block', marginTop: '-100px' }}
+          title="Gmailの設定を削除しますか?"
+          onConfirm={() => this.proceedDelete()}
+          onCancel={() => this.hideAlert()}
+          confirmBtnCssClass={
+            `${this.props.classes.button} ${this.props.classes.success}`
+          }
+          cancelBtnCssClass={
+            `${this.props.classes.button} ${this.props.classes.danger}`
+          }
+          confirmBtnText="削除"
+          cancelBtnText="キャンセル"
+          showCancel
+        >
+          Gmailの設定が削除されます。作成したエイリアスは、引き続き使用することができます。
+        </SweetAlert>
+      )
+    });
+  };
+
+  proceedDelete = () => {
+    this.setState({ mode: 'gmail-delete' });
+    const gmailAlias: AliasMailType = {
+      provider: 'gmail',
+      accountId: this.state.accountId,
+      password: this.state.password,
+      domain: this.state.domain,
+      firstName: this.state.firstName,
+      lastName: this.state.lastName,
+      firstNameKana: this.state.firstNameKana,
+      lastNameKana: this.state.lastNameKana,
+      gender: this.state.gender,
+      birthDate: this.state.birthDate,
+      contactMail: this.state.contactMail,
+      secretQuestion: '',
+      secretAnswer: '',
+      postalCode: this.state.postalCode,
+      prefecture: this.state.prefecture
+    };
+
+    this.props.startDeleteAlias(gmailAlias);
+  };
+
   /**
    * 既定の個人情報をセット
    */
@@ -554,10 +719,14 @@ class Steps00 extends React.Component<Props, State> {
     if (this.props.personalInfo.lastName.length > 0) {
       this.setState({
         lastName: this.props.personalInfo.lastName,
+        lastNameKana: this.props.personalInfo.lastNameKana,
         firstName: this.props.personalInfo.firstName,
+        firstNameKana: this.props.personalInfo.firstNameKana,
         gender: this.props.personalInfo.gender === 1,
         birthDate: this.props.personalInfo.birthDate,
+        contactMail: '',
         postalCode: this.props.personalInfo.postalCode,
+        prefecture: this.props.personalInfo.prefecture,
         forceUseDefault: true,
         forceUseRandom: false
       });
@@ -567,6 +736,12 @@ class Steps00 extends React.Component<Props, State> {
         openErrorSnackbar: true
       });
     }
+  };
+
+  hideAlert = () => {
+    this.setState({
+      sweetAlert: null
+    });
   };
 
   /**
@@ -605,72 +780,6 @@ class Steps00 extends React.Component<Props, State> {
         <div>
           <GridContainer style={stepContent}>
             <GridContainer container justify="center" style={groupBoxTop}>
-              <GridItem xs={12} sm={3} md={3}>
-                <FormControl fullWidth className={classes.selectFormControl}>
-                  <InputLabel htmlFor="provider-select" className={classes.selectLabel}>
-                    メール提供元
-                  </InputLabel>
-                  <Select
-                    MenuProps={{
-                      className: classes.selectMenu
-                    }}
-                    classes={{
-                      select: classes.select
-                    }}
-                    value={this.state.provider}
-                    onChange={this.handleSelectProvider}
-                    inputProps={{
-                      name: 'providerSelect',
-                      id: 'provider-select'
-                    }}
-                  >
-                    <MenuItem
-                      disabled
-                      classes={{
-                        root: classes.selectMenuItem
-                      }}
-                    >
-                      メール提供元
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="Yahoo"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="Yahoo" src={Yahoo} className={classes.avatar} />
-                        Yahoo!メール
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="Gmail"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="Gmail" src={Gmail} className={classes.avatar} />
-                        Gmail
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="Yandex"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="Yandex" src={Yandex} className={classes.avatar} />
-                        Yandex
-                      </div>
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-              </GridItem>
               <GridItem xs={12} sm={4} md={4}>
                 <CustomInput
                   success={this.state.accountIdState === 'success'}
@@ -690,7 +799,7 @@ class Steps00 extends React.Component<Props, State> {
                             color="primary"
                             onClick={() => this.handleGenerateAccountId()}
                           >
-                            <Refresh />
+                            <Refresh/>
                           </Button>
                         </Tooltip>
                       </InputAdornment>
@@ -720,7 +829,7 @@ class Steps00 extends React.Component<Props, State> {
                             color="primary"
                             onClick={() => this.handleGeneratePassword()}
                           >
-                            <Refresh />
+                            <Refresh/>
                           </Button>
                         </Tooltip>
                       </InputAdornment>
@@ -730,14 +839,26 @@ class Steps00 extends React.Component<Props, State> {
                   }}
                 />
               </GridItem>
+              <GridItem xs={12} sm={4} md={4}>
+                <CustomInput
+                  success={this.state.domainState === 'success'}
+                  error={this.state.domainState === 'error'}
+                  labelText="ドメイン"
+                  id="domain"
+                  formControlProps={{
+                    fullWidth: true
+                  }}
+                  inputProps={{
+                    value: this.state.domain,
+                    onChange: event => this.formFieldChange(event, 'domain')
+                  }}
+                />
+              </GridItem>
             </GridContainer>
           </GridContainer>
           <GridContainer style={stepContent}>
             <GridContainer style={groupBox} container justify="center">
-              <GridContainer>
-                <GridItem xs={12} sm={2} md={2}>
-                  <FormLabel className={classes.labelHorizontal}>姓名</FormLabel>
-                </GridItem>
+              <GridContainer justify="center">
                 <GridItem xs={12} sm={3} md={3}>
                   <CustomInput
                     success={this.state.lastNameState === 'success'}
@@ -768,11 +889,53 @@ class Steps00 extends React.Component<Props, State> {
                     }}
                   />
                 </GridItem>
-                <GridItem xs={12} sm={2} md={2}>
+                <GridItem xs={12} sm={3} md={3}>
                   <Tooltip title="ランダムな個人情報を再取得します。">
                     <Button color="primary" onClick={() => this.handleSetRandomData()}>
-                      <Refresh />
+                      <Refresh/>
                       ランダムデータ再取得
+                    </Button>
+                  </Tooltip>
+                </GridItem>
+              </GridContainer>
+              <GridContainer justify="center">
+                <GridItem xs={12} sm={3} md={3}>
+                  <CustomInput
+                    success={this.state.lastNameKanaState === 'success'}
+                    error={this.state.lastNameKanaState === 'error'}
+                    labelText="せい"
+                    id="lastNameKana"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      onChange: event => this.formFieldChange(event, 'lastNameKana'),
+                      value: this.state.lastNameKana,
+                      type: 'text'
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={3} md={3}>
+                  <CustomInput
+                    success={this.state.firstNameKanaState === 'success'}
+                    error={this.state.firstNameKanaState === 'error'}
+                    labelText="めい"
+                    id="firstNameKana"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      onChange: event => this.formFieldChange(event, 'firstNameKana'),
+                      value: this.state.firstNameKana,
+                      type: 'text'
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={3} md={3}>
+                  <Tooltip title="設定画面で保存した個人情報を読込みます。" placement="bottom">
+                    <Button color="primary" onClick={() => this.handleSetDefaultData()}>
+                      <FolderShared/>
+                      既存のデータを使用
                     </Button>
                   </Tooltip>
                 </GridItem>
@@ -780,6 +943,8 @@ class Steps00 extends React.Component<Props, State> {
               <GridContainer container justify="center">
                 <GridItem xs={12} sm={3} md={3}>
                   <FormLabel className={classes.labelHorizontalSwitchLeft}>男</FormLabel>
+                  <FormControlLabel
+                    control={
                   <Switch
                     checked={this.state.gender}
                     onChange={this.handleChangeGender('gender')}
@@ -790,8 +955,9 @@ class Steps00 extends React.Component<Props, State> {
                       icon: classes.switchIcon,
                       iconChecked: classes.switchIconChecked
                     }}
-                  />
-                  <FormLabel className={classes.labelHorizontalSwitchRight}>女</FormLabel>
+                  />}
+                    label="女"
+                    />
                 </GridItem>
                 <GridItem xs={12} sm={3} md={3}>
                   <CustomInput
@@ -808,17 +974,23 @@ class Steps00 extends React.Component<Props, State> {
                     }}
                   />
                 </GridItem>
-                <GridItem xs={12} sm={2} md={2}>
-                  <Tooltip title="設定画面で保存した個人情報を読込みます。" placement="bottom">
-                    <Button color="primary" onClick={() => this.handleSetDefaultData()}>
-                      <FolderShared />
-                      既存のデータを使用
-                    </Button>
-                  </Tooltip>
+                <GridItem xs={12} sm={4} md={3}>
+                  <CustomInput
+                    success={this.state.contactMailState === 'success'}
+                    error={this.state.contactMailState === 'error'}
+                    labelText="再設定用メールアドレス"
+                    id="contactMail"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      onChange: event => this.formFieldChange(event, 'contactMail'),
+                      value: this.state.contactMail
+                    }}
+                  />
                 </GridItem>
               </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={2} md={2} />
+              <GridContainer justify="center">
                 <GridItem xs={12} sm={3} md={3}>
                   <CustomInput
                     success={this.state.postalCodeState === 'success'}
@@ -866,9 +1038,40 @@ class Steps00 extends React.Component<Props, State> {
                     </Select>
                   </FormControl>
                 </GridItem>
+                <GridItem xs={12} sm={3} md={3}/>
               </GridContainer>
             </GridContainer>
           </GridContainer>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={3} md={5}>
+            <div className={classes.cardContentRight}>
+              <div className={classes.buttonGroup}>
+                <Tooltip title="Googleアカウントの情報を保存します。">
+                <Button color="primary" className={classes.firstButton} onClick={() => this.handleSaveGmailAlias()}>
+                  <SaveAltIcon style={iconStyle} />
+                  保存
+                </Button>
+                </Tooltip>
+                <Tooltip title="Googleアカウント情報を削除します。">
+                <Button color="primary" className={classes.lastButton} onClick={() => this.handleDeleteGmailAlias()}>
+                  <Cancel style={iconStyle} />
+                  削除
+                </Button>
+                </Tooltip>
+              </div>
+            </div>
+            </GridItem>
+            <GridItem xm={12} sm={1} md={1} />
+            <GridItem xm={12} sm={2} md={2}>
+              <Tooltip title="上記の情報でGoogleアカウントを作成します。">
+              <Button color="rose">
+                <ContactMail/>
+                Gmailを作成
+              </Button>
+              </Tooltip>
+            </GridItem>
+          </GridContainer>
+          {this.state.sweetAlert}
           <Snackbar
             color="warning"
             place="bc"
@@ -884,4 +1087,4 @@ class Steps00 extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(formAddStyle)(Steps00);
+export default withStyles(formAddStyle)(GmailBaseSettings);

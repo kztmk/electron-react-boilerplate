@@ -7,13 +7,7 @@ import Loadable from 'react-loading-overlay';
 
 import { withStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
-import Dialog from '@material-ui/core/Dialog/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
-import Close from '@material-ui/icons/Close';
-import DialogContent from '@material-ui/core/DialogContent/DialogContent';
 import Cancel from '@material-ui/icons/Cancel';
-import AlternateEmail from '@material-ui/icons/AlternateEmail';
-import Slide from '@material-ui/core/Slide/Slide';
 
 import type MailAccountType from '../../types/mailAccount';
 import GridContainer from '../../ui/Grid/GridContainer';
@@ -31,8 +25,6 @@ import { SaveAltIcon } from '../../assets/icons';
 
 import { getProviderImage } from './mailAddressList';
 
-import YandexAlias from '../../containers/MailAccountCreate/WizardChildren/subYandex';
-
 export type Props = {
   classes: Object,
   errorMessage: string,
@@ -49,9 +41,7 @@ type State = {
   data: Array<Array<string>>,
   sweetAlert: ?Object,
   isUpdated: boolean,
-  readyToClose: boolean,
-  hasAlias: boolean,
-  openAliasForm: boolean
+  readyToClose: boolean
 };
 
 const providerImageStyle = {
@@ -66,10 +56,6 @@ const iconStyle = {
   height: '18px'
 };
 
-function Transition(props) {
-  return <Slide direction="down" {...props} />;
-}
-
 class FormMailAddressEdit extends Component<Props, State> {
   constructor(props) {
     super(props);
@@ -83,9 +69,7 @@ class FormMailAddressEdit extends Component<Props, State> {
       data: this.convertTableData(this.props.targetAccount.detailInfo),
       sweetAlert: null,
       isUpdated: false,
-      readyToClose: false,
-      disableAlias: true,
-      openAliasForm: false
+      readyToClose: false
     };
   }
 
@@ -97,9 +81,6 @@ class FormMailAddressEdit extends Component<Props, State> {
    * @param nextProps
    */
   componentWillReceiveProps = nextProps => {
-    const pureYandex = /^[a-z0-9_-]+@yandex\.com$/.test(
-      this.props.targetAccount.mailAddress.toLowerCase()
-    );
     // this.state.isUpdatedがtrueの場合はrequestではなく処理完了通知
     if (nextProps.mode === 'update' && this.state.isUpdated) {
       // propsのtargetAccountが持つtagsは文字列のため、「,」で区切り、配列を取得
@@ -140,8 +121,7 @@ class FormMailAddressEdit extends Component<Props, State> {
             password: nextProps.targetAccount.password,
             tags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
-            sweetAlert: null,
-            disableAlias: !pureYandex
+            sweetAlert: null
           });
           break;
         // 更新・成功
@@ -151,7 +131,6 @@ class FormMailAddressEdit extends Component<Props, State> {
             tags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
             readyToClose: true,
-            disableAlias: !pureYandex,
             sweetAlert: (
               <SweetAlert
                 success
@@ -172,7 +151,6 @@ class FormMailAddressEdit extends Component<Props, State> {
             password: nextProps.targetAccount.password,
             tags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
-            disableAlias: !pureYandex,
             sweetAlert: (
               <SweetAlert
                 danger
@@ -198,7 +176,6 @@ class FormMailAddressEdit extends Component<Props, State> {
         tags: tagArray,
         data: this.convertTableData(nextProps.targetAccount.detailInfo),
         sweetAlert: null,
-        disableAlias: !pureYandex
       });
     }
   };
@@ -245,14 +222,6 @@ class FormMailAddressEdit extends Component<Props, State> {
     if (this.state.readyToClose) {
       this.props.closeModal();
     }
-  };
-
-  openAliasForm = () => {
-    this.setState({ openAliasForm: true });
-  };
-
-  aliasFormClose = () => {
-    this.setState({ openAliasForm: false });
   };
 
   render() {
@@ -341,17 +310,6 @@ class FormMailAddressEdit extends Component<Props, State> {
                         />
                       </GridItem>
                       <GridItem xs={12} sm={1} md={1} />
-                      <GridItem xs={12} sm={3} md={2}>
-                        <Button
-                          color="primary"
-                          className={classes.lastButton}
-                          onClick={this.openAliasForm}
-                          disabled={this.state.disableAlias}
-                        >
-                          <AlternateEmail style={iconStyle} />
-                          エイリアスを作成
-                        </Button>
-                      </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
@@ -367,7 +325,6 @@ class FormMailAddressEdit extends Component<Props, State> {
                           }}
                           lessSpace
                           inputProps={{
-                            className: classes.inputNoLabelLessUpperSpace,
                             placeholder: 'Disabled',
                             disabled: true,
                             // eslint-disable-next-line function-paren-newline
@@ -406,7 +363,7 @@ class FormMailAddressEdit extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer justify="center">
                       <GridItem xs={12} sm={9}>
-                        <div className={classes.inputNoLabelLessUpperSpace}>
+                        <div className={classes.labelHorizontalLeft}>
                           <TagsInput
                             value={this.state.tags}
                             tagProps={{ className: 'react-tagsinput-tag info' }}
@@ -431,34 +388,6 @@ class FormMailAddressEdit extends Component<Props, State> {
             {this.state.sweetAlert}
           </GridItem>
         </GridContainer>
-        <Dialog
-          classes={{
-            root: classes.formCenter,
-            paper: `${classes.modal} ${classes.modalSmall}`
-          }}
-          maxWidth={false}
-          open={this.state.openAliasForm}
-          TransitionComponent={Transition}
-        >
-          <DialogTitle id="modal-yandex-alias" disableTypography className={classes.modalHeader}>
-            <Button
-              justIcon
-              className={classes.modalCloseButton}
-              key="close"
-              aria-label="Close"
-              color="transparent"
-              onClick={() => this.aliasFormClose()}
-            >
-              <Close className={classes.modalClose} />
-            </Button>
-          </DialogTitle>
-          <DialogContent
-            id="formGmailSequenceseEdit"
-            className={`${classes.modalBody} ${classes.modalSmallBody}`}
-          >
-            <YandexAlias targetAccount={this.props.targetAccount} closeForm={this.aliasFormClose} />
-          </DialogContent>
-        </Dialog>
       </Loadable>
     );
   }

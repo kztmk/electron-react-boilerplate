@@ -19,7 +19,7 @@ import Close from '@material-ui/icons/Close';
 import AddAlert from '@material-ui/icons/AddAlert';
 import Cancel from '@material-ui/icons/Cancel';
 import Refresh from '@material-ui/icons/Refresh';
-import type { GmailSequenceType } from '../../../types/gmail';
+import type { SequenceType } from '../../../types/sequence';
 
 import GridContainer from '../../../ui/Grid/GridContainer';
 import GridItem from '../../../ui/Grid/GridItem';
@@ -45,15 +45,15 @@ export type Props = {
   isLoading: boolean,
   isFailure: boolean,
   errorMessage: string,
-  gmailSequences: Array<GmailSequenceType>,
-  startCreateGmailSequence: (sequence: GmailSequenceType) => void,
-  startUpdateGmailSequence: (sequence: GmailSequenceType) => void,
-  startDeleteGmailSequence: (sequence: GmailSequenceType) => void,
+  sequences: Array<SequenceType>,
+  startCreateSequence: (sequence: SequenceType) => void,
+  startUpdateSequence: (sequence: SequenceType) => void,
+  startDeleteSequence: (sequence: SequenceType) => void,
   closeForm: () => void
 };
 
 type State = {
-  targetSequence: GmailSequenceType,
+  targetSequence: SequenceType,
   prefix: '',
   prefixState: string,
   sequence: number,
@@ -62,13 +62,13 @@ type State = {
   sequenceDigitState: string,
   suffix: '',
   suffixState: string,
-  sequences: Array<GmailSequenceType>,
+  sequences: Array<SequenceType>,
   sweetAlert: React.Node,
   openErrorSnackbar: boolean,
   mode: string
 };
 
-class GmailSequences extends Component<Props, State> {
+class Sequences extends Component<Props, State> {
   constructor(props) {
     super(props);
 
@@ -82,7 +82,7 @@ class GmailSequences extends Component<Props, State> {
       sequenceDigitState: '',
       suffix: '',
       suffixState: '',
-      sequences: this.props.gmailSequences,
+      sequences: this.props.sequences,
       sweetAlert: null,
       openErrorSnackbar: false,
       mode: ''
@@ -111,20 +111,28 @@ class GmailSequences extends Component<Props, State> {
         sequenceDigitState: '',
         suffix: '',
         suffixState: '',
-        sequences: nextProps.gmailSequences
+        sequences: nextProps.sequences
       });
 
       if (this.state.mode === 'create' || 'update' || 'delete') {
-        const title =
-          this.state.mode === 'create'
-            ? 'を作成しました。'
-            : this.state.mode === 'update' ? 'を更新しました。' : '削除しました。';
+        const { mode } = this.state;
+        let title = '';
+        switch (mode) {
+          case 'create':
+            title ='を作成しました。';
+            break;
+          case 'update':
+            title =  'を更新しました。';
+            break;
+          default:
+            title= '削除しました。';
+        }
         const seq = `
           ${this.state.targetSequence.prefix}
           ${this.zeroPadding(
-            this.state.targetSequence.sequence,
-            this.state.targetSequence.sequenceDigit
-          )}
+          this.state.targetSequence.sequence,
+          this.state.targetSequence.sequenceDigit
+        )}
           ${this.state.targetSequence.suffix}`;
         this.setState({
           sweetAlert: (
@@ -177,7 +185,7 @@ class GmailSequences extends Component<Props, State> {
       };
 
       this.setState({ targetSequence: { ...newSequence }, mode: 'create' });
-      this.props.startCreateGmailSequence(newSequence);
+      this.props.startCreateSequence(newSequence);
     }
   };
 
@@ -191,7 +199,7 @@ class GmailSequences extends Component<Props, State> {
         suffix: this.state.suffix
       };
       this.setState({ targetSequence: { ...updateSequence }, mode: 'update' });
-      this.props.startUpdateGmailSequence(updateSequence);
+      this.props.startUpdateSequence(updateSequence);
     }
   };
 
@@ -235,7 +243,7 @@ class GmailSequences extends Component<Props, State> {
     }
   };
 
-  confirmDeleteSequence = (sequence: GmailSequenceType) => {
+  confirmDeleteSequence = (sequence: SequenceType) => {
     this.setState({
       sweetAlert: (
         <SweetAlert
@@ -269,7 +277,7 @@ class GmailSequences extends Component<Props, State> {
     this.setState({
       sweetAlert: null
     });
-    this.props.startDeleteGmailSequence(sequence);
+    this.props.startDeleteSequence(sequence);
   };
 
   cancelDelete = () => {
@@ -589,4 +597,4 @@ class GmailSequences extends Component<Props, State> {
   }
 }
 
-export default withStyles(tasksStyle)(GmailSequences);
+export default withStyles(tasksStyle)(Sequences);

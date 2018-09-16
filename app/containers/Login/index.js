@@ -8,8 +8,8 @@ import { getProfileRequest } from '../Profile/actions';
 import { getMailAddressRequest } from '../MailAddressList/actions';
 import { getBlogsRequest } from '../BlogList/actions';
 import { getPersonalInfoRequest } from '../PersonalInfo/actions';
-import { getGmailInfoRequest } from '../Gmail/actions';
-import { getGmailSequenceRequest } from '../GmailSequence/actions';
+import { getAliasMailRequest } from '../AliasMailInfo/actions';
+import { getSequenceRequest } from '../Sequence/actions';
 
 const mapStateToProps = (state: State) => ({
   userAuth: state.Login,
@@ -17,8 +17,8 @@ const mapStateToProps = (state: State) => ({
   mailAccountState: state.MailAddressList,
   blogAccountState: state.BlogList,
   personalInfoState: state.PersonalInfo,
-  gmailInfoState: state.Gmail,
-  gmailSequencesState: state.GmailSequence
+  aliasMailInfoState: state.AliasMailInfo,
+  sequencesState: state.Sequence
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
@@ -40,11 +40,11 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   startGetPersonalInfo() {
     dispatch(getPersonalInfoRequest());
   },
-  startGetGmailInfo() {
-    dispatch(getGmailInfoRequest());
+  startGetAliasMailInfo() {
+    dispatch(getAliasMailRequest())
   },
-  startGetGmailSequences() {
-    dispatch(getGmailSequenceRequest());
+  startGetSequence() {
+    dispatch(getSequenceRequest())
   }
 });
 

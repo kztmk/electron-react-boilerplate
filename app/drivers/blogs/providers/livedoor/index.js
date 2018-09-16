@@ -11,7 +11,7 @@ import signout from './lib/signout';
  *
  * @extends BlogProvider
  */
-class BlogProviderFc2 extends BlogProvider {
+class BlogProviderLivedoor extends BlogProvider {
   /**
    * Blog provider to automate.
    *
@@ -112,4 +112,4 @@ class BlogProviderFc2 extends BlogProvider {
   }
 }
 
-export default BlogProviderFc2;
+export default BlogProviderLivedoor;

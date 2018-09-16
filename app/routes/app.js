@@ -7,7 +7,7 @@ import HomePage from '../containers/HomePage';
 import BlogsListPage from '../containers/BlogList';
 import MailAddressListPage from '../containers/MailAddressList';
 import ProfilePage from '../components/ProfilePage';
-import SettingsPage from '../components/SettingsPage';
+import SettingsPage from '../containers/SettingsPage';
 
 const appRoutes = [
   {

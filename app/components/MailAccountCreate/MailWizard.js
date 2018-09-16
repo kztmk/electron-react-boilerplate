@@ -4,18 +4,17 @@
 import React from 'react';
 import cx from 'classnames';
 import SweetAlert from 'react-bootstrap-sweetalert';
-
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 
 import PuppeteerEmail from './puppeteerEmail';
-
 // core components
 import Button from '../../ui/CustomButtons/Button';
 import Table from '../../ui/Table/Table';
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
 import type MailAccountType from '../../types/mailAccount';
+import type SequenceType from '../../types/sequence';
 
 const errorStyles = {
   fontWeight: 'bold',
@@ -46,8 +45,12 @@ type Props = {
   validate: boolean,
   mailAccounts: Array<MailAccountType>,
   isCreating: boolean,
+  isImporting: boolean,
   isCreatingFailure: boolean,
-  errorMessage: string
+  errorMessage: string,
+  sequences: Array<SequenceType>,
+  startUpdateSequence: (SequenceType) => void,
+  startImportAliases: (Array<MailAccountType>) => void
 };
 
 /*
@@ -84,7 +87,8 @@ type State = {
   movingTabStyle: Object,
   accountInfo: Object,
   sweetAlert: Object,
-  targetMailAccount: MailAccountType
+  targetMailAccount: MailAccountType,
+  yandexList: string
 };
 
 class MailWizard extends React.Component<Props, State> {
@@ -97,7 +101,6 @@ class MailWizard extends React.Component<Props, State> {
       nextButton: this.props.steps.length > 1,
       previousButton: false,
       finishButton: this.props.steps.length === 1,
-      width: '50%',
       movingTabStyle: {
         transition: 'transform 0s'
       },
@@ -115,6 +118,7 @@ class MailWizard extends React.Component<Props, State> {
   componentWillReceiveProps = nextProps => {
     // target gmail
     console.log(`--MailWizard--loading:${this.props.isCreating}--next:${nextProps.isCreating}`);
+    console.log(`--MailWizard--importinging:${this.props.isImporting}--next:${nextProps.isImporting}`);
     if (this.state.accountInfo.provider === 'Gmail') {
       // loading status change true to false
       // if (this.props.isCreating && !nextProps.isCreating) {
@@ -136,7 +140,7 @@ class MailWizard extends React.Component<Props, State> {
               onCancel={() => this.hideAlert()}
               confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
             >
-              メールアドレス: {mailAddress} <br />
+              メールアドレス: {mailAddress} <br/>
               の登録が完了しました。
             </SweetAlert>
           )
@@ -153,14 +157,53 @@ class MailWizard extends React.Component<Props, State> {
               onCancel={() => this.closeAlert()}
               confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.warning}
             >
-              メールアドレス: {mailAddress} <br />
-              の登録中に以下のエラーが発生しました。<br />
+              メールアドレス: {mailAddress} <br/>
+              の登録中に以下のエラーが発生しました。<br/>
               エラー: {this.props.errorMessage}
             </SweetAlert>
           )
         });
       }
       // }
+    }
+
+    // Yandex
+    if (this.state.accountInfo.provider === 'Yandex') {
+      if (this.props.isImporting && !nextProps.isImporting) {
+        if (!nextProps.isCreatingFailure) {
+          const list = this.state.yandexList;
+          this.setState({
+            sweetAlert: (
+              <SweetAlert
+                success
+                style={{ display: 'block', marginTop: '-100px', whiteSpace: 'pre' }}
+                title="Yandeｘエイリアス登録完了"
+                onConfirm={() => this.hideAlert()}
+                onCancel={() => this.hideAlert()}
+                confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+              >
+                メールアドレス: {list} <br/>
+                の登録が完了しました。
+              </SweetAlert>
+            )
+          });
+        } else {
+          this.setState({
+            sweetAlert: (
+              <SweetAlert
+                warning
+                style={{ display: 'block', marginTop: '-100px' }}
+                title="エラー発生"
+                onConfirm={() => this.closeAlert()}
+                onCancel={() => this.closeAlert()}
+                confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+              >
+                エラー：{nextProps.errorMessage}
+              </SweetAlert>
+            )
+          });
+        }
+      }
     }
   };
 
@@ -239,12 +282,6 @@ class MailWizard extends React.Component<Props, State> {
         }
       });
       this.refreshAnimation(nextStep);
-      if (nextStep === 3) {
-        this[this.props.steps[3].stepId].getInfo(
-          steps00State.lastNameKana,
-          steps00State.firstNameKana
-        );
-      }
     }
   };
 
@@ -262,7 +299,7 @@ class MailWizard extends React.Component<Props, State> {
     this.refreshAnimation(0);
   };
 
-  getDialogMessge = user => {
+  getDialogMessage = user => {
     let gender = '';
     if (user.gender) {
       gender = '女性';
@@ -335,7 +372,7 @@ class MailWizard extends React.Component<Props, State> {
 
   showFinishDialog = (user, newMailAccount) => {
     console.log(`provider1: ${user.provider}`);
-    const message = this.getDialogMessge(user);
+    const message = this.getDialogMessage(user);
     this.setState({
       sweetAlert: (
         <SweetAlert
@@ -353,15 +390,15 @@ class MailWizard extends React.Component<Props, State> {
           {message}
           <p>
             メールアドレス一覧への登録を最初に行います。
-            <br />
+            <br/>
             途中で
             <span style={errorStyles}>エラー</span>
             が発生した場合には、
-            <br />
+            <br/>
             ・可能な場合は、失敗時点から手動で継続
-            <br />
+            <br/>
             ・ブラウザを閉じて、メール一覧から削除
-            <br />
+            <br/>
             で、対処してください。
           </p>
         </SweetAlert>
@@ -379,13 +416,57 @@ class MailWizard extends React.Component<Props, State> {
           onCancel={() => this.hideAlert()}
           confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
         >
-          作成しようとしたメールアドレス<br />
+          作成しようとしたメールアドレス<br/>
           {email}
-          <br />
+          <br/>
           は、すでにリストに存在しています。
         </SweetAlert>
       )
     });
+  };
+
+  showYandexDialog = importInfo => {
+    let list = '';
+    importInfo.accounts.forEach(account => {
+      list += `${account.mailAddress}\n`;
+    });
+
+    this.setState({
+      yandexList: list,
+      sweetAlert: (
+        <SweetAlert
+          style={{ display: 'block', marginTop: '-280px', width: '620px', whiteSpace: 'pre'}}
+          title="メールアカウント作成開始"
+          onConfirm={() => this.createYandexEmailAliases(importInfo)}
+          onCancel={() => this.hideAlert()}
+          confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.btnSuccess}
+          cancelBtnCssClass={this.props.classes.button + ' ' + this.props.classes.btnDanger}
+          confirmBtnText="作成"
+          cancelBtnText="キャンセル"
+          showCancel
+        >
+          <p>以下のメールアカウントの作成を開始します。 </p>
+          {list}
+        </SweetAlert>
+      )
+    });
+  };
+
+  createYandexEmailAliases = (importInfo) => {
+    // 連番使用時には、sequenceをカウントアップ
+    if (importInfo.sequenceKey.length > 0) {
+      const sequence = this.props.sequences.find(seq => seq.key === importInfo.sequenceKey);
+      console.log('---sequence');
+      console.log(sequence);
+
+      if (sequence) {
+        const sequenceNumber = sequence.sequence;
+        this.props.startUpdateSequence({ ...sequence, sequence: sequenceNumber + 1 });
+      }
+    }
+
+    // importAccounts
+    this.props.startImportAliases(importInfo.accounts);
   };
 
   createEmailAccount = (user, newMailAccount) => {
@@ -405,12 +486,12 @@ class MailWizard extends React.Component<Props, State> {
   };
 
   hideAlert = () => {
-    this.setState({ sweetAlert: '' });
+    this.setState({ sweetAlert: '', yandexList: '' });
     this.cancelButtonClick();
   };
 
   closeAlert = () => {
-    this.setState({ sweetAlert: null });
+    this.setState({ sweetAlert: null, yandexList: '' });
   };
 
   finishButtonClick = () => {
@@ -435,7 +516,7 @@ class MailWizard extends React.Component<Props, State> {
       detailInfo.push(
         `しめい(ふりがな):${this.state.accountInfo.lastNameKana} ${
           this.state.accountInfo.firstNameKana
-        }`
+          }`
       );
       detailInfo.push(`生年月日:${this.state.accountInfo.birthDate}`);
 
@@ -496,22 +577,10 @@ class MailWizard extends React.Component<Props, State> {
           userKey = additionalInfo.sequenceKey;
           break;
         case 'Yandex':
-          user.provider = 'yandex';
-          accId = this.state.accountInfo.accountId;
-          mailAddress = `${accId}@yandex.com`;
-          user.email = mailAddress;
-          detailInfo.push(`姓(ローマ字)${additionalInfo.lastNameHepburn}`);
-          detailInfo.push(`名(ローマ字)${additionalInfo.firstNameHepburn}`);
-          detailInfo.push(`秘密の質問:${additionalInfo.question}`);
-          detailInfo.push(`質問の答え:${additionalInfo.answer}`);
-
-          user.secret = {};
-          user.secret.question = additionalInfo.question;
-          user.secret.answer = additionalInfo.answer;
-          user.firstName = additionalInfo.firstNameHepburn;
-          user.lastName = additionalInfo.lastNameHepburn;
-          console.log();
-          break;
+          console.log('---yandexInfo')
+          console.log(additionalInfo);
+          this.showYandexDialog(additionalInfo);
+          return;
         default:
       }
 
@@ -545,8 +614,7 @@ class MailWizard extends React.Component<Props, State> {
     // eslint-disable-next-line react/no-string-refs
     let moveDistance = this.refs.wizard.children[0].offsetWidth / 2;
 
-    const indexTemp = index === 0 ? 0 : 1;
-    moveDistance *= indexTemp;
+    moveDistance *= index === 0 ? 0 : 1;
     moveDistance -= 8;
 
     const movingTabStyle = {
@@ -634,7 +702,7 @@ class MailWizard extends React.Component<Props, State> {
                 // eslint-disable-next-line react/no-array-index-key
                 <div className={stepContentClasses} key={key}>
                   {/* <prop.stepComponent innerRef={prop.stepId}/> */}
-                  <prop.stepComponent innerRef={node => (this[prop.stepId] = node)} />
+                  <prop.stepComponent innerRef={node => (this[prop.stepId] = node)}/>
                 </div>
               );
             })}
@@ -678,7 +746,7 @@ class MailWizard extends React.Component<Props, State> {
                 </Button>
               ) : null}
             </div>
-            <div className={classes.clearfix} />
+            <div className={classes.clearfix}/>
           </div>
         </Card>
         {this.state.sweetAlert}

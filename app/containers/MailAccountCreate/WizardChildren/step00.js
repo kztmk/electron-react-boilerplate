@@ -11,7 +11,7 @@ const mapStateToProps = (state: State) => ({
   errorMessage: state.PersonalInfo.errorMessage,
   personalInfo: state.PersonalInfo.personalInfo,
   randomPersonalInfo: state.PersonalInfo.randomPersonalInfo,
-  gmailInfo: state.Gmail.gmailInfo
+  aliasInfo: state.AliasMailInfo.aliasMailInfo
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({

@@ -7,8 +7,8 @@ import MailAddressList from './containers/MailAddressList/saga';
 import BlogList from './containers/BlogList/saga';
 import MailAccount from './containers/MailAccount/saga';
 import PersonalInfo from './containers/PersonalInfo/saga';
-import GmailInfo from './containers/Gmail/saga';
-import GmailSequence from './containers/GmailSequence/saga';
+import AliasMailInfo from './containers/AliasMailInfo/saga';
+import Sequence from './containers/Sequence/saga';
 
 function* root(): Generator<*, void, void> {
   yield all([
@@ -19,8 +19,8 @@ function* root(): Generator<*, void, void> {
     fork(BlogList),
     fork(MailAccount),
     fork(PersonalInfo),
-    fork(GmailInfo),
-    fork(GmailSequence)
+    fork(AliasMailInfo),
+    fork(Sequence)
   ]);
 }
 

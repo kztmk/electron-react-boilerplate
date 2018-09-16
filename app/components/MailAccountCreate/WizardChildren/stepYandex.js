@@ -1,156 +1,158 @@
 // @flow
 import React from 'react';
-import jconv from 'jaconv';
+import generatePassword from 'password-generator';
+import moment from 'moment';
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import Tooltip from '@material-ui/core/Tooltip';
+import Slide from '@material-ui/core/Slide';
+import FormLabel from '@material-ui/core/FormLabel/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import Tooltip from '@material-ui/core/Tooltip/Tooltip';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import Checkbox from '@material-ui/core/Checkbox';
 // @material-ui/icons
 import AddAlert from '@material-ui/icons/AddAlert';
-
+import Edit from '@material-ui/icons/Edit';
+import Close from '@material-ui/icons/Close';
+import Clear from '@material-ui/icons/Clear';
+import Check from '@material-ui/icons/Check';
 // core components
+import DialogTitle from '@material-ui/core/DialogTitle/DialogTitle';
+import InputAdornment from '@material-ui/core/InputAdornment/InputAdornment';
 import GridContainer from '../../../ui/Grid/GridContainer';
 import GridItem from '../../../ui/Grid/GridItem';
-import CustomInput from '../../../ui/CustomInput/CustomInput';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
-
 import formAddStyle from '../../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
+import CustomInput from '../../../ui/CustomInput/CustomInput';
 
-const stepContent = {
-  padding: '5px'
-};
+import Button from '../../../ui/CustomButtons/Button';
+
+import Sequences from '../../../containers/MailAccountCreate/WizardChildren/sequences';
+import type MailAccountType from '../../../types/mailAccount';
+import { initialYandexBase } from '../../../containers/AliasMailInfo/reducer';
+import type AliasMailType from '../../../types/aliasMailInfo';
+import type SequenceType from '../../../types/sequence';
+
+// import extendedFormsStyle from '../../../assets/jss/material-dashboard-pro-react/views/accountListPageStyle';
+
+const yandexDomains = [
+  'yandex.ru',
+  'ya.ru',
+  'yandex.ua',
+  'yandex.kz',
+  'yandex.by',
+  'yandex.com.tr',
+  'narod.ru',
+  'yandex.az'
+];
 
 const groupBox = {
   border: '1px solid #333',
   padding: '20px 0 20px 20px',
   borderRadius: '20px',
-  margin: '20px 0 0 0'
+  margin: '20px 0'
 };
 
-const questions = [
-  { question: "Your favorite musician's surname", jp: '好きなミュージシャンの姓', key: 0 },
-  { question: 'The street you grew up on', jp: '子どもの頃済んでいた町名', key: 1 },
-  { question: 'Your favorite actor or actress', jp: '好きな俳優', key: 2 },
-  { question: "Your grandmother's date of birth", jp: '祖母の誕生日', key: 3 },
-  { question: "Your parents' post code", jp: '両親の郵便番号', key: 4 },
-  { question: 'The brand of your first car', jp: '最初に購入した車名', key: 5 },
-  { question: "Your favorite teacher's surname", jp: '好きな先生の姓', key: 6 },
-  { question: 'Your favorite childhood book', jp: '子どもの頃好きだった本', key: 7 },
-  { question: 'Your favorite computer game', jp: '好きなゲーム名', key: 8 }
-];
-
 type Props = {
-  classes: Object
+  classes: Object,
+  aliasInfo: Array<AliasMailType>,
+  sequences: Array<SequenceType>,
+  mailAccounts: Array<MailAccountType>
 };
 
 type State = {
-  firstName: string,
-  firstNameState: string,
-  lastName: string,
-  lastNameState: string,
-  question: string,
-  questionJp: string,
-  questionSelect: string,
-  answer: string,
-  answerState: string,
+  sequenceValue: string,
+  sequenceState: string,
+  sequenceSelect: string,
+  randomAlias: string,
   errorMessage: string,
-  openErrorSnackbar: boolean
+  openErrorSnackbar: boolean,
+  editSequenceModal: boolean,
+  yandexInfo: AliasMailType,
+  checked: Array<number>,
+  aliases: Array<string>
 };
 
+function Transition(props) {
+  return <Slide direction="down" {...props} />;
+}
+
 /**
- * mailAccount自動取得のWizard画面 Yandex
+ * mailAccount自動取得時のYandexメール用追加情報フォーム
  */
 class StepYandex extends React.Component<Props, State> {
   constructor(props) {
     super(props);
 
     this.state = {
-      firstName: '',
-      firstNameState: '',
-      lastName: '',
-      lastNameState: '',
-      question: '',
-      questionJp: '',
-      questionSelect: '',
-      answer: '',
-      answerState: '',
+      sequenceValue: '',
+      sequenceState: '',
+      sequenceSelect: '',
+      randomAlias: '',
       errorMessage: '',
-      openErrorSnackbar: false
+      openErrorSnackbar: false,
+      editSequenceModal: false,
+      checked: [],
+      aliases: [],
+      yandexInfo: initialYandexBase
     };
   }
 
-  /**
-   * 入力欄が変更されたときのメソッド
-   *
-   * @param event
-   * @param fieldName
-   */
-  formFieldChange = (event, fieldName) => {
-    switch (fieldName) {
-      case 'lastName':
-        if (event.target.value.length > 3) {
-          this.setState({
-            lastName: event.target.value,
-            lastNameState: 'success'
-          });
-        } else {
-          this.setState({
-            lastName: event.target.value,
-            lastNameState: 'error'
-          });
-        }
-        break;
-      case 'firstName':
-        if (event.target.value.length > 3) {
-          this.setState({
-            firstName: event.target.value,
-            firstNameState: 'success'
-          });
-        } else {
-          this.setState({
-            firstName: event.target.value,
-            firstNameState: 'error'
-          });
-        }
-        break;
-      case 'answer':
-        {
-          if (event.target.value.length > 3) {
-            this.setState({
-              answer: event.target.value,
-              answerState: 'success'
-            });
-          } else {
-            this.setState({
-              answer: event.target.value,
-              answerState: 'error'
-            });
-          }
-        }
-        break;
-      default:
+  componentDidMount() {
+    this.existsYandexInfo();
+  };
+
+  existsYandexInfo = () => {
+    const yandexInfo = this.props.aliasInfo.find(alias => alias.provider === 'yandex');
+
+    if (yandexInfo && yandexInfo.accountId.length > 0) {
+      this.setState({ yandexInfo });
+    } else {
+      this.setState({
+        yandexInfo: initialYandexBase,
+        errorMessage: 'Yandexの登録を設定画面から行ってください。',
+        openErrorSnackbar: true
+      });
     }
   };
 
   /**
-   * 文字列長確認メソッド
-   *
-   * @param value
-   * @param length
-   * @returns {boolean}
+   * select box用に連番optionを作成
+   * @returns {any[]}
    */
-  isRequiredLength = (value, length) => value.length >= length;
+  generateSequenceValue = () => {
+    const { classes } = this.props;
 
-  getInfo = (lastNameKana: string, firstNameKana: string) => {
-    const firstNameHepburn = jconv.toHebon(firstNameKana);
-    const lastNameHepburn = jconv.toHebon(lastNameKana);
-    this.setState({ firstName: firstNameHepburn, lastName: lastNameHepburn });
+    return this.props.sequences.map(p => (
+      <MenuItem
+        key={p.key}
+        classes={{
+          root: classes.selectMenuItem,
+          selected: classes.selectMenuItemSelected
+        }}
+        value={p.key}
+      >
+        {`${p.prefix}${this.zeroPadding(p.sequence, p.sequenceDigit)}${p.suffix}`}
+      </MenuItem>
+    ));
   };
+
+  /**
+   * 「0(ゼロ)で桁数を埋める」
+   * @param num
+   * @param digits
+   * @returns {string}
+   */
+  zeroPadding = (num, digits) => `00000000000000000000${num}`.slice(-digits);
 
   /**
    * 親フォームから呼ばれてstateを返す
@@ -158,10 +160,42 @@ class StepYandex extends React.Component<Props, State> {
    */
   sendState = () => {
     const plusInfo = [];
-    plusInfo.firstNameHepburn = this.state.firstName;
-    plusInfo.lastNameHepburn = this.state.lastName;
-    plusInfo.question = this.state.question;
-    plusInfo.answer = this.state.answer;
+    // yandex.comを追加
+    const aliases = [];
+    aliases.push(`${this.state.yandexInfo.accountId}+${this.state.sequenceValue}@yandex.com`);
+    this.state.checked.forEach(address => aliases.push(address));
+
+    // 登録アカウント作成(ドメイン名含む)
+    const accounts = [];
+    aliases.forEach(aliasAddress => {
+      const detailInfo = [];
+      detailInfo.push(`氏名(漢字):${this.state.yandexInfo.lastName} ${this.state.yandexInfo.firstName}`);
+      detailInfo.push(`しめい(ふりがな):${this.state.yandexInfo.lastNameKana} ${this.state.yandexInfo.firstNameKana}`);
+      detailInfo.push(`生年月日:${this.state.yandexInfo.birthDate}`);
+      detailInfo.push(`郵便番号:${this.state.yandexInfo.postalCode}`);
+      detailInfo.push(`都道府県:${this.state.yandexInfo.prefecture}`);
+      if (this.state.yandexInfo.gender) {
+        detailInfo.push(`性別:女`);
+      } else {
+        detailInfo.push('性別:男');
+      }
+      const account: MailAccountType = {
+        key: '',
+        accountId: aliasAddress,
+        password: this.state.yandexInfo.password,
+        mailAddress: aliasAddress,
+        provider: 'Yandex',
+        createDate: moment().valueOf(),
+        lastLogin: 0,
+        tags: '',
+        detailInfo
+      }
+
+      accounts.push(account);
+    });
+
+    plusInfo.accounts = accounts;
+    plusInfo.sequenceKey = this.state.sequenceSelect;
 
     return plusInfo;
   };
@@ -171,53 +205,34 @@ class StepYandex extends React.Component<Props, State> {
    */
   initState = () => {
     this.setState({
-      firstName: '',
-      firstNameState: '',
-      lastName: '',
-      lastNameState: '',
-      question: '',
-      questionJp: '',
-      questionSelect: '',
-      answer: '',
-      answerState: '',
+      sequenceValue: '',
+      sequenceState: '',
+      sequenceSelect: '',
+      randomAlias: '',
       errorMessage: '',
-      openErrorSnackbar: false
+      openErrorSnackbar: false,
+      editSequenceModal: false,
+      checked: [],
+      aliases: [],
+      yandexInfo: initialYandexBase
     });
   };
 
   /**
-   * form移動時に全ての入力項目のチェック
-   *
-   * @returns {boolean}
+   * フォーム移動時、又は親から呼ばれるvalidation
    */
   isValidated = () => {
-    let errorMsg = '';
-
-    if (this.state.lastName.length < 1 || !this.isAlfa(this.state.lastName)) {
-      this.setState({ lastNameState: 'error' });
-      errorMsg += '姓は必須で、尚且つ半角英字です。\n';
-    } else {
-      this.setState({ lastNameState: 'success' });
-    }
-
-    if (this.state.firstName.length < 1 || !this.isAlfa(this.state.firstName)) {
-      this.setState({ firstNameState: 'error' });
-      errorMsg += '名は必須で、尚且つ半角英字です。\n';
-    } else {
-      this.setState({ firstNameState: 'success' });
-    }
-
-    if (this.state.questionSelect.length === 0) {
-      errorMsg += '秘密の質問を選択してください。\n';
-    }
-
-    if (this.state.answer.length < 4 || !this.isAlfaNumeric(this.state.answer)) {
-      errorMsg += '質問の答えは必須です。4文字以上、尚且つ半角英数字と「-」「/」「_」です。';
-      this.setState({ answerState: 'error' });
-    }
-    if (errorMsg.length > 0) {
+    if (this.state.yandexInfo.accountId.length === 0) {
       this.setState({
-        errorMessage: errorMsg,
+        errorMessage: '設定画面でYandexの登録を行ってください。\n',
+        openErrorSnackbar: true
+      });
+      return false;
+    }
+
+    if (this.state.sequenceValue.length === 0) {
+      this.setState({
+        errorMessage: 'エイリアスを入力・選択してください。',
         openErrorSnackbar: true
       });
       return false;
@@ -226,140 +241,310 @@ class StepYandex extends React.Component<Props, State> {
     return true;
   };
 
-  isAlfa = value => /^[A-Za-z]+$/.test(value);
-
-  isAlfaNumeric = value => /^[A-Za-z0-9 -/_]+$/.test(value);
-
   /**
-   * フォーム移動時の入力チェックでエラーがあった場合のエラー表示
+   * ランダムエイリアス欄に指定された桁数のランダム英数字を返す
+   * @param event
    */
-  handleErrorSnackbarClose = () => {
-    this.setState({
-      openErrorSnackbar: false
-    });
-  };
-
-  selectQuestions = () => {
-    const { classes } = this.props;
-
-    return questions.map(p => (
-      <MenuItem
-        key={p.key}
-        classes={{
-          root: classes.selectMenuItem,
-          selected: classes.selectMenuItemSelected
-        }}
-        value={p.key}
-      >
-        {p.question}
-      </MenuItem>
-    ));
-  };
-
-  handleSelectQuestion = event => {
-    const question = questions.find(q => q.key === event.target.value);
-
-    if (question) {
+  setRandomAlias = event => {
+    if (!Number.isNaN(parseInt(event.target.value, 10))) {
+      // create random string length
+      const alias = generatePassword(event.target.value, false, /[a-z0-9]/);
       this.setState({
-        question: question.question,
-        questionJp: question.jp,
-        questionSelect: event.target.value
+        sequenceValue: alias,
+        randomAlias: event.target.value,
+        sequenceSelect: ''
+      });
+      this.generateAliases(alias);
+    } else {
+      this.setState({
+        errorMessage: 'ランダムエイリアスを作成する桁数は、半角数字を入力してください。',
+        openErrorSnackbar: true
       });
     }
+  };
+
+  /**
+   * 連番ドロップダウンから選択
+   * @param event
+   */
+  handleSelectSequence = event => {
+    const selectedSequence = this.props.sequences.find(s => s.key === event.target.value);
+    if (selectedSequence) {
+      const seq = `${selectedSequence.prefix}${this.zeroPadding(
+        selectedSequence.sequence,
+        selectedSequence.sequenceDigit
+      )}${selectedSequence.suffix}`;
+      this.setState({ sequenceValue: seq, randomAlias: '', sequenceSelect: event.target.value });
+      this.generateAliases(seq);
+    }
+  };
+
+  /**
+   * エイリアス欄が変更時のチェックと処理
+   * @param event
+   */
+  handleChangeAlias = event => {
+    if (event.target.value.length < 21) {
+      if (/^[a-z0-9]+$/.test(event.target.value)) {
+        this.setState({ sequenceValue: event.target.value, randomAlias: '', sequenceSelect: '' });
+        this.generateAliases(event.target.value);
+      } else {
+        this.setState({ errorMessage: '半角英数字のみ使用できます。', openErrorSnackbar: true });
+      }
+    } else {
+      this.setState({
+        errorMessage: 'エイリアスは20桁以内で指定してください。。',
+        openErrorSnackbar: true
+      });
+    }
+  };
+
+  /**
+   * エイリアスの指定時(無指定の場合はドメイン・エイリアスのみ)、作成されるエイリアス候補を作成
+   * @param sequence
+   */
+  generateAliases = (sequence = '') => {
+    const aliases = [];
+
+    yandexDomains.forEach(domain => {
+      let aliasEmail = `${this.state.yandexInfo.accountId}@${domain}`;
+
+      let checkDup = this.checkDuplicate(aliasEmail);
+      if (checkDup === undefined) {
+        aliases.push(aliasEmail);
+      }
+
+      if (sequence.length > 0) {
+        aliasEmail = `${this.state.yandexInfo.accountId}+${sequence}@${domain}`;
+
+        checkDup = this.checkDuplicate(aliasEmail);
+        if (checkDup === undefined) {
+          aliases.push(aliasEmail);
+        }
+      }
+    });
+
+    this.setState({ aliases });
+  };
+
+  /**
+   * 作成するエイリアスが既にメール登録されていないかをチェック
+   * @param email
+   * @returns {*}
+   */
+  checkDuplicate = email => this.props.mailAccounts.find(account => account.mailAddress === email);
+
+  /**
+   * エラー表示を閉じる
+   */
+  handleErrorSnackbarClose = () => {
+    this.setState({ errorMessage: '', openErrorSnackbar: false });
+  };
+
+  /**
+   * 連番編集フォームを開く
+   */
+  editSequences = () => {
+    this.setState({ editSequenceModal: true });
+  };
+
+  /**
+   * 連番編集フォームを閉じる
+   */
+  editSequencesClose = () => {
+    this.setState({ editSequenceModal: false });
+  };
+
+  /**
+   * ランダムエイリアス欄をクリア
+   */
+  clearRandomAlias = () => {
+    this.setState({ sequenceValue: '', randomAlias: '', sequenceSelect: '', aliases: [] });
+  };
+
+  /**
+   * チェックボックをクリックした際の処理
+   * @param value
+   * @returns {Function}
+   */
+  handleToggle = value => () => {
+    const { checked } = this.state;
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    this.setState({
+      checked: newChecked
+    });
   };
 
   render() {
     const { classes } = this.props;
     return (
-      <div>
-        <GridContainer style={stepContent}>
-          <GridContainer style={groupBox} container justify="center">
-            <GridContainer container justify="center">
-              <GridItem xs={12} sm={3} md={4}>
-                <CustomInput
-                  success={this.state.lastNameState === 'success'}
-                  error={this.state.lastNameState === 'error'}
-                  labelText="姓"
-                  id="lastName"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
+      <GridContainer>
+        <GridContainer style={groupBox}>
+          <GridContainer container justify="center">
+            <GridItem xs={12} sm={2} md={3}>
+              <FormLabel className={classes.labelHorizontal}>
+                {this.state.yandexInfo.accountId} +{' '}
+              </FormLabel>
+            </GridItem>
+            <GridItem xs={12} sm={3} md={3}>
+              <CustomInput
+                success={this.state.sequenceState === 'success'}
+                error={this.state.sequenceState === 'error'}
+                id="sequence"
+                labelText="エイリアス"
+                formControlProps={{
+                  fullWidth: true
+                }}
+                lessSpace
+                inputProps={{
+                  onChange: this.handleChangeAlias,
+                  type: 'text',
+                  value: this.state.sequenceValue
+                }}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={2} md={3}>
+              <FormLabel className={classes.labelHorizontalLeft}>@yandex.com</FormLabel>
+            </GridItem>
+          </GridContainer>
+          <GridContainer justify="center">
+            <GridItem xs={12} sm={3} md={4}>
+              <CustomInput
+                labelText="ランダムエイリアス桁数"
+                id="randomAlias"
+                formControlProps={{
+                  fullWidth: true,
+                  className: classes.formControlAdjTop
+                }}
+                inputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Tooltip title="ランダムエイリアス桁数をクリア">
+                        <Button
+                          justIcon
+                          size="sm"
+                          color="primary"
+                          onClick={() => this.clearRandomAlias()}
+                        >
+                          <Clear/>
+                        </Button>
+                      </Tooltip>
+                    </InputAdornment>
+                  ),
+                  value: this.state.randomAlias,
+                  onChange: event => this.setRandomAlias(event),
+                  type: 'text'
+                }}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={3} md={3}>
+              <FormControl fullWidth className={classes.selectFormControl}>
+                <InputLabel htmlFor="select-seq" className={classes.selectLabel}>
+                  連番選択
+                </InputLabel>
+                <Select
+                  value={this.state.sequenceSelect}
+                  onChange={this.handleSelectSequence}
+                  MenuProps={{ className: classes.selectMenu }}
+                  classes={{ select: classes.select }}
                   inputProps={{
-                    onChange: event => this.formFieldChange(event, 'lastName'),
-                    value: this.state.lastName
+                    name: 'sequenceSelect',
+                    id: 'select-seq'
                   }}
-                />
-              </GridItem>
-              <GridItem xs={12} sm={3} md={4}>
-                <CustomInput
-                  success={this.state.firstNameState === 'success'}
-                  error={this.state.firstNameState === 'error'}
-                  labelText="名"
-                  id="firstname"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                  inputProps={{
-                    onChange: event => this.formFieldChange(event, 'firstName'),
-                    value: this.state.firstName
-                  }}
-                />
-              </GridItem>
-            </GridContainer>
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={3} md={8}>
-                <FormControl fullWidth className={classes.selectFormControl}>
-                  <InputLabel htmlFor="question-select" className={classes.selectLabel}>
-                    秘密の質問を選択
-                  </InputLabel>
-                  <Select
-                    MenuProps={{
-                      className: classes.selectMenu
-                    }}
+                >
+                  <MenuItem
+                    disabled
                     classes={{
-                      select: classes.select
-                    }}
-                    value={this.state.questionSelect}
-                    onChange={this.handleSelectQuestion}
-                    inputProps={{
-                      name: 'questionSelect',
-                      id: 'question-select'
+                      root: classes.selectMenuItem
                     }}
                   >
-                    <MenuItem
-                      disabled
-                      classes={{
-                        root: classes.selectMenuItem
-                      }}
-                    >
-                      秘密の質問を選択
-                    </MenuItem>
-                    {this.selectQuestions()}
-                  </Select>
-                  <FormHelperText>{this.state.questionJp}</FormHelperText>
-                </FormControl>
-              </GridItem>
-            </GridContainer>
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={3} md={8}>
-                <CustomInput
-                  success={this.state.answerState === 'success'}
-                  error={this.state.answerState === 'error'}
-                  labelText="質問の答え"
-                  id="answer"
-                  formControlProps={{
-                    fullWidth: true
-                  }}
-                  inputProps={{
-                    onChange: event => this.formFieldChange(event, 'answer'),
-                    value: this.state.answer,
-                    placeholder: '質問の答え(半角英数字)'
-                  }}
-                />
-              </GridItem>
-            </GridContainer>
+                    連番を選択
+                  </MenuItem>
+                  {this.generateSequenceValue()}
+                </Select>
+              </FormControl>
+            </GridItem>
+            <GridItem xs={12} sm={3} md={4}>
+              <Tooltip title="連番の新規作成、編集、削除を行います。">
+                <Button color="primary" onClick={() => this.editSequences()}>
+                  <Edit/>
+                  連番追加・編集
+                </Button>
+              </Tooltip>
+            </GridItem>
           </GridContainer>
         </GridContainer>
+        <GridContainer style={groupBox}>
+          <GridItem>
+            <Table className={classes.table}>
+              <TableHead>
+                <TableRow>
+                  <TableCell/>
+                  <TableCell>以下のアドレスも同時に登録する。</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {this.state.aliases.map(value => (
+                  <TableRow key={value} className={classes.tableRow}>
+                    <TableCell className={classes.tableCell}>
+                      <Checkbox
+                        checked={this.state.checked.indexOf(value) !== -1}
+                        tabIndex={-1}
+                        onClick={this.handleToggle(value)}
+                        checkedIcon={<Check className={classes.checkedIcon}/>}
+                        icon={<Check className={classes.uncheckedIcon}/>}
+                        classes={{
+                          checked: classes.checked
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>{value}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </GridItem>
+        </GridContainer>
+        <Dialog
+          classes={{
+            root: classes.formCenter,
+            paper: `${classes.modal} ${classes.modalSmall}`
+          }}
+          maxWidth={false}
+          open={this.state.editSequenceModal}
+          TransitionComponent={Transition}
+        >
+          <DialogTitle
+            id="modal-sequence-edit"
+            disableTypography
+            className={classes.modalHeader}
+          >
+            <Button
+              justIcon
+              className={classes.modalCloseButton}
+              key="close"
+              aria-label="Close"
+              color="transparent"
+              onClick={() => this.editSequencesClose()}
+            >
+              <Close className={classes.modalClose}/>
+            </Button>
+          </DialogTitle>
+          <DialogContent
+            id="formSequenceseEdit"
+            className={`${classes.modalBody} ${classes.modalSmallBody}`}
+          >
+            <Sequences closeForm={this.editSequencesClose}/>
+          </DialogContent>
+        </Dialog>
         <Snackbar
           color="warning"
           place="bc"
@@ -369,7 +554,7 @@ class StepYandex extends React.Component<Props, State> {
           close
           message={<span id="login_error">{this.state.errorMessage}</span>}
         />
-      </div>
+      </GridContainer>
     );
   }
 }

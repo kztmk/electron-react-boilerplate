@@ -7,7 +7,7 @@ import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
 
 import Steps00 from '../../containers/MailAccountCreate/WizardChildren/step00';
-import StepYandex from './WizardChildren/stepYandex';
+import StepYandex from '../../containers/MailAccountCreate/WizardChildren/stepYandex';
 import StepYahoo from './WizardChildren/stepYahoo';
 import StepGmail from '../../containers/MailAccountCreate/WizardChildren/stepGmail';
 import type MailAccountType from '../../types/mailAccount';
