@@ -20,8 +20,8 @@ import type { ImapManagerPropertyType, MailRowMessageType } from '../../types/ma
 import { firebaseDbUpdate } from '../../database/db';
 
 let imapClient = null;
-
-const imapProperty: ImapManagerPropertyType = {
+let imapProperty = null;
+const initialImapProperty: ImapManagerPropertyType = {
   mailBoxes: [],
   messages: [],
   selectMailBoxPath: '',
@@ -49,6 +49,18 @@ const getImapConfig = targetAccount => {
     case 'Outlook':
       config = {
         host: 'outlook.office365.com',
+        port: 993
+      };
+      break;
+    case 'Gmail':
+      config = {
+        host: 'imap.gmail.com',
+        port: 993
+      };
+      break;
+    case 'Yandex':
+      config = {
+        host: 'imap.yandex.ru',
         port: 993
       };
       break;
@@ -85,6 +97,7 @@ function* getMailboxes() {
  */
 function* getSelectMailboxInfoAndMessages(path = 'INBOX', startSeq = 0) {
   if (imapClient === null) {
+    imapProperty = null;
     throw new Error({
       errorMessage: '接続が切れています。開き直してください。'
     });
@@ -185,6 +198,7 @@ function generateSeq(startSeq, mailCount): string {
 function* openImapConnection(action) {
   try {
     // 提供元からimap server情報を作成
+    imapProperty = initialImapProperty;
     const config = getImapConfig(action.payload);
     imapClient = new ImapClient(config.host, config.port, {
       auth: {
@@ -199,6 +213,7 @@ function* openImapConnection(action) {
       console.log(`error:${error}`);
       imapClient.close();
       imapClient = null;
+      imapProperty = null;
     };
 
     // imap serverへ接続
@@ -207,20 +222,49 @@ function* openImapConnection(action) {
 
     // 最終ログイン時刻を更新
     const userAuth = yield select(state => state.Login);
-    try {
-      // firebaseをアップデート
-      yield call(firebaseDbUpdate, `/users/${userAuth.userId}/mailAccount/${action.payload.key}`, {
-        lastLogin: Date.now()
-      });
-    } catch (error) {
-      throw new Error({ errorMessage: error.toString() });
+    if (action.payload.key.length > 0) {
+      try {
+        // firebaseをアップデート
+        yield call(
+          firebaseDbUpdate,
+          `/users/${userAuth.userId}/mailAccount/${action.payload.key}`,
+          {
+            lastLogin: Date.now()
+          }
+        );
+      } catch (error) {
+        throw new Error({ errorMessage: error.toString() });
+      }
     }
 
     // account内のメールフォルダを取得
-    const maiBoxesRoot = yield call(getMailboxes);
-    imapProperty.mailBoxes = maiBoxesRoot.children;
+    imapProperty.mailBoxes = [];
+    const mailBoxesRoot = yield call(getMailboxes);
+    if (action.payload.provider === 'Gmail') {
+      console.log(mailBoxesRoot.children);
+      const gmailRoot = mailBoxesRoot.children.find(grandChild => grandChild.name === '[Gmail]');
+      console.log('--[Gmail]');
+      console.log(gmailRoot);
 
-    console.log(maiBoxesRoot.children);
+      if (gmailRoot) {
+        gmailRoot.children.forEach(box => {
+          console.log(`boxName:${box.name}`);
+          imapProperty.mailBoxes.push(box);
+        });
+      } else {
+        throw new Error('[Gmail not found.]');
+      }
+    } else {
+      mailBoxesRoot.children.forEach(box => {
+        if (!box.subscribed) {
+          box.subscribed = false;
+        }
+        imapProperty.mailBoxes.push(box);
+      });
+    }
+    // imapProperty.mailBoxes = mailBoxesRoot.children;
+
+    console.log(imapProperty.mailBoxes);
 
     // inboxのpathを検索
     // eslint-disable-next-line array-callback-return
@@ -234,6 +278,19 @@ function* openImapConnection(action) {
     if (inbox.length > 0) {
       inBoxPath = inbox[0].path;
     }
+
+    if (action.payload.provider === 'Gmail') {
+      const gInbox = imapProperty.mailBoxes.find(box => {
+        console.log('g-specialUse');
+        console.log(box.specialUse);
+        return box.specialUse === '\\All';
+      });
+      console.log('g-inbox');
+      console.log(gInbox);
+      inBoxPath = gInbox.path;
+    }
+
+    console.log(`Inbox --path --${inBoxPath}`);
 
     // Inbox内のメール取得
     if (inBoxPath.length > 0) {
@@ -271,6 +328,7 @@ function* closeImapConnection() {
   if (imapClient !== null) {
     try {
       imapClient.close();
+      imapProperty = null;
       imapClient = null;
 
       yield put(closeConnectionSuccess());

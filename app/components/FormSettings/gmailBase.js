@@ -17,12 +17,15 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import InputLabel from '@material-ui/core/InputLabel/InputLabel';
 import Select from '@material-ui/core/Select/Select';
 import MenuItem from '@material-ui/core/MenuItem/MenuItem';
+
 // @material-ui/icons
 import FolderShared from '@material-ui/icons/FolderShared';
 import AddAlert from '@material-ui/icons/AddAlert';
 import Refresh from '@material-ui/icons/Refresh';
-import Cancel from "@material-ui/icons/Cancel";
+import Cancel from '@material-ui/icons/Cancel';
 import ContactMail from '@material-ui/icons/ContactMail';
+import MarkunreadMailbox from '@material-ui/icons/MarkunreadMailbox';
+
 // core components
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
@@ -36,7 +39,8 @@ import type PersonalInfoType from '../../types/personalInfo';
 import type AliasMailType from '../../types/aliasMailInfo';
 import prefectures from '../Commons/prefecture';
 import { SaveAltIcon } from '../../assets/icons';
-
+import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
+import type MailAccountType from '../../types/mailAccount';
 
 const stepContent = {
   padding: '5px',
@@ -74,8 +78,9 @@ type Props = {
   randomPersonalInfo: PersonalInfoType,
   startGetRandomPersonalInfo: () => void,
   gmailBase: AliasMailType,
-  startSaveAlias: (AliasMailType) => void,
-  startDeleteAlias: (AliasMailType) => void
+  startSaveAlias: AliasMailType => void,
+  startDeleteAlias: AliasMailType => void,
+  openImapMail: MailAccountType => void
 };
 
 type State = {
@@ -179,9 +184,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
                 title="登録完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={
-                  `${this.props.classes.button} ${this.props.classes.success}`
-                }
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 Gmailの設定を保存しました。
               </SweetAlert>
@@ -196,9 +199,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
                 title="削除完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={
-                  `${this.props.classes.button} ${this.props.classes.success}`
-                }
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 Gmailの設定を削除しました。
               </SweetAlert>
@@ -216,9 +217,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
               title="エラー発生"
               onConfirm={() => this.hideAlert()}
               onCancel={() => this.hideAlert()}
-              confirmBtnCssClass={
-                `${this.props.classes.button} ${this.props.classes.success}`
-              }
+              confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
             >
               以下のエラーが発生しました:{nextProps.errorMessageAlias}
             </SweetAlert>
@@ -378,7 +377,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
   formFieldChange = (event, fieldName) => {
     switch (fieldName) {
       case 'accountId':
-        if (this.isRequiredLength(event.target.value, 8)) {
+        if (this.isRequiredLength(event.target.value, 4)) {
           this.setState({
             accountId: event.target.value,
             accountIdState: 'success'
@@ -488,20 +487,21 @@ class GmailBaseSettings extends React.Component<Props, State> {
           });
         }
         break;
-      case 'postalCode': {
-        const myRegx = /^[0-9]{7}$/;
-        if (myRegx.test(event.target.value)) {
-          this.setState({
-            postalCode: event.target.value,
-            postalCodeState: 'success'
-          });
-        } else {
-          this.setState({
-            postalCode: event.target.value,
-            postalCodeState: 'error'
-          });
+      case 'postalCode':
+        {
+          const myRegx = /^[0-9]{7}$/;
+          if (myRegx.test(event.target.value)) {
+            this.setState({
+              postalCode: event.target.value,
+              postalCodeState: 'success'
+            });
+          } else {
+            this.setState({
+              postalCode: event.target.value,
+              postalCodeState: 'error'
+            });
+          }
         }
-      }
         break;
       default:
     }
@@ -532,9 +532,9 @@ class GmailBaseSettings extends React.Component<Props, State> {
   isValidated = () => {
     let errorMsg = '';
 
-    if (!this.isRequiredLength(this.state.accountId, 8)) {
+    if (!this.isRequiredLength(this.state.accountId, 4)) {
       this.setState({ accountIdState: 'error' });
-      errorMsg += 'アカウントIDは8文字以上です。\n';
+      errorMsg += 'アカウントIDは4文字以上です。\n';
     } else {
       this.setState({ accountIdState: 'success' });
     }
@@ -673,12 +673,8 @@ class GmailBaseSettings extends React.Component<Props, State> {
           title="Gmailの設定を削除しますか?"
           onConfirm={() => this.proceedDelete()}
           onCancel={() => this.hideAlert()}
-          confirmBtnCssClass={
-            `${this.props.classes.button} ${this.props.classes.success}`
-          }
-          cancelBtnCssClass={
-            `${this.props.classes.button} ${this.props.classes.danger}`
-          }
+          confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+          cancelBtnCssClass={`${this.props.classes.button} ${this.props.classes.danger}`}
           confirmBtnText="削除"
           cancelBtnText="キャンセル"
           showCancel
@@ -773,6 +769,49 @@ class GmailBaseSettings extends React.Component<Props, State> {
     this.setState({ prefecture: event.target.value });
   };
 
+  handleCreateGoogleAccount = () => {
+    if (this.isValidated()) {
+      // this.handleSaveGmailAlias();
+      const user = {};
+      user.provider = 'gmail';
+      user.username = this.state.accountId;
+      user.password = this.state.password;
+      user.firstName = this.state.firstName;
+      user.lastName = this.state.lastName;
+      user.contactMail = this.state.contactMail;
+      user.birthday = {};
+      const birthdays = this.state.birthDate.split('/');
+      if (birthdays.length === 3) {
+        user.birthday.year = birthdays[0];
+        const numOfMonth = parseInt(birthdays[1], 10);
+        user.birthday.month = numOfMonth.toString();
+        const numOfDays = parseInt(birthdays[2], 10);
+        user.birthday.day = numOfDays.toString();
+      }
+      console.log('---g user==');
+      console.log(user);
+
+      const puppeteerEmail = new PuppeteerEmail(user);
+      puppeteerEmail.signup(user);
+    }
+  };
+
+  handleOpenImap = () => {
+    const mailAccount: MailAccountType = {
+      key: '',
+      accountId: `${this.state.accountId}@${this.state.domain}`,
+      password: this.state.password,
+      mailAddress: `${this.state.accountId}@${this.state.domain}`,
+      provider: 'Gmail',
+      createDate: 0,
+      lastLogin: 0,
+      tags: '',
+      detailInfo: []
+    };
+
+    this.props.openImapMail(mailAccount);
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -799,7 +838,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
                             color="primary"
                             onClick={() => this.handleGenerateAccountId()}
                           >
-                            <Refresh/>
+                            <Refresh />
                           </Button>
                         </Tooltip>
                       </InputAdornment>
@@ -829,7 +868,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
                             color="primary"
                             onClick={() => this.handleGeneratePassword()}
                           >
-                            <Refresh/>
+                            <Refresh />
                           </Button>
                         </Tooltip>
                       </InputAdornment>
@@ -892,7 +931,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
                 <GridItem xs={12} sm={3} md={3}>
                   <Tooltip title="ランダムな個人情報を再取得します。">
                     <Button color="primary" onClick={() => this.handleSetRandomData()}>
-                      <Refresh/>
+                      <Refresh />
                       ランダムデータ再取得
                     </Button>
                   </Tooltip>
@@ -934,7 +973,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
                 <GridItem xs={12} sm={3} md={3}>
                   <Tooltip title="設定画面で保存した個人情報を読込みます。" placement="bottom">
                     <Button color="primary" onClick={() => this.handleSetDefaultData()}>
-                      <FolderShared/>
+                      <FolderShared />
                       既存のデータを使用
                     </Button>
                   </Tooltip>
@@ -945,19 +984,20 @@ class GmailBaseSettings extends React.Component<Props, State> {
                   <FormLabel className={classes.labelHorizontalSwitchLeft}>男</FormLabel>
                   <FormControlLabel
                     control={
-                  <Switch
-                    checked={this.state.gender}
-                    onChange={this.handleChangeGender('gender')}
-                    value="gender"
-                    classes={{
-                      checked: classes.switchChecked,
-                      bar: classes.switchBarChecked,
-                      icon: classes.switchIcon,
-                      iconChecked: classes.switchIconChecked
-                    }}
-                  />}
+                      <Switch
+                        checked={this.state.gender}
+                        onChange={this.handleChangeGender('gender')}
+                        value="gender"
+                        classes={{
+                          checked: classes.switchChecked,
+                          bar: classes.switchBarChecked,
+                          icon: classes.switchIcon,
+                          iconChecked: classes.switchIconChecked
+                        }}
+                      />
+                    }
                     label="女"
-                    />
+                  />
                 </GridItem>
                 <GridItem xs={12} sm={3} md={3}>
                   <CustomInput
@@ -1038,36 +1078,53 @@ class GmailBaseSettings extends React.Component<Props, State> {
                     </Select>
                   </FormControl>
                 </GridItem>
-                <GridItem xs={12} sm={3} md={3}/>
+                <GridItem xs={12} sm={3} md={3} />
               </GridContainer>
             </GridContainer>
           </GridContainer>
           <GridContainer justify="center">
             <GridItem xs={12} sm={3} md={5}>
-            <div className={classes.cardContentRight}>
-              <div className={classes.buttonGroup}>
-                <Tooltip title="Googleアカウントの情報を保存します。">
-                <Button color="primary" className={classes.firstButton} onClick={() => this.handleSaveGmailAlias()}>
-                  <SaveAltIcon style={iconStyle} />
-                  保存
-                </Button>
-                </Tooltip>
-                <Tooltip title="Googleアカウント情報を削除します。">
-                <Button color="primary" className={classes.lastButton} onClick={() => this.handleDeleteGmailAlias()}>
-                  <Cancel style={iconStyle} />
-                  削除
-                </Button>
-                </Tooltip>
+              <div className={classes.cardContentRight}>
+                <div className={classes.buttonGroup}>
+                  <Tooltip title="Googleアカウントの情報を保存します。">
+                    <Button
+                      color="primary"
+                      className={classes.firstButton}
+                      onClick={() => this.handleSaveGmailAlias()}
+                    >
+                      <SaveAltIcon style={iconStyle} />
+                      保存
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Googleアカウント情報を削除します。">
+                    <Button
+                      color="primary"
+                      className={classes.lastButton}
+                      onClick={() => this.handleDeleteGmailAlias()}
+                    >
+                      <Cancel style={iconStyle} />
+                      削除
+                    </Button>
+                  </Tooltip>
+                </div>
               </div>
-            </div>
+            </GridItem>
+            <GridItem xm={12} sm={1} md={1} />
+            <GridItem xm={12} sm={2} md={2}>
+              <Tooltip title="Gmailをimapで開けるかテストします。">
+                <Button color="info" onClick={() => this.handleOpenImap()}>
+                  <MarkunreadMailbox />
+                  Gmailを開く
+                </Button>
+              </Tooltip>
             </GridItem>
             <GridItem xm={12} sm={1} md={1} />
             <GridItem xm={12} sm={2} md={2}>
               <Tooltip title="上記の情報でGoogleアカウントを作成します。">
-              <Button color="rose">
-                <ContactMail/>
-                Gmailを作成
-              </Button>
+                <Button color="rose" onClick={() => this.handleCreateGoogleAccount()}>
+                  <ContactMail />
+                  Gmailを作成
+                </Button>
               </Tooltip>
             </GridItem>
           </GridContainer>

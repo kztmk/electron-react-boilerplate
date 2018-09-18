@@ -278,6 +278,8 @@ const signup = async (blogInfo, opts) => {
         text:'ブログタイトル入力開始' 
       }).show();
     `);
+
+      await page.$eval('#blogTitle', (el, value) => (el.value = value), '');
       await page.type('#blogTitle', blogInfo.title);
       await page.evaluate(`
     new Noty({

@@ -2,7 +2,7 @@
 import EmailProvider from '../provider';
 import EmailSession from '../../session';
 
-// import signup from './lib/signup';
+import signup from './lib/signup';
 import signin from './lib/signin';
 // import signout from './lib/signout';
 // import sendEmail from './lib/send-email';
@@ -48,35 +48,28 @@ class EmailProviderGmail extends EmailProvider {
    *
    * @return {Promise<EmailSession}
    */
-
-  /*
   async signup(user, opts) {
     if (!user) throw new Error('登録用個人情報は必須です。');
     if (!user.username) throw new Error('ログインIDは必須です。');
     if (!user.password) throw new Error('パスワードは必須です。');
     if (!user.firstName) throw new Error('姓は必須です。');
     if (!user.lastName) throw new Error('名は必須です。');
-    if (!user.postalCode) throw new Error('郵便番号は必須です。');
     if (!user.birthday) throw new Error('生年月日は必須です。');
     if (!user.birthday.year) throw new Error('生年月日の年がありません。');
     if (!user.birthday.month) throw new Error('生年月日の月がありません。');
     if (!user.birthday.day) throw new Error('生年月日の日がありません。');
-    if (!user.secret) throw new Error('秘密の質問・答えは必須です。');
-    if (!user.secret.question) throw new Error('秘密の質問は必須です。');
-    if (!user.secret.answer) throw new Error('秘密の答えは必須です。');
 
     await signup(user, opts);
 
     return new EmailSession({
       user: {
         username: user.username,
-        email: `${user.username}@yahoo.co.jp`
+        email: `${user.username}@gmail.com`
       },
       browser: opts.browser,
       provider: this
     });
   }
-  */
 
   /**
    * Signs into existing email account.

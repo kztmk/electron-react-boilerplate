@@ -279,6 +279,8 @@ const signup = async (user, opts) => {
       }).show();
     `);
 
+      await page.focus('#captcha');
+      await page.$eval('#captcha', (el, value) => (el.value = value), '');
       await page.type('#captcha', captchaValue.value, { delay: 100 });
       log.info(`input:画像認証へ-${captchaValue.value}-を入力`);
       await page.evaluate(`

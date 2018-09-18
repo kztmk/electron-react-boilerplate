@@ -18,11 +18,11 @@ class BlogSession {
     if (!opts.provider) throw new Error('メール提供元は必須です。');
 
     this.sessionProperty = opts;
-    this.isAuthenticated = true;
+    this._isAuthenticated = true;
   }
 
   set isAuthenticated(status) {
-    this.isAuthenticated = status;
+    this._isAuthenticated = status;
   }
 
   /**
@@ -68,7 +68,7 @@ class BlogSession {
    * @member {boolean}
    */
   get isAuthenticated() {
-    return this.isAuthenticated;
+    return this._isAuthenticated;
   }
 
   /**

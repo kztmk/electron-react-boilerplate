@@ -87,8 +87,9 @@ class BlogProviderLivedoor extends BlogProvider {
     await signin(blogInfo, opts);
 
     return new BlogSession({
-      user: {
-        username: blogInfo.accountId,
+      blogInfo: {
+        accountId: blogInfo.accountId,
+        password: blogInfo.password,
         email: blogInfo.mailAddress
       },
       browser: opts.browser,

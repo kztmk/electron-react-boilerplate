@@ -245,11 +245,11 @@ class BlogList extends React.Component<Props, State> {
                     groupTags: restoredTags,
                     createDate: moment(account.createDate).valueOf()
                   };
-                  // if (target.provider !== 'fc2' || target.provider !== 'livedoor') {
-                  //  alert('fc2以外はテスト中です。');
-                  // } else {
-                  this.loginBlog(target);
-                  // }
+                  if (target.provider === 'fc2' || target.provider === 'livedoor') {
+                    this.loginBlog(target);
+                  } else {
+                    alert('fc2、Livedoor以外はテスト中です。');
+                  }
                 } else {
                   alert('ログイン対象のブログアカウントの取得に失敗しました。');
                 }

@@ -18,9 +18,6 @@ import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
 import AddAlert from '@material-ui/icons/AddAlert';
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
-import Card from '../../ui/Card/Card';
-import CardBody from '../../ui/Card/CardBody';
-import CardFooter from '../../ui/Card/CardFooter';
 import CustomInput from '../../ui/CustomInput/CustomInput';
 import Button from '../../ui/CustomButtons/Button';
 import Clearfix from '../../ui/Clearfix/Clearfix';
@@ -393,7 +390,7 @@ class PreferencesPage extends React.Component<Props, State> {
                     <Checkbox
                       checked={this.state.useDefault}
                       tabIndex={-1}
-                      onClick={() => this.handleCheckBoxClicked()}
+                      onChange={this.handleCheckBoxClicked}
                       checkedIcon={<Check className={classes.checkedIcon} />}
                       icon={<Check className={classes.uncheckedIcon} />}
                       classes={{

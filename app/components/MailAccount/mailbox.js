@@ -20,10 +20,7 @@ import FolderIcon from '@material-ui/icons/Folder';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 import type MailAccountType from '../../types/mailAccount';
-import type {
-  MailBoxesType,
-  MailRowMessageType
-} from '../../types/mailMessageType';
+import type { MailBoxesType, MailRowMessageType } from '../../types/mailMessageType';
 
 import baseMailBoxes from './defaultMailboxes';
 import {
@@ -161,6 +158,14 @@ class MailBox extends Component<Props, State> {
   componentWillReceiveProps = nextProps => {
     // select mailbox pathが更新(別なメールフォルダを選択)
     if (this.state.imapSelectMailBoxPath !== nextProps.imapSelectMailBoxPath) {
+      const selectedBox = nextProps.imapMailBoxes.find(
+        box => box.path === nextProps.imapSelectMailBoxPath
+      );
+      if (selectedBox) {
+        console.log(`selectedBox:${selectedBox.name}`);
+      } else {
+        console.log(`selectBox: undefined`);
+      }
       const defMailBox = this.generateMailBoxList(
         nextProps.imapMailBoxes,
         nextProps.imapSelectMailBoxPath,
@@ -193,6 +198,14 @@ class MailBox extends Component<Props, State> {
       this.state.imapSelectMailBoxPath === nextProps.imapSelectMailBoxPath &&
       this.state.seqFrom !== nextProps.imapSeqFrom
     ) {
+      const selectedBox = nextProps.imapMailBoxes.find(
+        box => box.path === nextProps.imapSelectMailBoxPath
+      );
+      if (selectedBox) {
+        console.log(`selectedBox:${selectedBox.name}`);
+      } else {
+        console.log(`selectBox: undefined`);
+      }
       const defMailBox = this.generateMailBoxList(
         nextProps.imapMailBoxes,
         nextProps.imapSelectMailBoxPath,
@@ -218,6 +231,14 @@ class MailBox extends Component<Props, State> {
       this.state.mailCount !== nextProps.imapMailCount ||
       this.state.unseenCount !== nextProps.imapMailUnseenCount
     ) {
+      const selectedBox = nextProps.imapMailBoxes.find(
+        box => box.path === nextProps.imapSelectMailBoxPath
+      );
+      if (selectedBox) {
+        console.log(`selectedBox:${selectedBox.name}`);
+      } else {
+        console.log(`selectBox: undefined`);
+      }
       const defMailBox = this.generateMailBoxList(
         nextProps.imapMailBoxes,
         nextProps.imapSelectMailBoxPath,
@@ -254,11 +275,7 @@ class MailBox extends Component<Props, State> {
       if (selectedPath === myBox.path) {
         if (unseenCount > 0) {
           return (
-            <Badge
-              className={classes.padding}
-              color="secondary"
-              badgeContent={unseenCount}
-            >
+            <Badge className={classes.padding} color="secondary" badgeContent={unseenCount}>
               ({mailCount})
             </Badge>
           );
@@ -320,23 +337,10 @@ class MailBox extends Component<Props, State> {
                   <ListItemIcon style={itemIconStyles}>
                     <FolderIcon />
                   </ListItemIcon>
-                  <ListItemText
-                    primary={childBox.name}
-                    style={listItemTextStyle}
-                  />
-                  {this.unseenCountBadge(
-                    childBox,
-                    selectedPath,
-                    mailCount,
-                    unseenCount
-                  )}
+                  <ListItemText primary={childBox.name} style={listItemTextStyle} />
+                  {this.unseenCountBadge(childBox, selectedPath, mailCount, unseenCount)}
                 </ListItem>
-                {this.renderChild(
-                  childBox,
-                  selectedPath,
-                  mailCount,
-                  unseenCount
-                )}
+                {this.renderChild(childBox, selectedPath, mailCount, unseenCount)}
               </List>
             );
           }
@@ -352,12 +356,7 @@ class MailBox extends Component<Props, State> {
                 <FolderIcon />
               </ListItemIcon>
               <ListItemText primary={childBox.name} style={listItemTextStyle} />
-              {this.unseenCountBadge(
-                childBox,
-                selectedPath,
-                mailCount,
-                unseenCount
-              )}
+              {this.unseenCountBadge(childBox, selectedPath, mailCount, unseenCount)}
             </ListItem>
           );
         });
@@ -379,18 +378,25 @@ class MailBox extends Component<Props, State> {
     console.log('start other');
     if (boxes.length > 0) {
       // const otherboxes = [];
-
+      let otherboxes = [];
       // eslint-disable-next-line array-callback-return
-      const otherboxes = boxes.filter(box => {
+      otherboxes = boxes.filter(box => {
         if (
-          box.name !== 'Bulk Mail' &&
-          box.name !== 'Draft' &&
-          box.name !== 'Inbox' &&
-          box.name !== 'Sent' &&
-          box.name !== 'Trash' &&
-          box.name !== 'Deleted' &&
-          box.name !== 'Drafts' &&
-          box.name !== 'Junk'
+          box.name.toLowerCase() !== 'bulk mail' &&
+          box.name.toLowerCase() !== 'draft' &&
+          box.name.toLowerCase() !== 'inbox' &&
+          box.name.toLowerCase() !== 'sent' &&
+          box.name.toLowerCase() !== 'trash' &&
+          box.name.toLowerCase() !== 'deleted' &&
+          box.name.toLowerCase() !== 'drafts' &&
+          box.name.toLowerCase() !== 'junk' &&
+          box.name.toLowerCase() !== 'spam' &&
+          box.name.toLowerCase() !== 'all' &&
+          box.name !== 'すべてのメール' &&
+          box.name !== 'ゴミ箱' &&
+          box.name !== '下書き' &&
+          box.name !== '迷惑メール' &&
+          box.name !== '送信済みメール'
         ) {
           return box;
         }
@@ -446,20 +452,27 @@ class MailBox extends Component<Props, State> {
         switch (boxName) {
           case 'bulk mail':
           case 'junk':
+          case 'spam':
+          case '迷惑メール':
             bulkMail = box;
             break;
           case 'draft':
           case 'drafts':
+          case '下書き':
             draft = box;
             break;
           case 'inbox':
+          case 'all':
+          case 'すべてのメール':
             inbox = box;
             break;
           case 'sent':
+          case '送信済みメール':
             sent = box;
             break;
           case 'trash':
           case 'deleted':
+          case 'ゴミ箱':
             trash = box;
             break;
           default:
@@ -475,9 +488,7 @@ class MailBox extends Component<Props, State> {
             }}
             // className={this.isSelected(inbox, selectedPath) ? classes.selectedList : ''}
             className={
-              inbox.path.toLowerCase() === selectedPath.toLowerCase()
-                ? classes.selectedList
-                : ''
+              inbox.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
             style={listItemStyles}
           >
@@ -496,9 +507,7 @@ class MailBox extends Component<Props, State> {
               this.handleSelectBox(sent.path);
             }}
             className={
-              sent.path.toLowerCase() === selectedPath.toLowerCase()
-                ? classes.selectedList
-                : ''
+              sent.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
             style={listItemStyles}
           >
@@ -514,9 +523,7 @@ class MailBox extends Component<Props, State> {
               this.handleSelectBox(draft.path);
             }}
             className={
-              draft.path.toLowerCase() === selectedPath.toLowerCase()
-                ? classes.selectedList
-                : ''
+              draft.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
             style={listItemStyles}
           >
@@ -532,9 +539,7 @@ class MailBox extends Component<Props, State> {
               this.handleSelectBox(trash.path);
             }}
             className={
-              trash.path.toLowerCase() === selectedPath.toLowerCase()
-                ? classes.selectedList
-                : ''
+              trash.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
             style={listItemStyles}
           >
@@ -550,9 +555,7 @@ class MailBox extends Component<Props, State> {
               this.handleSelectBox(bulkMail.path);
             }}
             className={
-              bulkMail.path.toLowerCase() === selectedPath.toLowerCase()
-                ? classes.selectedList
-                : ''
+              bulkMail.path.toLowerCase() === selectedPath.toLowerCase() ? classes.selectedList : ''
             }
             style={listItemStyles}
           >
@@ -560,12 +563,7 @@ class MailBox extends Component<Props, State> {
               <ReportIcon />
             </ListItemIcon>
             <ListItemText primary="迷惑メール" style={listItemTextStyle} />
-            {this.unseenCountBadge(
-              bulkMail,
-              selectedPath,
-              mailCount,
-              unseenCount
-            )}
+            {this.unseenCountBadge(bulkMail, selectedPath, mailCount, unseenCount)}
           </ListItem>
         </div>
       );

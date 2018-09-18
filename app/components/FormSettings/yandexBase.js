@@ -6,6 +6,7 @@ import moment from 'moment';
 import generatePassword from 'password-generator';
 import validator from 'email-validator';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import jaconv from 'jaconv';
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -22,8 +23,9 @@ import FormHelperText from '@material-ui/core/FormHelperText/FormHelperText';
 import FolderShared from '@material-ui/icons/FolderShared';
 import AddAlert from '@material-ui/icons/AddAlert';
 import Refresh from '@material-ui/icons/Refresh';
-import Cancel from "@material-ui/icons/Cancel";
+import Cancel from '@material-ui/icons/Cancel';
 import ContactMail from '@material-ui/icons/ContactMail';
+import MarkunreadMailbox from '@material-ui/icons/MarkunreadMailbox';
 // core components
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
@@ -34,10 +36,11 @@ import Snackbar from '../../ui/Snackbar/Snackbar';
 import formAddStyle from '../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
 import type PersonalInfoType from '../../types/personalInfo';
 
-
 import type AliasMailType from '../../types/aliasMailInfo';
 import prefectures from '../Commons/prefecture';
 import { SaveAltIcon } from '../../assets/icons';
+import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
+import type MailAccountType from '../../types/mailAccount';
 
 const stepContent = {
   padding: '5px',
@@ -45,13 +48,13 @@ const stepContent = {
 };
 
 const questions = [
-  { question: 'Your favorite musician\'s surname', jp: '好きなミュージシャンの姓', key: '0' },
+  { question: "Your favorite musician's surname", jp: '好きなミュージシャンの姓', key: '0' },
   { question: 'The street you grew up on', jp: '子どもの頃済んでいた町名', key: '1' },
   { question: 'Your favorite actor or actress', jp: '好きな俳優', key: '2' },
-  { question: 'Your grandmother\'s date of birth', jp: '祖母の誕生日', key: '3' },
-  { question: 'Your parents\' post code', jp: '両親の郵便番号', key: '4' },
+  { question: "Your grandmother's date of birth", jp: '祖母の誕生日', key: '3' },
+  { question: "Your parents' post code", jp: '両親の郵便番号', key: '4' },
   { question: 'The brand of your first car', jp: '最初に購入した車名', key: '5' },
-  { question: 'Your favorite teacher\'s surname', jp: '好きな先生の姓', key: '6' },
+  { question: "Your favorite teacher's surname", jp: '好きな先生の姓', key: '6' },
   { question: 'Your favorite childhood book', jp: '子どもの頃好きだった本', key: '7' },
   { question: 'Your favorite computer game', jp: '好きなゲーム名', key: '8' }
 ];
@@ -87,8 +90,9 @@ type Props = {
   randomPersonalInfo: PersonalInfoType,
   startGetRandomPersonalInfo: () => void,
   yandexBase: AliasMailType,
-  startSaveAlias: (AliasMailType) => void,
-  startDeleteAlias: (AliasMailType) => void
+  startSaveAlias: AliasMailType => void,
+  startDeleteAlias: AliasMailType => void,
+  openImapMail: MailAccountType => void
 };
 
 type State = {
@@ -208,9 +212,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
                 title="登録完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={
-                  `${this.props.classes.button} ${this.props.classes.success}`
-                }
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 Yandexの設定を保存しました。
               </SweetAlert>
@@ -225,9 +227,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
                 title="削除完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={
-                  `${this.props.classes.button} ${this.props.classes.success}`
-                }
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 Yandexの設定を削除しました。
               </SweetAlert>
@@ -244,9 +244,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
               title="エラー発生"
               onConfirm={() => this.hideAlert()}
               onCancel={() => this.hideAlert()}
-              confirmBtnCssClass={
-                `${this.props.classes.button} ${this.props.classes.success}`
-              }
+              confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
             >
               以下のエラーが発生しました:{nextProps.errorMessageAlias}
             </SweetAlert>
@@ -524,20 +522,21 @@ class YandexBaseSettings extends React.Component<Props, State> {
           });
         }
         break;
-      case 'postalCode': {
-        const myRegx = /^[0-9]{7}$/;
-        if (myRegx.test(event.target.value)) {
-          this.setState({
-            postalCode: event.target.value,
-            postalCodeState: 'success'
-          });
-        } else {
-          this.setState({
-            postalCode: event.target.value,
-            postalCodeState: 'error'
-          });
+      case 'postalCode':
+        {
+          const myRegx = /^[0-9]{7}$/;
+          if (myRegx.test(event.target.value)) {
+            this.setState({
+              postalCode: event.target.value,
+              postalCodeState: 'success'
+            });
+          } else {
+            this.setState({
+              postalCode: event.target.value,
+              postalCodeState: 'error'
+            });
+          }
         }
-      }
         break;
       case 'answer':
         if (event.target.value.length > 3) {
@@ -731,12 +730,8 @@ class YandexBaseSettings extends React.Component<Props, State> {
           title="Yandexの設定を削除しますか?"
           onConfirm={() => this.proceedDelete()}
           onCancel={() => this.hideAlert()}
-          confirmBtnCssClass={
-            `${this.props.classes.button} ${this.props.classes.success}`
-          }
-          cancelBtnCssClass={
-            `${this.props.classes.button} ${this.props.classes.danger}`
-          }
+          confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
+          cancelBtnCssClass={`${this.props.classes.button} ${this.props.classes.danger}`}
           confirmBtnText="削除"
           cancelBtnText="キャンセル"
           showCancel
@@ -872,6 +867,43 @@ class YandexBaseSettings extends React.Component<Props, State> {
     this.setState({ prefecture: event.target.value });
   };
 
+  handleCreateYandexAccount = () => {
+    if (this.isValidated()) {
+      this.handleSaveYandexAlias();
+      const user = {};
+      user.provider = 'yandex';
+      user.firstName = jaconv.toHebon(this.state.firstNameKana);
+      user.lastName = jaconv.toHebon(this.state.lastNameKana);
+      user.username = this.state.accountId;
+      user.password = this.state.password;
+      user.secret = {};
+      user.secret.question = this.state.questionSelect;
+      user.secret.answer = this.state.answer;
+
+      console.log('---g user==');
+      console.log(user);
+
+      const puppeteerEmail = new PuppeteerEmail(user);
+      puppeteerEmail.signup(user);
+    }
+  };
+
+  handleOpenImap = () => {
+    const mailAccount: MailAccountType = {
+      key: '',
+      accountId: this.state.accountId,
+      password: this.state.password,
+      mailAddress: `${this.state.accountId}${this.state.domain}`,
+      provider: 'Yandex',
+      createDate: 0,
+      lastLogin: 0,
+      tags: '',
+      detailInfo: []
+    };
+
+    this.props.openImapMail(mailAccount);
+  };
+
   render() {
     const { classes } = this.props;
     return (
@@ -898,7 +930,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
                             color="primary"
                             onClick={() => this.handleGenerateAccountId()}
                           >
-                            <Refresh/>
+                            <Refresh />
                           </Button>
                         </Tooltip>
                       </InputAdornment>
@@ -928,7 +960,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
                             color="primary"
                             onClick={() => this.handleGeneratePassword()}
                           >
-                            <Refresh/>
+                            <Refresh />
                           </Button>
                         </Tooltip>
                       </InputAdornment>
@@ -992,7 +1024,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
                 <GridItem xs={12} sm={3} md={3}>
                   <Tooltip title="ランダムな個人情報を再取得します。">
                     <Button color="primary" onClick={() => this.handleSetRandomData()}>
-                      <Refresh/>
+                      <Refresh />
                       ランダムデータ再取得
                     </Button>
                   </Tooltip>
@@ -1034,7 +1066,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
                 <GridItem xs={12} sm={3} md={3}>
                   <Tooltip title="設定画面で保存した個人情報を読込みます。" placement="bottom">
                     <Button color="primary" onClick={() => this.handleSetDefaultData()}>
-                      <FolderShared/>
+                      <FolderShared />
                       既存のデータを使用
                     </Button>
                   </Tooltip>
@@ -1058,7 +1090,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
                       />
                     }
                     label="女"
-                    />
+                  />
                 </GridItem>
                 <GridItem xs={12} sm={3} md={3}>
                   <CustomInput
@@ -1139,7 +1171,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
                     </Select>
                   </FormControl>
                 </GridItem>
-                <GridItem xs={12} sm={3} md={3}/>
+                <GridItem xs={12} sm={3} md={3} />
               </GridContainer>
               <GridContainer justify="center">
                 <GridItem xs={12} sm={3} md={5}>
@@ -1195,30 +1227,47 @@ class YandexBaseSettings extends React.Component<Props, State> {
           </GridContainer>
           <GridContainer justify="center">
             <GridItem xs={12} sm={3} md={5}>
-            <div className={classes.cardContentRight}>
-              <div className={classes.buttonGroup}>
-                <Tooltip title="Yandexアカウントの情報を保存します。">
-                <Button color="primary" className={classes.firstButton} onClick={() => this.handleSaveYandexAlias()}>
-                  <SaveAltIcon style={iconStyle} />
-                  保存
-                </Button>
-                </Tooltip>
-                <Tooltip title="Yandexアカウント情報を削除します。">
-                <Button color="primary" className={classes.lastButton} onClick={() => this.handleDeleteYandexAlias()}>
-                  <Cancel style={iconStyle} />
-                  削除
-                </Button>
-                </Tooltip>
+              <div className={classes.cardContentRight}>
+                <div className={classes.buttonGroup}>
+                  <Tooltip title="Yandexアカウントの情報を保存します。">
+                    <Button
+                      color="primary"
+                      className={classes.firstButton}
+                      onClick={() => this.handleSaveYandexAlias()}
+                    >
+                      <SaveAltIcon style={iconStyle} />
+                      保存
+                    </Button>
+                  </Tooltip>
+                  <Tooltip title="Yandexアカウント情報を削除します。">
+                    <Button
+                      color="primary"
+                      className={classes.lastButton}
+                      onClick={() => this.handleDeleteYandexAlias()}
+                    >
+                      <Cancel style={iconStyle} />
+                      削除
+                    </Button>
+                  </Tooltip>
+                </div>
               </div>
-            </div>
+            </GridItem>
+            <GridItem xm={12} sm={1} md={1} />
+            <GridItem xm={12} sm={2} md={2}>
+              <Tooltip title="Yandexアカウントをimapで開けるかテストします。">
+                <Button color="info" onClick={() => this.handleOpenImap()}>
+                  <MarkunreadMailbox />
+                  Yandexメールを開く
+                </Button>
+              </Tooltip>
             </GridItem>
             <GridItem xm={12} sm={1} md={1} />
             <GridItem xm={12} sm={2} md={2}>
               <Tooltip title="上記の情報でYandexアカウントを作成します。">
-              <Button color="rose">
-                <ContactMail/>
-                Yandexを作成
-              </Button>
+                <Button color="rose" onClick={() => this.handleCreateYandexAccount()}>
+                  <ContactMail />
+                  Yandexを作成
+                </Button>
               </Tooltip>
             </GridItem>
           </GridContainer>

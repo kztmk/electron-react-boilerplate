@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "description": "Affiliate super tool The Yoriki version5",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -250,6 +250,7 @@
     "emailjs-imap-client": "^3.0.7",
     "emailjs-mime-parser": "^2.0.5",
     "font-awesome": "^4.7.0",
+    "googleapis": "^33.0.0",
     "history": "^4.7.2",
     "is-url": "^1.2.4",
     "jaconv": "^1.0.1",

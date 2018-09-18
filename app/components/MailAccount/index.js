@@ -17,12 +17,7 @@ import IconButton from '@material-ui/core/IconButton';
 
 import Close from '@material-ui/icons/Close';
 
-import {
-  MailSeenIcon,
-  MailUnseenIcon,
-  CloseIcon,
-  TrashIcon
-} from '../../assets/icons';
+import { MailSeenIcon, MailUnseenIcon, CloseIcon, TrashIcon } from '../../assets/icons';
 
 import Button from '../../ui/CustomButtons/Button';
 import MailBox from './mailbox';
@@ -253,8 +248,7 @@ class MailAccount extends React.Component<Props, State> {
     // 新たなmailAddressが指定され、モードが無指定の場合、openConnection
     console.log(`this.form.status:${this.props.formStatus}`);
     if (
-      this.props.targetAccount.mailAddress !==
-        nextProps.targetAccount.mailAddress &&
+      this.props.targetAccount.mailAddress !== nextProps.targetAccount.mailAddress &&
       nextProps.formStatus
     ) {
       // targetAccountのmailAddressが更新され、且つ、長さがある場合
@@ -268,8 +262,7 @@ class MailAccount extends React.Component<Props, State> {
     // update flgs
     if (
       nextProps.imapMessageLoading &&
-      (this.state.updateFlags === 'toSeen' ||
-        this.state.updateFlags === 'toUnseen')
+      (this.state.updateFlags === 'toSeen' || this.state.updateFlags === 'toUnseen')
     ) {
       this.setState({ updateFlags: '' });
     }
@@ -366,16 +359,28 @@ class MailAccount extends React.Component<Props, State> {
 
   getExactPath = path => {
     let moveTo = path;
+    let box;
     if (this.props.targetAccount.provider === 'Outlook') {
       if (path.toLowerCase() === 'trash') {
         moveTo = 'deleted';
       }
+
+      box = this.props.imapMailBoxes.find(m => {
+        if (m.path.toLowerCase() === moveTo.toLowerCase()) {
+          return m;
+        }
+      });
     }
-    const box = this.props.imapMailBoxes.find(m => {
-      if (m.path.toLowerCase() === moveTo.toLowerCase()) {
-        return m.path;
+
+    if (this.props.targetAccount.provider === 'Gmail') {
+      if (path.toLowerCase() === 'trash') {
+        box = this.props.imapMailBoxes.find(m => {
+          if (m.name === 'ゴミ箱' || m.specialUse.toLowerCase() === '\\trash') {
+            return m;
+          }
+        });
       }
-    });
+    }
 
     if (box !== null && box !== undefined) {
       return box.path;
@@ -386,11 +391,7 @@ class MailAccount extends React.Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <Loadable
-        active={this.state.openLoading}
-        spinner
-        text="メール取得中・・・・"
-      >
+      <Loadable active={this.state.openLoading} spinner text="メール取得中・・・・">
         <div className={classes.root}>
           <AppBar position="absolute" className={classes.appBar}>
             <Toolbar style={toolBarStyles}>
@@ -511,9 +512,7 @@ class MailAccount extends React.Component<Props, State> {
           >
             <h5>変更・削除対象のメールが選択されていません。</h5>
           </DialogContent>
-          <DialogActions
-            className={`${classes.modalFooter} ${classes.modalFooterCenter}`}
-          >
+          <DialogActions className={`${classes.modalFooter} ${classes.modalFooterCenter}`}>
             <Button
               onClick={() => this.handleCloseDialog()}
               color="warning"
