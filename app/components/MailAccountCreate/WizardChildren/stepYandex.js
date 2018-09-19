@@ -109,7 +109,7 @@ class StepYandex extends React.Component<Props, State> {
 
   componentDidMount() {
     this.existsYandexInfo();
-  };
+  }
 
   existsYandexInfo = () => {
     const yandexInfo = this.props.aliasInfo.find(alias => alias.provider === 'yandex');
@@ -169,8 +169,14 @@ class StepYandex extends React.Component<Props, State> {
     const accounts = [];
     aliases.forEach(aliasAddress => {
       const detailInfo = [];
-      detailInfo.push(`氏名(漢字):${this.state.yandexInfo.lastName} ${this.state.yandexInfo.firstName}`);
-      detailInfo.push(`しめい(ふりがな):${this.state.yandexInfo.lastNameKana} ${this.state.yandexInfo.firstNameKana}`);
+      detailInfo.push(
+        `氏名(漢字):${this.state.yandexInfo.lastName} ${this.state.yandexInfo.firstName}`
+      );
+      detailInfo.push(
+        `しめい(ふりがな):${this.state.yandexInfo.lastNameKana} ${
+          this.state.yandexInfo.firstNameKana
+        }`
+      );
       detailInfo.push(`生年月日:${this.state.yandexInfo.birthDate}`);
       detailInfo.push(`郵便番号:${this.state.yandexInfo.postalCode}`);
       detailInfo.push(`都道府県:${this.state.yandexInfo.prefecture}`);
@@ -189,7 +195,7 @@ class StepYandex extends React.Component<Props, State> {
         lastLogin: 0,
         tags: '',
         detailInfo
-      }
+      };
 
       accounts.push(account);
     });
@@ -216,6 +222,10 @@ class StepYandex extends React.Component<Props, State> {
       aliases: [],
       yandexInfo: initialYandexBase
     });
+  };
+
+  setData = () => {
+    this.existsYandexInfo();
   };
 
   /**
@@ -434,7 +444,7 @@ class StepYandex extends React.Component<Props, State> {
                           color="primary"
                           onClick={() => this.clearRandomAlias()}
                         >
-                          <Clear/>
+                          <Clear />
                         </Button>
                       </Tooltip>
                     </InputAdornment>
@@ -475,7 +485,7 @@ class StepYandex extends React.Component<Props, State> {
             <GridItem xs={12} sm={3} md={4}>
               <Tooltip title="連番の新規作成、編集、削除を行います。">
                 <Button color="primary" onClick={() => this.editSequences()}>
-                  <Edit/>
+                  <Edit />
                   連番追加・編集
                 </Button>
               </Tooltip>
@@ -487,7 +497,7 @@ class StepYandex extends React.Component<Props, State> {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell/>
+                  <TableCell />
                   <TableCell>以下のアドレスも同時に登録する。</TableCell>
                 </TableRow>
               </TableHead>
@@ -499,8 +509,8 @@ class StepYandex extends React.Component<Props, State> {
                         checked={this.state.checked.indexOf(value) !== -1}
                         tabIndex={-1}
                         onClick={this.handleToggle(value)}
-                        checkedIcon={<Check className={classes.checkedIcon}/>}
-                        icon={<Check className={classes.uncheckedIcon}/>}
+                        checkedIcon={<Check className={classes.checkedIcon} />}
+                        icon={<Check className={classes.uncheckedIcon} />}
                         classes={{
                           checked: classes.checked
                         }}
@@ -522,11 +532,7 @@ class StepYandex extends React.Component<Props, State> {
           open={this.state.editSequenceModal}
           TransitionComponent={Transition}
         >
-          <DialogTitle
-            id="modal-sequence-edit"
-            disableTypography
-            className={classes.modalHeader}
-          >
+          <DialogTitle id="modal-sequence-edit" disableTypography className={classes.modalHeader}>
             <Button
               justIcon
               className={classes.modalCloseButton}
@@ -535,14 +541,14 @@ class StepYandex extends React.Component<Props, State> {
               color="transparent"
               onClick={() => this.editSequencesClose()}
             >
-              <Close className={classes.modalClose}/>
+              <Close className={classes.modalClose} />
             </Button>
           </DialogTitle>
           <DialogContent
             id="formSequenceseEdit"
             className={`${classes.modalBody} ${classes.modalSmallBody}`}
           >
-            <Sequences closeForm={this.editSequencesClose}/>
+            <Sequences closeForm={this.editSequencesClose} />
           </DialogContent>
         </Dialog>
         <Snackbar

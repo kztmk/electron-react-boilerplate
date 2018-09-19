@@ -84,9 +84,9 @@ class StepGmail extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.existsGmailInfo();
-  };
+  }
 
   existsGmailInfo = () => {
     const gmailInfo = this.props.aliasInfo.find(alias => alias.provider === 'gmail');
@@ -143,6 +143,10 @@ class StepGmail extends React.Component<Props, State> {
     plusInfo.sequenceKey = this.state.sequenceSelect;
 
     return plusInfo;
+  };
+
+  setData = () => {
+    this.existsGmailInfo();
   };
 
   /**
@@ -227,7 +231,6 @@ class StepGmail extends React.Component<Props, State> {
     if (event.target.value.length < 21) {
       if (/^[a-z0-9]+$/.test(event.target.value)) {
         this.setState({ sequenceValue: event.target.value, randomAlias: '', sequenceSelect: '' });
-        this.generateAliases(event.target.value);
       } else {
         this.setState({ errorMessage: '半角英数字のみ使用できます。', openErrorSnackbar: true });
       }
@@ -378,11 +381,7 @@ class StepGmail extends React.Component<Props, State> {
           open={this.state.editSequenceModal}
           TransitionComponent={Transition}
         >
-          <DialogTitle
-            id="modal-sequence-edit"
-            disableTypography
-            className={classes.modalHeader}
-          >
+          <DialogTitle id="modal-sequence-edit" disableTypography className={classes.modalHeader}>
             <Button
               justIcon
               className={classes.modalCloseButton}

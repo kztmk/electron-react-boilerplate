@@ -49,7 +49,7 @@ type Props = {
   isCreatingFailure: boolean,
   errorMessage: string,
   sequences: Array<SequenceType>,
-  startUpdateSequence: (SequenceType) => void,
+  startUpdateSequence: SequenceType => void,
   startImportAliases: (Array<MailAccountType>) => void
 };
 
@@ -118,76 +118,38 @@ class MailWizard extends React.Component<Props, State> {
   componentWillReceiveProps = nextProps => {
     // target gmail
     console.log(`--MailWizard--loading:${this.props.isCreating}--next:${nextProps.isCreating}`);
-    console.log(`--MailWizard--importinging:${this.props.isImporting}--next:${nextProps.isImporting}`);
-    if (this.state.accountInfo.provider === 'Gmail') {
-      // loading status change true to false
-      // if (this.props.isCreating && !nextProps.isCreating) {
-      // error status check
-      const { mailAddress } = this.state.targetMailAccount;
-      console.log(
-        `===MailWizard--fail:${this.props.isCreatingFailure}--next:${nextProps.isCreatingFailure}`
-      );
-      if (!nextProps.isCreatingFailure) {
-        console.log('=======gmail create success=======');
-        // success
-        this.setState({
-          sweetAlert: (
-            <SweetAlert
-              success
-              style={{ display: 'block', marginTop: '-100px' }}
-              title="Gmail登録完了"
-              onConfirm={() => this.hideAlert()}
-              onCancel={() => this.hideAlert()}
-              confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
-            >
-              メールアドレス: {mailAddress} <br/>
-              の登録が完了しました。
-            </SweetAlert>
-          )
-        });
-      } else {
-        // gmail create fail
-        this.setState({
-          sweetAlert: (
-            <SweetAlert
-              warning
-              style={{ display: 'block', marginTop: '-100px' }}
-              title="エラー発生"
-              onConfirm={() => this.closeAlert()}
-              onCancel={() => this.closeAlert()}
-              confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.warning}
-            >
-              メールアドレス: {mailAddress} <br/>
-              の登録中に以下のエラーが発生しました。<br/>
-              エラー: {this.props.errorMessage}
-            </SweetAlert>
-          )
-        });
-      }
-      // }
-    }
-
-    // Yandex
-    if (this.state.accountInfo.provider === 'Yandex') {
-      if (this.props.isImporting && !nextProps.isImporting) {
+    console.log(
+      `--MailWizard--importinging:${this.props.isImporting}--next:${nextProps.isImporting}`
+    );
+    if (this.props.isCreating && !nextProps.isCreating) {
+      if (this.state.accountInfo.provider === 'Gmail') {
+        // loading status change true to false
+        // if (this.props.isCreating && !nextProps.isCreating) {
+        // error status check
+        const { mailAddress } = this.state.targetMailAccount;
+        console.log(
+          `===MailWizard--fail:${this.props.isCreatingFailure}--next:${nextProps.isCreatingFailure}`
+        );
         if (!nextProps.isCreatingFailure) {
-          const list = this.state.yandexList;
+          console.log('=======gmail create success=======');
+          // success
           this.setState({
             sweetAlert: (
               <SweetAlert
                 success
-                style={{ display: 'block', marginTop: '-100px', whiteSpace: 'pre' }}
-                title="Yandeｘエイリアス登録完了"
+                style={{ display: 'block', marginTop: '-100px' }}
+                title="Gmail登録完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
                 confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
               >
-                メールアドレス: {list} <br/>
+                メールアドレス: {mailAddress} <br />
                 の登録が完了しました。
               </SweetAlert>
             )
           });
         } else {
+          // gmail create fail
           this.setState({
             sweetAlert: (
               <SweetAlert
@@ -196,12 +158,56 @@ class MailWizard extends React.Component<Props, State> {
                 title="エラー発生"
                 onConfirm={() => this.closeAlert()}
                 onCancel={() => this.closeAlert()}
-                confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+                confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.warning}
               >
-                エラー：{nextProps.errorMessage}
+                メールアドレス: {mailAddress} <br />
+                の登録中に以下のエラーが発生しました。<br />
+                エラー: {this.props.errorMessage}
               </SweetAlert>
             )
           });
+        }
+        // }
+      }
+    }
+
+    if (this.props.isImporting && !nextProps.isImporting) {
+      // Yandex
+      if (this.state.accountInfo.provider === 'Yandex') {
+        if (this.props.isImporting && !nextProps.isImporting) {
+          if (!nextProps.isCreatingFailure) {
+            const list = this.state.yandexList;
+            this.setState({
+              sweetAlert: (
+                <SweetAlert
+                  success
+                  style={{ display: 'block', marginTop: '-100px', whiteSpace: 'pre' }}
+                  title="Yandeｘエイリアス登録完了"
+                  onConfirm={() => this.hideAlert()}
+                  onCancel={() => this.hideAlert()}
+                  confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+                >
+                  メールアドレス: {list} <br />
+                  の登録が完了しました。
+                </SweetAlert>
+              )
+            });
+          } else {
+            this.setState({
+              sweetAlert: (
+                <SweetAlert
+                  warning
+                  style={{ display: 'block', marginTop: '-100px' }}
+                  title="エラー発生"
+                  onConfirm={() => this.closeAlert()}
+                  onCancel={() => this.closeAlert()}
+                  confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
+                >
+                  エラー：{nextProps.errorMessage}
+                </SweetAlert>
+              )
+            });
+          }
         }
       }
     }
@@ -228,7 +234,8 @@ class MailWizard extends React.Component<Props, State> {
       previousButton: false,
       finishButton: this.props.steps.length === 1,
       accountInfo: {},
-      sweetAlert: ''
+      sweetAlert: '',
+      targetMailAccount: {}
     });
     // steps0-2
     this[this.props.steps[0].stepId].initState();
@@ -259,6 +266,7 @@ class MailWizard extends React.Component<Props, State> {
           break;
         default:
       }
+      this[this.props.steps[nextStep].stepId].setData();
       const steps00State = this[this.props.steps[0].stepId].sendState();
       console.log(steps00State);
       this.setState({
@@ -390,15 +398,15 @@ class MailWizard extends React.Component<Props, State> {
           {message}
           <p>
             メールアドレス一覧への登録を最初に行います。
-            <br/>
+            <br />
             途中で
             <span style={errorStyles}>エラー</span>
             が発生した場合には、
-            <br/>
+            <br />
             ・可能な場合は、失敗時点から手動で継続
-            <br/>
+            <br />
             ・ブラウザを閉じて、メール一覧から削除
-            <br/>
+            <br />
             で、対処してください。
           </p>
         </SweetAlert>
@@ -416,9 +424,9 @@ class MailWizard extends React.Component<Props, State> {
           onCancel={() => this.hideAlert()}
           confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.success}
         >
-          作成しようとしたメールアドレス<br/>
+          作成しようとしたメールアドレス<br />
           {email}
-          <br/>
+          <br />
           は、すでにリストに存在しています。
         </SweetAlert>
       )
@@ -435,7 +443,7 @@ class MailWizard extends React.Component<Props, State> {
       yandexList: list,
       sweetAlert: (
         <SweetAlert
-          style={{ display: 'block', marginTop: '-280px', width: '620px', whiteSpace: 'pre'}}
+          style={{ display: 'block', marginTop: '-280px', width: '620px', whiteSpace: 'pre' }}
           title="メールアカウント作成開始"
           onConfirm={() => this.createYandexEmailAliases(importInfo)}
           onCancel={() => this.hideAlert()}
@@ -452,7 +460,7 @@ class MailWizard extends React.Component<Props, State> {
     });
   };
 
-  createYandexEmailAliases = (importInfo) => {
+  createYandexEmailAliases = importInfo => {
     // 連番使用時には、sequenceをカウントアップ
     if (importInfo.sequenceKey.length > 0) {
       const sequence = this.props.sequences.find(seq => seq.key === importInfo.sequenceKey);
@@ -486,7 +494,6 @@ class MailWizard extends React.Component<Props, State> {
   };
 
   hideAlert = () => {
-    this.setState({ sweetAlert: '', yandexList: '' });
     this.cancelButtonClick();
   };
 
@@ -516,7 +523,7 @@ class MailWizard extends React.Component<Props, State> {
       detailInfo.push(
         `しめい(ふりがな):${this.state.accountInfo.lastNameKana} ${
           this.state.accountInfo.firstNameKana
-          }`
+        }`
       );
       detailInfo.push(`生年月日:${this.state.accountInfo.birthDate}`);
 
@@ -577,7 +584,7 @@ class MailWizard extends React.Component<Props, State> {
           userKey = additionalInfo.sequenceKey;
           break;
         case 'Yandex':
-          console.log('---yandexInfo')
+          console.log('---yandexInfo');
           console.log(additionalInfo);
           this.showYandexDialog(additionalInfo);
           return;
@@ -702,7 +709,7 @@ class MailWizard extends React.Component<Props, State> {
                 // eslint-disable-next-line react/no-array-index-key
                 <div className={stepContentClasses} key={key}>
                   {/* <prop.stepComponent innerRef={prop.stepId}/> */}
-                  <prop.stepComponent innerRef={node => (this[prop.stepId] = node)}/>
+                  <prop.stepComponent innerRef={node => (this[prop.stepId] = node)} />
                 </div>
               );
             })}
@@ -746,7 +753,7 @@ class MailWizard extends React.Component<Props, State> {
                 </Button>
               ) : null}
             </div>
-            <div className={classes.clearfix}/>
+            <div className={classes.clearfix} />
           </div>
         </Card>
         {this.state.sweetAlert}

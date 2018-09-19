@@ -377,7 +377,10 @@ class GmailBaseSettings extends React.Component<Props, State> {
   formFieldChange = (event, fieldName) => {
     switch (fieldName) {
       case 'accountId':
-        if (this.isRequiredLength(event.target.value, 4)) {
+        if (
+          this.isRequiredLength(event.target.value, 4) &&
+          /^[a-z][A-Za-z0-9\.]+$/.test(event.target.value)
+        ) {
           this.setState({
             accountId: event.target.value,
             accountIdState: 'success'
@@ -539,9 +542,10 @@ class GmailBaseSettings extends React.Component<Props, State> {
       this.setState({ accountIdState: 'success' });
     }
 
-    if (!/^[a-z][A-Za-z0-9]+$/.test(this.state.accountId)) {
+    if (!/^[a-z][A-Za-z0-9\.]+$/.test(this.state.accountId)) {
       this.setState({ accountIdState: 'error' });
-      errorMsg += 'アカウントIDは1文字目はアルファベット、2文字目移行は英数字です。。\n';
+      errorMsg +=
+        'アカウントIDは1文字目はアルファベット、2文字目移行は英数字、ピリオドのみ使用できます。\n';
     }
 
     if (!this.isRequiredLength(this.state.password, 8)) {

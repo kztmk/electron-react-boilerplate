@@ -76,6 +76,8 @@ class StepYahoo extends React.Component<Props, State> {
     });
   };
 
+  setData = () => {}
+  ;
   /**
    * Yahoo!メール作成時の秘密の質問
    *
@@ -186,10 +188,7 @@ class StepYahoo extends React.Component<Props, State> {
           <GridContainer container justify="center">
             <GridItem xs={12} sm={8} md={8}>
               <FormControl fullWidth className={classes.selectFormControl}>
-                <InputLabel
-                  htmlFor="yahooQuestion-select"
-                  className={classes.selectLabel}
-                >
+                <InputLabel htmlFor="yahooQuestion-select" className={classes.selectLabel}>
                   秘密の質問を選択
                 </InputLabel>
                 <Select
