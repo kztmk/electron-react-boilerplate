@@ -606,6 +606,7 @@ class Steps00blog extends React.Component<Props, State> {
         gender: this.props.personalInfo.gender === 1,
         birthDate: this.props.personalInfo.birthDate,
         postalCode: this.props.personalInfo.postalCode,
+        prefecture: this.props.personalInfo.prefecture,
         forceUseDefault: true,
         forceUseRandom: false
       });

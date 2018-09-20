@@ -293,12 +293,10 @@ const signup = async (user, opts) => {
 
       // captcha clear
       do {
+        let captchaValue = '';
         // in case of left previous input
         await page.focus('#hipTemplateContainer input');
-        const inputCaptcha = await page.$eval(
-          '#hipTemplateContainer input',
-          elm => elm.value
-        );
+        const inputCaptcha = await page.$eval('#hipTemplateContainer input', elm => elm.value);
         if (inputCaptcha && inputCaptcha.length > 0) {
           await page.focus('#hipTemplateContainer input');
           // eslint-disable-next-line no-plusplus
@@ -329,7 +327,7 @@ const signup = async (user, opts) => {
 
         const imageData = await base64Encode(captchaPath);
 
-        const captchaValue = await page.evaluate(`swal({
+        captchaValue = await page.evaluate(`swal({
         title: '画像認証',
         text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
         imageUrl: 'data:image/jpg;base64,${imageData}',
@@ -396,9 +394,7 @@ const signup = async (user, opts) => {
     // -----------------
 
     await delay(500);
-    await page.goto(
-      'https://www.outlook.com/?refd=account.microsoft.com&fref=home.banner.profile'
-    );
+    await page.goto('https://www.outlook.com/?refd=account.microsoft.com&fref=home.banner.profile');
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -420,7 +416,7 @@ const signup = async (user, opts) => {
 
     // keep pressing next...
     while (true) {
-      if (!(await page.$('.dialog button.nextButton'))) break;
+      if (!await page.$('.dialog button.nextButton')) break;
       await page.evaluate(`
     new Noty({
         type: 'success',

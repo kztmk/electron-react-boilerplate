@@ -278,6 +278,7 @@ const signup = async (user, opts) => {
     `);
     await page.evaluate(`Noty.closeAll();`);
     do {
+      let captchaValue = '';
       if (await page.$('#cimg')) {
         await page.waitFor('#cimg', { visible: true });
       }
@@ -304,7 +305,7 @@ const signup = async (user, opts) => {
       });
       await page.addScriptTag({ path: swa2Js });
       await page.evaluate('Noty.closeAll();');
-      const captchaValue = await page.evaluate(`swal({
+      captchaValue = await page.evaluate(`swal({
       title: '画像認証',
       text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
       input: 'text',

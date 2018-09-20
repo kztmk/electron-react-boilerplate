@@ -157,6 +157,7 @@ const signup = async (blogInfo, opts) => {
     let isCaptchaError = true;
     do {
       // capthca
+      let captchaValue = '';
       await page.focus('#captcha');
       log.info('画像認証入力用テキストボックスへフォーカス');
       const $img = await page.$('#captcha-img');
@@ -188,7 +189,7 @@ const signup = async (blogInfo, opts) => {
       });
       await page.addScriptTag({ path: swa2Js });
       const imageData = await base64Encode(captchaPath);
-      const captchaValue = await page.evaluate(`swal({
+      captchaValue = await page.evaluate(`swal({
         title: '画像認証',
         text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
         imageUrl: 'data:image/jpg;base64,${imageData}',

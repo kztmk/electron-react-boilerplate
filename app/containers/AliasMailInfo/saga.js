@@ -1,6 +1,7 @@
 // @flow
 import type Saga from 'redux-saga';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
+import moment from 'moment';
 import { Actions } from './actionTypes';
 import {
   deleteAliasMailFailure,
@@ -12,13 +13,14 @@ import {
 } from './actions';
 import { firebaseDbDelete, firebaseDbRead, firebaseDbSet } from '../../database/db';
 import type AliasMailType from '../../types/aliasMailInfo';
+import { createMailAddressRequest, updateMailAddressRequest } from '../MailAddressList/actions';
 
 function* saveAliasMail(action) {
   try {
     const userAuth = yield select(state => state.Login);
     console.log('----g alias');
     console.log(action.payload);
-    const alias = { ...action.payload }
+    const alias = { ...action.payload };
     // update
     yield call(firebaseDbSet, `/users/${userAuth.userId}/aliasMails/${alias.provider}`, {
       accountId: alias.accountId,
@@ -37,8 +39,10 @@ function* saveAliasMail(action) {
       secretAnswer: alias.secretAnswer
     });
 
-    console.log('---db complete--')
-    const originalAliases: Array<AliasMailType> = yield select(state => state.AliasMailInfo.aliasMailInfo);
+    console.log('---db complete--');
+    const originalAliases: Array<AliasMailType> = yield select(
+      state => state.AliasMailInfo.aliasMailInfo
+    );
 
     console.log('----state aliases--');
     console.log(originalAliases);
@@ -50,7 +54,57 @@ function* saveAliasMail(action) {
     restAliases.push(alias);
 
     yield put(saveAliasMailSuccess(restAliases));
+    console.log('----Alias save---');
+    // mailAccountsに登録がない場合には、新規登録
+    // check mailAddress exists
+    const mailAccounts = yield select(state => state.MailAddressList.mailAccounts);
+    const aliasBase = `${alias.accountId}@${alias.domain}`;
+    console.log(`mailAddress:${aliasBase}`);
+    const existsAccount = mailAccounts.find(m => m.mailAddress === aliasBase);
 
+    if (existsAccount) {
+      // mailAccountsに登録がある場合には、更新
+      // accountId  編集不可
+      existsAccount.password = alias.password;
+      // mailAddress 編集不可
+      // provider 編集不可
+      // createDate 編集不可
+      // lastLogin 編集の必要なし
+      // tags AliasBaseでは入力欄なし
+      console.log('------exists alias then update');
+      yield put(updateMailAddressRequest(existsAccount));
+    } else {
+      // 新規
+      const detailInfo = [];
+      detailInfo.push(`氏名(漢字):${alias.lastName} ${alias.firstName}`);
+      detailInfo.push(`しめい(ふりがな):${alias.lastNameKana} ${alias.firstNameKana}`);
+      detailInfo.push(`生年月日: ${alias.birthDate}`);
+      detailInfo.push(`郵便番号: ${alias.postalCode}`);
+      if (alias.gender) {
+        detailInfo.push(`性別: 女`);
+      } else {
+        detailInfo.push(`性別: 男`);
+      }
+      detailInfo.push(`都道府県: ${alias.prefecture}`);
+      if (alias.secretQuestion.length > 0) {
+        detailInfo.push(`秘密の質問:${alias.secretQuestion}`);
+        detailInfo.push(`質問の答え:${alias.secretAnswer}`);
+      }
+      const provider = alias.provider === 'gmail' ? 'Gmail' : 'Yandex';
+      const newMailAccount = {
+        key: '',
+        accountId: alias.accountId,
+        password: alias.password,
+        mailAddress: `${alias.accountId}@${alias.domain}`,
+        provider,
+        createDate: moment().valueOf(),
+        lastLogin: 0,
+        tags: '',
+        detailInfo
+      };
+      console.log('------not exists alias then create');
+      yield put(createMailAddressRequest(newMailAccount));
+    }
   } catch (error) {
     yield put(saveAliasMailFailure({ errorMessage: error.toString() }));
   }
@@ -62,7 +116,10 @@ function* getAliasMails() {
 
     if (userAuth.userId.length > 0) {
       const aliases: Array<AliasMailType> = [];
-      const gmailSnapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/aliasMails/gmail`);
+      const gmailSnapshot = yield call(
+        firebaseDbRead,
+        `/users/${userAuth.userId}/aliasMails/gmail`
+      );
 
       if (gmailSnapshot.child('accountId').val() !== null) {
         const gmailAlias: AliasMailType = {
@@ -85,7 +142,10 @@ function* getAliasMails() {
         aliases.push(gmailAlias);
       }
 
-      const yandexSnapshot = yield call(firebaseDbRead, `/users/${userAuth.userId}/aliasMails/yandex`);
+      const yandexSnapshot = yield call(
+        firebaseDbRead,
+        `/users/${userAuth.userId}/aliasMails/yandex`
+      );
       if (yandexSnapshot.child('accountId').val() !== null) {
         const yandexAlias: AliasMailType = {
           provider: 'yandex',
@@ -127,7 +187,6 @@ function* deleteAliasMail(action) {
     yield put(deleteAliasMailFailure({ errorMessage: error.toString() }));
   }
 }
-
 
 function* rootSaga(): Saga {
   yield takeEvery(Actions.SAVE_ALIAS_MAIL_REQUEST, saveAliasMail);

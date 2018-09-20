@@ -85,7 +85,7 @@ class SettingsPage extends React.Component<Props, State> {
 
     let yandexBase = nextProps.aliasMailInfo.find(alias => alias.provider === 'yandex');
     if (!yandexBase) {
-      yandexBase = { ...initialAliasBase, provider: 'yandex' };
+      yandexBase = { ...initialAliasBase, provider: 'yandex', domain: '@yandex.com' };
     }
     this.setState({
       gmailBase,

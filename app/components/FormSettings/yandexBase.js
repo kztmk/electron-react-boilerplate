@@ -270,7 +270,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
           secretQuestion: '',
           questionSelect: '',
           questionJp: '',
-          secretAnswer: ''
+          answer: ''
         });
       } else {
         this.setState({
@@ -289,7 +289,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
           question: '',
           questionJp: '',
           questionSelect: '',
-          secretAnswer: ''
+          answer: ''
         });
       }
       if (nextProps.yandexBase.accountId.length === 0) {
@@ -591,7 +591,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
 
     if (!/^[a-z][A-Za-z0-9]+$/.test(this.state.accountId)) {
       this.setState({ accountIdState: 'error' });
-      errorMsg += 'アカウントIDは1文字目はアルファベット、2文字目移行は英数字です。。\n';
+      errorMsg += 'アカウントIDは1文字目はアルファベット、2文字目以降は英数字です。。\n';
     }
 
     if (!this.isRequiredLength(this.state.password, 8)) {
@@ -656,6 +656,10 @@ class YandexBaseSettings extends React.Component<Props, State> {
     } else {
       this.setState({ contactMailState: 'error' });
       errorMsg += '再設定用メールアドレスを正しく入力してください。\n';
+    }
+
+    if (this.state.questionSelect.length === 0) {
+      errorMsg += '秘密の質問を選択してください。';
     }
 
     if (this.state.answer.length < 4 || !this.isAlfaNumeric(this.state.answer)) {
@@ -784,7 +788,8 @@ class YandexBaseSettings extends React.Component<Props, State> {
         forceUseRandom: false,
         questionJp: '',
         question: '',
-        questionSelect: ''
+        questionSelect: '',
+        answer: ''
       });
     } else {
       this.setState({
@@ -796,6 +801,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
 
   hideAlert = () => {
     this.setState({
+      domain: 'yandex.com',
       sweetAlert: null,
       mode: ''
     });
@@ -869,7 +875,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
 
   handleCreateYandexAccount = () => {
     if (this.isValidated()) {
-      this.handleSaveYandexAlias();
+      // this.handleSaveYandexAlias();
       const user = {};
       user.provider = 'yandex';
       user.firstName = jaconv.toHebon(this.state.firstNameKana);
@@ -889,19 +895,21 @@ class YandexBaseSettings extends React.Component<Props, State> {
   };
 
   handleOpenImap = () => {
-    const mailAccount: MailAccountType = {
-      key: '',
-      accountId: this.state.accountId,
-      password: this.state.password,
-      mailAddress: `${this.state.accountId}${this.state.domain}`,
-      provider: 'Yandex',
-      createDate: 0,
-      lastLogin: 0,
-      tags: '',
-      detailInfo: []
-    };
+    if (this.isValidated) {
+      const mailAccount: MailAccountType = {
+        key: '',
+        accountId: this.state.accountId,
+        password: this.state.password,
+        mailAddress: `${this.state.accountId}${this.state.domain}`,
+        provider: 'Yandex',
+        createDate: 0,
+        lastLogin: 0,
+        tags: '',
+        detailInfo: []
+      };
 
-    this.props.openImapMail(mailAccount);
+      this.props.openImapMail(mailAccount);
+    }
   };
 
   render() {

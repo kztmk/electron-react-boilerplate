@@ -379,7 +379,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
       case 'accountId':
         if (
           this.isRequiredLength(event.target.value, 4) &&
-          /^[a-z][A-Za-z0-9\.]+$/.test(event.target.value)
+          /^[A-Za-z0-9\.]+$/.test(event.target.value)
         ) {
           this.setState({
             accountId: event.target.value,
@@ -542,10 +542,9 @@ class GmailBaseSettings extends React.Component<Props, State> {
       this.setState({ accountIdState: 'success' });
     }
 
-    if (!/^[a-z][A-Za-z0-9\.]+$/.test(this.state.accountId)) {
+    if (!/^[A-Za-z0-9\.]+$/.test(this.state.accountId)) {
       this.setState({ accountIdState: 'error' });
-      errorMsg +=
-        'アカウントIDは1文字目はアルファベット、2文字目移行は英数字、ピリオドのみ使用できます。\n';
+      errorMsg += 'アカウントIDは英数字、ピリオドのみ使用できます。\n';
     }
 
     if (!this.isRequiredLength(this.state.password, 8)) {
@@ -801,19 +800,21 @@ class GmailBaseSettings extends React.Component<Props, State> {
   };
 
   handleOpenImap = () => {
-    const mailAccount: MailAccountType = {
-      key: '',
-      accountId: `${this.state.accountId}@${this.state.domain}`,
-      password: this.state.password,
-      mailAddress: `${this.state.accountId}@${this.state.domain}`,
-      provider: 'Gmail',
-      createDate: 0,
-      lastLogin: 0,
-      tags: '',
-      detailInfo: []
-    };
+    if (this.isValidated()) {
+      const mailAccount: MailAccountType = {
+        key: '',
+        accountId: `${this.state.accountId}@${this.state.domain}`,
+        password: this.state.password,
+        mailAddress: `${this.state.accountId}@${this.state.domain}`,
+        provider: 'Gmail',
+        createDate: 0,
+        lastLogin: 0,
+        tags: '',
+        detailInfo: []
+      };
 
-    this.props.openImapMail(mailAccount);
+      this.props.openImapMail(mailAccount);
+    }
   };
 
   render() {

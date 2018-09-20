@@ -462,9 +462,29 @@ class MailAddressList extends React.Component<Props, State> {
 
   showMailAccount = account => {
     this.props.updateLastLogin({ ...account, lastLogin: moment().valueOf() });
+
+    let loginId = account.accountId;
+    let loginPass = account.password;
+
+    // aliasの場合(+を含む）場合、ベースのメールアドレスを取得
+    if (account.accountId.indexOf('+') > -1) {
+      console.log('----found + ');
+      const baseAccount = this.props.mailAccounts.find(
+        m =>
+          m.accountId === account.accountId.replace(/\+.*$/, '') && m.provider === account.provider
+      );
+      console.log('----base address');
+      console.log(baseAccount);
+      if (baseAccount) {
+        loginId = baseAccount.accountId;
+        loginPass = baseAccount.password;
+      }
+      // aliasの基アドレスが見つからない場合には、現在のものを使用
+    }
+
     const user = {};
-    user.username = account.accountId;
-    user.password = account.password;
+    user.username = loginId;
+    user.password = loginPass;
     user.email = account.mailAddress;
     user.provider = account.provider.toLowerCase();
 

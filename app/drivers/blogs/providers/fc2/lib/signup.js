@@ -77,6 +77,7 @@ const signup = async (blogInfo, opts) => {
     // captcha
     let isCapchaError = true;
     do {
+      let captchaValue = '';
       await page.evaluate('window.scrollTo(0, 200)');
       if (await page.$('.image-auth > img')) {
         await page.waitFor('.image-auth > img', { visible: true });
@@ -100,7 +101,7 @@ const signup = async (blogInfo, opts) => {
       await page.addStyleTag({ path: swa2Css });
       await page.addScriptTag({ path: swa2Js });
       await page.evaluate(`Noty.closeAll();`);
-      const captchaValue = await page.evaluate(`swal({
+      captchaValue = await page.evaluate(`swal({
       title: '画像認証',
       text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
       input: 'text',
@@ -478,6 +479,7 @@ const signup = async (blogInfo, opts) => {
           let captchaError = true;
 
           do {
+            let captchaValue = '';
             await page.addScriptTag({ path: notyJsPath });
             await page.addStyleTag({ path: notyCssPath });
             await page.addStyleTag({ path: notyThemePath });
@@ -487,14 +489,14 @@ const signup = async (blogInfo, opts) => {
             await page.addStyleTag({ path: swa2Css });
             await page.addScriptTag({ path: swa2Js });
 
-            const captchaValue = await page.evaluate(`swal({
-      title: '画像認証',
-      text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
-      input: 'text',
-      inputPlaceholder: '画像にある数字を入力',
-      confirmButtonText: '認証',
-      position: 'top-start'
-    })`);
+            captchaValue = await page.evaluate(`swal({
+          title: '画像認証',
+          text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
+          input: 'text',
+          inputPlaceholder: '画像にある数字を入力',
+          confirmButtonText: '認証',
+          position: 'top-start'
+        })`);
             await page.evaluate(`
     new Noty({
         type: 'success',

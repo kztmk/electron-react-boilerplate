@@ -217,8 +217,8 @@ class Steps00 extends React.Component<Props, State> {
    * @param event
    */
   handleSelectProvider = event => {
-    let gmailInfo={};
-    let yandexInfo={};
+    let gmailInfo = {};
+    let yandexInfo = {};
     switch (event.target.value) {
       case 'Gmail':
         gmailInfo = this.props.aliasInfo.find(alias => alias.provider === 'gmail');
@@ -239,7 +239,7 @@ class Steps00 extends React.Component<Props, State> {
           this.setState({
             errorMessage: '基になるGmailを設定画面で登録してください。',
             openErrorSnackbar: true
-          })
+          });
         }
         break;
       case 'Yandex':
@@ -261,7 +261,7 @@ class Steps00 extends React.Component<Props, State> {
           this.setState({
             errorMessage: '基になるYandexメールを設定画面で登録してください。',
             openErrorSnackbar: true
-          })
+          });
         }
         break;
       default:
@@ -558,6 +558,7 @@ class Steps00 extends React.Component<Props, State> {
         gender: this.props.personalInfo.gender === 1,
         birthDate: this.props.personalInfo.birthDate,
         postalCode: this.props.personalInfo.postalCode,
+        prefecture: this.props.personalInfo.prefecture,
         forceUseDefault: true,
         forceUseRandom: false
       });
