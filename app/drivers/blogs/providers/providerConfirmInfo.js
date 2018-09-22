@@ -10,6 +10,12 @@ const confirmMails = [
     sender: 'pre@livedoor.fm',
     link: 'http://member.livedoor.com/email_auth/commit',
     regx: 'http:\\/\\/member\\.livedoor\\.com\\/email_auth\\/commit.*$'
+  },
+  {
+    provider: 'seesaa',
+    sender: 'info@account.seesaa.jp',
+    link: 'https://ssl.seesaa.jp/pages/my/member/email/activate?key=',
+    regx: 'https:\\/\\/ssl\\.seesaa\\.jp\\/pages\\/my\\/member\\/email\\/activate.*$'
   }
 ];
 

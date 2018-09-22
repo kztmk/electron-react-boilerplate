@@ -248,6 +248,11 @@ class BlogWizard extends React.Component<Props, State> {
       blogInfo.groupTags = additionalInfo.tags;
       blogInfo.mailAccount = this.state.accountInfo.mailAccount;
       blogInfo.detailInfo = {};
+      blogInfo.firstName = this.state.accountInfo.firstName;
+      blogInfo.lastName = this.state.accountInfo.lastName;
+      blogInfo.firstNameKana = this.state.accountInfo.firstNameKana;
+      blogInfo.lastNameKana = this.state.accountInfo.lastNameKana;
+
       // 追加情報から最上位情報に保存したものを重複回避のため削除
       delete additionalInfo.title;
       delete additionalInfo.description;
@@ -258,6 +263,7 @@ class BlogWizard extends React.Component<Props, State> {
       const dbFields = [];
       const userFields = [];
 
+      console.log('------additionalInfo');
       for (const key in additionalInfo) {
         if (key.indexOf('Value') === -1) {
           dbFields.push(additionalInfo[key]);
@@ -336,7 +342,6 @@ class BlogWizard extends React.Component<Props, State> {
   getDialogMessage = info => {
     const rows = [];
 
-    let str = '';
     info.forEach(row => {
       const tableRow = [];
       tableRow.push(row);
@@ -408,11 +413,12 @@ class BlogWizard extends React.Component<Props, State> {
         url += `${userFields.subdomain}.webnode.jp`;
         break;
       case 'livedoor':
-        url += ``;
+        url += `${blogInfo.accountId}.${blogInfo.detailInfo.domain}`;
         testPass = true;
         break;
       case 'seesaa':
-        url += ``;
+        url = `http://${blogInfo.accountId}.seesaa.net`;
+        testPass = true;
         break;
       case 'ameba':
         url += ``;
@@ -481,15 +487,9 @@ class BlogWizard extends React.Component<Props, State> {
       detailInfo: dbFields
     };
 
-    console.log('---new blog account ----');
-    console.log(newAccount);
     this.props.finishButtonClick(newAccount);
-    console.log('---------userFields--------');
-    console.log(userFields);
     const blogAdditionalInfo = { ...userFields };
     const createBlogInfo = { ...blogInfo, detailInfo: blogAdditionalInfo };
-    console.log('-----create blog info');
-    console.log(createBlogInfo);
     this.hideAlert();
 
     const puppeteerBlog = new PuppeteerBlog(createBlogInfo);

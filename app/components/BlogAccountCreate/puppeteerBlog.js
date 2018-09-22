@@ -11,6 +11,9 @@ class PuppeteerBlog {
       case 'livedoor':
         this.client = new BlogDriver('livedoor');
         break;
+      case 'seesaa':
+        this.client = new BlogDriver('seesaa');
+        break;
       default:
     }
   }

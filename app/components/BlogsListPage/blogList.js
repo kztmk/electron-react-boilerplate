@@ -245,7 +245,11 @@ class BlogList extends React.Component<Props, State> {
                     groupTags: restoredTags,
                     createDate: moment(account.createDate).valueOf()
                   };
-                  if (target.provider === 'fc2' || target.provider === 'livedoor') {
+                  if (
+                    target.provider === 'fc2' ||
+                    target.provider === 'livedoor' ||
+                    target.provider === 'seesaa'
+                  ) {
                     this.loginBlog(target);
                   } else {
                     alert('fc2、Livedoor以外はテスト中です。');

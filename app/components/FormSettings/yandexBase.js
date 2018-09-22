@@ -875,7 +875,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
 
   handleCreateYandexAccount = () => {
     if (this.isValidated()) {
-      // this.handleSaveYandexAlias();
+      this.handleSaveYandexAlias();
       const user = {};
       user.provider = 'yandex';
       user.firstName = jaconv.toHebon(this.state.firstNameKana);

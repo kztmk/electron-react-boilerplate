@@ -2,6 +2,7 @@
 // @flow
 import React from 'react';
 import TagsInput from 'react-tagsinput';
+
 // material-ui components
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
@@ -98,7 +99,9 @@ type State = {
   descriptionState: string,
   remark: string,
   tags: Array<string>,
+  occupationValue: string,
   occupation: string,
+  categoryValue: string,
   category: string,
   nickName: string,
   nickNameState: string,
@@ -123,7 +126,9 @@ class StepSeesaa extends React.Component<Props, State> {
       remark: '',
       tags: [],
       occupation: '',
+      occupationValue: '',
       category: '',
+      categoryValue: '',
       nickName: '',
       nickNameState: '',
       spouse: false,
@@ -145,9 +150,9 @@ class StepSeesaa extends React.Component<Props, State> {
     blogParams.nickName = `${this.state.nickName}`;
     blogParams.nickNameValue = this.state.nickName;
     blogParams.occupation = `職業:${this.state.occupation}`;
-    blogParams.occupationValue = this.state.occupation;
+    blogParams.occupationValue = this.state.occupationValue;
     blogParams.category = `カテゴリ:${this.state.category}`;
-    blogParams.categoryValue = this.state.category;
+    blogParams.categoryValue = this.state.categoryValue;
     blogParams.spouse = `配偶者:${this.state.spouse ? 'あり' : 'なし'}`;
     blogParams.spouseValue = this.state.spouse;
     blogParams.children = `子ども:${this.state.children ? 'あり' : 'なし'}`;
@@ -168,7 +173,9 @@ class StepSeesaa extends React.Component<Props, State> {
       remark: '',
       tags: [],
       occupation: '',
+      occupationValue: '',
       category: '',
+      categoryValue: '',
       nickName: '',
       nickNameState: '',
       spouse: false,
@@ -204,9 +211,8 @@ class StepSeesaa extends React.Component<Props, State> {
     if (value) {
       const o = occupations.find(occ => occ.val === value);
       return o.occupation;
-    } else {
-      return '';
     }
+    return '';
   };
 
   /**
@@ -233,9 +239,8 @@ class StepSeesaa extends React.Component<Props, State> {
     if (value) {
       const c = categories.find(t => t.val === value);
       return c.category;
-    } else {
-      return '';
     }
+    return '';
   };
 
   /**
@@ -245,7 +250,8 @@ class StepSeesaa extends React.Component<Props, State> {
    */
   handleOccupationSelected = event => {
     this.setState({
-      occupation: event.target.value
+      occupation: this.getOccupationLabel(event.target.value),
+      occupationValue: event.target.value
     });
   };
 
@@ -255,7 +261,8 @@ class StepSeesaa extends React.Component<Props, State> {
    */
   handleCategorySelected = event => {
     this.setState({
-      category: event.target.value
+      category: this.getCategoryLabel(event.target.value),
+      categoryValue: event.target.value
     });
   };
 
@@ -483,7 +490,7 @@ class StepSeesaa extends React.Component<Props, State> {
                   classes={{
                     select: classes.select
                   }}
-                  value={this.state.occupation}
+                  value={this.state.occupationValue}
                   onChange={this.handleOccupationSelected}
                   inputProps={{
                     name: 'occupationSelect',
@@ -514,7 +521,7 @@ class StepSeesaa extends React.Component<Props, State> {
                   classes={{
                     select: classes.select
                   }}
-                  value={this.state.category}
+                  value={this.state.categoryValue}
                   onChange={this.handleCategorySelected}
                   inputProps={{
                     name: 'categorySelect',
@@ -540,7 +547,7 @@ class StepSeesaa extends React.Component<Props, State> {
                 <FormControlLabel
                   control={
                     <Radio
-                      checked={this.state.spouse === 'S'}
+                      checked={!this.state.spouse}
                       onChange={this.handleChangeSpouse}
                       value="S"
                       name="single"
@@ -562,7 +569,7 @@ class StepSeesaa extends React.Component<Props, State> {
                 <FormControlLabel
                   control={
                     <Radio
-                      checked={this.state.spouse === 'M'}
+                      checked={this.state.spouse}
                       onChange={this.handleChangeSpouse}
                       value="M"
                       name="married"
@@ -586,7 +593,7 @@ class StepSeesaa extends React.Component<Props, State> {
                 <FormControlLabel
                   control={
                     <Radio
-                      checked={this.state.children === 'N'}
+                      checked={!this.state.children}
                       onChange={this.handleChangeChildren}
                       value="N"
                       name="noChild"
@@ -608,7 +615,7 @@ class StepSeesaa extends React.Component<Props, State> {
                 <FormControlLabel
                   control={
                     <Radio
-                      checked={this.state.children === 'Y'}
+                      checked={this.state.children}
                       onChange={this.handleChangeChildren}
                       value="Y"
                       name="hasChild"

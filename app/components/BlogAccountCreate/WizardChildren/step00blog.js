@@ -45,6 +45,21 @@ import Goo from '../../../assets/img/blogs/goo.png';
 import prefectures from '../../Commons/prefecture';
 import type MailAccountType from '../../../types/mailAccount';
 
+// TODO
+// fc2 -------->comp
+// webnode
+// livedoor---->comp
+// seesaa
+// ameba
+// rakuten
+// kokolog
+// yaplog
+// ninjya
+// hatena
+// webryblog
+// wpcom
+// goo
+//
 const stepContent = {
   padding: '5px'
 };
