@@ -137,8 +137,25 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
     log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
+    await page.evaluate(`Noty.closeAll();`);
 
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
+
+    await page.evaluate(`swal({
+      title: '手順の確認',
+      html: 'この次に表示される<b>「画像コードの入力」</b>欄に、入力後、<span style="color:red; font-weight: bold">完了ボタン</span>をクリックしてください。その後は、<span style="color:red; font-weight: bold">自動</span>で続けます。また、60秒が経過しても<b>仮登録完了画面</b>にならない場合には、エラーとなります。',
+      type: 'info'
+    })`);
+
+    log.info('確認ダイアログ完了');
+    await delay(500);
+    await page.click('input[value="ユーザー情報を登録"]');
+
+    // --------------------------------
     // click registerにて画像認証用ダイアログが表示
+
+    /*
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -234,6 +251,10 @@ const signup = async (blogInfo, opts) => {
         await delay(4000);
       }
     } while (isCaptchaError);
+    */
+    // -----------------
+
+    await page.waitForSelector('.done', { timeout: 60000 });
 
     // mail account へ
     log.info('livedoorブログ仮登録完了');

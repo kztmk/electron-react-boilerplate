@@ -145,20 +145,26 @@ async function getValidationLink(mailCriteria) {
       console.log(messageUids);
       console.log('--search result----');
       console.log('--get messages--');
-      let messages = await getMessages(boxes.inbox, messageUids);
-      console.log('---got messages--');
-      console.log('---start sort---');
-      messages.sort(mailSortBySequence);
-      console.log('---after sort');
-      console.log(messages);
-      console.log(`mailCount:${messages.length}`);
-      if (!messages) {
+
+      // message check
+      if (!messageUids) {
         messageUids = await searchMessages(boxes.junk, sender);
         if (!messageUids) {
           throw new Error('mail not found inbox/junk');
         }
-        messages = await getMessages(boxes.junk, messageUids);
       }
+
+      const messages = await getMessages(boxes.inbox, messageUids);
+      console.log('---got messages--');
+      console.log('---start sort---');
+      if (!messages) {
+        throw new Error('message not found.');
+      }
+      messages.sort(mailSortBySequence);
+      console.log('---after sort');
+      console.log(messages);
+      console.log(`mailCount:${messages.length}`);
+
       // const bodies = [];
       // messages.forEach(m => {
       const message = messages[0];

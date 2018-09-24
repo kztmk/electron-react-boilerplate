@@ -158,9 +158,7 @@ class FormBlogEdit extends Component<Props, State> {
                 title="更新完了"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={`${this.props.classes.button} ${
-                  this.props.classes.success
-                }`}
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 {msg}
               </SweetAlert>
@@ -185,9 +183,7 @@ class FormBlogEdit extends Component<Props, State> {
                 title="更新失敗"
                 onConfirm={() => this.hideAlert()}
                 onCancel={() => this.hideAlert()}
-                confirmBtnCssClass={`${this.props.classes.button} ${
-                  this.props.classes.success
-                }`}
+                confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.success}`}
               >
                 {msg}
               </SweetAlert>
@@ -331,11 +327,7 @@ class FormBlogEdit extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <Loadable
-        active={this.state.isUpdated}
-        spinner
-        text="サーバーと通信中・・・・"
-      >
+      <Loadable active={this.state.isUpdated} spinner text="サーバーと通信中・・・・">
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
             <Card>
@@ -343,11 +335,7 @@ class FormBlogEdit extends Component<Props, State> {
                 <CardText color="primary">
                   <h4 className={classes.cardTitle}>ブログ情報　編集</h4>
                 </CardText>
-                <GridItem
-                  xs={12}
-                  sm={6}
-                  className={classes.labelHorizontalLessUpperSpace}
-                >
+                <GridItem xs={12} sm={6} className={classes.labelHorizontalLessUpperSpace}>
                   <div className={classes.buttonGroupStyle}>
                     <div className={classes.buttonGroup}>
                       <Button
@@ -375,9 +363,19 @@ class FormBlogEdit extends Component<Props, State> {
                   <form>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
+                          メールアドレス:
+                        </FormLabel>
+                      </GridItem>
+                      <GridItem xs={12} sm={9}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpaceLeft}>
+                          {this.state.mailAddress}
+                        </FormLabel>
+                      </GridItem>
+                    </GridContainer>
+                    <GridContainer>
+                      <GridItem xs={12} sm={2}>
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           ブログ名:
                         </FormLabel>
                       </GridItem>
@@ -398,18 +396,14 @@ class FormBlogEdit extends Component<Props, State> {
                       <GridItem xs={12} sm={1}>
                         <img
                           style={providerImageStyle}
-                          src={getBlogProviderImage(
-                            this.props.targetAccount.provider
-                          )}
+                          src={getBlogProviderImage(this.props.targetAccount.provider)}
                           alt={this.props.targetAccount.provider}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           ブログ説明
                         </FormLabel>
                       </GridItem>
@@ -423,17 +417,14 @@ class FormBlogEdit extends Component<Props, State> {
                           inputProps={{
                             type: 'text',
                             value: this.state.description,
-                            onChange: event =>
-                              this.handleChangeDescription(event)
+                            onChange: event => this.handleChangeDescription(event)
                           }}
                         />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           ログインID:
                         </FormLabel>
                       </GridItem>
@@ -453,9 +444,7 @@ class FormBlogEdit extends Component<Props, State> {
                         />
                       </GridItem>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           パスワード:
                         </FormLabel>
                       </GridItem>
@@ -476,9 +465,7 @@ class FormBlogEdit extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           作成:
                         </FormLabel>
                       </GridItem>
@@ -493,9 +480,7 @@ class FormBlogEdit extends Component<Props, State> {
                             className: classes.inputNoLabelLessUpperSpace,
                             disabled: true,
                             // eslint-disable-next-line function-paren-newline
-                            value: moment(
-                              this.props.targetAccount.createDate
-                            ).format(
+                            value: moment(this.props.targetAccount.createDate).format(
                               'YYYY/MM/DD HH:mm'
                               // eslint-disable-next-line function-paren-newline
                             )
@@ -503,9 +488,7 @@ class FormBlogEdit extends Component<Props, State> {
                         />
                       </GridItem>
                       <GridItem xs={12} sm={1}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           URL:
                         </FormLabel>
                       </GridItem>
@@ -523,9 +506,7 @@ class FormBlogEdit extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel
-                          className={classes.labelHorizontalLessUpperSpace}
-                        >
+                        <FormLabel className={classes.labelHorizontalLessUpperSpace}>
                           備考:
                         </FormLabel>
                       </GridItem>
@@ -546,9 +527,7 @@ class FormBlogEdit extends Component<Props, State> {
                     </GridContainer>
                     <GridContainer>
                       <GridItem xs={12} sm={2}>
-                        <FormLabel
-                          className={classes.labelHorizontalLeastUpperSpace}
-                        >
+                        <FormLabel className={classes.labelHorizontalLeastUpperSpace}>
                           グループタグ:
                         </FormLabel>
                       </GridItem>
@@ -569,10 +548,7 @@ class FormBlogEdit extends Component<Props, State> {
                     <GridContainer>
                       <GridItem xs={12} sm={1} md={1} />
                       <GridItem>
-                        <Table
-                          tableHead={['---詳細情報---']}
-                          tableData={this.state.data}
-                        />
+                        <Table tableHead={['---詳細情報---']} tableData={this.state.data} />
                       </GridItem>
                     </GridContainer>
                   </form>

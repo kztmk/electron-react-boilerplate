@@ -53,6 +53,7 @@ export type Props = {
 };
 
 type State = {
+  key: string,
   targetSequence: SequenceType,
   prefix: '',
   prefixState: string,
@@ -73,6 +74,7 @@ class Sequences extends Component<Props, State> {
     super(props);
 
     this.state = {
+      key: '',
       targetSequence: {},
       prefix: '',
       prefixState: '',
@@ -119,20 +121,20 @@ class Sequences extends Component<Props, State> {
         let title = '';
         switch (mode) {
           case 'create':
-            title ='を作成しました。';
+            title = 'を作成しました。';
             break;
           case 'update':
-            title =  'を更新しました。';
+            title = 'を更新しました。';
             break;
           default:
-            title= '削除しました。';
+            title = '削除しました。';
         }
         const seq = `
           ${this.state.targetSequence.prefix}
           ${this.zeroPadding(
-          this.state.targetSequence.sequence,
-          this.state.targetSequence.sequenceDigit
-        )}
+            this.state.targetSequence.sequence,
+            this.state.targetSequence.sequenceDigit
+          )}
           ${this.state.targetSequence.suffix}`;
         this.setState({
           sweetAlert: (
@@ -198,8 +200,13 @@ class Sequences extends Component<Props, State> {
         sequenceDigit: this.state.sequenceDigit,
         suffix: this.state.suffix
       };
-      this.setState({ targetSequence: { ...updateSequence }, mode: 'update' });
-      this.props.startUpdateSequence(updateSequence);
+      if (updateSequence.key.length > 0) {
+        this.setState({ targetSequence: { ...updateSequence }, mode: 'update' });
+        this.props.startUpdateSequence(updateSequence);
+      } else {
+        this.setState({ targetSequence: { ...updateSequence }, mode: 'create' });
+        this.props.startCreateSequence(updateSequence);
+      }
     }
   };
 

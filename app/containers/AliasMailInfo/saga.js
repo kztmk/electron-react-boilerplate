@@ -1,6 +1,6 @@
 // @flow
 import type Saga from 'redux-saga';
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery, all } from 'redux-saga/effects';
 import moment from 'moment';
 import { Actions } from './actionTypes';
 import {
@@ -11,9 +11,18 @@ import {
   saveAliasMailFailure,
   saveAliasMailSuccess
 } from './actions';
-import { firebaseDbDelete, firebaseDbRead, firebaseDbSet } from '../../database/db';
+import {
+  firebaseDbDelete,
+  firebaseDbRead,
+  firebaseDbSet,
+  firebaseDbUpdate
+} from '../../database/db';
 import type AliasMailType from '../../types/aliasMailInfo';
-import { createMailAddressRequest, updateMailAddressRequest } from '../MailAddressList/actions';
+import {
+  createMailAddressRequest,
+  getMailAddressRequest,
+  updateMailAddressRequest
+} from '../MailAddressList/actions';
 
 function* saveAliasMail(action) {
   try {
@@ -63,6 +72,7 @@ function* saveAliasMail(action) {
     const existsAccount = mailAccounts.find(m => m.mailAddress === aliasBase);
 
     if (existsAccount) {
+      const existsPassword = existsAccount.password;
       // mailAccountsに登録がある場合には、更新
       // accountId  編集不可
       existsAccount.password = alias.password;
@@ -72,7 +82,38 @@ function* saveAliasMail(action) {
       // lastLogin 編集の必要なし
       // tags AliasBaseでは入力欄なし
       console.log('------exists alias then update');
-      yield put(updateMailAddressRequest(existsAccount));
+
+      // alias全てのパスワードも変更
+      console.log(`oldPass:${existsPassword}`);
+      console.log(`newPass:${alias.password}`);
+      if (existsPassword !== alias.password) {
+        console.log('---change all alias password');
+        const aliases = mailAccounts.filter(
+          m => m.accountId.replace(/\+.*$/, '') === alias.accountId
+        );
+        console.log('--alisaes:');
+        console.log(aliases);
+        yield all(
+          aliases.map(a =>
+            call(firebaseDbUpdate, `/users/${userAuth.userId}/mailAccount/${a.key}`, {
+              accountId: a.accountId,
+              password: alias.password,
+              provider: a.provider,
+              mailAddress: a.mailAddress,
+              lastLogin: a.lastLogin,
+              createDate: a.createDate,
+              tags: a.tags,
+              detailInfo: a.detailInfo
+            })
+          )
+        );
+        yield put(getMailAddressRequest());
+      } else {
+        console.log('---update expected password');
+        yield call(firebaseDbUpdate, `/users/${userAuth.userId}/mailAccount/${existsAccount.key}`, {
+          ...existsAccount
+        });
+      }
     } else {
       // 新規
       const detailInfo = [];

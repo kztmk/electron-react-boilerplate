@@ -469,14 +469,27 @@ class Steps00 extends React.Component<Props, State> {
     if (this.state.provider.length === 0) {
       errorMsg += 'メール提供元を選択してください。\n';
     }
-    if (!this.isRequiredLength(this.state.accountId, 8)) {
-      this.setState({ accountIdState: 'error' });
-      errorMsg += 'アカウントIDは8文字以上です。\n';
+
+    if (this.state.provider !== 'Gmail') {
+      if (!this.isRequiredLength(this.state.accountId, 8)) {
+        this.setState({ accountIdState: 'error' });
+        errorMsg += 'アカウントIDは8文字以上です。\n';
+      }
+    } else {
+      if (!this.isRequiredLength(this.state.accountId, 4)) {
+        this.setState({ accountIdState: 'error' });
+        errorMsg += 'アカウントIDは4文字以上です。\n';
+      }
     }
 
     if (!this.isRequiredLength(this.state.password, 8)) {
       this.setState({ passwordState: 'error' });
       errorMsg += 'パスワードは8文字以上です。\n';
+    }
+
+    if (!/^[a-zA-Z0-9!#$%&()*+,.:;=?@\[\]^_{}-]+$/.test(this.state.password)) {
+      this.setState({ passwordState: 'error' });
+      errorMsg += 'パスワードに半角英数字・記号以外が使用されています。\n';
     }
 
     if (this.state.lastName.length === 0) {

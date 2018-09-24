@@ -463,28 +463,9 @@ class MailAddressList extends React.Component<Props, State> {
   showMailAccount = account => {
     this.props.updateLastLogin({ ...account, lastLogin: moment().valueOf() });
 
-    let loginId = account.accountId;
-    let loginPass = account.password;
-
-    // aliasの場合(+を含む）場合、ベースのメールアドレスを取得
-    if (account.accountId.indexOf('+') > -1) {
-      console.log('----found + ');
-      const baseAccount = this.props.mailAccounts.find(
-        m =>
-          m.accountId === account.accountId.replace(/\+.*$/, '') && m.provider === account.provider
-      );
-      console.log('----base address');
-      console.log(baseAccount);
-      if (baseAccount) {
-        loginId = baseAccount.accountId;
-        loginPass = baseAccount.password;
-      }
-      // aliasの基アドレスが見つからない場合には、現在のものを使用
-    }
-
     const user = {};
-    user.username = loginId;
-    user.password = loginPass;
+    user.username = account.accountId.replace(/\+.*$/, '');
+    user.password = account.password;
     user.email = account.mailAddress;
     user.provider = account.provider.toLowerCase();
 
@@ -494,9 +475,10 @@ class MailAddressList extends React.Component<Props, State> {
     const puppeteerEmail = new PuppeteerEmail(user);
     puppeteerEmail.signin(user);
 
+    // imapでmailAccountを開く
     // this.setState({
-    //   targetAccount: account,
-    //   openMailAccount: true
+    //  targetAccount: account,
+    //  openMailAccount: true
     // });
   };
 

@@ -554,7 +554,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
       this.setState({ passwordState: 'success' });
     }
 
-    if (!/^[A-Za-z0-9]+$/.test(this.state.password)) {
+    if (!/^[a-zA-Z0-9!#$%&()*+,.:;=?@\[\]^_{}-]+$/.test(this.state.password)) {
       this.setState({ passwordState: 'error' });
       errorMsg += 'パスワードは半角英数字のみ使用できます。\n';
     }

@@ -304,7 +304,9 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
     await page.type('#birthday_year', birthday[0]);
+    await delay(500);
     await page.type('#birthday_month', birthday[1]);
+    await delay(500);
     await page.type('#birthday_mday', birthday[2]);
     await page.evaluate(`
     new Noty({
@@ -676,21 +678,25 @@ const signup = async (blogInfo, opts) => {
         log.info(`click submit`);
 
         // error check
-        await page.waitFor('.alert-list, h4.alert-header');
+        await page.waitFor('h4.alert-header');
         const success = await page.$eval('h4.alert-header', item => {
           return item.textContent;
         });
+        console.log(`--result:${success}`);
 
         if (success === '新しいブログを作成しました。') {
+          console.log('--complete--');
           isCaptchaError = false;
         } else {
           // "認証コードが不正です。画像の中の数字を入力してください。"
-          const errors = await page.$$eval('.alert-list > li');
+          console.log('-----captcha error----');
+          const errors = await page.$$('.alert-list > li');
+          console.log(`error count:${errors.length}`);
           let isCriticalError = false;
           if (errors.length === 1) {
-            if (
-              errors[0].textContent !== '認証コードが不正です。画像の中の数字を入力してください。'
-            ) {
+            const textContent = await (await errors[0].getProperty('textContent')).jsonValue();
+            console.log(`error textContent:${textContent}`);
+            if (textContent !== '認証コードが不正です。画像の中の数字を入力してください。') {
               isCriticalError = true;
             }
           } else if (errors.length > 1) {
