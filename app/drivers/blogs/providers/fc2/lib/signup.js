@@ -341,9 +341,9 @@ const signup = async (blogInfo, opts) => {
 
       // FC2ID登録完了ページ
       await page.waitFor('.sh_heading_main_b');
-      let successMessege = await page.$eval('.sh_heading_main_b', item => item.textContent);
+      const successMessage = await page.$eval('.sh_heading_main_b', item => item.textContent);
 
-      if (successMessege === 'FC2IDの登録完了') {
+      if (successMessage === 'FC2IDの登録完了') {
         log.info('FC2ID登録完了');
         // サービスの追加リンクをクリック
         await page.addScriptTag({ path: notyJsPath });

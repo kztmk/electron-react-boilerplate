@@ -7,18 +7,18 @@ import signin from './lib/signin';
 import signout from './lib/signout';
 
 /**
- * blog provider for [FC2](https://fc2.com).
+ * blog provider for [ameba](https://www.ameba.jp).
  *
  * @extends BlogProvider
  */
-class BlogProviderFc2 extends BlogProvider {
+class BlogProviderAmeba extends BlogProvider {
   /**
    * Blog provider to automate.
    *
    * @member {BlogProvider}
    */
   get name() {
-    return 'fc2';
+    return 'ameba';
   }
 
   /**
@@ -36,7 +36,7 @@ class BlogProviderFc2 extends BlogProvider {
    * @param {object} opts - Options
    * @param {object} opts.browser - Puppeteer browser instance to use
    *
-   * @return {Promise<BlogSession}
+   * @return {Promise<EmailSession}
    */
   async signup(blogInfo, opts) {
     if (!blogInfo) throw new Error('ブログ登録用情報は必須です。');
@@ -61,11 +61,11 @@ class BlogProviderFc2 extends BlogProvider {
   /**
    * Signs into existing blog account.
    *
-   * You must specify either `blogInfo.username` or 'blogInfo.email`.
+   * You must specify either `user.username` or 'user.email`.
    *
    * Return an blog session with the authenticated puppeteer browser.
    *
-   * @param {object} blogInfo- User info for the account to sign into
+   * @param {object} blogInfo - User info for the account to sign into
    * @param {string} [blogInfo.username] - Username (implies email)
    * @param {string} [blogInfo.email] -Email (implies username)
    * @param {string} blogInfo.password - Password
@@ -81,7 +81,7 @@ class BlogProviderFc2 extends BlogProvider {
     if (!blogInfo.password) throw new Error('パスワードは必須です。');
     if (!blogInfo.mailAddress) throw new Error('メールアドレスは必須です。');
 
-    console.log('--signin to fc2');
+    console.log('--signin to ameba');
 
     await signin(blogInfo, opts);
 
@@ -99,7 +99,7 @@ class BlogProviderFc2 extends BlogProvider {
   /**
    * Sign out of an authenticated session
    *
-   * @param {BlogSession} session
+   * @param {EmailSession} session
    *
    * @return {Promise}
    */
@@ -112,4 +112,4 @@ class BlogProviderFc2 extends BlogProvider {
   }
 }
 
-export default BlogProviderFc2;
+export default BlogProviderAmeba;

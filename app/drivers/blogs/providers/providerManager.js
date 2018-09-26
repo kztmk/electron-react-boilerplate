@@ -1,13 +1,15 @@
 import BlogProviderFc2 from './fc2';
 import BlogProviderLivedoor from './livedoor';
 import BlogProviderSeesaa from './seesaa';
+import BlogProviderAmeba from './ameba';
 
 class BlogProviderManager {
   constructor() {
     this.providers = {
       fc2: BlogProviderFc2,
       livedoor: BlogProviderLivedoor,
-      seesaa: BlogProviderSeesaa
+      seesaa: BlogProviderSeesaa,
+      ameba: BlogProviderAmeba
     };
   }
 

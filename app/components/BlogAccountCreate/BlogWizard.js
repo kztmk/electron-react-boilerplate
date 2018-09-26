@@ -421,7 +421,8 @@ class BlogWizard extends React.Component<Props, State> {
         testPass = true;
         break;
       case 'ameba':
-        url += ``;
+        url += `http://ameblo.jp/${blogInfo.accountId}/`;
+        testPass = true;
         break;
       case 'rakuten':
         url += ``;

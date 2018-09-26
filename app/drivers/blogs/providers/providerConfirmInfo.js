@@ -16,6 +16,12 @@ const confirmMails = [
     sender: 'info@account.seesaa.jp',
     link: 'https://ssl.seesaa.jp/pages/my/member/email/activate?key=',
     regx: 'https:\\/\\/ssl\\.seesaa\\.jp\\/pages\\/my\\/member\\/email\\/activate.*$'
+  },
+  {
+    provider: 'ameba',
+    sender: 'info@ameba.jp',
+    link: 'https://user.ameba.jp/regist/registerInput.do?ekey',
+    regx: 'https:\\/\\/user\\.ameba\\.jp\\/regist\\/registerInput\\.do\\?ekey.*$'
   }
 ];
 

@@ -14,6 +14,9 @@ class PuppeteerBlog {
       case 'seesaa':
         this.client = new BlogDriver('seesaa');
         break;
+      case 'ameba':
+        this.client = new BlogDriver('ameba');
+        break;
       default:
     }
   }
