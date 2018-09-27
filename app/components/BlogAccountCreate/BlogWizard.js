@@ -286,6 +286,7 @@ class BlogWizard extends React.Component<Props, State> {
       // db保存用情報に個人情報を追加
       dbFields.unshift(`都道府県:${this.state.accountInfo.prefecture}`);
       dbFields.unshift(`郵便番号:${this.state.accountInfo.postalCode}`);
+      dbFields.unshift(`生年月日:${this.state.accountInfo.birthDate}`);
       if (this.state.accountInfo.gender === 0) {
         dbFields.unshift(`性別:男`);
       } else {

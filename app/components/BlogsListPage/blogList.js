@@ -248,11 +248,12 @@ class BlogList extends React.Component<Props, State> {
                   if (
                     target.provider === 'fc2' ||
                     target.provider === 'livedoor' ||
-                    target.provider === 'seesaa'
+                    target.provider === 'seesaa' ||
+                    target.provider === 'ameba'
                   ) {
                     this.loginBlog(target);
                   } else {
-                    alert('fc2、Livedoor以外はテスト中です。');
+                    alert('fc2、Livedoor、Seesaa、アメブロ以外はテスト中です。');
                   }
                 } else {
                   alert('ログイン対象のブログアカウントの取得に失敗しました。');

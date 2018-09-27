@@ -81,7 +81,7 @@ const signup = async (blogInfo, opts) => {
   log.info('create: browser page');
   try {
     // Seesaa login/signup page
-    await page.goto('http://blog.seesaa.jp/');
+    await page.goto('http://blog.seesaa.jp/', { waitUntil: 'load', timeout: 60000 });
     log.info('access: http://blog.seesaa.jp/');
 
     await page.addScriptTag({ path: notyJsPath });
@@ -497,7 +497,7 @@ const signup = async (blogInfo, opts) => {
       log.info(`本登録URL:${result[0]}`);
       // 本登録URLへアクセス プロフィールの入力ページ
 
-      await page.goto(result[0], { waitUntil: 'load' });
+      await page.goto(result[0], { waitUntil: 'load', timeout: 60000 });
       await page.waitForSelector('.finished');
       log.info('本登録完了');
 

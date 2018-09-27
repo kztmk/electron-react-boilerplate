@@ -194,7 +194,7 @@ const signup = async (user, opts) => {
     const menuTexts = await page.$$('.menu__text');
     console.log(`find--text menu:${menuTexts.length}`);
     let didClickSecretQuestion = false;
-    for (let i = 0; i < menuTexts.length; i++) {
+    for (let i = 0; i < menuTexts.length; i = +1) {
       const textContent = await (await menuTexts[i].getProperty('textContent')).jsonValue();
       console.log('----text content--');
       console.log(textContent);

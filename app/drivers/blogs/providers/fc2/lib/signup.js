@@ -534,10 +534,10 @@ const signup = async (blogInfo, opts) => {
           } while (captchaError);
 
           log.info('ブログ登録完了');
-          await page.click('#goto_admin > a');
-          log.info('click:管理ページへ');
-          await page.waitFor('#entry_title');
-          log.info('記事ページ');
+          // await page.click('#goto_admin > a');
+          // log.info('click:管理ページへ');
+          // await page.waitFor('#entry_title');
+          // log.info('記事ページ');
 
           await page.addStyleTag({ path: swa2Css });
           await page.addScriptTag({ path: swa2Js });

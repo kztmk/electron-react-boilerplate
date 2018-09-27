@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import delay from 'delay';
 import log from 'electron-log';
+import clickByText from '../../../utils';
 
 const signin = async (blogInfo, opts) => {
   const { browser } = opts;
@@ -17,7 +18,7 @@ const signin = async (blogInfo, opts) => {
   const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
   const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
-  log.info('--------->login to  fc2 blog account--------->');
+  log.info('--------->login to  ameba blog account--------->');
   log.info('-----------user----------');
   log.info(blogInfo);
   log.info('-------------------------');
@@ -26,10 +27,10 @@ const signin = async (blogInfo, opts) => {
 
   log.info('create: browser page');
   try {
-    // Fc2 login/signup page
-    await page.goto(`https://fc2.com/login.php?ref=blog`, { waitUntil: 'load' });
+    // Ameba login/signup page
+    await page.goto(`https://www.ameba.jp/`, { waitUntil: 'load' });
 
-    log.info('access: https://fc2.com/login.php?ref=blog');
+    log.info('access: https://www.ameba.jp/');
 
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
@@ -38,7 +39,32 @@ const signin = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ ログインページアクセス完了' 
+        text:'Amebaトップページへアクセス完了' 
+      }).show();
+    `);
+
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[ログインする]ボタンをクリック' 
+      }).show();
+    `);
+    // click login button
+    await clickByText(page, 'ログインする');
+    log.info('click: login button');
+    await page.waitFor('input[name="accountId"]');
+
+    log.info('access: login page');
+
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'ログインページへアクセス完了' 
       }).show();
     `);
 
@@ -49,7 +75,7 @@ const signin = async (blogInfo, opts) => {
         text:'メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('#id', blogInfo.mailAddress);
+    await page.type('input[name="accountId"]', blogInfo.mailAddress);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -66,7 +92,7 @@ const signin = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-    await page.type('#pass', blogInfo.password);
+    await page.type('input[name="password"]', blogInfo.password);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -86,7 +112,7 @@ const signin = async (blogInfo, opts) => {
         timeout:3000,
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ ログイン完了' 
+        text:'Amebaブログ ログイン完了' 
       }).show();
     `);
   } catch (error) {
