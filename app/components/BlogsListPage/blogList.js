@@ -249,7 +249,8 @@ class BlogList extends React.Component<Props, State> {
                     target.provider === 'fc2' ||
                     target.provider === 'livedoor' ||
                     target.provider === 'seesaa' ||
-                    target.provider === 'ameba'
+                    target.provider === 'ameba' ||
+                    target.provider === 'rakuten'
                   ) {
                     this.loginBlog(target);
                   } else {

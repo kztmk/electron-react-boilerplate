@@ -18,6 +18,29 @@ import CustomInput from '../../../ui/CustomInput/CustomInput';
 import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import extendedFormsStyle from '../../../assets/jss/material-dashboard-pro-react/views/extendedFormsStyle';
+import fc2Junre from "./data/fc2";
+
+const categories = [
+  { val: '100', text: '園芸' },
+  { val: '200', text: 'パソコン・家電' },
+  { val: '300', text: '料理・食べ物' },
+  { val: '400', text: 'ドリンク・お酒' },
+  { val: '500', text: 'ファッション' },
+  { val: '525', text: '出産・子育て' },
+  { val: '600', text: '生活・インテリア' },
+  { val: '700', text: '美容・コスメ' },
+  { val: '710', text: '健康・ダイエット' },
+  { val: '800', text: 'アウトドア・釣り' },
+  { val: '805', text: '車・バイク' },
+  { val: '820', text: 'スポーツ' },
+  { val: '900', text: '趣味・ゲーム' },
+  { val: '920', text: 'ペット' },
+  { val: '1000', text: '映画・ＴＶ' },
+  { val: '1005', text: '読書・コミック' },
+  { val: '1025', text: '音楽' },
+  { val: '1100', text: '旅行・海外情報' },
+  { val: '1200', text: 'そのほか' }
+];
 
 const groupBox = {
   border: '1px solid #333',
@@ -38,8 +61,6 @@ type State = {
   remark: string,
   tags: Array<string>,
   junre: string,
-  nickName: string,
-  nickNameState: string,
   errorMessage: string,
   openErrorSnackbar: boolean
 };
@@ -59,8 +80,6 @@ class StepRakuten extends React.Component<Props, State> {
       remark: '',
       tags: [],
       junre: '',
-      nickName: '',
-      nickNameState: '',
       errorMessage: '',
       openErrorSnackbar: false
     };
@@ -75,9 +94,7 @@ class StepRakuten extends React.Component<Props, State> {
     blogParams.description = this.state.description;
     blogParams.remark = this.state.remark;
     blogParams.tags = this.state.tags.length > 0 ? this.state.tags.join(',') : '';
-    blogParams.nickName = `ニックネーム:${this.state.nickName}`;
-    blogParams.nickNameValue = this.state.nickName;
-    blogParams.junre = `ジャンル:${this.state.junre}`;
+    blogParams.junre = `ジャンル:${this.getJunreLabel(this.state.junre)}`;
     blogParams.junreValue = this.state.junre;
 
     return blogParams;
@@ -96,8 +113,6 @@ class StepRakuten extends React.Component<Props, State> {
       tags: [],
       junre: '',
       junreValue: '',
-      nickName: '',
-      nickNameState: '',
       errorMessage: '',
       openErrorSnackbar: false
     });
@@ -109,27 +124,7 @@ class StepRakuten extends React.Component<Props, State> {
    * @returns {any[]}
    */
   getCategories = () => {
-    const categories = [
-      { val: '100', text: '園芸' },
-      { val: '200', text: 'パソコン・家電' },
-      { val: '300', text: '料理・食べ物' },
-      { val: '400', text: 'ドリンク・お酒' },
-      { val: '500', text: 'ファッション' },
-      { val: '525', text: '出産・子育て' },
-      { val: '600', text: '生活・インテリア' },
-      { val: '700', text: '美容・コスメ' },
-      { val: '710', text: '健康・ダイエット' },
-      { val: '800', text: 'アウトドア・釣り' },
-      { val: '805', text: '車・バイク' },
-      { val: '820', text: 'スポーツ' },
-      { val: '900', text: '趣味・ゲーム' },
-      { val: '920', text: 'ペット' },
-      { val: '1000', text: '映画・ＴＶ' },
-      { val: '1005', text: '読書・コミック' },
-      { val: '1025', text: '音楽' },
-      { val: '1100', text: '旅行・海外情報' },
-      { val: '1200', text: 'そのほか' }
-    ];
+
     const { classes } = this.props;
 
     return categories.map(q => (
@@ -158,6 +153,19 @@ class StepRakuten extends React.Component<Props, State> {
   };
 
   /**
+   * カテゴリの値からカテゴリのラベルを返す
+   * @param value
+   * @returns {*}
+   */
+  getJunreLabel = value => {
+    if (value) {
+      const category = categories.find(c => c.val === value);
+      return category.text;
+    } else {
+      return '';
+    }
+  }
+  /**
    * 入力完了時(フォーム移動時)に全入力項目をチェック
    * @returns {boolean}
    */
@@ -173,10 +181,6 @@ class StepRakuten extends React.Component<Props, State> {
     }
     if (this.state.junre.length === 0) {
       errorMsg = 'ジャンルを選択してください。\n';
-    }
-    if (this.state.nickNameState !== 'success') {
-      this.setState({ nickNameState: 'error' });
-      errorMsg += 'ニックネームの入力を確認してください。\n';
     }
     if (errorMsg.length > 0) {
       this.setState({
@@ -233,19 +237,6 @@ class StepRakuten extends React.Component<Props, State> {
         break;
       case 'remark':
         this.setState({ remark: event.target.value });
-        break;
-      case 'nickName':
-        if (this.requiredField(event.target.value)) {
-          this.setState({
-            nickName: event.target.value,
-            nickNameState: 'success'
-          });
-        } else {
-          this.setState({
-            nickName: event.target.value,
-            nickNameState: 'error'
-          });
-        }
         break;
       default:
     }
@@ -340,20 +331,6 @@ class StepRakuten extends React.Component<Props, State> {
             </GridItem>
           </GridContainer>
           <GridContainer container justify="center">
-            <GridItem xs={12} sm={4} md={4}>
-              <CustomInput
-                labelText="ニックネーム"
-                id="nickName"
-                formControlProps={{
-                  fullWidth: true
-                }}
-                inputProps={{
-                  value: this.state.nickName,
-                  type: 'text',
-                  onChange: event => this.inputFormChange(event, 'nickName')
-                }}
-              />
-            </GridItem>
             <GridItem xs={12} sm={4} md={4}>
               <FormControl fullWidth className={classes.selectFormControl}>
                 <InputLabel htmlFor="junre-select" className={classes.selectLabel}>

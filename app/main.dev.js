@@ -1,5 +1,4 @@
 /* eslint global-require: 0, flowtype-errors/show-errors: 0 */
-// TODO: need logging check electron-log or any other logger
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -23,12 +22,14 @@ import setAppMenu from './menu';
 let mainWindow = null;
 let fileManager = null;
 
-const shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
   // Someone tried to run a second instance, we should focus our window.
   if (mainWindow) {
     if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
     mainWindow.focus();
   }
+  return true;
 });
 
 if (shouldQuit) {

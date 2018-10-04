@@ -2,8 +2,8 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-// import Select from '@material-ui/core/Select';
-// import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
 import moment from 'moment';
 import AddAlert from '@material-ui/icons/AddAlert';
@@ -68,12 +68,8 @@ class FormProfile extends React.Component<Props, State> {
 
     this.state = {
       userInfo: this.props.userInfo,
-      expireDateString: moment(this.props.userInfo.expireDate).format(
-        'YYYY-MM-DD'
-      ),
-      formatPaymentMethod: convertStringToPaymentMethod(
-        this.props.userInfo.paymentMethod
-      ),
+      expireDateString: moment(this.props.userInfo.expireDate).format('YYYY-MM-DD'),
+      formatPaymentMethod: convertStringToPaymentMethod(this.props.userInfo.paymentMethod),
       mailAddressError: false,
       passwordError: false,
       disabled: true,
@@ -237,10 +233,7 @@ class FormProfile extends React.Component<Props, State> {
     return (
       <Grid container justify="center" className={classes.noMargin}>
         <GridItem xs={12} sm={12} md={8}>
-          <ValidatorForm
-            onSubmit={this.handleSubmit}
-            onError={errors => this.validateForm(errors)}
-          >
+          <ValidatorForm onSubmit={this.handleSubmit} onError={errors => this.validateForm(errors)}>
             <Card>
               <CardHeader color="primary" text>
                 <CardText color="primary">
@@ -276,11 +269,7 @@ class FormProfile extends React.Component<Props, State> {
                         onChange={this.handleChangePassword}
                         name="password"
                         value={this.state.userInfo.password}
-                        validators={[
-                          'required',
-                          'minStringLength:8',
-                          'isPassword'
-                        ]}
+                        validators={['required', 'minStringLength:8', 'isPassword']}
                         errorMessages={[
                           '必須項目です。',
                           '最低8文字が必要です。',
@@ -321,7 +310,6 @@ class FormProfile extends React.Component<Props, State> {
                         }}
                       />
                     </GridItem>
-                    {/* 管理者用
                     <GridItem>
                       <CustomInput
                         labelText="有効期限設定"
@@ -335,7 +323,7 @@ class FormProfile extends React.Component<Props, State> {
                           onChange: this.handleChangeExpire
                         }}
                       />
-                    </GridItem> */}
+                    </GridItem>
                   </Grid>
                   <Grid container>
                     <GridItem xs={12} sm={12} md={6}>
@@ -351,7 +339,6 @@ class FormProfile extends React.Component<Props, State> {
                         }}
                       />
                     </GridItem>
-                    {/* 管理者用
                     <GridItem xs={12} sm={12} md={6}>
                       <Select
                         value={this.state.userInfo.paymentMethod}
@@ -367,7 +354,7 @@ class FormProfile extends React.Component<Props, State> {
                         <MenuItem value="by">銀行振込年間支払い</MenuItem>
                         <MenuItem value="bm">銀行振込3ヶ月支払い</MenuItem>
                       </Select>
-                    </GridItem> */}
+                    </GridItem>
                   </Grid>
                 </div>
               </CardBody>
@@ -390,9 +377,7 @@ class FormProfile extends React.Component<Props, State> {
             open={this.state.isOpenErrorSnackbar}
             closeNotification={this.handleErrorSnackbarClose}
             close
-            message={
-              <span id="login_error">{this.state.userInfo.errorMessage}</span>
-            }
+            message={<span id="login_error">{this.state.userInfo.errorMessage}</span>}
           />
           <Snackbar
             color="success"

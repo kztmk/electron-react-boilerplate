@@ -22,6 +22,12 @@ const confirmMails = [
     sender: 'info@ameba.jp',
     link: 'https://user.ameba.jp/regist/registerInput.do?ekey',
     regx: 'https:\\/\\/user\\.ameba\\.jp\\/regist\\/registerInput\\.do\\?ekey.*$'
+  },
+  {
+    provider: 'ninjya',
+    sender: 'oshirase@shinobi.jp',
+    link: 'https://www.ninja.co.jp/register/input/hash/',
+    regx: 'https:\\/\\/www\\.ninja\\.co\\.jp\\/register\\/input\\/hash'
   }
 ];
 

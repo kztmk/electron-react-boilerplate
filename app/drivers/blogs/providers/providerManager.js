@@ -2,6 +2,8 @@ import BlogProviderFc2 from './fc2';
 import BlogProviderLivedoor from './livedoor';
 import BlogProviderSeesaa from './seesaa';
 import BlogProviderAmeba from './ameba';
+import BlogProviderNinjya from './ninjya';
+import BlogProviderRakuten from './rakuten';
 
 class BlogProviderManager {
   constructor() {
@@ -9,7 +11,9 @@ class BlogProviderManager {
       fc2: BlogProviderFc2,
       livedoor: BlogProviderLivedoor,
       seesaa: BlogProviderSeesaa,
-      ameba: BlogProviderAmeba
+      ameba: BlogProviderAmeba,
+      ninjya: BlogProviderNinjya,
+      rakuten: BlogProviderRakuten
     };
   }
 

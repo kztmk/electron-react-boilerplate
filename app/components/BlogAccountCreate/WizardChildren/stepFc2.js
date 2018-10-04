@@ -55,8 +55,6 @@ type State = {
   mainJunreValue: string,
   subJunre: string,
   subJunreValue: string,
-  nickName: string,
-  nickNameState: string,
   answerState: string,
   errorMessage: string,
   openErrorSnackbar: boolean,
@@ -81,8 +79,6 @@ class StepFc2 extends React.Component<Props, State> {
       fc2Answer: '',
       mainJunre: '',
       subJunre: '',
-      nickName: '',
-      nickNameState: '',
       answerState: '',
       errorMessage: '',
       openErrorSnackbar: false,
@@ -99,8 +95,6 @@ class StepFc2 extends React.Component<Props, State> {
     blogParams.description = this.state.description;
     blogParams.remark = this.state.remark;
     blogParams.tags = this.state.tags.length > 0 ? this.state.tags.join(',') : '';
-    blogParams.nickName = `ニックネーム:${this.state.nickName}`;
-    blogParams.nickNameValue = this.state.nickName;
     blogParams.question = `秘密の質問:${this.getFc2QuestionLabel(this.state.fc2Question)}`;
     blogParams.questionValue = this.state.fc2Question;
     blogParams.answer = `質問の答え:${this.state.fc2Answer}`;
@@ -131,8 +125,6 @@ class StepFc2 extends React.Component<Props, State> {
       fc2Answer: '',
       mainJunre: '',
       subJunre: '',
-      nickName: '',
-      nickNameState: '',
       answerState: '',
       errorMessage: '',
       openErrorSnackbar: false,
@@ -295,10 +287,7 @@ class StepFc2 extends React.Component<Props, State> {
       this.setState({ descriptionState: 'error' });
       errorMsg += 'ブログの説明の入力を確認してください。\n';
     }
-    if (this.state.nickNameState !== 'success') {
-      this.setState({ nickNameState: 'error' });
-      errorMsg += 'ニックネームの入力を確認してください。\n';
-    }
+
     if (this.state.mainJunre.length === 0) {
       errorMsg += 'ジャンルを選択してください。\n';
     }
@@ -371,19 +360,6 @@ class StepFc2 extends React.Component<Props, State> {
           this.setState({
             fc2Answer: event.target.value,
             answerState: 'error'
-          });
-        }
-        break;
-      case 'nickName':
-        if (this.requiredField(event.target.value)) {
-          this.setState({
-            nickName: event.target.value,
-            nickNameState: 'success'
-          });
-        } else {
-          this.setState({
-            nickName: event.target.value,
-            nickNameState: 'error'
           });
         }
         break;
@@ -474,22 +450,6 @@ class StepFc2 extends React.Component<Props, State> {
                 inputProps={{
                   className: 'react-tagsinput-input-top-padding',
                   placeholder: 'ここへタグを追加'
-                }}
-              />
-            </GridItem>
-            <GridItem xs={12} sm={4} md={4}>
-              <CustomInput
-                success={this.state.nickNameState === 'success'}
-                error={this.state.nickNameState === 'error'}
-                labelText="ニックネーム"
-                id="nickName"
-                formControlProps={{
-                  fullWidth: true
-                }}
-                inputProps={{
-                  value: this.state.nickName,
-                  type: 'text',
-                  onChange: event => this.inputFormChange(event, 'nickName')
                 }}
               />
             </GridItem>

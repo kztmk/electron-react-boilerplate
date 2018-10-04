@@ -116,6 +116,7 @@ class BlogDriver {
         executablePath: exePath,
         headless: false,
         slowMo: 20,
+        timeout: 60000,
         args: [`--window-size=${width},${height}`]
       }));
 

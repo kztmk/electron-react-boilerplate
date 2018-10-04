@@ -128,7 +128,7 @@ class StepAmeba extends React.Component<Props, State> {
     this.setState({ openErrorSnackbar: false });
   };
 
-  requiredField = value => value.length > 3;
+  requiredField = value => value.length >= 3;
 
   /**
    * フォーム入力時のフィールド毎の処理

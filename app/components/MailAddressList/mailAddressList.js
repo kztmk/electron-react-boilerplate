@@ -545,6 +545,9 @@ class MailAddressList extends React.Component<Props, State> {
 
       const birthDate = this.findPersonalInfoField(detailInfo, '生年月日');
       userBirthDate = this.getUserDetail(birthDate);
+      console.log(`せいねんがっぴ:${userBirthDate}`);
+      userBirthDate = moment(userBirthDate, 'YYYY/M/D').format('YYYY/MM/DD');
+      console.log(`生年月日:${userBirthDate}`);
       const gender = this.findPersonalInfoField(detailInfo, '性別');
       userGender = gender === '性別:男' ? 0 : 1;
       const postalCode = this.findPersonalInfoField(detailInfo, '郵便番号');

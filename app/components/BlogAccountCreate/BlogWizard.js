@@ -422,11 +422,12 @@ class BlogWizard extends React.Component<Props, State> {
         testPass = true;
         break;
       case 'ameba':
-        url += `http://ameblo.jp/${blogInfo.accountId}/`;
+        url = `http://ameblo.jp/${blogInfo.accountId}/`;
         testPass = true;
         break;
       case 'rakuten':
-        url += ``;
+        testPass = true;
+        url += `plaza.rakuten.co.jp/${blogInfo.accountId}/`;
         break;
       case 'kokolog':
         url += ``;
@@ -436,6 +437,7 @@ class BlogWizard extends React.Component<Props, State> {
         break;
       case 'ninjya':
         url += ``;
+        testPass = true;
         break;
       case 'hatena':
         url += ``;

@@ -55,11 +55,9 @@
     ],
     "publish": [
       {
-        "provider": "github",
-        "owner": "kztmk",
-        "repo": "yoriki5",
-        "host": "github.com",
-        "releaseType": "release"
+        "provider": "generic",
+        "url": "https://v5install.yoriki.cloud/update/${os}/${arch}",
+        "channel": "latest"
       }
     ],
     "appId": "com.electron.yorikiv5",
@@ -71,6 +69,9 @@
       "main.prod.js.map",
       "package.json"
     ],
+    "mac": {
+      "identity": "TMK Solutions, Inc. (V6HDK7QFW8)"
+    },
     "dmg": {
       "contents": [
         {
