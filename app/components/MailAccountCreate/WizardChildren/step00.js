@@ -225,15 +225,15 @@ class Steps00 extends React.Component<Props, State> {
         if (gmailInfo && gmailInfo.accountId.length > 0) {
           this.setState({
             provider: event.target.value,
-            accountId: gmailInfo.accountId,
-            password: gmailInfo.password,
-            firstName: gmailInfo.firstName,
-            lastName: gmailInfo.lastName,
-            firstNameKana: gmailInfo.firstNameKana,
-            lastNameKana: gmailInfo.lastNameKana,
+            accountId: gmailInfo.accountId.trim(),
+            password: gmailInfo.password.trim(),
+            firstName: gmailInfo.firstName.trim(),
+            lastName: gmailInfo.lastName.trim(),
+            firstNameKana: gmailInfo.firstNameKana.trim(),
+            lastNameKana: gmailInfo.lastNameKana.trim(),
             gender: gmailInfo.gender,
-            postalCode: gmailInfo.postalCode,
-            prefecture: gmailInfo.prefecture
+            postalCode: gmailInfo.postalCode.trim(),
+            prefecture: gmailInfo.prefecture.trim()
           });
         } else {
           this.setState({
@@ -247,15 +247,15 @@ class Steps00 extends React.Component<Props, State> {
         if (yandexInfo && yandexInfo.accountId.length > 0) {
           this.setState({
             provider: event.target.value,
-            accountId: yandexInfo.accountId,
-            password: yandexInfo.password,
-            firstName: yandexInfo.firstName,
-            lastName: yandexInfo.lastName,
-            firstNameKana: yandexInfo.firstNameKana,
-            lastNameKana: yandexInfo.lastNameKana,
+            accountId: yandexInfo.accountId.trim(),
+            password: yandexInfo.password.trim(),
+            firstName: yandexInfo.firstName.trim(),
+            lastName: yandexInfo.lastName.trim(),
+            firstNameKana: yandexInfo.firstNameKana.trim(),
+            lastNameKana: yandexInfo.lastNameKana.trim(),
             gender: yandexInfo.gender,
-            postalCode: yandexInfo.postalCode,
-            prefecture: yandexInfo.prefecture
+            postalCode: yandexInfo.postalCode.trim(),
+            prefecture: yandexInfo.prefecture.trim()
           });
         } else {
           this.setState({

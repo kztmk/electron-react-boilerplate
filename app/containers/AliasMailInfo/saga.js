@@ -119,14 +119,14 @@ function* saveAliasMail(action) {
       const detailInfo = [];
       detailInfo.push(`氏名(漢字):${alias.lastName} ${alias.firstName}`);
       detailInfo.push(`しめい(ふりがな):${alias.lastNameKana} ${alias.firstNameKana}`);
-      detailInfo.push(`生年月日: ${alias.birthDate}`);
-      detailInfo.push(`郵便番号: ${alias.postalCode}`);
+      detailInfo.push(`生年月日:${alias.birthDate}`);
+      detailInfo.push(`郵便番号:${alias.postalCode}`);
       if (alias.gender) {
-        detailInfo.push(`性別: 女`);
+        detailInfo.push(`性別:女`);
       } else {
-        detailInfo.push(`性別: 男`);
+        detailInfo.push(`性別:男`);
       }
-      detailInfo.push(`都道府県: ${alias.prefecture}`);
+      detailInfo.push(`都道府県:${alias.prefecture}`);
       if (alias.secretQuestion.length > 0) {
         detailInfo.push(`秘密の質問:${alias.secretQuestion}`);
         detailInfo.push(`質問の答え:${alias.secretAnswer}`);

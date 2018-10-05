@@ -197,14 +197,14 @@ class Steps00blog extends React.Component<Props, State> {
           mailAddress,
           accountId,
           password,
-          lastName: nextProps.randomPersonalInfo.lastName,
-          lastNameKana: nextProps.randomPersonalInfo.lastNameKana,
-          firstName: nextProps.randomPersonalInfo.firstName,
-          firstNameKana: nextProps.randomPersonalInfo.firstNameKana,
+          lastName: nextProps.randomPersonalInfo.lastName.trim(),
+          lastNameKana: nextProps.randomPersonalInfo.lastNameKana.trim(),
+          firstName: nextProps.randomPersonalInfo.firstName.trim(),
+          firstNameKana: nextProps.randomPersonalInfo.firstNameKana.trim(),
           gender: nextProps.randomPersonalInfo.gender === 1,
-          birthDate: nextProps.randomPersonalInfo.birthDate,
-          postalCode: nextProps.randomPersonalInfo.postalCode,
-          prefecture: nextProps.randomPersonalInfo.prefecture,
+          birthDate: nextProps.randomPersonalInfo.birthDate.trim(),
+          postalCode: nextProps.randomPersonalInfo.postalCode.trim(),
+          prefecture: nextProps.randomPersonalInfo.prefecture.trim(),
           mailAccount: nextProps.randomPersonalInfo.mailAccount
         });
       } else {
@@ -212,14 +212,14 @@ class Steps00blog extends React.Component<Props, State> {
           mailAddress,
           accountId,
           password,
-          lastName: nextProps.personalInfo.lastName,
-          lastNameKana: nextProps.personalInfo.lastNameKana,
-          firstName: nextProps.personalInfo.firstName,
-          firstNameKana: nextProps.personalInfo.firstNameKana,
+          lastName: nextProps.personalInfo.lastName.trim(),
+          lastNameKana: nextProps.personalInfo.lastNameKana.trim(),
+          firstName: nextProps.personalInfo.firstName.trim(),
+          firstNameKana: nextProps.personalInfo.firstNameKana.trim(),
           gender: nextProps.personalInfo.gender === 1,
-          birthDate: nextProps.personalInfo.birthDate,
-          postalCode: nextProps.personalInfo.postalCode,
-          prefecture: nextProps.personalInfo.prefecture,
+          birthDate: nextProps.personalInfo.birthDate.trim(),
+          postalCode: nextProps.personalInfo.postalCode.trim(),
+          prefecture: nextProps.personalInfo.prefecture.trim(),
           mailAccount: nextProps.randomPersonalInfo.mailAccount
         });
       }

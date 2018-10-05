@@ -27,7 +27,7 @@ const confirmMails = [
     provider: 'ninjya',
     sender: 'oshirase@shinobi.jp',
     link: 'https://www.ninja.co.jp/register/input/hash/',
-    regx: 'https:\\/\\/www\\.ninja\\.co\\.jp\\/register\\/input\\/hash'
+    regx: 'https:\\/\\/www\\.ninja\\.co\\.jp\\/register\\/input\\/hash.*$'
   }
 ];
 

@@ -104,8 +104,6 @@ const signup = async (blogInfo, opts) => {
       throw new Error('忍者 仮登録に失敗');
     }
 
-    throw new Error('');
-
     await page.goto('https://tools.yoriki.cloud/countdown/');
     log.info('メール到着60秒待機');
     await page.waitForSelector('#blind', { timeout: 70000 });
@@ -121,23 +119,64 @@ const signup = async (blogInfo, opts) => {
     // メールアカウントへログインし、本登録URLを取得
     const result = await getValidationLink(mailacc);
 
+    let validationUrl = '';
     if (result) {
-      log.info(`本登録URL:${result[0]}`);
-      // 本登録URLへアクセス プロフィールの入力ページ
+      validationUrl = result[0];
+    } else {
+      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
 
-      await page.goto(result[0]);
-      await page.waitForSelector('#pass1');
-      log.info('本登録URLへアクセス完了');
-      await page.addScriptTag({ path: notyJsPath });
-      await page.addStyleTag({ path: notyCssPath });
-      await page.addStyleTag({ path: notyThemePath });
-      await page.evaluate(`
+      const { value: url } = await page.evaluate(`
+    swal({
+    title: '本登録用リンクURLを貼付け',
+    html: '<p>使用したメールアドレスにログインしてください。<span style="color: red;font-weight: bold;">本登録URLをコピー</span>して、以下のボックスへ貼りつけます。<b>OK</b>をクリックすると自動作成を続けます。</p><p><span style="color: red;font-weight: bold;">未入力でOK</span>をクリックすると<span style="color: red;font-weight: bold;">中止します。</span></p>',
+    input: 'text',
+    inputPlaceholder: '本登録URLを貼付け'
+    })`);
+
+      if (url) {
+        console.log(`url: ${url}`);
+        validationUrl = url;
+        log.info(`set url: ${validationUrl}`);
+      } else {
+        await page.evaluate(`
+        swal({
+        title: '中止しました。',
+        html: '<p>ブログの作成を中止しました。</p><p>ブログ一覧に登録されているデータを削除してください。</p>',
+        })`);
+        log.info('quit:');
+        return;
+      }
+    }
+
+    log.info(`本登録URL:${validationUrl}`);
+    // 本登録URLへアクセス プロフィールの入力ページ
+
+    await page.goto(validationUrl);
+
+    await page.waitForSelector('#password-input');
+    log.info('本登録URLへアクセス完了');
+
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text:'本登録URLへアクセス完了' 
       }).show();
     `);
+
+    await delay(1000);
+    await page.evaluate(`Noty.closeAll();`);
+
+    let isCaptchaError = true;
+    let hasEntered = false;
+    do {
+      await page.addScriptTag({ path: notyJsPath });
+      await page.addStyleTag({ path: notyCssPath });
+      await page.addStyleTag({ path: notyThemePath });
+
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -145,7 +184,9 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-      await page.type(`#pass1`, blogInfo.password);
+      await page.$eval('#password-input', (el, value) => (el.value = value), '');
+      await delay(500);
+      await page.type(`#password-input`, blogInfo.password);
       log.info(`input password:${blogInfo.password}`);
       await page.evaluate(`
     new Noty({
@@ -161,8 +202,10 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード(確認)入力開始' 
       }).show();
     `);
-      await page.type(`#pass2`, blogInfo.password);
-      log.info(`input password confirm`);
+      await page.$eval('#password-confirm', (el, value) => (el.value = value), '');
+      await delay(500);
+      await page.type(`#password-confirm`, blogInfo.password);
+      log.info(`input password confirm: ${blogInfo.password}`);
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -170,337 +213,329 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード(確認)入力完了' 
       }).show();
     `);
-      await page.evaluate(`
+
+      if (!hasEntered) {
+        await page.evaluate(`
     new Noty({
         killer: true,
         type: 'success',
         layout: 'topLeft',
-        text:'性別選択開始' 
+        text:'メールマガジン受信選択開始' 
       }).show();
     `);
-      if (blogInfo.gender === 0) {
-        await page.select('#sex', 'male');
-        log.info('select gender male');
+        await page.click('#magazine-0');
+        log.info('click: メールマガジン受信しない');
         await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'[男性]選択完了' 
-      }).show();
-    `);
-      } else {
-        await page.select('#sex', 'female');
-        log.info('select gender female');
-        await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[女性]選択完了' 
+        text:'メールマガジン受信選択完了' 
       }).show();
     `);
       }
 
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'秘密の質問選択開始' 
-      }).show();
-    `);
-      await page.select(`#select_question`, blogInfo.detailInfo.questionValue);
-      log.info(`select questions:${blogInfo.detailInfo.questionValue}`);
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'秘密の質問選択完了' 
-      }).show();
-    `);
-      await page.evaluate(`
-    new Noty({
-        killer: true,
-        type: 'success',
-        layout: 'topLeft',
-        text:'質問の答え入力開始' 
-      }).show();
-    `);
-      await page.type(`#answer`, blogInfo.detailInfo.answerValue);
-      log.info(`input answer:${blogInfo.detailInfo.answerValue}`);
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'質問の答え入力完了' 
-      }).show();
-    `);
-      const birthDateParts = blogInfo.birthDate.split('/');
-      await page.evaluate(`
-    new Noty({
-        killer: true,
-        type: 'success',
-        layout: 'topLeft',
-        text:'生年月日-[月]-選択開始' 
-      }).show();
-    `);
-      const mm = parseInt(birthDateParts[1], 10).toString();
-      await page.select(`#birthday_mm`, mm);
-      log.info(`split birth date:${birthDateParts[0]}`);
-      log.info(`input birth month:${mm}`);
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'生年月日-[月]-選択完了' 
-      }).show();
-    `);
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'生年月日-[日]-選択開始' 
-      }).show();
-    `);
-      const dd = parseInt(birthDateParts[2], 10).toString();
-      await page.select(`#birthday_dd`, dd);
-      log.info(`input birth date:${dd}`);
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'生年月日-[日]-選択完了' 
-      }).show();
-    `);
-      await page.evaluate(`
-    new Noty({
-        killer: true,
-        type: 'success',
-        layout: 'topLeft',
-        text:'郵便番号入力開始' 
-      }).show();
-    `);
-      await page.type(`#zip`, blogInfo.postalCode);
-      log.info(`input postalCode:${blogInfo.postalCode}`);
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'郵便番号入力完了' 
-      }).show();
-    `);
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'登録ボタンクリック' 
-      }).show();
-    `);
-      await page.click('#enter > input[type="submit"]');
-      log.info('click:登録ボタン');
+      await page.focus('input[name="captcha[input]"]');
+      await page.evaluate(`Noty.closeAll();`);
 
-      // NinjyaID登録完了ページ
-      await page.waitFor('.sh_heading_main_b');
-      const successMessage = await page.$eval('.sh_heading_main_b', item => item.textContent);
+      await delay(500);
+      await page.focus('#password-input');
+      await delay(500);
+      await page.evaluate(() => {window.scrollBy(0, 200)});
+      await delay(500);
 
-      if (successMessage === 'NinjyaIDの登録完了') {
-        log.info('NinjyaID登録完了');
-        // サービスの追加リンクをクリック
-        await page.addScriptTag({ path: notyJsPath });
-        await page.addStyleTag({ path: notyCssPath });
-        await page.addStyleTag({ path: notyThemePath });
-        await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'NinjyaID本登録完了' 
-      }).show();
-    `);
+      await page.evaluate(`Noty.closeAll();`);
 
-        await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'サービス追加リンクをクリック' 
-      }).show();
-    `);
-        await page.click('a[href^="https://secure.id.ninjya.com/add.php"]');
-        log.info('サービス追加リンクをクリック');
-        // サービス追加ページ
-        await page.waitFor('.sh_heading_main_b');
-        successMessege = await page.$eval('.sh_heading_main_b', item => item.textContent);
+      await page.addStyleTag({ path: swa2Css });
+      await page.addScriptTag({ path: swa2Js });
 
-        if (successMessege === 'サービスの追加') {
-          log.info('サービス追加ページへアクセス完了');
-          await page.addScriptTag({ path: notyJsPath });
-          await page.addStyleTag({ path: notyCssPath });
-          await page.addStyleTag({ path: notyThemePath });
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[サービス追加ページ]アクセス完了' 
-      }).show();
-    `);
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ブログを追加ボタンをクリック' 
-      }).show();
-    `);
-
-          // ブログを追加
-          await page.click(
-            '#service_body > dl.service_blog > dd.service_button > form > input[type="submit"]:nth-child(2)'
-          );
-          log.info('click:ブログを追加ボタン');
-          await page.waitFor('#topicpath');
-
-          await page.addScriptTag({ path: notyJsPath });
-          await page.addStyleTag({ path: notyCssPath });
-          await page.addStyleTag({ path: notyThemePath });
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[ブログ情報入力ページ]アクセス完了' 
-      }).show();
-    `);
-          log.info('ブログ-ユーザ情報入力ページ');
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ブログID入力開始' 
-      }).show();
-    `);
-          await page.type('#id', blogInfo.accountId);
-          log.info(`input: blogID:${blogInfo.accountId}`);
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ブログID入力完了' 
-      }).show();
-    `);
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ブログタイトル入力開始' 
-      }).show();
-    `);
-          await page.type('#blog_title > input', blogInfo.title);
-          log.info(`input blog title:${blogInfo.title}`);
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ブログタイトル入力完了' 
-      }).show();
-    `);
-          await page.evaluate(`
-    new Noty({
-        killer: true,
-        type: 'success',
-        layout: 'topLeft',
-        text:'ジャンル入力開始' 
-      }).show();
-    `);
-          await page.select('#janre_list', blogInfo.detailInfo.mainJunreValue);
-          log.info('select main junre');
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ジャンル入力完了' 
-      }).show();
-    `);
-          await delay(1000);
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'サブジャンル入力開始' 
-      }).show();
-    `);
-          await page.select('#subjanre_list', blogInfo.detailInfo.subJunreValue);
-          log.info('select sub junre');
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'サブジャンル入力完了' 
-      }).show();
-    `);
-
-          await page.evaluate(`Noty.closeAll();`);
-          let captchaError = true;
-
-          do {
-            let captchaValue = '';
-            await page.addScriptTag({ path: notyJsPath });
-            await page.addStyleTag({ path: notyCssPath });
-            await page.addStyleTag({ path: notyThemePath });
-
-            await page.focus('#auth_answer_focus');
-
-            await page.addStyleTag({ path: swa2Css });
-            await page.addScriptTag({ path: swa2Js });
-
-            captchaValue = await page.evaluate(`swal({
+      const captchaValue = await page.evaluate(`swal({
           title: '画像認証',
           text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
           input: 'text',
-          inputPlaceholder: '画像にある数字を入力',
+          inputPlaceholder: '画像にある文字を入力',
           confirmButtonText: '認証',
           position: 'top-start'
         })`);
-            await page.evaluate(`
+      await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text: '画像承認キーワードへ[${captchaValue.value}]を入力開始'
       }).show();
     `);
-            await page.$eval('#auth_answer_focus', (el, value) => (el.value = value), '');
-
-            await page.type('#auth_answer_focus', captchaValue.value, { delay: 240 });
-            log.info(`input captcha:${captchaValue.value}`);
-            await page.evaluate(`
+      await page.focus('input[name="captcha[input]"]');
+      await delay(500);
+      await page.$eval('input[name="captcha[input]"]', (el, value) => (el.value = value), '');
+      await page.type('input[name="captcha[input]"]', captchaValue.value, { delay: 240 });
+      log.info(`input captcha:${captchaValue.value}`);
+      await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text: '画像承認キーワードへ[${captchaValue.value}]を入力完了'
       }).show();
     `);
-            await page.evaluate(`
+
+      if (!hasEntered) {
+        await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text: '[利用規約に同意して登録する]ボタンをクリック'
+        text:'利用規約に同意を選択開始' 
       }).show();
     `);
-            await page.click('#submit');
-            log.info('click:[利用規約に同意して登録する]');
-            // --loop
+        await page.click('#registerInputRule');
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'利用規約に同意を選択完了' 
+      }).show();
+    `);
 
-            await page.waitFor('#thankyou, .style_error');
-            const checkSuccess = await page.$('#thankyou');
-            if (checkSuccess) {
-              captchaError = false;
-            }
-          } while (captchaError);
+        log.info('click: 利用規約に同意')
+      await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'個人情報の取扱に同意を選択開始' 
+      }).show();
+    `);
+      await page.click('#registerInputPrivacy');
+      await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'個人情報の取扱に同意を選択完了' 
+      }).show();
+    `);
+        hasEntered = true;
+        log.info('click: 個人情報の取扱に同意')
+      }
+      await page.evaluate(`Noty.closeAll();`);
 
-          log.info('ブログ登録完了');
-          // await page.click('#goto_admin > a');
-          // log.info('click:管理ページへ');
-          // await page.waitFor('#entry_title');
-          // log.info('記事ページ');
+      // button
+      // await page.click('#registerInputSend > input[type="image"]');
+      await page.click('input[src^="/images/register/btn-regist.gif"]');
+      log.info('本登録ボタンをクリック');
+      await delay(5000);
+      await page.waitFor('#authimg, .ttl-registFinish');
 
-          await page.addStyleTag({ path: swa2Css });
-          await page.addScriptTag({ path: swa2Js });
+      const h3Tags = await page.$$('h3.ttl-registFinish');
+      if (h3Tags.length === 1) {
+        isCaptchaError = false;
+        log.info('忍者IDページを確認');
+      }
+    } while (isCaptchaError);
 
-          const closeConfirm = await page.evaluate(`swal({
+        // 完了ページ
+        await page.addScriptTag({ path: notyJsPath });
+        await page.addStyleTag({ path: notyCssPath });
+        await page.addStyleTag({ path: notyThemePath });
+
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'忍者ツールズ登録完了' 
+      }).show();
+    `);
+
+
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[サービス一覧へ]ボタンをクリック' 
+      }).show();
+    `);
+    await delay(1000);
+    await page.click('a[href="/home/"]');
+    await page.waitFor('#main_block');
+
+    // 管理ページ
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[サービス一覧からツールを作成してみよう]をクリック' 
+      }).show();
+    `);
+    await page.click('a[href^="/home/service"]');
+    log.info(`click: サービス一覧からツールを作成してみよう`);
+    await page.waitFor('#header_block > ul > li:nth-child(3)');
+
+    // サービスを追加ページ
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'忍者ブログ サービスを作成リンクをクリック' 
+      }).show();
+    `);
+    await page.click('a[href^="/home/blog/make"]');
+    await page.waitFor('#main_block');
+
+    // 忍者ブログ作成ページ
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'success',
+        layout: 'topLeft',
+        text:'忍者ブログ作成ページへアクセス完了' 
+      }).show();
+    `);
+
+    // blog title
+    await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'success',
+        layout: 'topLeft',
+        text:'ツールの名前入力開始' 
+      }).show();
+    `);
+    await page.type(`#name`, blogInfo.title);
+    log.info(`input name of tools:${blogInfo.title}`);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'ツールの名前入力完了' 
+      }).show();
+    `);
+    log.info(`input title: ${blogInfo.title}`);
+
+    // accountId
+    await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'success',
+        layout: 'topLeft',
+        text:'アカウント名入力開始' 
+      }).show();
+    `);
+    await page.type('#account', blogInfo.accountId);
+    await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'success',
+        layout: 'topLeft',
+        text:'アカウント名入力開始' 
+      }).show();
+    `);
+    log.info(`input accoutId: ${blogInfo.accountId}`);
+
+    // domain
+    await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'success',
+        layout: 'topLeft',
+        text:'ドメイン選択開始' 
+      }).show();
+    `);
+    await page.select('select#domain', blogInfo.detailInfo.domainValue);
+    log.info(`select: select ${blogInfo.detailInfo.domainValue}`);
+    await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'success',
+        layout: 'topLeft',
+        text:'ドメイン選択完了' 
+      }).show();
+    `);
+
+    // not adult site
+    await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'success',
+        layout: 'topLeft',
+        text:'「アダルトサイトではありません」にチェック' 
+      }).show();
+    `);
+    await page.click('#adult');
+    log.info('click: not adult site')
+    await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'success',
+        layout: 'topLeft',
+        text:'利用規約に同意するにチェック' 
+      }).show();
+    `);
+    await page.click('#rule');
+
+    isCaptchaError = true;
+    do {
+      await page.addScriptTag({ path: notyJsPath });
+      await page.addStyleTag({ path: notyCssPath });
+      await page.addStyleTag({ path: notyThemePath });
+
+      await page.addStyleTag({ path: swa2Css });
+      await page.addScriptTag({ path: swa2Js });
+
+      await page.focus('input[name="captcha[input]"]');
+      await page.$eval('input[name="captcha[input]"]', (el, value) => (el.value = value), '');
+
+      const captchaValue = await page.evaluate(`swal({
+          title: '画像認証',
+          text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
+          input: 'text',
+          inputPlaceholder: '画像にある文字を入力',
+          confirmButtonText: '認証',
+          position: 'top-start'
+        })`);
+      await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text: '画像承認キーワードへ[${captchaValue.value}]を入力開始'
+      }).show();
+    `);
+
+      await page.type('input[name="captcha[input]"]', captchaValue.value, { delay: 240 });
+      log.info(`input captcha:${captchaValue.value}`);
+      await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text: '画像承認キーワードへ[${captchaValue.value}]を入力完了'
+      }).show();
+    `);
+
+      await page.click('input[src="/images/home/btn-make.gif"]');
+
+      await page.waitFor('.errorArea, #header_block > ul > li:nth-child(5)');
+
+      const finish = await page.$('#header_block > ul > li:nth-child(5)');
+      if (finish) {
+        const message = await page.$eval('#main_block > h2', item => {
+          return item.textContent;
+        });
+
+        if (message === '忍者ブログ作成完了') {
+          log.info(message);
+          isCaptchaError = false;
+        }
+      }
+    } while (isCaptchaError);
+
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
+
+    const closeConfirm = await page.evaluate(`swal({
       title: 'Ninjyaブログの作成が完了しました。',
       text: 'ブラウザを閉じてもよろしいですか？',
       showCancelButton: true,
@@ -511,19 +546,8 @@ const signup = async (blogInfo, opts) => {
       reverseButtons: true
     })`);
 
-          if (closeConfirm.value) {
-            await page.close();
-          }
-        } else {
-          log.warn('サービス追加ページが確認できません。');
-          throw new Error('サービス追加ページが確認できません。');
-        }
-      } else {
-        log.warn('NinjyaIDの登録完了ページが確認できません。');
-        throw new Error('NinjyaIDの登録完了ページが確認できません。');
-      }
-    } else {
-      throw new Error('本登録URLの取得に失敗しました。');
+    if (closeConfirm.value) {
+      await page.close();
     }
   } catch (error) {
     log.error(`error:${error.toString()}`);
