@@ -5,6 +5,7 @@ import BlogSession from '../../session';
 import signup from './lib/signup';
 import signin from './lib/signin';
 import signout from './lib/signout';
+import open from "./lib/open";
 
 /**
  * blog provider for [Seesaa blog](http://blog.seesaa.jp/).
@@ -108,6 +109,24 @@ class BlogProviderSeesaa extends BlogProvider {
 
     return signout({
       browser: session.browser
+    });
+  }
+
+  async openTopPage(blogInfo, opts) {
+    if (!blogInfo) throw new Error('ブログ情報は必須です。');
+    if (!blogInfo.url) throw new Error('URLは必須です。');
+
+    await open(blogInfo, opts);
+
+    return new BlogSession({
+      blogInfo: {
+        accountId: blogInfo.accountId,
+        password: blogInfo.password,
+        email: blogInfo.mailAddress,
+        url: blogInfo.url
+      },
+      browser: opts.browser,
+      provider: this
     });
   }
 }

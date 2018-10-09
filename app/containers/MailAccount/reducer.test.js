@@ -149,3 +149,45 @@ test('handle UPDATE_LAST_LOGIN_FAILURE', () => {
     seqFrom: 1
   });
 });
+
+test('handle TEST_CONNECTION_REQUEST', () => {
+  expect(reducer(initialState, actions.testConnectionRequest())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});
+
+test('handle TEST_CONNECTION_SUCCESS', () => {
+  expect(reducer(initialState, actions.testConnectionSuccess())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});
+
+test('handle TEST_CONNECTION_FAILURE', () => {
+  expect(reducer(initialState, actions.testConnectionFailure())).toEqual({
+    isLoading: false,
+    isFailure: false,
+    errorMessage: '',
+    mailBoxes: [],
+    selectMailBoxPath: '',
+    messages: [],
+    mailCount: 0,
+    unseenCount: 0,
+    seqFrom: 1
+  });
+});

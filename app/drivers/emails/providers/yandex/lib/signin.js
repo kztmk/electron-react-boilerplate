@@ -93,7 +93,7 @@ const signin = async (user, opts) => {
     `);
 
     await page.focus('input[name=passwd]');
-    await page.type('input[name=passwd]', user.password);
+    await page.type('input[name=passwd]', user.password, {delay: 120});
 
     await page.evaluate(`
     new Noty({

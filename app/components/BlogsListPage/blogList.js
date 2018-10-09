@@ -18,6 +18,7 @@ import matchSorter from 'match-sorter';
 import Edit from '@material-ui/icons/Edit';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import Close from '@material-ui/icons/Close';
+import Public from '@material-ui/icons/Public.js'
 
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
@@ -315,6 +316,29 @@ class BlogList extends React.Component<Props, State> {
               <DeleteForever />
             </Button>
           </Tooltip>
+          <Tooltip title="トップページを開く" placement="top-end">
+            <Button
+              justIcon
+              onClick /* eslint-disable no-alert */={() => {
+                const account = this.state.data.find(o => o.key === prop.key);
+                if (account) {
+                  const target = {
+                    ...account,
+                   groupTags: '',
+                   createDate: moment(account.createDate).valueOf()
+                  };
+                  this.handleOpenTopPage(target);
+                } else {
+                  alert('ブログ作成用メールアカウントの取得に失敗しました。');
+                }
+              }}
+              size="sm"
+              round
+              color="info"
+            >
+              <Public />
+            </Button>
+          </Tooltip>
         </div>
       )
     }));
@@ -412,6 +436,12 @@ class BlogList extends React.Component<Props, State> {
       openEditForm: false
     });
   };
+
+
+  handleOpenTopPage = target => {
+    const puppeteerBlog = new PuppeteerBlog(target);
+    puppeteerBlog.openTopPage(target);
+  }
 
   render() {
     const { classes } = this.props;

@@ -38,6 +38,12 @@ class PuppeteerBlog {
       return this.client.signin(blogInfo);
     }
   }
+
+  openTopPage(blogInfo) {
+    if (this.client) {
+      return this.client.openTopPage(blogInfo);
+    }
+  }
 }
 
 export default PuppeteerBlog;

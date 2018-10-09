@@ -301,6 +301,7 @@ const signup = async (blogInfo, opts) => {
         text:'個人情報の取扱に同意を選択開始' 
       }).show();
     `);
+
       await page.click('#registerInputPrivacy');
       await page.evaluate(`
     new Noty({
@@ -314,11 +315,14 @@ const signup = async (blogInfo, opts) => {
       }
       await page.evaluate(`Noty.closeAll();`);
 
+      await delay(1000);
       // button
-      // await page.click('#registerInputSend > input[type="image"]');
-      await page.click('input[src^="/images/register/btn-regist.gif"]');
+      const submit = await page.$('#registerInputSend > input');
+      await submit.click();
+      // await page.focus('input[src^="/images/register/btn-regist.gif"]');
+      // await page.click('input[src^="/images/register/btn-regist.gif"]');
       log.info('本登録ボタンをクリック');
-      await delay(5000);
+      await delay(15000);
       await page.waitFor('#authimg, .ttl-registFinish');
 
       const h3Tags = await page.$$('h3.ttl-registFinish');

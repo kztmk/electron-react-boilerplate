@@ -42,6 +42,9 @@ const stepContent = {
   padding: '5px'
 };
 
+// TODO: gmail, yandexsen選択時に、パスワード欄をunableへ
+
+
 const groupBoxTop = {
   border: '1px solid #333',
   padding: '10px 0 20px 0',
@@ -60,6 +63,10 @@ const selectAvatarStyle = {
   display: 'flex',
   alignItems: 'center'
 };
+
+const toolTipMultiLine = {
+  whiteSpace: 'pre'
+}
 
 type Props = {
   classes: Object,
@@ -276,14 +283,23 @@ class Steps00 extends React.Component<Props, State> {
    */
   handleGenerateAccountId = () => {
     let acLength = 7;
-    const newAcLength = parseInt(this.state.accountId, 10);
-    if (!Number.isNaN(newAcLength)) {
-      if (newAcLength > 8) {
-        acLength = newAcLength - 1;
+    if (/^\d+$/.test(this.state.password) && this.state.password.length < 3) {
+      const newAcLength = parseInt(this.state.accountId, 10);
+      if (newAcLength < 32) {
+        if (!Number.isNaN(newAcLength)) {
+          if (newAcLength > 8) {
+            acLength = newAcLength;
+          }
+        }
+      } else {
+        this.setState({
+          errorMessage: '指定出来る桁数は、32以下です。',
+          openErrorSnackbar: true
+        })
       }
     }
     const newAccountId =
-      generatePassword(1, false, /[a-z]/) + generatePassword(acLength, false, /[a-z0-9]/);
+      generatePassword(1, false, /[a-z]/) + generatePassword(acLength - 1, false, /[a-z0-9]/);
     if (this.isRequiredLength(newAccountId, 8)) {
       this.setState({
         accountId: newAccountId.toLowerCase(),
@@ -304,10 +320,19 @@ class Steps00 extends React.Component<Props, State> {
    */
   handleGeneratePassword = () => {
     let pwLength = 8;
-    const newPwLength = parseInt(this.state.password, 10);
-    if (!Number.isNaN(newPwLength)) {
-      if (newPwLength > 8) {
-        pwLength = newPwLength;
+    if (/^\d+$/.test(this.state.password) && this.state.password.length < 3) {
+      const newPwLength = parseInt(this.state.password, 10);
+      if (newPwLength < 17) {
+        if (!Number.isNaN(newPwLength)) {
+          if (newPwLength > 8) {
+            pwLength = newPwLength;
+          }
+        }
+      } else {
+        this.setState({
+          errorMessage: '指定出来るパスワード桁数は、16以下です。',
+          openErrorSnackbar: true
+        })
       }
     }
 
@@ -612,6 +637,10 @@ class Steps00 extends React.Component<Props, State> {
     this.setState({ prefecture: event.target.value });
   };
 
+  toolTipsForPassword = () => {
+    return 'ランダムパスワードを再取得<br />16以下の数字の入力で桁数指定。Gmail、Yandexは変更不可。';
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -697,12 +726,13 @@ class Steps00 extends React.Component<Props, State> {
                   inputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Tooltip title="ランダムアカウントIDを再取得">
+                        <Tooltip title="ランダムアカウントIDを再取得、Gmail,Yandexは次の画面で変更します。">
                           <Button
                             justIcon
                             size="sm"
                             color="primary"
                             onClick={() => this.handleGenerateAccountId()}
+                            disabled={(this.state.provider === 'Yandex') || (this.state.provider=== 'Gmail')}
                           >
                             <Refresh />
                           </Button>
@@ -711,6 +741,7 @@ class Steps00 extends React.Component<Props, State> {
                     ),
                     value: this.state.accountId,
                     onChange: event => this.formFieldChange(event, 'accountId'),
+                    disabled: (this.state.provider === 'Yandex') || (this.state.provider=== 'Gmail'),
                     type: 'text'
                   }}
                 />
@@ -727,18 +758,20 @@ class Steps00 extends React.Component<Props, State> {
                   inputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Tooltip title="ランダムパスワードを再取得">
+                        <Tooltip title= "ランダムパスワードを再取得。16以下の数字の入力で桁数指定。Gmail、Yandexは変更不可">
                           <Button
                             justIcon
                             size="sm"
                             color="primary"
                             onClick={() => this.handleGeneratePassword()}
+                            disabled={(this.state.provider === 'Yandex') || (this.state.provider=== 'Gmail')}
                           >
                             <Refresh />
                           </Button>
                         </Tooltip>
                       </InputAdornment>
                     ),
+                    disabled: (this.state.provider === 'Yandex') || (this.state.provider=== 'Gmail'),
                     value: this.state.password,
                     onChange: event => this.formFieldChange(event, 'password')
                   }}

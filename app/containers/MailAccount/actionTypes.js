@@ -41,6 +41,12 @@ export const CLOSE_CONNECTION_SUCCESS: 'MailAccount/CLOSE_CONNECTION_SUCCESS' =
   'MailAccount/CLOSE_CONNECTION_SUCCESS';
 export const CLOSE_CONNECTION_FAILURE: 'MailAccount/CLOSE_CONNECTION_FAILURE' =
   'MailAccount/CLOSE_CONNECTION_FAILURE';
+export const TEST_CONNECTION_REQUEST: 'MailAccount/TEST_CONNECTION_REQUEST' =
+  'MailAccount/TEST_CONNECTION_REQUEST';
+export const TEST_CONNECTION_SUCCESS: 'MailAccount/TEST_CONNECTION_SUCCESS' =
+  'MailAccount/TEST_CONNECTION_SUCCESS';
+export const TEST_CONNECTION_FAILURE: 'MailAccount/TEST_CONNECTION_FAILURE' =
+  'MailAccount/TEST_CONNECTION_FAILURE';
 
 export const Actions = {
   OPEN_CONNECTION_REQUEST,
@@ -60,7 +66,10 @@ export const Actions = {
   MOVE_MAILS_FAILURE,
   CLOSE_CONNECTION_REQUEST,
   CLOSE_CONNECTION_SUCCESS,
-  CLOSE_CONNECTION_FAILURE
+  CLOSE_CONNECTION_FAILURE,
+  TEST_CONNECTION_REQUEST,
+  TEST_CONNECTION_SUCCESS,
+  TEST_CONNECTION_FAILURE
 };
 
 export type OpenConnectionRequest = {
@@ -134,6 +143,19 @@ export type CloseConnectionFailure = {
   meta: { errorMessage: string }
 };
 
+export type TestConnectionRequest = {
+  type: typeof TEST_CONNECTION_REQUEST,
+  payload: MailAccountType
+};
+export type TestConnectionSuccess = {
+  type: typeof TEST_CONNECTION_SUCCESS,
+  payload: ImapManagerPropertyType
+};
+export type TestConnectionFailure = {
+  type: typeof TEST_CONNECTION_FAILURE,
+  meta: { errorMessage: string }
+};
+
 export type Action =
   | OpenConnectionRequest
   | OpenConnectionSuccess
@@ -152,4 +174,7 @@ export type Action =
   | MoveMailsFailure
   | CloseConnectionRequest
   | CloseConnectionSuccess
-  | CloseConnectionFailure;
+  | CloseConnectionFailure
+  | TestConnectionRequest
+  | TestConnectionSuccess
+  | TestConnectionFailure;

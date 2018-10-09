@@ -1,7 +1,11 @@
 // @flow
 import type { Action } from './actionTypes';
 import { Actions } from './actionTypes';
-import { MailBoxesType, MailBoxInfoType, MailRowMessageType } from '../../types/mailMessageType';
+import {
+  MailBoxesType,
+  MailBoxInfoType,
+  MailRowMessageType
+} from '../../types/mailMessageType';
 
 export type State = {
   isLoading: boolean,
@@ -51,6 +55,32 @@ export const initialState: State = {
 
 export default function(state: State = initialState, action: Action): State {
   switch (action.type) {
+    case Actions.TEST_CONNECTION_REQUEST:
+      return {
+        ...state,
+        isLoading: true
+      };
+
+    case Actions.TEST_CONNECTION_SUCCESS:
+      return {
+        ...initialState,
+        isLoading: false,
+        mailBoxes: action.payload.mailBoxes,
+        selectMailBoxPath: action.payload.selectMailBoxPath,
+        messages: action.payload.messages,
+        mailCount: action.payload.mailCount,
+        unseenCount: action.payload.unseenCount,
+        seqFrom: action.payload.seqFrom
+      };
+
+    case Actions.TEST_CONNECTION_FAILURE:
+      return {
+        ...initialState,
+        isLoading: false,
+        isFailure: true,
+        errorMessage: action.meta.errorMessage
+      };
+
     case Actions.OPEN_CONNECTION_REQUEST:
       return {
         ...initialState,

@@ -14,8 +14,8 @@ import {
   updateFlagsFailure,
   updateFlagsSuccess,
   moveMailsSuccess,
-  moveMailsFailure
-} from './actions';
+  moveMailsFailure, testConnectionFailure, testConnectionSuccess
+} from "./actions";
 import type { ImapManagerPropertyType, MailRowMessageType } from '../../types/mailMessageType';
 import { firebaseDbUpdate } from '../../database/db';
 
@@ -29,6 +29,28 @@ const initialImapProperty: ImapManagerPropertyType = {
   unseenCount: 0,
   seqFrom: 0
 };
+
+const convertToBaseAccountId = mailAccount => {
+  let loginId = '';
+
+  switch (mailAccount.provider) {
+    case 'Outlook':
+      loginId = mailAccount.mailAddress;
+      break;
+    case 'Gmail':
+      loginId = mailAccount.mailAddress.replace(/\+.*@/, '@');
+      break;
+    case 'Yandex':
+      loginId = mailAccount.mailAddress.replace(/@.*$/, '');
+      loginId = loginId.replace(/\+.*$/, '');
+      break;
+    case 'Yahoo':
+      loginId = mailAccount.accountId;
+      break;
+    default:
+  }
+  return loginId;
+}
 
 /**
  * 提供元により接続先imap server情報の作成
@@ -190,6 +212,105 @@ function generateSeq(startSeq, mailCount): string {
   return sequence;
 }
 
+function* testImapConnection(action) {
+  try {
+    // 提供元からimap server情報を作成
+    imapProperty = initialImapProperty;
+    const loginId = convertToBaseAccountId(action.payload);
+    const config = getImapConfig(action.payload);
+    imapClient = new ImapClient(config.host, config.port, {
+      auth: {
+        user: loginId,
+        pass: action.payload.password
+      },
+      useSecureTransport: true
+    });
+
+    // error発生
+    imapClient.onerror = function(error) {
+      console.log(`error:${error}`);
+      imapClient.close();
+      imapClient = null;
+      imapProperty = null;
+    };
+
+    // imap serverへ接続
+    const imapConnect = client => client.connect();
+    yield call(imapConnect, imapClient);
+
+    // account内のメールフォルダを取得
+    imapProperty.mailBoxes = [];
+    const mailBoxesRoot = yield call(getMailboxes);
+    if (action.payload.provider === 'Gmail') {
+      console.log(mailBoxesRoot.children);
+      const gmailRoot = mailBoxesRoot.children.find(grandChild => grandChild.name === '[Gmail]');
+      console.log('--[Gmail]');
+      console.log(gmailRoot);
+
+      if (gmailRoot) {
+        gmailRoot.children.forEach(box => {
+          console.log(`boxName:${box.name}`);
+          imapProperty.mailBoxes.push(box);
+        });
+      } else {
+        throw new Error('[Gmail not found.]');
+      }
+    } else {
+      mailBoxesRoot.children.forEach(box => {
+        if (!box.subscribed) {
+          box.subscribed = false;
+        }
+        imapProperty.mailBoxes.push(box);
+      });
+    }
+    // imapProperty.mailBoxes = mailBoxesRoot.children;
+
+    console.log(imapProperty.mailBoxes);
+
+    // inboxのpathを検索
+    // eslint-disable-next-line array-callback-return
+    const inbox = imapProperty.mailBoxes.filter(box => {
+      if (box.path.toLowerCase().trim() === 'inbox') {
+        return box;
+      }
+    });
+
+    let inBoxPath = '';
+    if (inbox.length > 0) {
+      inBoxPath = inbox[0].path;
+    }
+
+    if (action.payload.provider === 'Gmail') {
+      const gInbox = imapProperty.mailBoxes.find(box => {
+        console.log('g-specialUse');
+        console.log(box.specialUse);
+        return box.specialUse === '\\All';
+      });
+      console.log('g-inbox');
+      console.log(gInbox);
+      inBoxPath = gInbox.path;
+    }
+
+    console.log(`Inbox --path --${inBoxPath}`);
+
+    // Inbox内のメール取得
+    if (inBoxPath.length > 0) {
+      yield call(getSelectMailboxInfoAndMessages, inBoxPath);
+    } else {
+      yield call(getSelectMailboxInfoAndMessages);
+    }
+
+    // connection Close
+    imapClient.close();
+    imapClient = null;
+    yield put(testConnectionSuccess(imapProperty))
+  } catch (error) {
+    // imapClient.close();
+    imapClient = null;
+    yield put(testConnectionFailure({ errorMessage: error.toString() }));
+  }
+}
+
 /**
  * imap serverへ接続し、inbox内のメール25通を取得しidle
  * @param action
@@ -199,10 +320,12 @@ function* openImapConnection(action) {
   try {
     // 提供元からimap server情報を作成
     imapProperty = initialImapProperty;
+    const loginId = convertToBaseAccountId(action.payload);
+
     const config = getImapConfig(action.payload);
     imapClient = new ImapClient(config.host, config.port, {
       auth: {
-        user: action.payload.accountId,
+        user: loginId,
         pass: action.payload.password
       },
       useSecureTransport: true
@@ -494,6 +617,7 @@ function* rootSaga(): Saga {
   yield takeEvery(Actions.CLOSE_CONNECTION_REQUEST, closeImapConnection);
   yield takeEvery(Actions.UPDATE_FLAGS_REQUEST, updateFlags);
   yield takeEvery(Actions.MOVE_MAILS_REQUEST, moveMails);
+  yield takeEvery(Actions.TEST_CONNECTION_REQUEST, testImapConnection);
 }
 
 export default rootSaga;

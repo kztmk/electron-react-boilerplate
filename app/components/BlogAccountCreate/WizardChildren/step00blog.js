@@ -20,6 +20,8 @@ import Avatar from '@material-ui/core/Avatar';
 import FolderShared from '@material-ui/icons/FolderShared';
 import AddAlert from '@material-ui/icons/AddAlert';
 import Refresh from '@material-ui/icons/Refresh';
+import { MailTest } from '../../../assets/icons';
+
 // core components
 import GridContainer from '../../../ui/Grid/GridContainer';
 import GridItem from '../../../ui/Grid/GridItem';
@@ -45,16 +47,18 @@ import Goo from '../../../assets/img/blogs/goo.png';
 import prefectures from '../../Commons/prefecture';
 import type MailAccountType from '../../../types/mailAccount';
 
+import { imapConnectionTest } from "../../../drivers/emails/imap";
+
 // TODO
 // fc2 -------->comp
 // webnode
 // livedoor---->comp
-// seesaa
-// ameba
-// rakuten
+// seesaa------>comp
+// ameba------->comp
+// rakuten----->comp
 // kokolog
 // yaplog
-// ninjya
+// ninjya-----
 // hatena
 // webryblog
 // wpcom
@@ -96,10 +100,17 @@ type Props = {
   personalInfo: PersonalInfoType,
   randomPersonalInfo: PersonalInfoType,
   startGetRandomPersonalInfo: () => void,
-  startClearPersonalInfo: () => void
+  startClearPersonalInfo: () => void,
+  imapMessageLoading: boolean,
+  imapIsError: boolean,
+  imapErrorMessage: string,
+  imapSelectMailBoxPath: string,
+  imapMailCount: number,
+  startTestImapConnection: () => void
 };
 
 type State = {
+  isLoading: boolean,
   provider: string,
   mailAddress: string,
   accountId: string,
@@ -117,9 +128,11 @@ type State = {
   postalCodeState: string,
   prefecture: string,
   forceUseDefault: boolean,
-  forceUseRAndom: boolean,
+  forceUseRandom: boolean,
   errorMessage: string,
   openErrorSnackbar: boolean,
+  successMessage: string,
+  openSuccessSnackbar: boolean,
   init: boolean,
   mailAccount: MailAccountType
 };
@@ -132,6 +145,7 @@ class Steps00blog extends React.Component<Props, State> {
     super(props);
 
     this.state = {
+      isLoading: false,
       provider: '',
       mailAddress: '',
       accountId: '',
@@ -152,6 +166,8 @@ class Steps00blog extends React.Component<Props, State> {
       prefecture: '',
       errorMessage: '',
       openErrorSnackbar: false,
+      successMessage: '',
+      openSuccessSnackbar: false,
       forceUseDefault: false,
       forceUseRandom: false,
       init: true,
@@ -160,6 +176,9 @@ class Steps00blog extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps = nextProps => {
+    if (!this.props.isLoading && nextProps.isLoading) {
+      this.setState({ isLoading: true });
+    }
     if (!nextProps.isLoading && !nextProps.isFailure) {
       const accountMeta = nextProps.randomPersonalInfo.address1;
       let accountMetaData = [];
@@ -194,6 +213,7 @@ class Steps00blog extends React.Component<Props, State> {
         this.state.forceUseRandom
       ) {
         this.setState({
+          isLoading: false,
           mailAddress,
           accountId,
           password,
@@ -204,11 +224,14 @@ class Steps00blog extends React.Component<Props, State> {
           gender: nextProps.randomPersonalInfo.gender === 1,
           birthDate: nextProps.randomPersonalInfo.birthDate.trim(),
           postalCode: nextProps.randomPersonalInfo.postalCode.trim(),
-          prefecture: nextProps.randomPersonalInfo.prefecture.trim(),
-          mailAccount: nextProps.randomPersonalInfo.mailAccount
+          prefecture: nextProps.randomPersonalInfo.prefecture.trim()
         });
+        if (this.state.init) {
+          this.setState({ mailAccount: nextProps.randomPersonalInfo.mailAccount });
+        }
       } else {
         this.setState({
+          isLoading: false,
           mailAddress,
           accountId,
           password,
@@ -219,18 +242,41 @@ class Steps00blog extends React.Component<Props, State> {
           gender: nextProps.personalInfo.gender === 1,
           birthDate: nextProps.personalInfo.birthDate.trim(),
           postalCode: nextProps.personalInfo.postalCode.trim(),
-          prefecture: nextProps.personalInfo.prefecture.trim(),
-          mailAccount: nextProps.randomPersonalInfo.mailAccount
+          prefecture: nextProps.personalInfo.prefecture.trim()
         });
+        if (this.state.init) {
+          this.setState({ mailAccount: nextProps.randomPersonalInfo.mailAccount })
+        }
       }
     }
 
     // error get random personalInfo
     if (!nextProps.isLoading && nextProps.isFailure) {
       this.setState({
+        isLoading: false,
         errorMessage: nextProps.errorMessage,
         openErrorSnackbar: true
       });
+    }
+
+    if (!this.props.imapMessageLoading && nextProps.imapMessageLoading) {
+      this.setState({ isLoading: true })
+    }
+    if (this.props.imapMessageLoading && !nextProps.imapMessageLoading) {
+      // imap connection test done
+      if (!nextProps.imapIsError) {
+        this.setState({
+          isLoading: false,
+          successMessage: `このメールアドレスへimapでの接続に成功しました。受信箱に${nextProps.imapMailCount}通のメールがあります。`,
+          openSuccessSnackbar: true
+        })
+      } else {
+        this.setState({
+          isLoading: false,
+          errorMessage: `エラー：${nextProps.imapErrorMessage}`,
+          openErrorSnackbar: true
+        })
+      }
     }
   };
 
@@ -246,6 +292,7 @@ class Steps00blog extends React.Component<Props, State> {
   initState = () => {
     this.props.startClearPersonalInfo();
     this.setState({
+      isLoading: false,
       mailAddress: '',
       provider: '',
       accountId: '',
@@ -302,13 +349,23 @@ class Steps00blog extends React.Component<Props, State> {
    */
   handleGenerateAccountId = () => {
     let acLength = 8;
-    const newAcLength = parseInt(this.state.accountId, 10);
-    if (!Number.isNaN(newAcLength)) {
-      if (newAcLength > 8) {
-        acLength = newAcLength;
+    if (/^\d+$/.test(this.state.password) && this.state.password.length < 3) {
+      const newAcLength = parseInt(this.state.accountId, 10);
+      if (newAcLength < 33) {
+        if (!Number.isNaN(newAcLength)) {
+          if (newAcLength > 8) {
+            acLength = newAcLength;
+          }
+        }
+      } else {
+        this.setState({
+          errorMessage: '指定出来る桁数は、32以下です。',
+          openErrorSnackbar: true
+        })
       }
     }
-    const newAccountId = generatePassword(acLength, false, /[a-zA-Z0-9]/);
+
+    const newAccountId = generatePassword(1, false, /[a-z]/) + generatePassword(acLength-1, false, /[a-z0-9]/);
     if (this.isRequiredLength(newAccountId, 8)) {
       this.setState({
         accountId: newAccountId.toLowerCase(),
@@ -329,10 +386,19 @@ class Steps00blog extends React.Component<Props, State> {
    */
   handleGeneratePassword = () => {
     let pwLength = 8;
-    const newPwLength = parseInt(this.state.password, 10);
-    if (!Number.isNaN(newPwLength)) {
-      if (newPwLength > 8) {
-        pwLength = newPwLength;
+    if (/^\d+$/.test(this.state.password) && this.state.password.length < 3) {
+      const newPwLength = parseInt(this.state.password, 10);
+      if (newPwLength < 17) {
+        if (!Number.isNaN(newPwLength)) {
+          if (newPwLength > 8) {
+            pwLength = newPwLength;
+          }
+        }
+      } else {
+        this.setState({
+          errorMessage: '指定出来るパスワード桁数は、16以下です。',
+          openErrorSnackbar: true
+        })
       }
     }
 
@@ -633,14 +699,44 @@ class Steps00blog extends React.Component<Props, State> {
     }
   };
 
+  handleImapConnectionTest = () =>{
+    this.props.startTestImapConnection({
+      key: this.state.mailAccount.key,
+      accountId: this.state.mailAccount.accountId,
+      password: this.state.mailAccount.password,
+      mailAddress: this.state.mailAccount.mailAddress,
+      provider: this.state.mailAccount.provider,
+      createDate: this.state.mailAccount.createDate,
+      lastLogin: this.state.mailAccount.lastLogin,
+      tags: this.state.mailAccount.tags,
+      detailInfo: this.state.mailAccount.detailInfo
+    });
+  }
+
+
+ handleSuccessSnackbarClose = () => {
+    this.setState({ openSuccessSnackbar: false})
+ }
+
   render() {
     const { classes } = this.props;
     return (
-      <Loadable active={this.props.isLoading} spinner text="個人情報取得中・・・・">
+      <Loadable active={this.state.isLoading} spinner text="サーバーへ接続中・・・・">
         <div>
           <GridContainer style={stepContent}>
             <GridContainer>
               <legend style={legendStyle}>使用メールアドレス:{this.state.mailAddress}</legend>
+              <Tooltip title="imap接続出来るかをチェックします。">
+                <Button
+                  justIcon
+                  size="sm"
+                  round
+                  color="primary"
+                  onClick={this.handleImapConnectionTest}
+                >
+                  <MailTest />
+                </Button>
+              </Tooltip>
             </GridContainer>
             <GridContainer container justify="center" style={groupBoxTop}>
               <GridItem xs={12} sm={3} md={3}>
@@ -1033,6 +1129,15 @@ class Steps00blog extends React.Component<Props, State> {
             closeNotification={this.handleErrorSnackbarClose}
             close
             message={<span id="login_error">{this.state.errorMessage}</span>}
+          />
+          <Snackbar
+            color="success"
+            place="bc"
+            icon={AddAlert}
+            open={this.state.openSuccessSnackbar}
+            closeNotification={this.handleSuccessSnackbarClose}
+            close
+            message={<span id="login_error">{this.state.successMessage}</span>}
           />
         </div>
       </Loadable>

@@ -125,6 +125,38 @@ class BlogDriver {
       ...opts
     });
   }
+
+  async openTopPage(blogInfo, opts = {}) {
+    if (!blogInfo) {
+      throw new Error('トップページURLは必須です。');
+    }
+
+    let exePath = await puppeteer.executablePath();
+    if (process.env.NODE_ENV === 'production') {
+      exePath = exePath.replace('app.asar', 'app.asar.unpacked');
+    }
+
+    const width = 1024;
+    const height = 748;
+
+    const browser =
+      opts.browser ||
+      (await puppeteer.launch({
+        executablePath: exePath,
+        headless: false,
+        slowMo: 20,
+        timeout: 60000,
+        args: [`--window-size=${width},${height}`]
+      }));
+
+    return this.blogProvider.openTopPage(blogInfo, {
+      browser,
+      ...opts
+    });
+
+
+  }
 }
+
 
 export default BlogDriver;

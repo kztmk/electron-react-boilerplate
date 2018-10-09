@@ -7,7 +7,7 @@ import type { Action as MailAddressListAction } from '../containers/MailAddressL
 import type { Action as PersonalInfoAction } from '../containers/PersonalInfo/actionTypes';
 import type { Action as ProfileAction } from '../containers/Profile/actionTypes';
 import type { Action as ResetPasswordAction } from '../containers/ResetPassword/actionTypes';
-import type { Action as SequenceActon } from '../containers/Sequence/actionTypes';
+import type { Action as SequenceAction } from '../containers/Sequence/actionTypes';
 
 export type ReduxInitAction = {
   type: '@@INIT'
@@ -23,4 +23,4 @@ export type Action =
   | PersonalInfoAction
   | ProfileAction
   | ResetPasswordAction
-  | SequenceActon;
+  | SequenceAction;
