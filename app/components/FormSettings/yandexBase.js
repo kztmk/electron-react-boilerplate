@@ -325,8 +325,8 @@ class YandexBaseSettings extends React.Component<Props, State> {
    * 文字列長をaccountId欄に入力すれば優先、default length 8
    */
   handleGenerateAccountId = () => {
-    let acLength = 7;
-    if (/^\d+$/.test(this.state.password) && this.state.password.length < 3) {
+    let acLength = 8;
+    if (/^\d+$/.test(this.state.accountId) && this.state.accountId.length < 3) {
       const newAcLength = parseInt(this.state.accountId, 10);
       if (newAcLength < 32) {
         if (!Number.isNaN(newAcLength)) {
@@ -343,7 +343,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
     }
 
     const newAccountId =
-      generatePassword(1, false, /[a-z]/) + generatePassword(acLength, false, /[a-z0-9]/);
+      generatePassword(1, false, /[a-z]/) + generatePassword(acLength -1, false, /[a-z0-9]/);
     if (this.isRequiredLength(newAccountId, 8)) {
       this.setState({
         accountId: newAccountId.toLowerCase(),

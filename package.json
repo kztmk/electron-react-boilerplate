@@ -187,7 +187,7 @@
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "enzyme-to-json": "^3.3.4",
-    "eslint": "^5.4.0",
+    "eslint": "^5.6.1",
     "eslint-config-airbnb": "^17.0.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-formatter-pretty": "^1.3.0",
@@ -238,8 +238,8 @@
     "webpack-merge": "^4.1.3"
   },
   "dependencies": {
-    "@material-ui/core": "^1.4.3",
-    "@material-ui/icons": "^2.0.1",
+    "@material-ui/core": "^3.2.0",
+    "@material-ui/icons": "^3.0.1",
     "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.6",
     "clipboard-copy": "^2.0.0",
@@ -263,6 +263,7 @@
     "perfect-scrollbar": "^1.4.0",
     "react": "^16.4.1",
     "react-bootstrap-sweetalert": "^4.2.3",
+    "react-contextmenu": "^2.9.3",
     "react-datetime": "git+https://github.com/kztmk/react-datetime.git#master",
     "react-dom": "^16.4.1",
     "react-hot-loader": "^4.3.4",

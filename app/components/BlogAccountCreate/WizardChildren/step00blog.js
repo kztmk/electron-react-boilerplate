@@ -349,7 +349,7 @@ class Steps00blog extends React.Component<Props, State> {
    */
   handleGenerateAccountId = () => {
     let acLength = 8;
-    if (/^\d+$/.test(this.state.password) && this.state.password.length < 3) {
+    if (/^\d+$/.test(this.state.accountId) && this.state.accountId.length < 3) {
       const newAcLength = parseInt(this.state.accountId, 10);
       if (newAcLength < 33) {
         if (!Number.isNaN(newAcLength)) {
@@ -365,7 +365,7 @@ class Steps00blog extends React.Component<Props, State> {
       }
     }
 
-    const newAccountId = generatePassword(1, false, /[a-z]/) + generatePassword(acLength-1, false, /[a-z0-9]/);
+    const newAccountId = generatePassword(1, false, /[a-z]/) + generatePassword(acLength -1, false, /[a-z0-9]/);
     if (this.isRequiredLength(newAccountId, 8)) {
       this.setState({
         accountId: newAccountId.toLowerCase(),

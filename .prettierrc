@@ -3,7 +3,10 @@
     {
       "files": [".prettierrc", ".babelrc", ".eslintrc"],
       "options": {
-        "parser": "json"
+        "parser": "json",
+        "printWidth": 100,
+        "singleQuote": true,
+        "trailingComma": "es5"
       }
     }
   ],
