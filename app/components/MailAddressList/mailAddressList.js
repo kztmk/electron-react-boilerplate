@@ -45,7 +45,7 @@ import type BlogAccountType from '../../types/blogAccount';
 import type PersonalInfoType from '../../types/personalInfo';
 import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
 
-// import getValidationLink from '../../drivers/emails/imap';
+import GavelPopup from '../Utils/gavel';
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -222,6 +222,9 @@ class MailAddressList extends React.Component<Props, State> {
       title: `${prop.mailAddress}/作成日：${moment(prop.createDate).format('YYYY/MM/DD HH:mm')}`,
       actions: (
         <div className="actions-right">
+          <Tooltip title="ID、パスワードのコピーなど便利ツール" placement="top-end">
+            <GavelPopup account={prop} mode="mail"/>
+          </Tooltip>
           <Tooltip title="メールアカウントへログイン" placement="top-end">
             <Button
               justIcon
@@ -624,7 +627,7 @@ class MailAddressList extends React.Component<Props, State> {
                       </div>
                     </Tooltip>
                   ),
-                  width: 60,
+                  width: 54,
                   filterable: true,
                   sortable: true,
                   filterMethod: (filter, rows) =>
@@ -656,8 +659,8 @@ class MailAddressList extends React.Component<Props, State> {
                     </Tooltip>
                   ),
                   accessor: 'accountId',
-                  width: 220,
-                  maxWidth: 160,
+                  width: 215,
+                  maxWidth: 215,
                   filterable: true,
                   sortable: true,
                   Filter: ({ filter, onChange }) => (
@@ -753,7 +756,7 @@ class MailAddressList extends React.Component<Props, State> {
                   }
                 },
                 {
-                  width: 160,
+                  width: 170,
                   Header: '',
                   accessor: 'actions',
                   sortable: false,

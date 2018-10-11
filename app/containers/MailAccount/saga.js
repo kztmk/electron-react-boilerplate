@@ -30,24 +30,36 @@ const initialImapProperty: ImapManagerPropertyType = {
   seqFrom: 0
 };
 
+/**
+ * alias addressからログイン用Idに変換
+ * @param mailAccount
+ * @returns {string}
+ */
 const convertToBaseAccountId = mailAccount => {
   let loginId = '';
-
+  console.log(`--provider: ${mailAccount.provider}`);
   switch (mailAccount.provider) {
     case 'Outlook':
       loginId = mailAccount.mailAddress;
       break;
     case 'Gmail':
       loginId = mailAccount.mailAddress.replace(/\+.*@/, '@');
+      loginId = loginId.replace(/\./, '');
       break;
     case 'Yandex':
-      loginId = mailAccount.mailAddress.replace(/@.*$/, '');
+      loginId = mailAccount.mailAddress.replace(/@.*$/g, '');
+      console.log(`--delete after at: ${loginId}`);
       loginId = loginId.replace(/\+.*$/, '');
+      console.log(`--delete after plus: ${loginId}`);
       break;
     case 'Yahoo':
       loginId = mailAccount.accountId;
       break;
     default:
+  }
+
+  if (loginId.length === 0 ) {
+    throw new Error('メール提供元を特定出来ません。: convert alias id to login Id');
   }
   return loginId;
 }
@@ -258,6 +270,7 @@ function* testImapConnection(action) {
     } else {
       mailBoxesRoot.children.forEach(box => {
         if (!box.subscribed) {
+          // eslint-disable-next-line no-param-reassign
           box.subscribed = false;
         }
         imapProperty.mailBoxes.push(box);
@@ -380,6 +393,7 @@ function* openImapConnection(action) {
     } else {
       mailBoxesRoot.children.forEach(box => {
         if (!box.subscribed) {
+          // eslint-disable-next-line no-param-reassign
           box.subscribed = false;
         }
         imapProperty.mailBoxes.push(box);

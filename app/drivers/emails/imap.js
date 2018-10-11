@@ -99,6 +99,7 @@ export async function imapConnectionTest(mailCriteria) {
 
     if (mailCriteria.provider === 'Gmail') {
       accountId = mailCriteria.mailAddress.replace(/\+.*@/, '@');
+      accountId = accountId.replace(/\./, '');
     }
 
     if (mailCriteria.provider === 'Yandex') {

@@ -919,7 +919,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
         key: '',
         accountId: this.state.accountId,
         password: this.state.password,
-        mailAddress: `${this.state.accountId}${this.state.domain}`,
+        mailAddress: `${this.state.accountId}@${this.state.domain}`,
         provider: 'Yandex',
         createDate: 0,
         lastLogin: 0,
