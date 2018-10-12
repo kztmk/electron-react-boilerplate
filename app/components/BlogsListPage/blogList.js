@@ -18,7 +18,7 @@ import matchSorter from 'match-sorter';
 import Edit from '@material-ui/icons/Edit';
 import DeleteForever from '@material-ui/icons/DeleteForever';
 import Close from '@material-ui/icons/Close';
-import Public from '@material-ui/icons/Public.js'
+import Public from '@material-ui/icons/Public'
 
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
@@ -49,6 +49,7 @@ import accountListPageStyle from '../../assets/jss/material-dashboard-pro-react/
 import SweetAlertTitle from '../SweetAlertTitle';
 
 import PuppeteerBlog from '../BlogAccountCreate/puppeteerBlog';
+import GavelPopup from "../Utils/gavel";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -233,6 +234,9 @@ class BlogList extends React.Component<Props, State> {
       affiliateTags: prop.detailInfo,
       actions: (
         <div className="actions-right">
+          <Tooltip title="ID、パスワードのコピーなど便利ツール" placement="top-end">
+            <GavelPopup account={prop} mode="blog"/>
+          </Tooltip>
           <Tooltip title="ブログへログイン" placement="top-end">
             <Button
               justIcon
@@ -470,7 +474,7 @@ class BlogList extends React.Component<Props, State> {
                       <img height={24} src={getBlogProviderImage(row.original.provider)} alt="" />
                     </div>
                   ),
-                  width: 60,
+                  width: 54,
                   filterable: true,
                   sortable: true,
                   filterMethod: (filter, rows) =>
@@ -512,8 +516,8 @@ class BlogList extends React.Component<Props, State> {
                     </Tooltip>
                   ),
                   accessor: 'title',
-                  minWidth: 250,
-                  maxWidth: 400,
+                  minWidth: 185,
+                  maxWidth: 350,
                   filterable: true,
                   sortable: true,
                   Filter: ({ filter, onChange }) => (
@@ -541,7 +545,7 @@ class BlogList extends React.Component<Props, State> {
                       }}
                     />
                   ),
-                  minWidth: 200,
+                  minWidth: 160,
                   maxWidth: 400,
                   filterable: true,
                   sortable: true,
@@ -564,6 +568,28 @@ class BlogList extends React.Component<Props, State> {
                       });
                       return isMatch;
                     }
+                  }
+                },
+                {
+                  Header: () => <span style={{ fontSize: 12 }}>作成日</span>,
+                  accessor: 'createDate',
+                  width: 120,
+                  filterable: true,
+                  sortable: true,
+                  Filter: ({ filter, onChange }) => (
+                    <input
+                      type="text"
+                      placeholder="YYYY/MM/DDより前"
+                      value={filter ? filter.value : ''}
+                      onChange={event => onChange(event.target.value)}
+                      style={{ fontSize: 12 }}
+                    />
+                  ),
+                  filterMethod: (filter, row) => {
+                    if (row[filter.id].length === 0) {
+                      return row[filter.id];
+                    }
+                    if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
                   }
                 },
                 {

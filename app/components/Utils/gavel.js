@@ -11,30 +11,25 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import Paper from "@material-ui/core/Paper";
 import Grow from "@material-ui/core/Grow";
 import Popper from '@material-ui/core/Popper';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Divider from '@material-ui/core/Divider';
 
 // material icons
 import Gavel from '@material-ui/icons/Gavel';
+import Update from '@material-ui/icons/Update';
 
 import Button from "../../ui/CustomButtons/Button";
+import { AccountIcon, PasswordIcon, AtmarkIcon } from "../../assets/icons";
 
 import headerLinksStyle from "../../assets/jss/material-dashboard-pro-react/components/headerLinksStyle";
 import type MailAccountType from "../../types/mailAccount";
 import type BlogAccountType from "../../types/blogAccount";
 
-const arrow = {
-  position: 'absolute',
-  fontSize: 7,
-  width: '3em',
-  height: '3em',
-  '&::before': {
-    content: '""',
-    margin: 'auto',
-    display: 'block',
-    width: 0,
-    height: 0,
-    borderStyle: 'solid',
-  },
-}
+
+const iconStyle = {
+  width: '18px',
+  height: '18px'
+};
 
 type Props ={
   classes: Object,
@@ -81,30 +76,40 @@ class GavelPopup extends React.Component<Props, State> {
 
   modeBlog = () => {
     const { classes } = this.props;
-    if (this.props.mode === 'blog') {
-      return (
-        <MenuItem
-          onClick = {this.handleCheckLastPostDateTime}
-          className = {classes.dropdownItem}
-        >
-          最終投稿日時をチェック
-        </MenuItem>
-      )
-    }
-  }
-
-  render() {
-    const { classes } = this.props;
-    const { open } = this.state;
 
     const dropdownItem = classNames(
       classes.dropdownItem,
       classes.primaryHover,
     );
 
+    if (this.props.mode === 'blog') {
+      return (
+        <MenuItem
+          onClick = {this.handleCheckLastPostDateTime}
+          className = {dropdownItem}
+        >
+          <ListItemIcon>
+            <Update style={iconStyle}/>
+          </ListItemIcon>
+          最終投稿日時をチェック
+        </MenuItem>
+      )
+    }
+    return null;
+  }
+
+  render() {
+    const { classes } = this.props;
+    const { open } = this.state;
+
     const managerClasses = classNames({
       [classes.managerClasses]: true
     });
+
+    const dropdownItem = classNames(
+      classes.dropdownItem,
+      classes.primaryHover,
+    );
 
   return (
     <div className={managerClasses}>
@@ -153,27 +158,36 @@ class GavelPopup extends React.Component<Props, State> {
               >
                 <Paper className={classes.dropdown}>
                   <ClickAwayListener onClickAway={this.handleClose}>
-                  <MenuList role="menu">
-                    <MenuItem
-                      onClick = {this.handleCopyAccountId}
-                      className = {dropdownItem}
+                    <MenuList role="menu">
+                      <MenuItem
+                        onClick={this.handleCopyAccountId}
+                        className={dropdownItem}
                       >
-                      アカウントIDをコピー
-                    </MenuItem>
-                    <MenuItem
-                      onClick = {this.handleCopyPassword}
-                      className = {dropdownItem}
-                    >
-                      パスワードをコピー
-                    </MenuItem>
-                    <MenuItem
-                      onClick = {this.handleCopyMailAddress}
-                      className = {dropdownItem}
-                    >
-                      メールアドレスをコピー
-                    </MenuItem>
-                    {this.modeBlog}
-                  </MenuList>
+                        <ListItemIcon>
+                          <AccountIcon style={iconStyle}/>
+                        </ListItemIcon>
+                        アカウントIDをコピー
+                      </MenuItem>
+                      <MenuItem
+                        onClick={this.handleCopyPassword}
+                        className={dropdownItem}
+                      >
+                        <ListItemIcon>
+                          <PasswordIcon style={iconStyle}/>
+                        </ListItemIcon>
+                        パスワードをコピー
+                      </MenuItem>
+                      <MenuItem
+                        onClick={this.handleCopyMailAddress}
+                        className={dropdownItem}
+                      >
+                        <ListItemIcon>
+                          <AtmarkIcon style={iconStyle}/>
+                        </ListItemIcon>
+                        メールアドレスをコピー
+                      </MenuItem>
+                    {this.modeBlog()}
+                    </MenuList>
                   </ClickAwayListener>
                 </Paper>
             </Grow>
