@@ -20,7 +20,7 @@ import Avatar from '@material-ui/core/Avatar';
 import FolderShared from '@material-ui/icons/FolderShared';
 import AddAlert from '@material-ui/icons/AddAlert';
 import Refresh from '@material-ui/icons/Refresh';
-import { MailTest } from '../../../assets/icons';
+
 
 // core components
 import GridContainer from '../../../ui/Grid/GridContainer';
@@ -47,7 +47,6 @@ import Goo from '../../../assets/img/blogs/goo.png';
 import prefectures from '../../Commons/prefecture';
 import type MailAccountType from '../../../types/mailAccount';
 
-import { imapConnectionTest } from "../../../drivers/emails/imap";
 
 // TODO
 // fc2 -------->comp
@@ -100,13 +99,7 @@ type Props = {
   personalInfo: PersonalInfoType,
   randomPersonalInfo: PersonalInfoType,
   startGetRandomPersonalInfo: () => void,
-  startClearPersonalInfo: () => void,
-  imapMessageLoading: boolean,
-  imapIsError: boolean,
-  imapErrorMessage: string,
-  imapSelectMailBoxPath: string,
-  imapMailCount: number,
-  startTestImapConnection: () => void
+  startClearPersonalInfo: () => void
 };
 
 type State = {
@@ -257,26 +250,6 @@ class Steps00blog extends React.Component<Props, State> {
         errorMessage: nextProps.errorMessage,
         openErrorSnackbar: true
       });
-    }
-
-    if (!this.props.imapMessageLoading && nextProps.imapMessageLoading) {
-      this.setState({ isLoading: true })
-    }
-    if (this.props.imapMessageLoading && !nextProps.imapMessageLoading) {
-      // imap connection test done
-      if (!nextProps.imapIsError) {
-        this.setState({
-          isLoading: false,
-          successMessage: `このメールアドレスへimapでの接続に成功しました。受信箱に${nextProps.imapMailCount}通のメールがあります。`,
-          openSuccessSnackbar: true
-        })
-      } else {
-        this.setState({
-          isLoading: false,
-          errorMessage: `エラー：${nextProps.imapErrorMessage}`,
-          openErrorSnackbar: true
-        })
-      }
     }
   };
 
@@ -699,21 +672,6 @@ class Steps00blog extends React.Component<Props, State> {
     }
   };
 
-  handleImapConnectionTest = () =>{
-    this.props.startTestImapConnection({
-      key: this.state.mailAccount.key,
-      accountId: this.state.mailAccount.accountId,
-      password: this.state.mailAccount.password,
-      mailAddress: this.state.mailAccount.mailAddress,
-      provider: this.state.mailAccount.provider,
-      createDate: this.state.mailAccount.createDate,
-      lastLogin: this.state.mailAccount.lastLogin,
-      tags: this.state.mailAccount.tags,
-      detailInfo: this.state.mailAccount.detailInfo
-    });
-  }
-
-
  handleSuccessSnackbarClose = () => {
     this.setState({ openSuccessSnackbar: false})
  }
@@ -726,17 +684,6 @@ class Steps00blog extends React.Component<Props, State> {
           <GridContainer style={stepContent}>
             <GridContainer>
               <legend style={legendStyle}>使用メールアドレス:{this.state.mailAddress}</legend>
-              <Tooltip title="imap接続出来るかをチェックします。">
-                <Button
-                  justIcon
-                  size="sm"
-                  round
-                  color="primary"
-                  onClick={this.handleImapConnectionTest}
-                >
-                  <MailTest />
-                </Button>
-              </Tooltip>
             </GridContainer>
             <GridContainer container justify="center" style={groupBoxTop}>
               <GridItem xs={12} sm={3} md={3}>

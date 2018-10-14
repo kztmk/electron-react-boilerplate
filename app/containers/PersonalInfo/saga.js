@@ -182,7 +182,7 @@ function* savePersonalInfoForBlog(action) {
       }
     } else {
       // use default
-      randomPersonalInfo = { ...personalInfo, address1: action.payload.address1 };
+      randomPersonalInfo = { ...personalInfo, address1: action.payload.address1, mailAccount: action.payload.mailAccount };
     }
     yield put(savePersonalInfoForBlogSuccess(randomPersonalInfo));
   } catch (error) {

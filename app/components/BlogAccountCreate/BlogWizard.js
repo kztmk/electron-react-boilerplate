@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/anchor-has-content,react/no-unused-state */
+/* eslint-disable jsx-a11y/anchor-is-valid,jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions,jsx-a11y/anchor-has-content,react/no-unused-state,no-lonely-if */
 /* eslint-disable no-return-assign */
 // @flow
 import React from 'react';
@@ -15,6 +15,55 @@ import Button from '../../ui/CustomButtons/Button';
 import Table from '../../ui/Table/Table';
 import wizardStyle from '../../assets/jss/material-dashboard-pro-react/components/wizardStyle';
 import PuppeteerBlog from './puppeteerBlog';
+import type MailAccountType from "../../types/mailAccount";
+
+const convertProviderToStep = provider => {
+  let nextStep = 0;
+  switch (provider) {
+    case 'fc2':
+      nextStep = 2;
+      break;
+    case 'webnode':
+      nextStep = 3;
+      break;
+    case 'livedoor':
+      nextStep = 4;
+      break;
+    case 'seesaa':
+      nextStep = 5;
+      break;
+    case 'ameba':
+      nextStep = 6;
+      break;
+    case 'rakuten':
+      nextStep = 7;
+      break;
+    case 'kokolog':
+      nextStep = 8;
+      break;
+    case 'yaplog':
+      nextStep = 9;
+      break;
+    case 'ninjya':
+      nextStep = 10;
+      break;
+    case 'hatena':
+      nextStep = 11;
+      break;
+    case 'webryblog':
+      nextStep = 12;
+      break;
+    case 'wpcom':
+      nextStep = 13;
+      break;
+    case 'goo':
+      nextStep = 14;
+      break;
+    default:
+  }
+  return nextStep;
+}
+
 
 const errorStyles = {
   fontWeight: 'bold',
@@ -29,6 +78,7 @@ type StepsType = {
 
 type Props = {
   classes: Object,
+  mailAccount: MailAccountType,
   steps: Array<StepsType>,
   color: 'primary' | 'warning' | 'danger' | 'success' | 'info' | 'rose',
   title: string,
@@ -55,7 +105,8 @@ type State = {
   width: string,
   movingTabStyle: Object,
   accountInfo: Object,
-  sweetAlert: Object
+  sweetAlert: Object,
+  mailAccount: MailAccountType
 };
 
 // TODO: when select provider, check allow multi site
@@ -72,12 +123,13 @@ class BlogWizard extends React.Component<Props, State> {
       nextButton: this.props.steps.length > 1,
       previousButton: false,
       finishButton: this.props.steps.length === 1,
-      width: '50%',
+      width: '33%',
       movingTabStyle: {
         transition: 'transform 0s'
       },
       accountInfo: {},
-      sweetAlert: ''
+      sweetAlert: '',
+      mailAccount: {}
     };
   }
 
@@ -92,6 +144,53 @@ class BlogWizard extends React.Component<Props, State> {
 
   updateWidth() {
     this.refreshAnimation(this.state.currentStep);
+  }
+
+  navigationStepChange(key) {
+    let step = 0;
+    if (this.props.steps) {
+      if (key === -2) {
+        step = 2;
+        if (this.state.accountInfo.provider && this.state.accountInfo.provider.length > 0) {
+          const { provider } = this.state.accountInfo;
+          const nextStep = convertProviderToStep(provider);
+          this.setState({
+            currentStep: nextStep,
+            cancelButton: false,
+            nextButton: false,
+            previousButton: true,
+            finishButton: true
+          });
+        } else {
+          step = 0;
+          this.setState({
+            currentStep: 0,
+            color: this.props.color,
+            cancelButton: true,
+            nextButton: true,
+            previousButton: false,
+            finishButton: false,
+            movingTabStyle: {
+              transition: "transform 0s"
+            },
+            accountInfo: {},
+            allStates: {}
+          })
+        }
+      } else {
+        if (key > -1 && key < 2) {
+          step = key;
+          this.setState({
+            currentStep: key,
+            cancelButton: key === 0,
+            nextButton: true,
+            previousButton: key > 0,
+            finishButton: false
+          });
+        }
+      }
+      this.refreshAnimation(step);
+    }
   }
 
   /**
@@ -124,6 +223,7 @@ class BlogWizard extends React.Component<Props, State> {
     this[this.props.steps[11].stepId].initState();
     this[this.props.steps[12].stepId].initState();
     this[this.props.steps[13].stepId].initState();
+    this[this.props.steps[14].stepId].initState();
     // tab move to init location
     this.refreshAnimation(0);
     this.props.cancelButtonClick();
@@ -133,90 +233,90 @@ class BlogWizard extends React.Component<Props, State> {
    * Next button click
    */
   nextButtonClick = () => {
-    if (this[this.props.steps[0].stepId].isValidated()) {
-      const selectedProvider = this[this.props.steps[0].stepId].getProvider();
-      let nextStep = 0;
-      switch (selectedProvider) {
-        case 'fc2':
-          nextStep = 1;
-          break;
-        case 'webnode':
-          nextStep = 2;
-          break;
-        case 'livedoor':
-          nextStep = 3;
-          break;
-        case 'seesaa':
-          nextStep = 4;
-          break;
-        case 'ameba':
-          nextStep = 5;
-          break;
-        case 'rakuten':
-          nextStep = 6;
-          break;
-        case 'kokolog':
-          nextStep = 7;
-          break;
-        case 'yaplog':
-          nextStep = 8;
-          break;
-        case 'ninjya':
-          nextStep = 9;
-          break;
-        case 'hatena':
-          nextStep = 10;
-          break;
-        case 'webryblog':
-          nextStep = 11;
-          break;
-        case 'wpcom':
-          nextStep = 12;
-          break;
-        case 'goo':
-          nextStep = 13;
-          break;
-        default:
-      }
-      const steps00State = this[this.props.steps[0].stepId].sendState();
-      this.setState({
-        cancelButton: false,
-        currentStep: nextStep,
-        nextButton: false,
-        previousButton: true,
-        finishButton: true,
-        accountInfo: {
-          provider: steps00State.provider,
-          mailAddress: steps00State.mailAddress,
-          accountId: steps00State.accountId,
-          password: steps00State.password,
-          lastName: steps00State.lastName,
-          lastNameKana: steps00State.lastNameKana,
-          firstName: steps00State.firstName,
-          firstNameKana: steps00State.firstNameKana,
-          gender: steps00State.gender,
-          birthDate: steps00State.birthDate,
-          postalCode: steps00State.postalCode,
-          prefecture: steps00State.prefecture,
-          mailAccount: steps00State.mailAccount
+    let key = 0;
+    let isValidate = false;
+
+    switch(this.state.currentStep) {
+      case 0:
+        if (this[this.props.steps[0].stepId].isValidated()) {
+          isValidate = true;
+          // next to step1
+          key = 1;
+          const mailAccount = this[this.props.steps[0].stepId].sendState();
+          this.setState({
+            currentStep: key,
+            cancelButton: false,
+            nextButton: true,
+            previousButton: true,
+            finishButton: false,
+            mailAccount
+          });
         }
-      });
-      this.refreshAnimation(nextStep);
+        break;
+      case 1:
+        if (this[this.props.steps[1].stepId].isValidated()) {
+          isValidate = true;
+          // next to selected provider
+          key = 2;
+          const selectedProvider = this[this.props.steps[1].stepId].getProvider();
+          const nextStep = convertProviderToStep(selectedProvider);
+          const steps00State = this[this.props.steps[1].stepId].sendState();
+          this.setState({
+            cancelButton: false,
+            currentStep: nextStep,
+            nextButton: false,
+            previousButton: true,
+            finishButton: true,
+            accountInfo: {
+              provider: steps00State.provider,
+              mailAddress: steps00State.mailAddress,
+              accountId: steps00State.accountId,
+              password: steps00State.password,
+              lastName: steps00State.lastName,
+              lastNameKana: steps00State.lastNameKana,
+              firstName: steps00State.firstName,
+              firstNameKana: steps00State.firstNameKana,
+              gender: steps00State.gender,
+              birthDate: steps00State.birthDate,
+              postalCode: steps00State.postalCode,
+              prefecture: steps00State.prefecture,
+              mailAccount: steps00State.mailAccount
+            }
+          });
+        }
+        break;
+        default:
     }
-  };
+
+    if (isValidate) {
+      this.refreshAnimation(key);
+    }
+  }
 
   /**
    *  previous button click on step2
    */
   previousButtonClick = () => {
-    this.setState({
-      currentStep: 0,
-      cancelButton: true,
-      nextButton: true,
-      previousButton: false,
-      finishButton: false
-    });
-    this.refreshAnimation(0);
+    let key=0;
+    if (this.state.currentStep === 1) {
+      this.setState({
+        currentStep: 0,
+        cancelButton: true,
+        nextButton: true,
+        previousButton: false,
+        finishButton: false
+      });
+    } else {
+      key = 1;
+      this.setState({
+        currentStep: key,
+        cancelButton: false,
+        nextButton: true,
+        previousButton: true,
+        finishButton: false
+      });
+    }
+    this.refreshAnimation(key);
   };
 
   /**
@@ -246,7 +346,7 @@ class BlogWizard extends React.Component<Props, State> {
       blogInfo.prefecture = this.state.accountInfo.prefecture;
       blogInfo.remark = additionalInfo.remark;
       blogInfo.groupTags = additionalInfo.tags;
-      blogInfo.mailAccount = this.state.accountInfo.mailAccount;
+      blogInfo.mailAccount = this.state.mailAccount;
       blogInfo.detailInfo = {};
       blogInfo.firstName = this.state.accountInfo.firstName;
       blogInfo.lastName = this.state.accountInfo.lastName;
@@ -359,45 +459,74 @@ class BlogWizard extends React.Component<Props, State> {
 
   refreshAnimation = index => {
     // eslint-disable-next-line react/no-string-refs
-    let moveDistance = this.refs.wizard.children[0].offsetWidth / 2;
+    const total = 3;
+    let liWidth = 100 / total;
+    const totalSteps = 3;
+    let moveDistance = this.refs.wizard.children[0].offsetWidth / totalSteps;
+    let indexTemp = index;
+    let verticalLevel = 0;
 
-    const indexTemp = index === 0 ? 0 : 1;
+    const mobileDevice = window.innerWidth < 600 && total > 3;
+
+    if (mobileDevice) {
+      moveDistance = this.refs.wizard.children[0].offsetWidth / 2;
+      indexTemp = index % 2;
+      liWidth = 50;
+    }
+    this.setState({ width: `${liWidth}%` });
+
+    const stepWidth = moveDistance;
     moveDistance *= indexTemp;
-    moveDistance -= 8;
 
+    const current = index + 1;
+
+    if (current === 1 || (mobileDevice === true && index % 2 === 0)) {
+      moveDistance -= 8;
+    } else if (
+      current === totalSteps ||
+      (mobileDevice === true && index % 2 === 1)
+    ) {
+      moveDistance += 8;
+    }
+
+    if (mobileDevice) {
+      verticalLevel = parseInt(index / 2, 10);
+      verticalLevel *= 38;
+    }
     const movingTabStyle = {
-      width: '50%',
-      transform: `translate3d(${moveDistance}px, 0, 0)`,
-      transition: 'all 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)'
+      width: stepWidth,
+      transform:
+        `translate3d(${moveDistance}px, ${verticalLevel}px, 0)`,
+      transition: "all 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)"
     };
     this.setState({ movingTabStyle });
   };
 
   writeTabs = () => {
     const { classes } = this.props;
-    console.log(`current:${this.state.currentStep}`);
-    if (this.state.currentStep !== 0) {
+    console.log(`currentStep:${this.state.currentStep}`)
+    if (this.state.currentStep > 1) {
       return (
-        <li className={classes.steps} key={this.state.currentStep} style={{ width: '50%' }}>
+        <li className={classes.steps} key={this.state.currentStep} style={{ width: '33%' }}>
           <a className={classes.stepsAnchor} onClick={() => this.previousButtonClick()}>
-            {this.props.steps[0].stepName}
+            {this.props.steps[this.state.currentStep].stepName}
           </a>
         </li>
       );
     }
     return (
-      <li className={classes.steps} key={-1} style={{ width: '50%' }}>
+      <li className={classes.steps} key={-1} style={{ width: '33%' }}>
         <a
           className={classes.stepsAnchor}
-          onClick={() => this.previousButtonClick()}
+          onClick={() => this.navigationStepChange(-2)}
           role="button"
           tabIndex="0"
-          onKeyPress={() => this.previousButtonClick()}
+          onKeyPress={() => this.navigationStepChange(-2)}
         >
           ブログ追加情報
         </a>
       </li>
-    );
+    )
   };
 
   createBlogAccount = (blogInfo, dbFields, userFields) => {
@@ -463,7 +592,7 @@ class BlogWizard extends React.Component<Props, State> {
             title="テスト中"
             onConfirm={() => this.hideAlert()}
             onCancel={() => this.hideAlert()}
-            confirmBtnCssClass={this.props.classes.button + ' ' + this.props.classes.info}
+            confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.info}`}
           >
             {blogInfo.provider}は、現在テスト中です。
           </SweetAlert>
@@ -511,9 +640,23 @@ class BlogWizard extends React.Component<Props, State> {
           </div>
           <div className={classes.wizardNavigation}>
             <ul className={classes.nav}>
-              <li className={classes.steps} key={0} style={{ width: '50%' }}>
-                <a className={classes.stepsAnchor} onClick={() => this.previousButtonClick()} />
-              </li>
+              {steps.map((prop, key) => {
+                if(key < 2)
+                  return (
+                    <li
+                      className={classes.steps}
+                      key={key}
+                      style={{ width: this.state.width }}
+                    >
+                      <a
+                        className={classes.stepsAnchor}
+                        onClick={() => this.navigationStepChange(key)}
+                      >
+                        {prop.stepName}
+                      </a>
+                    </li>
+                  );
+              })}
               {this.writeTabs()}
             </ul>
             <div
@@ -587,6 +730,7 @@ class BlogWizard extends React.Component<Props, State> {
 }
 
 BlogWizard.defaultProps = {
+  mailAccount: {},
   steps: [],
   color: 'primary',
   title: '',

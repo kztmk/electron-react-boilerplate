@@ -6,6 +6,7 @@ import BlogWizard from './BlogWizard';
 import GridContainer from '../../ui/Grid/GridContainer';
 import GridItem from '../../ui/Grid/GridItem';
 
+import MailConnectionTest from '../../containers/BlogAccountCreate/WizardChildren/stepMailConnectionTest';
 import Steps00blog from '../../containers/BlogAccountCreate/WizardChildren/step00blog';
 import StepFc2 from './WizardChildren/stepFc2';
 import StepWebNode from './WizardChildren/stepWebNode';
@@ -20,8 +21,10 @@ import StepHatena from './WizardChildren/stepHatena';
 import StepWebryBlog from './WizardChildren/stepWebryBlog';
 import StepWpcom from './WizardChildren/stepWpcom';
 import StepGoo from './WizardChildren/stepGoo';
+import type MailAccountType from "../../types/mailAccount";
 
 type Props = {
+  mailAccount: MailAccountType,
   createBlogAccount: () => void,
   cancelAccount: () => void
 };
@@ -32,9 +35,15 @@ class WizardViewBlog extends React.Component<Props> {
       <GridContainer justify="center">
         <GridItem xs={12} sm={12} md={12}>
           <BlogWizard
+            mailAccount={this.props.mailAccount}
             validate
             color="primary"
             steps={[
+              {
+                stepName: 'メール接続確認',
+                stepComponent: MailConnectionTest,
+                stepId: 'mailConnectionTest'
+              },
               {
                 stepName: 'ブログ取得-個人情報',
                 stepComponent: Steps00blog,

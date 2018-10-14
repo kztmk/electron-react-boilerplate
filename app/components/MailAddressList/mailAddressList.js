@@ -584,6 +584,7 @@ class MailAddressList extends React.Component<Props, State> {
 
     this.props.savePersonalInfoForBlog(personalInfo);
     this.setState({
+      targetAccount: account,
       openFormBlogAccountNew: true
     });
   };
