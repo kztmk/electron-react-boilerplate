@@ -87,61 +87,6 @@ async function getMessages(path, seq) {
   return imapClient.listMessages(path, seq, ['uid', 'body.peek[]'], { byUid: true });
 }
 
-export async function imapConnectionTest(mailCriteria) {
-  try {
-    // get imap server config from mailaddress
-    const config = getImapConfig(mailCriteria.provider);
-
-    let { accountId } = mailCriteria;
-    if (mailCriteria.provider === 'Outlook') {
-      accountId = mailCriteria.mailAddress;
-    }
-
-    if (mailCriteria.provider === 'Gmail') {
-      accountId = mailCriteria.mailAddress.replace(/\+.*@/, '@');
-      accountId = accountId.replace(/\./, '');
-    }
-
-    if (mailCriteria.provider === 'Yandex') {
-      accountId = mailCriteria.mailAddress.replace(/@.*$/, '');
-      accountId = accountId.replace(/\+.*$/, '');
-    }
-
-    // connect to imap server use by accountId, password
-    imapClient = new ImapClient(config.host, config.port, {
-      auth: {
-        user: accountId,
-        pass: mailCriteria.password
-      },
-      useSecureTransport: true
-    });
-
-    await imapClient.connect();
-    const boxes = await getPathToInbox(imapClient);
-
-    // check boxex
-    if (boxes.inbox) {
-      const mailCount = await imapClient.selectMailbox(boxes.inbox).then(mailbox => mailbox.exists)
-      console.log(`mailCount:${mailCount}`)
-      imapClient.close().then(() => {
-        console.log('---------imap server disconnected.------');
-      });
-      return mailCount
-    } else {
-      throw new Error('inbox not found');
-      imapClient.close().then(() => {
-        console.log('---------imap server disconnected.------');
-      });
-    }
-  } catch (error) {
-    throw new Error(error.toString());
-    imapClient.close().then(() => {
-      console.log('---------imap server disconnected.------');
-    });
-  }
-}
-
-
 async function getValidationLink(mailCriteria) {
   try {
     console.log('--recieved criteria---');

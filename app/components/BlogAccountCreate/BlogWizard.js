@@ -559,13 +559,14 @@ class BlogWizard extends React.Component<Props, State> {
         url += `plaza.rakuten.co.jp/${blogInfo.accountId}/`;
         break;
       case 'kokolog':
-        url += ``;
+        testPass = true;
+        url = `http://${blogInfo.accountId}.cocolog-nifty.com/`;
         break;
       case 'yaplog':
         url += ``;
         break;
       case 'ninjya':
-        url += ``;
+        url = `http://${blogInfo.accountId}.${blogInfo.detailInfo.domainValue}`;
         testPass = true;
         break;
       case 'hatena':

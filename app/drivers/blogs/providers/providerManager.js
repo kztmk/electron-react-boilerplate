@@ -4,6 +4,7 @@ import BlogProviderSeesaa from './seesaa';
 import BlogProviderAmeba from './ameba';
 import BlogProviderNinjya from './ninjya';
 import BlogProviderRakuten from './rakuten';
+import BlogProviderCocolog from './cocolog';
 
 class BlogProviderManager {
   constructor() {
@@ -13,7 +14,8 @@ class BlogProviderManager {
       seesaa: BlogProviderSeesaa,
       ameba: BlogProviderAmeba,
       ninjya: BlogProviderNinjya,
-      rakuten: BlogProviderRakuten
+      rakuten: BlogProviderRakuten,
+      cocolog: BlogProviderCocolog
     };
   }
 

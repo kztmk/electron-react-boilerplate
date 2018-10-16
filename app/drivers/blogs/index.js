@@ -69,6 +69,7 @@ class BlogDriver {
       opts.browser ||
       (await puppeteer.launch({
         executablePath: exePath,
+        timeout: 60000,
         headless: false,
         slowMo: 20,
         args: [`--window-size=${width},${height}`]

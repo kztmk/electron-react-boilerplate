@@ -297,6 +297,8 @@ class StepMailConnectionTest extends Component<Props, State> {
           place="bc"
           color="success"
           icon={AddAlert}
+          autoHideDuration = {2000}
+          onClose = {() => this.closeSuccessSnackbar()}
           message={this.state.successMessage}
           open={this.state.openSuccessDialog}
           closeNotification={() => this.closeSuccessSnackbar()}

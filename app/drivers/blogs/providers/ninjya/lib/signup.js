@@ -123,7 +123,7 @@ const signup = async (blogInfo, opts) => {
     if (result) {
       validationUrl = result[0];
     } else {
-      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
+         await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
 
       const { value: url } = await page.evaluate(`
     swal({
@@ -318,7 +318,8 @@ const signup = async (blogInfo, opts) => {
       await delay(1000);
       // button
       const submit = await page.$('#registerInputSend > input');
-      await submit.click();
+      const {x, y, width, hight} = await submit.boundingBox();
+      await page.mouse.click(x + 10, y + 15 );
       // await page.focus('input[src^="/images/register/btn-regist.gif"]');
       // await page.click('input[src^="/images/register/btn-regist.gif"]');
       log.info('本登録ボタンをクリック');
@@ -355,6 +356,7 @@ const signup = async (blogInfo, opts) => {
     `);
     await delay(1000);
     await page.click('a[href="/home/"]');
+
     await page.waitFor('#main_block');
 
     // 管理ページ
@@ -369,9 +371,13 @@ const signup = async (blogInfo, opts) => {
         text:'[サービス一覧からツールを作成してみよう]をクリック' 
       }).show();
     `);
-    await page.click('a[href^="/home/service"]');
+    // const serviceButton = await page.$('img[src^="/images/home/btn-addTool-noTool.png"]');
+    // const {x1, y1, width1, hight1} = await serviceButton.boundingBox();
+    // await page.mouse.click(x1 + 10, y1 + 10);
+    // await page.click('a[href^="/home/service"]');
+    await page.goto('https://ninja.co.jp/home/service', {waitUntil: 'networkidle0'});
     log.info(`click: サービス一覧からツールを作成してみよう`);
-    await page.waitFor('#header_block > ul > li:nth-child(3)');
+    // await page.waitFor('#header_block > ul > li:nth-child(3)');
 
     // サービスを追加ページ
     await page.addScriptTag({ path: notyJsPath });
@@ -519,8 +525,10 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
-      await page.click('input[src="/images/home/btn-make.gif"]');
-
+      await page.click('input[src^="/images/home/btn-make.gif"]');
+      // const finishButton = await page.$('input[src="/images/home/btn-make.gif"]');
+      // const {x2, y2, width2, height2} = await finishButton.boundingBox();
+      // await page.mouse.click(x2 +10, y2 +10);
       await page.waitFor('.errorArea, #header_block > ul > li:nth-child(5)');
 
       const finish = await page.$('#header_block > ul > li:nth-child(5)');

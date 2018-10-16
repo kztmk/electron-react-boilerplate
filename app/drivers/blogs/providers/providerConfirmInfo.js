@@ -28,6 +28,12 @@ const confirmMails = [
     sender: 'oshirase@shinobi.jp',
     link: 'https://www.ninja.co.jp/register/input/hash/',
     regx: 'https:\\/\\/www\\.ninja\\.co\\.jp\\/register\\/input\\/hash.*$'
+  },
+  {
+    provider: 'kokolog',
+    sender: 'nifty-info@nifty.com',
+    link: 'https://signup.nifty.com/users/cgi-bin/msignup_cclg.cgi',
+    regx: 'https:\\/\\/signup\\.nifty\\.com\\/users\\/cgi-bin\\/msignup_cclg\\.cgi.*$'
   }
 ];
 

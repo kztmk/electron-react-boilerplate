@@ -18,6 +18,9 @@ type Props = {
 
 const theme = createMuiTheme({
   breakpoints: {
+    typography: {
+      useNextVariants: true,
+    },
     values: {
       sm: 320,
       md: 450

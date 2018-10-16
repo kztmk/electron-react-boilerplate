@@ -23,6 +23,9 @@ class PuppeteerBlog {
       case 'rakuten':
         this.client = new BlogDriver('rakuten');
         break;
+      case 'kokolog':
+        this.client = new BlogDriver('cocolog');
+        break;
       default:
     }
   }

@@ -27,14 +27,14 @@ const groupBox = {
 };
 
 const questions = [
-  { val: '1', question: '好きな食べ物は？' },
-  { val: '2', question: '嫌いな食べ物は？' },
-  { val: '3', question: '初恋の相手の名前は？' },
-  { val: '4', question: '尊敬する人の名前は？' },
-  { val: '5', question: '一番印象に残っている学校の先生の名前は？' },
-  { val: '6', question: '初めて飼ったペットの名前は？' },
-  { val: '7', question: '両親の結婚記念日は？' },
-  { val: '8', question: '愛用する腕時計のシリアル番号は？' }
+  { val: '好きな食べ物は？', question: '好きな食べ物は？' },
+  { val: '嫌いな食べ物は？', question: '嫌いな食べ物は？' },
+  { val: '初恋の相手の名前は？', question: '初恋の相手の名前は？' },
+  { val: '尊敬する人の名前は？', question: '尊敬する人の名前は？' },
+  { val: '一番印象に残っている学校の先生の名前は？', question: '一番印象に残っている学校の先生の名前は？' },
+  { val: '初めて飼ったペットの名前は？', question: '初めて飼ったペットの名前は？' },
+  { val: '両親の結婚記念日は？', question: '両親の結婚記念日は？' },
+  { val: '愛用する腕時計のシリアル番号は？', question: '愛用する腕時計のシリアル番号は？' }
 ];
 
 type Props = {
@@ -95,7 +95,7 @@ class StepKokolog extends React.Component<Props, State> {
     blogParams.question = `秘密の質問:${this.getQuestionLabel(this.state.question)}`;
     blogParams.questionValue = this.state.question;
     blogParams.answer = `質問の答:${this.state.answer}`;
-    blogParams.anserValue = this.state.answer;
+    blogParams.answerValue = this.state.answer;
     blogParams.nickName = `ニックネーム:${this.state.nickName}`;
     blogParams.nickNameValue = this.state.nickName;
 
