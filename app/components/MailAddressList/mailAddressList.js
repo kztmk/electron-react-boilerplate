@@ -45,6 +45,7 @@ import type BlogAccountType from '../../types/blogAccount';
 import type PersonalInfoType from '../../types/personalInfo';
 import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
 
+import getValidationLink from '../../drivers/emails/imap';
 import GavelPopup from '../Utils/gavel';
 
 function Transition(props) {
@@ -294,14 +295,14 @@ class MailAddressList extends React.Component<Props, State> {
                     lastLogin: moment(account.lastLogin).valueOf()
                   };
                   // 削除処理
-                  this.handleDeleteMailAccount(target);
+                   this.handleDeleteMailAccount(target);
                   // const mailacc = {};
                   // mailacc.accountId = account.accountId;
                   // mailacc.mailAddress = account.mailAddress;
                   // mailacc.password = account.password;
                   // mailacc.sender = 'noreply@id.fc2.com';
                   // mailacc.provider = account.provider;
-                  // mailacc.BlogProvider = 'fc2';
+                  // mailacc.blogProvider = 'fc2';
                   // console.log('---mail criteria---');
                   // console.log(mailacc);
                   // const result = getValidationLink(mailacc);

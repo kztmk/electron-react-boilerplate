@@ -17,7 +17,7 @@ const signin = async (blogInfo, opts) => {
   const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
   const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
-  log.info('--------->login to  fc2 blog account--------->');
+  log.info('--------->login to  ninjya blog account--------->');
   log.info('-----------user----------');
   log.info(blogInfo);
   log.info('-------------------------');
@@ -26,10 +26,10 @@ const signin = async (blogInfo, opts) => {
 
   log.info('create: browser page');
   try {
-    // Fc2 login/signup page
-    await page.goto(`https://fc2.com/login.php?ref=blog`, { waitUntil: 'load' });
+    // Ninjya login/signup page
+    await page.goto(`https://www.ninja.co.jp/login/`, { waitUntil: 'load' });
 
-    log.info('access: https://fc2.com/login.php?ref=blog');
+    log.info('access: https://www.ninja.co.jp/login/');
 
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
@@ -38,7 +38,7 @@ const signin = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ ログインページアクセス完了' 
+        text:'忍者ツールズ ログインページアクセス完了' 
       }).show();
     `);
 
@@ -49,7 +49,7 @@ const signin = async (blogInfo, opts) => {
         text:'メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('#id', blogInfo.mailAddress);
+    await page.type('#email', blogInfo.mailAddress);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -66,7 +66,7 @@ const signin = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-    await page.type('#pass', blogInfo.password);
+    await page.type('#password', blogInfo.password);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -76,7 +76,16 @@ const signin = async (blogInfo, opts) => {
     `);
     log.info(`password:${blogInfo.password}入力完了`);
 
-    await page.click('input[value=ログイン]');
+    await page.click('input[src^="/images/login/btn-login.gif"]');
+    const loginButton = await page.$('input[src^="/images/login/btn-login.gif"]');
+    if (!loginButton) {
+      throw new Error('ログインボタンの位置が取得できません。');
+    }
+    const {x, y, width, height} = await loginButton.boundingBox();
+    await page.mouse.click(x+10, y+10);
+    log.info('click login button')
+    await page.waitFor('.ninja-ui-admin-page');
+
 
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
@@ -86,7 +95,7 @@ const signin = async (blogInfo, opts) => {
         timeout:3000,
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ ログイン完了' 
+        text:'忍者ツールズ ログイン完了' 
       }).show();
     `);
   } catch (error) {

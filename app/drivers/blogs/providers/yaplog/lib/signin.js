@@ -17,7 +17,7 @@ const signin = async (blogInfo, opts) => {
   const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
   const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
-  log.info('--------->login to  cocolog blog account--------->');
+  log.info('--------->login to  yaplog blog account--------->');
   log.info('-----------user----------');
   log.info(blogInfo);
   log.info('-------------------------');
@@ -26,32 +26,10 @@ const signin = async (blogInfo, opts) => {
 
   log.info('create: browser page');
   try {
-    // Cocolog login/signup page
-    await page.goto(`http://www.cocolog-nifty.com/`, { waitUntil: 'load' });
+    // Yaplog login/signup page
+    await page.goto(`https://www.yaplog.jp/`, { waitUntil: 'load' });
 
-    log.info('http://www.cocolog-nifty.com/');
-
-    await page.addScriptTag({ path: notyJsPath });
-    await page.addStyleTag({ path: notyCssPath });
-    await page.addStyleTag({ path: notyThemePath });
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ココログ トップページアクセス完了' 
-      }).show();
-    `);
-
-    await delay(1000);
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ログインボタンをクリック' 
-      }).show();
-    `);
-    await page.click('a[href^="/login/"]');
-    await page.waitFor('#username');
+    log.info('access: https://www.yaplog.jp/');
 
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
@@ -60,26 +38,33 @@ const signin = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'ココログ ログインページアクセス完了' 
+        text:'Yaplogトップインページアクセス完了' 
       }).show();
     `);
-    await delay(1000);
+
+    await page.click('#login');
+    await page.waitFor('input[name="uid"]');
+
+    // login page
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'@niftyユーザー名入力開始' 
+        text:'メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('#username', blogInfo.accountId);
+    await page.type('input[name="uid"]', blogInfo.mailAddress);
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'@niftyユーザー名入力完了' 
+        text:'メールアドレス入力完了' 
       }).show();
     `);
-    log.info(`mailAddress:${blogInfo.accountId}入力完了`);
+    log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
 
     await page.evaluate(`
     new Noty({
@@ -88,7 +73,7 @@ const signin = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-    await page.type('#password', blogInfo.password);
+    await page.type('input[name="pass"]', blogInfo.password);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -98,17 +83,10 @@ const signin = async (blogInfo, opts) => {
     `);
     log.info(`password:${blogInfo.password}入力完了`);
 
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ログインボタンをクリック' 
-      }).show();
-    `);
-    await page.click('p.button > input[value=ログイン]');
-    await page.waitFor('a[href^="/t/app?__mode=logout"]');
+    await page.click('input[name="btn_login"]');
+    await page.waitFor('#logout');
 
-    log.info('-------------> cocolog login done--')
+    log.info('----------->yaplog login done--')
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -117,7 +95,7 @@ const signin = async (blogInfo, opts) => {
         timeout:3000,
         type: 'success',
         layout: 'topLeft',
-        text:'ココログ ログイン完了' 
+        text:'Yaplogログイン完了' 
       }).show();
     `);
   } catch (error) {
@@ -127,7 +105,7 @@ const signin = async (blogInfo, opts) => {
 
     await page.evaluate(`swal({
       title: 'エラー発生',
-      text: 'エラーが発生しました。お手数ですが、手作業で続けてください。',
+      text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
       showCancelButton: false,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',

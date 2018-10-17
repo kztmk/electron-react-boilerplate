@@ -72,7 +72,8 @@ const signin = async (user, opts) => {
       }).show();
     `);
     // +以降と@の間を削除
-    const yandexBase = user.username.replace(/\+.*$/, '');
+    let yandexBase = user.username.replace(/@.*$/, '');
+    yandexBase = yandexBase.replace(/\+.*$/, '');
     await page.type('input[name=login]', yandexBase, { delay: 40 });
     delay(500);
     await page.evaluate(`

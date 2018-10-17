@@ -34,6 +34,12 @@ const confirmMails = [
     sender: 'nifty-info@nifty.com',
     link: 'https://signup.nifty.com/users/cgi-bin/msignup_cclg.cgi',
     regx: 'https:\\/\\/signup\\.nifty\\.com\\/users\\/cgi-bin\\/msignup_cclg\\.cgi.*$'
+  },
+  {
+    provider: 'yaplog',
+    sender: 'upport@yaplog.jp',
+    link: 'https://www.yaplog.jp/userRegistration/JoinCheck.blog?id',
+    regx: 'https:\\/\\/www\\.yaplog\\.jp\\/userRegistration\\/JoinCheck.*$'
   }
 ];
 

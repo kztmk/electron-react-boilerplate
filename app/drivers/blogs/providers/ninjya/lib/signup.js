@@ -525,10 +525,16 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
-      await page.click('input[src^="/images/home/btn-make.gif"]');
-      // const finishButton = await page.$('input[src="/images/home/btn-make.gif"]');
-      // const {x2, y2, width2, height2} = await finishButton.boundingBox();
-      // await page.mouse.click(x2 +10, y2 +10);
+      // await page.click('input[src^="/images/home/btn-make.gif"]');
+      log.info('click: 作成ボタン')
+      const finishButton = await page.$('input[src^="/images/home/btn-make.gif"]');
+      if (!finishButton) {
+        log.warn('can not found create button');
+        throw new Error('作成ボタンが見つかりません。')
+      }
+      const {x2, y2, width2, height2} = await finishButton.boundingBox();
+      await page.mouse.click(x2 +10, y2 +10);
+      await delay(2000);
       await page.waitFor('.errorArea, #header_block > ul > li:nth-child(5)');
 
       const finish = await page.$('#header_block > ul > li:nth-child(5)');
@@ -542,6 +548,7 @@ const signup = async (blogInfo, opts) => {
           isCaptchaError = false;
         }
       }
+      log.warn('can not complete page')
     } while (isCaptchaError);
 
     await page.addStyleTag({ path: swa2Css });

@@ -26,6 +26,9 @@ class PuppeteerBlog {
       case 'kokolog':
         this.client = new BlogDriver('cocolog');
         break;
+      case 'yaplog':
+        this.client = new BlogDriver('yaplog');
+        break;
       default:
     }
   }

@@ -563,7 +563,8 @@ class BlogWizard extends React.Component<Props, State> {
         url = `http://${blogInfo.accountId}.cocolog-nifty.com/`;
         break;
       case 'yaplog':
-        url += ``;
+        testPass = true;
+        url += `yaplog.jp/${blogInfo.accountId}`;
         break;
       case 'ninjya':
         url = `http://${blogInfo.accountId}.${blogInfo.detailInfo.domainValue}`;

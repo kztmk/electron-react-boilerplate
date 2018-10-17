@@ -1,5 +1,7 @@
 /* eslint-disable promise/catch-or-return,promise/always-return */
 import ImapClient from 'emailjs-imap-client';
+import parse from 'emailjs-mime-parser';
+import { TextDecoder } from 'text-encoding';
 import confirmMails from '../blogs/providers/providerConfirmInfo';
 
 // eslint-disable-next-line prefer-destructuring
@@ -62,7 +64,14 @@ async function getPathToInbox() {
   return imapClient.listMailboxes().then(mailboxes => {
     console.log('--list mailboxes -----');
     const inbox = mailboxes.children.find(box => box.name.toLowerCase() === 'inbox');
-    const junk = mailboxes.children.find(box => box.name.toLowerCase() === 'junk' || 'bulk mail');
+    const junk = mailboxes.children.find(box => {
+      if ((box.name.toLowerCase() === 'junk') ||
+          (box.name.toLowerCase() === 'bulk mail') ||
+          (box.name.toLowerCase() === 'spam') ||
+          (box.name === '迷惑メール')) {
+              return box;
+      }
+    });
 
     const boxes = {};
     boxes.inbox = inbox.path;
@@ -126,6 +135,7 @@ async function getValidationLink(mailCriteria) {
 
     // check boxex
     if (boxes.inbox) {
+      let targetBox = boxes.inbox;
       console.log(`get messages from:${boxes.inbox}`);
 
       const confirmInfo = confirmMails.find(c => c.provider === mailCriteria.blogProvider);
@@ -147,14 +157,18 @@ async function getValidationLink(mailCriteria) {
       console.log('--get messages--');
 
       // message check
-      if (!messageUids) {
+      if (!messageUids || messageUids.length === 0) {
+        console.log('---search in junk---');
         messageUids = await searchMessages(boxes.junk, sender);
+        console.log('---in junk');
+        console.log(messageUids);
         if (!messageUids) {
           throw new Error('mail not found inbox/junk');
         }
+        targetBox = boxes.junk;
       }
 
-      const messages = await getMessages(boxes.inbox, messageUids);
+      const messages = await getMessages(targetBox, messageUids);
       console.log('---got messages--');
       console.log('---start sort---');
       if (!messages) {
@@ -171,10 +185,21 @@ async function getValidationLink(mailCriteria) {
       console.log('-----------body-----------');
       console.log(message['body[]']);
 
+      let contentMsg = message['body[]'];
+      if (mailCriteria.blogProvider === 'yaplog') {
+        const myMimeNodes = parse(message['body[]']);
+        console.log('-----------body parse-----------');
+        console.log(myMimeNodes);
+
+        const decodedMsg = new TextDecoder('iso-2022-jp').decode(myMimeNodes.content);
+        console.log('-----decoded msg--------');
+        console.log(decodedMsg);
+        contentMsg = decodedMsg;
+      }
       console.log('---confirmInfo regx----');
       console.log(confirmInfo.regx);
       const regxLink = new RegExp(confirmInfo.regx, 'gm');
-      validationLink = message['body[]'].match(regxLink);
+      validationLink = contentMsg.match(regxLink);
 
       /*
       if (message !== undefined) {

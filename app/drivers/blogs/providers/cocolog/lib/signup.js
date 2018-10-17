@@ -107,19 +107,18 @@ const signup = async (blogInfo, opts) => {
     log.info(`mailAddress:${blogInfo.mailAddress}確認入力完了`);
 
 
-
     await page.evaluate(`Noty.closeAll();`);
-      await page.evaluate(`
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text:'[個人情報の取扱いに同意し「メールアドレスを送信する」]をクリック' 
       }).show();
     `);
-      await page.click('input[src^="/users/images/btn_submit_m.gif"]');
-      log.info('[利用規約に同意しCocologIDへ登録する]をクリック');
+    await page.click('input[src^="/users/images/btn_submit_m.gif"]');
+    log.info('[利用規約に同意しCocologIDへ登録する]をクリック');
 
-      await page.waitFor('.cmpMail');
+    await page.waitFor('.cmpMail');
     log.info('CocologID仮登録完了');
 
     await page.goto('https://tools.yoriki.cloud/countdown/');
@@ -133,16 +132,24 @@ const signup = async (blogInfo, opts) => {
     mailacc.password = blogInfo.mailAccount.password;
     mailacc.provider = blogInfo.mailAccount.provider;
     mailacc.blogProvider = blogInfo.provider;
-    log.info('本登録URLを取得');
-    // メールアカウントへログインし、本登録URLを取得
-    const result = await getValidationLink(mailacc);
+    log.info('本登録URLを取得開始');
 
-    // https://signup.nifty.com/users/cgi-bin/msignup_cclg.cgi?T=PCSfWJzZo&M=j.koizumi2%40gmail.com
-    let validationUrl = ''
-    if (result) {
-      log.info(`本登録URL:${result[0]}`);
-      validationUrl = result[0];
-    } else {
+    // メールアカウントへログインし、本登録URLを取得
+    let validationUrl = '';
+    try {
+      const result = await getValidationLink(mailacc);
+
+      // https://signup.nifty.com/users/cgi-bin/msignup_cclg.cgi?T=PCSfWJzZo&M=j.koizumi2%40gmail.com
+
+      if (result) {
+        log.info(`本登録URL:${result[0]}`);
+        validationUrl = result[0];
+      } else {
+        throw new Error('error on imap process');
+      }
+    } catch (error) {
+      log.warn(`imap error: ${error.toString()}`);
+
       await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
 
       const { value: url } = await page.evaluate(`
@@ -167,15 +174,15 @@ const signup = async (blogInfo, opts) => {
         return;
       }
     }
-      // 本登録URLへアクセス プロフィールの入力ページ
+    // 本登録URLへアクセス プロフィールの入力ページ
 
-      await page.goto(validationUrl);
-      await page.waitForSelector('#cruiser_id');
-      log.info('本登録URLへアクセス完了');
-      await page.addScriptTag({ path: notyJsPath });
-      await page.addStyleTag({ path: notyCssPath });
-      await page.addStyleTag({ path: notyThemePath });
-      await page.evaluate(`
+    await page.goto(validationUrl);
+    await page.waitForSelector('#cruiser_id');
+    log.info('本登録URLへアクセス完了');
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
@@ -183,7 +190,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
-      // userId
+    // userId
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -312,7 +319,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
-      await page.evaluate(`
+    await page.evaluate(`
     new Noty({
         killer: true,
         type: 'success',
@@ -320,45 +327,45 @@ const signup = async (blogInfo, opts) => {
         text:'性別選択開始' 
       }).show();
     `);
-      if (blogInfo.gender === 0) {
-        await page.click('#male');
-        log.info('select gender male');
-        await page.evaluate(`
+    if (blogInfo.gender === 0) {
+      await page.click('#male');
+      log.info('select gender male');
+      await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text:'[男性]選択完了' 
       }).show();
     `);
-      } else {
-        await page.click('#female');
-        log.info('select gender female');
-        await page.evaluate(`
+    } else {
+      await page.click('#female');
+      log.info('select gender female');
+      await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text:'[女性]選択完了' 
       }).show();
     `);
-      }
+    }
 
-      await page.evaluate(`
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text:'秘密の質問選択開始' 
       }).show();
     `);
-      await page.select(`select#secret_question`, blogInfo.detailInfo.questionValue);
-      log.info(`select questions:${blogInfo.detailInfo.questionValue}`);
-      await page.evaluate(`
+    await page.select(`select#secret_question`, blogInfo.detailInfo.questionValue);
+    log.info(`select questions:${blogInfo.detailInfo.questionValue}`);
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text:'秘密の質問選択完了' 
       }).show();
     `);
-      await page.evaluate(`
+    await page.evaluate(`
     new Noty({
         killer: true,
         type: 'success',
@@ -366,9 +373,9 @@ const signup = async (blogInfo, opts) => {
         text:'質問の答え入力開始' 
       }).show();
     `);
-      await page.type(`#secret_answer`, blogInfo.detailInfo.answerValue);
-      log.info(`input answer:${blogInfo.detailInfo.answerValue}`);
-      await page.evaluate(`
+    await page.type(`#secret_answer`, blogInfo.detailInfo.answerValue);
+    log.info(`input answer:${blogInfo.detailInfo.answerValue}`);
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
@@ -376,8 +383,10 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
-      await page.focus('#password');
-     await page.evaluate(() => {window.scrollBy(0, 100)});
+    await page.focus('#password');
+    await page.evaluate(() => {
+      window.scrollBy(0, 120);
+    });
 
     await page.evaluate(`Noty.closeAll();`);
     let captchaError = true;
@@ -396,7 +405,8 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-      await page.type(`#password`, blogInfo.password);
+      await page.$eval('#password', (el, value) => (el.value = value), '');
+      await page.type('#password', blogInfo.password);
       log.info(`input password:${blogInfo.password}`);
       await page.evaluate(`
     new Noty({
@@ -412,7 +422,8 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード(確認)入力開始' 
       }).show();
     `);
-      await page.type(`#WIdummy_password2`, blogInfo.password);
+      await page.$eval('#WIdummy_password2', (el, value) => (el.value = value), '');
+      await page.type('#WIdummy_password2', blogInfo.password);
       log.info(`input password confirm`);
       await page.evaluate(`
     new Noty({
@@ -422,8 +433,11 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+      await page.evaluate(`Noty.closeAll();`);
       await page.focus('#password');
-      await page.evaluate(() => {window.scrollBy(0, 100)});
+      await page.evaluate(() => {
+        window.scrollBy(0, 120);
+      });
 
       await page.addStyleTag({ path: swa2Css });
       await page.addScriptTag({ path: swa2Js });
@@ -443,8 +457,9 @@ const signup = async (blogInfo, opts) => {
         text: '画像承認キーワードへ[${captchaValue.value}]を入力開始'
       }).show();
     `);
+      await page.focus('#WIdummy_image_answer');
+      await delay(500);
       await page.$eval('#WIdummy_image_answer', (el, value) => (el.value = value), '');
-
       await page.type('#WIdummy_image_answer', captchaValue.value, { delay: 240 });
       log.info(`input captcha:${captchaValue.value}`);
       await page.evaluate(`
@@ -458,39 +473,39 @@ const signup = async (blogInfo, opts) => {
       await delay(1000);
       await page.click('input[src^="/users/images/btn_confirm.gif"]');
 
-      await page.waitFor('#error', 'input[src^="/users/images/btn_entry.gif"]')
+      await page.waitFor('#error, input[src^="/users/images/btn_entry.gif"]');
 
       const entryButton = await page.$('input[src^="/users/images/btn_entry.gif"]');
 
       if (entryButton) {
-        captchaError = false
+        captchaError = false;
       }
 
-    } while (captchaError)
+    } while (captchaError);
 
-     log.info('ココログ登録確認ページ');
+    log.info('ココログ登録確認ページ');
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
-      await page.evaluate(`
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text:'上記の内容で[登録する]ボタンクリック' 
       }).show();
     `);
-      await page.click('input[src^="/users/images/btn_entry.gif"]');
-      log.info('click:登録ボタン');
+    await page.click('input[src^="/users/images/btn_entry.gif"]');
+    log.info('click:登録ボタン');
 
 
-      // CocologID登録完了ページ
-      await page.waitFor('img[src^="/users/images/h2_step4_m.gif"]');
+    // CocologID登録完了ページ
+    await page.waitFor('img[src^="/users/images/h2_step4_m.gif"]');
 
-      log.info('CocologID登録完了');
-      await page.addStyleTag({ path: swa2Css });
-      await page.addScriptTag({ path: swa2Js });
+    log.info('CocologID登録完了');
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
 
-      const closeConfirm = await page.evaluate(`swal({
+    const closeConfirm = await page.evaluate(`swal({
       title: 'ココログの作成が完了しました。',
       text: 'ブラウザを閉じてもよろしいですか？',
       showCancelButton: true,
@@ -501,9 +516,9 @@ const signup = async (blogInfo, opts) => {
       reverseButtons: true
     })`);
 
-          if (closeConfirm.value) {
-            await page.close();
-          }
+    if (closeConfirm.value) {
+      await page.close();
+    }
   } catch (error) {
     log.error(`error:${error.toString()}`);
     await page.addStyleTag({ path: swa2Css });

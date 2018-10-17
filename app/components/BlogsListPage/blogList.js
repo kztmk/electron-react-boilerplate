@@ -257,7 +257,8 @@ class BlogList extends React.Component<Props, State> {
                     target.provider === 'ameba' ||
                     target.provider === 'rakuten' ||
                     target.provider === 'kokolog' ||
-                    target.provider === 'ninjya'
+                    target.provider === 'ninjya' ||
+                    target.provider === 'yaplog'
                   ) {
                     this.loginBlog(target);
                   } else {

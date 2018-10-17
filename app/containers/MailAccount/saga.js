@@ -38,13 +38,25 @@ const initialImapProperty: ImapManagerPropertyType = {
 const convertToBaseAccountId = mailAccount => {
   let loginId = '';
   console.log(`--provider: ${mailAccount.provider}`);
+  const mailIdWithDomain = mailAccount.mailAddress.split('@');
+  const accountId = mailIdWithDomain[0];
+  const domain = mailIdWithDomain[1];
+  console.log(`accountId:${accountId}`);
+  console.log(`domain:${domain}`);
   switch (mailAccount.provider) {
     case 'Outlook':
       loginId = mailAccount.mailAddress;
       break;
     case 'Gmail':
-      loginId = mailAccount.mailAddress.replace(/\+.*@/, '@');
+      console.log(`gmail: ${mailAccount.mailAddress}`);
+
+      if (!accountId) {
+        throw new Error('Gmailのアドレスを確認してください。')
+      }
+      loginId = accountId.replace(/\+.*$/, '');
       loginId = loginId.replace(/\./, '');
+      loginId = `${loginId}@${domain}`;
+      console.log(`gmail after convert: ${loginId}`);
       break;
     case 'Yandex':
       loginId = mailAccount.mailAddress.replace(/@.*$/g, '');
