@@ -543,7 +543,7 @@ class BlogWizard extends React.Component<Props, State> {
         url += `${userFields.subdomain}.webnode.jp`;
         break;
       case 'livedoor':
-        url += `${blogInfo.accountId}.${blogInfo.detailInfo.domain}`;
+        url += `${blogInfo.accountId}.${userFields.domainValue}`;
         testPass = true;
         break;
       case 'seesaa':
@@ -567,7 +567,7 @@ class BlogWizard extends React.Component<Props, State> {
         url += `yaplog.jp/${blogInfo.accountId}`;
         break;
       case 'ninjya':
-        url = `http://${blogInfo.accountId}.${blogInfo.detailInfo.domainValue}`;
+        url = `http://${blogInfo.accountId}.${userFields.domainValue}`;
         testPass = true;
         break;
       case 'hatena':

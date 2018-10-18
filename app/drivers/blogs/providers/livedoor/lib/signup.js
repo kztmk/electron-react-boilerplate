@@ -160,7 +160,7 @@ const signup = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'ユーザー情報登録ボタンをクリック' 
+        text:'ユーザー情報登録ボタンをクリック'
       }).show();
     `);
     await page.click('input[value="ユーザー情報を登録"]');
@@ -189,7 +189,7 @@ const signup = async (blogInfo, opts) => {
         type: 'success',
         layout: 'topLeft',
         killer: true,
-        text:'画像認証をキャプチャ' 
+        text:'画像認証をキャプチャ'
       }).show();
     `);
       // 1秒待機後に、closeボタンでダイアログを閉じる
@@ -220,7 +220,7 @@ const signup = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text: '${captchaValue.value}を入力' 
+        text: '${captchaValue.value}を入力'
       }).show();
     `);
 
@@ -271,13 +271,54 @@ const signup = async (blogInfo, opts) => {
     mailacc.provider = blogInfo.mailAccount.provider;
     mailacc.blogProvider = blogInfo.provider;
     log.info('本登録URLを取得');
-    // メールアカウントへログインし、本登録URLを取得
-    const result = await getValidationLink(mailacc);
 
-    if (result) {
-      log.info(`本登録URL:${result[0]}`);
+    // メールアカウントへログインし、本登録URLを取得
+    let validationUrl = '';
+    try {
+      const result = await getValidationLink(mailacc);
+
+      if (result) {
+        log.info(`本登録URL:${validationUrl}`);
+        // 本登録URLへアクセス プロフィールの入力ページ
+        [validationUrl] = result;
+      } else {
+        log.warn('本登録用リンクが見つかりません。')
+        throw new Error('registration link not found')
+      }
+    } catch (error) {
+      log.warn('本登録用リンク取得中にエラーが発生しました。')
+      log.warn(error.toString());
+
+      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
+
+      const { value: url } = await page.evaluate(`
+        swal({
+          title: '本登録用リンクURLを貼付け',
+          html: '<p>使用したメールアドレスにログインしてください。<span style="color: red;font-weight: bold;">本登録URLをコピー</span>して、以下のボックスへ貼りつけます。<b>OK</b>をクリックすると自動作成を続けます。</p><p><span style="color: red;font-weight: bold;">未入力でOK</span>をクリックすると<span style="color: red;font-weight: bold;">中止します。</span></p>',
+          input: 'text',
+          inputPlaceholder: '本登録URLを貼付け'
+        })`);
+
+      if (url) {
+        console.log(`url: ${url}`);
+        validationUrl = url;
+        log.info(`set url: ${validationUrl}`);
+      } else {
+        await page.evaluate(`
+        swal({
+          title: '中止しました。',
+          html: '<p>ブログの作成を中止しました。</p><p>ブログ一覧に登録されているデータを削除してください。</p>',
+         })`);
+        log.info('quit:');
+        return;
+      }
+    }
+
+    log.info(`本登録URL:${validationUrl}`);
+
+      log.info(`本登録URL:${validationUrl}`);
       // 本登録URLへアクセス プロフィールの入力ページ
-      await page.goto(result[0]);
+      await page.goto(validationUrl);
 
       await page.waitForSelector('#blogTitle');
       log.info('本登録URLへアクセス完了');
@@ -398,9 +439,6 @@ const signup = async (blogInfo, opts) => {
       if (closeConfirm.value) {
         await page.close();
       }
-    } else {
-      throw new Error('本登録URLの取得に失敗しました。');
-    }
   } catch (error) {
     const pageUrl = await page.url();
 

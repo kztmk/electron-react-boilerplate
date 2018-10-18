@@ -29,7 +29,6 @@ const signup = async (blogInfo, opts) => {
   try {
     // Fc2 login/signup page
     await page.goto(`https://fc2.com/login.php`, { waitUntil: 'load' });
-
     log.info('access: https://fc2.com/login.php');
 
     await page.addScriptTag({ path: notyJsPath });
@@ -53,10 +52,13 @@ const signup = async (blogInfo, opts) => {
     await page.click('img[src="//static.fc2.com/share/fc2footermenu/blank.gif"]');
     await page.waitForSelector('#email', { timeout: 5000 });
 
+    // mailaddress validation page
     // mailAddress input & captcha
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
+
+    // mail address
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -74,8 +76,9 @@ const signup = async (blogInfo, opts) => {
     `);
     log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
     await page.evaluate(`Noty.closeAll();`);
+
     // captcha
-    let isCapchaError = true;
+    let isCaptchaError = true;
     do {
       let captchaValue = '';
       await page.evaluate('window.scrollTo(0, 200)');
@@ -84,6 +87,7 @@ const signup = async (blogInfo, opts) => {
       }
       await delay(1000);
 
+      // when captcha error occurred, it needs script again
       await page.addScriptTag({ path: notyJsPath });
       await page.addStyleTag({ path: notyCssPath });
       await page.addStyleTag({ path: notyThemePath });
@@ -138,16 +142,16 @@ const signup = async (blogInfo, opts) => {
       log.info('[利用規約に同意しFC2IDへ登録する]をクリック');
 
       await page.waitFor('.signup_attention_msg, .sh_heading_main_b');
-
       const successMessege = await page.$('.sh_heading_main_b');
 
       if (successMessege) {
-        isCapchaError = false;
+        isCaptchaError = false;
       }
-    } while (isCapchaError);
+    } while (isCaptchaError);
 
     log.info('FC2ID仮登録完了');
 
+    // countdown page
     await page.goto('https://tools.yoriki.cloud/countdown/');
     log.info('メール到着60秒待機');
     await page.waitForSelector('#blind', { timeout: 70000 });
@@ -160,14 +164,53 @@ const signup = async (blogInfo, opts) => {
     mailacc.provider = blogInfo.mailAccount.provider;
     mailacc.blogProvider = blogInfo.provider;
     log.info('本登録URLを取得');
+
     // メールアカウントへログインし、本登録URLを取得
-    const result = await getValidationLink(mailacc);
+    let validationUrl = '';
+    try {
+      const result = await getValidationLink(mailacc);
 
-    if (result) {
-      log.info(`本登録URL:${result[0]}`);
+      if (result) {
+        log.info(`本登録URL:${validationUrl}`);
+        // 本登録URLへアクセス プロフィールの入力ページ
+        [validationUrl] = result;
+      } else {
+        log.warn('本登録用リンクが見つかりません。')
+        throw new Error('registration link not found')
+      }
+    } catch (error) {
+      log.warn('本登録用リンク取得中にエラーが発生しました。')
+      log.warn(error.toString());
+
+      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
+
+      const { value: url } = await page.evaluate(`
+        swal({
+          title: '本登録用リンクURLを貼付け',
+          html: '<p>使用したメールアドレスにログインしてください。<span style="color: red;font-weight: bold;">本登録URLをコピー</span>して、以下のボックスへ貼りつけます。<b>OK</b>をクリックすると自動作成を続けます。</p><p><span style="color: red;font-weight: bold;">未入力でOK</span>をクリックすると<span style="color: red;font-weight: bold;">中止します。</span></p>',
+          input: 'text',
+          inputPlaceholder: '本登録URLを貼付け'
+        })`);
+
+      if (url) {
+        console.log(`url: ${url}`);
+        validationUrl = url;
+        log.info(`set url: ${validationUrl}`);
+      } else {
+        await page.evaluate(`
+        swal({
+          title: '中止しました。',
+          html: '<p>ブログの作成を中止しました。</p><p>ブログ一覧に登録されているデータを削除してください。</p>',
+         })`);
+        log.info('quit:');
+        return;
+      }
+    }
+
+      log.info(`本登録URL:${validationUrl}`);
+
       // 本登録URLへアクセス プロフィールの入力ページ
-
-      await page.goto(result[0]);
+      await page.goto(validationUrl);
       await page.waitForSelector('#pass1');
       log.info('本登録URLへアクセス完了');
       await page.addScriptTag({ path: notyJsPath });
@@ -180,6 +223,8 @@ const signup = async (blogInfo, opts) => {
         text:'本登録URLへアクセス完了' 
       }).show();
     `);
+
+      // password
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -196,6 +241,8 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード入力完了' 
       }).show();
     `);
+
+      // confirm pasword
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -212,6 +259,8 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード(確認)入力完了' 
       }).show();
     `);
+
+      // gender
       await page.evaluate(`
     new Noty({
         killer: true,
@@ -242,6 +291,7 @@ const signup = async (blogInfo, opts) => {
     `);
       }
 
+      // secret question
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -258,6 +308,8 @@ const signup = async (blogInfo, opts) => {
         text:'秘密の質問選択完了' 
       }).show();
     `);
+
+      // secret answer
       await page.evaluate(`
     new Noty({
         killer: true,
@@ -275,7 +327,10 @@ const signup = async (blogInfo, opts) => {
         text:'質問の答え入力完了' 
       }).show();
     `);
+
+      // birth date
       const birthDateParts = blogInfo.birthDate.split('/');
+      // month
       await page.evaluate(`
     new Noty({
         killer: true,
@@ -295,6 +350,7 @@ const signup = async (blogInfo, opts) => {
         text:'生年月日-[月]-選択完了' 
       }).show();
     `);
+      // date
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -312,6 +368,8 @@ const signup = async (blogInfo, opts) => {
         text:'生年月日-[日]-選択完了' 
       }).show();
     `);
+
+      // postal code
       await page.evaluate(`
     new Noty({
         killer: true,
@@ -329,6 +387,8 @@ const signup = async (blogInfo, opts) => {
         text:'郵便番号入力完了' 
       }).show();
     `);
+
+      // button click
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -357,6 +417,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+        // service add
         await page.evaluate(`
     new Noty({
         type: 'success',
@@ -368,7 +429,7 @@ const signup = async (blogInfo, opts) => {
         log.info('サービス追加リンクをクリック');
         // サービス追加ページ
         await page.waitFor('.sh_heading_main_b');
-        successMessege = await page.$eval('.sh_heading_main_b', item => item.textContent);
+        const successMessege = await page.$eval('.sh_heading_main_b', item => item.textContent);
 
         if (successMessege === 'サービスの追加') {
           log.info('サービス追加ページへアクセス完了');
@@ -382,6 +443,7 @@ const signup = async (blogInfo, opts) => {
         text:'[サービス追加ページ]アクセス完了' 
       }).show();
     `);
+          // click blog add
           await page.evaluate(`
     new Noty({
         type: 'success',
@@ -397,6 +459,7 @@ const signup = async (blogInfo, opts) => {
           log.info('click:ブログを追加ボタン');
           await page.waitFor('#topicpath');
 
+          // blog info page
           await page.addScriptTag({ path: notyJsPath });
           await page.addStyleTag({ path: notyCssPath });
           await page.addStyleTag({ path: notyThemePath });
@@ -408,6 +471,8 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
           log.info('ブログ-ユーザ情報入力ページ');
+
+          // accountId
           await page.evaluate(`
     new Noty({
         type: 'success',
@@ -424,6 +489,7 @@ const signup = async (blogInfo, opts) => {
         text:'ブログID入力完了' 
       }).show();
     `);
+          // title
           await page.evaluate(`
     new Noty({
         type: 'success',
@@ -440,6 +506,8 @@ const signup = async (blogInfo, opts) => {
         text:'ブログタイトル入力完了' 
       }).show();
     `);
+
+          // main junre
           await page.evaluate(`
     new Noty({
         killer: true,
@@ -458,6 +526,8 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
           await delay(1000);
+
+          // sub junre
           await page.evaluate(`
     new Noty({
         type: 'success',
@@ -478,6 +548,7 @@ const signup = async (blogInfo, opts) => {
           await page.evaluate(`Noty.closeAll();`);
           let captchaError = true;
 
+          // captcha
           do {
             let captchaValue = '';
             await page.addScriptTag({ path: notyJsPath });
@@ -516,12 +587,12 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
             await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text: '[利用規約に同意して登録する]ボタンをクリック'
-      }).show();
-    `);
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text: '[利用規約に同意して登録する]ボタンをクリック'
+        }).show();
+      `);
             await page.click('#submit');
             log.info('click:[利用規約に同意して登録する]');
             // --loop
@@ -564,9 +635,6 @@ const signup = async (blogInfo, opts) => {
         log.warn('FC2IDの登録完了ページが確認できません。');
         throw new Error('FC2IDの登録完了ページが確認できません。');
       }
-    } else {
-      throw new Error('本登録URLの取得に失敗しました。');
-    }
   } catch (error) {
     log.error(`error:${error.toString()}`);
     await page.addStyleTag({ path: swa2Css });

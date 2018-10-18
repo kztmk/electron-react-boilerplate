@@ -63,12 +63,12 @@ const getImapConfig = provider => {
 async function getPathToInbox() {
   return imapClient.listMailboxes().then(mailboxes => {
     console.log('--list mailboxes -----');
+    console.log(mailboxes);
     const inbox = mailboxes.children.find(box => box.name.toLowerCase() === 'inbox');
     const junk = mailboxes.children.find(box => {
       if ((box.name.toLowerCase() === 'junk') ||
           (box.name.toLowerCase() === 'bulk mail') ||
-          (box.name.toLowerCase() === 'spam') ||
-          (box.name === '迷惑メール')) {
+          (box.name.toLowerCase() === 'spam')) {
               return box;
       }
     });
@@ -76,7 +76,26 @@ async function getPathToInbox() {
     const boxes = {};
     boxes.inbox = inbox.path;
     console.log(`inboxPath:${boxes.inbox}`);
-    boxes.junk = junk.path;
+
+    const GmailRoot = mailboxes.children.find(box => box.name === '[Gmail]');
+    console.log('--Gmail');
+    console.log(GmailRoot);
+    if (GmailRoot) {
+      const gmailJunk = GmailRoot.children.find(box => {
+        return box.flags.find(f => {
+          console.log(f);
+          return f=== '\\Junk';
+        })
+      });
+      boxes.junk = gmailJunk.path;
+      console.log(`gmail-junkPath:${boxes.junk}`);
+    } else {
+      if (junk) {
+        boxes.junk = junk.path;
+      } else {
+        boxes.junk = '';
+      }
+    }
     console.log(`junkPath:${boxes.junk}`);
 
     return boxes;

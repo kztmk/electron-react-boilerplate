@@ -42,8 +42,6 @@ const stepContent = {
   padding: '5px'
 };
 
-// TODO: gmail, yandexsen選択時に、パスワード欄をunableへ
-
 
 const groupBoxTop = {
   border: '1px solid #333',
@@ -63,10 +61,6 @@ const selectAvatarStyle = {
   display: 'flex',
   alignItems: 'center'
 };
-
-const toolTipMultiLine = {
-  whiteSpace: 'pre'
-}
 
 type Props = {
   classes: Object,

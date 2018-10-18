@@ -24,6 +24,7 @@ const signup = async (blogInfo, opts) => {
   log.info('-------------------------');
   const page = await browser.newPage();
   await page.setViewport({ width: 1024, height: 748 });
+  await page.setDefaultNavigationTimeout(60000);
 
   log.info('create: browser page');
   try {
@@ -51,7 +52,7 @@ const signup = async (blogInfo, opts) => {
     `);
     log.info('click [新規ユーザー登録]ボタンクリック');
     await page.click('a[href^="/register"]');
-    await page.waitForSelector('#email', { timeout: 5000 });
+    await page.waitForSelector('#email');
 
     // mailAddress input
     await page.addScriptTag({ path: notyJsPath });
@@ -116,22 +117,33 @@ const signup = async (blogInfo, opts) => {
     mailacc.provider = blogInfo.mailAccount.provider;
     mailacc.blogProvider = blogInfo.provider;
     log.info('本登録URLを取得');
-    // メールアカウントへログインし、本登録URLを取得
-    const result = await getValidationLink(mailacc);
 
+    // メールアカウントへログインし、本登録URLを取得
     let validationUrl = '';
-    if (result) {
-      validationUrl = result[0];
-    } else {
-         await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
+    try {
+      const result = await getValidationLink(mailacc);
+
+      if (result) {
+        log.info(`本登録URL:${validationUrl}`);
+        // 本登録URLへアクセス プロフィールの入力ページ
+        [validationUrl] = result;
+      } else {
+        log.warn('本登録用リンクが見つかりません。')
+        throw new Error('registration link not found')
+      }
+    } catch (error) {
+      log.warn('本登録用リンク取得中にエラーが発生しました。')
+      log.warn(error.toString());
+
+      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
 
       const { value: url } = await page.evaluate(`
-    swal({
-    title: '本登録用リンクURLを貼付け',
-    html: '<p>使用したメールアドレスにログインしてください。<span style="color: red;font-weight: bold;">本登録URLをコピー</span>して、以下のボックスへ貼りつけます。<b>OK</b>をクリックすると自動作成を続けます。</p><p><span style="color: red;font-weight: bold;">未入力でOK</span>をクリックすると<span style="color: red;font-weight: bold;">中止します。</span></p>',
-    input: 'text',
-    inputPlaceholder: '本登録URLを貼付け'
-    })`);
+        swal({
+          title: '本登録用リンクURLを貼付け',
+          html: '<p>使用したメールアドレスにログインしてください。<span style="color: red;font-weight: bold;">本登録URLをコピー</span>して、以下のボックスへ貼りつけます。<b>OK</b>をクリックすると自動作成を続けます。</p><p><span style="color: red;font-weight: bold;">未入力でOK</span>をクリックすると<span style="color: red;font-weight: bold;">中止します。</span></p>',
+          input: 'text',
+          inputPlaceholder: '本登録URLを貼付け'
+        })`);
 
       if (url) {
         console.log(`url: ${url}`);
@@ -140,9 +152,9 @@ const signup = async (blogInfo, opts) => {
       } else {
         await page.evaluate(`
         swal({
-        title: '中止しました。',
-        html: '<p>ブログの作成を中止しました。</p><p>ブログ一覧に登録されているデータを削除してください。</p>',
-        })`);
+          title: '中止しました。',
+          html: '<p>ブログの作成を中止しました。</p><p>ブログ一覧に登録されているデータを削除してください。</p>',
+         })`);
         log.info('quit:');
         return;
       }
@@ -323,7 +335,7 @@ const signup = async (blogInfo, opts) => {
       // await page.focus('input[src^="/images/register/btn-regist.gif"]');
       // await page.click('input[src^="/images/register/btn-regist.gif"]');
       log.info('本登録ボタンをクリック');
-      await delay(15000);
+      await delay(2000);
       await page.waitFor('#authimg, .ttl-registFinish');
 
       const h3Tags = await page.$$('h3.ttl-registFinish');
@@ -525,15 +537,24 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+      await page.evaluate(() => {window.scrollBy(0, 200)});
+      await page.focus('input[src^="/images/home/btn-make.gif"]');
+      await delay(1000);
+
+      const selector = 'input[src^="/images/home/btn-make.gif"]';
+      await page.evaluate((selector) => document.querySelector(selector).click(), selector);
       // await page.click('input[src^="/images/home/btn-make.gif"]');
+      // const finishButton = await page.$('input[src^="/images/home/btn-make.gif"]');
+      // if (!finishButton) {
+        // log.warn('can not found create button');
+       // throw new Error('作成ボタンが見つかりません。')
+      // }
+
+      // await finishButton.click();
+      // const {x2, y2, width2, height2} = await finishButton.boundingBox();
+      // console.log(`x:${x2}px-y:${y2}px`);
+      // await page.mouse.click(x2 +10, y2 +10);
       log.info('click: 作成ボタン')
-      const finishButton = await page.$('input[src^="/images/home/btn-make.gif"]');
-      if (!finishButton) {
-        log.warn('can not found create button');
-        throw new Error('作成ボタンが見つかりません。')
-      }
-      const {x2, y2, width2, height2} = await finishButton.boundingBox();
-      await page.mouse.click(x2 +10, y2 +10);
       await delay(2000);
       await page.waitFor('.errorArea, #header_block > ul > li:nth-child(5)');
 
@@ -546,9 +567,10 @@ const signup = async (blogInfo, opts) => {
         if (message === '忍者ブログ作成完了') {
           log.info(message);
           isCaptchaError = false;
+        } else {
+          log.warn('can not complete page');
         }
       }
-      log.warn('can not complete page')
     } while (isCaptchaError);
 
     await page.addStyleTag({ path: swa2Css });

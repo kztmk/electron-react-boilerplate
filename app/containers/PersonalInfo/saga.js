@@ -62,8 +62,7 @@ function* getRandomPersonalInfo() {
       .then(data => {
         let postCode = '00';
         if (data.postalCode.length < 7) {
-          postCode += data.postalCode;
-          postCode = postCode.substr(1, 7);
+          postCode = `00${data.postalCode}`.slice(-7);
         } else {
           postCode = data.postalCode;
         }
@@ -153,8 +152,7 @@ function* savePersonalInfoForBlog(action) {
           .then(data => {
             let postCode = '00';
             if (data.postalCode.length < 7) {
-              postCode += data.postalCode;
-              postCode = postCode.substr(1, 7);
+              postCode = `00${data.postalCode}`.slice(-7);
             } else {
               postCode = data.postalCode;
             }

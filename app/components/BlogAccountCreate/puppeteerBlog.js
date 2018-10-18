@@ -29,6 +29,9 @@ class PuppeteerBlog {
       case 'yaplog':
         this.client = new BlogDriver('yaplog');
         break;
+      case 'jugem':
+        this.client = new BlogDriver('jugem');
+        break;
       default:
     }
   }

@@ -6,6 +6,7 @@ import BlogProviderNinjya from './ninjya';
 import BlogProviderRakuten from './rakuten';
 import BlogProviderCocolog from './cocolog';
 import BlogProviderYaplog from './yaplog';
+import BlogProviderJugem from './jugem';
 
 class BlogProviderManager {
   constructor() {
@@ -17,7 +18,8 @@ class BlogProviderManager {
       ninjya: BlogProviderNinjya,
       rakuten: BlogProviderRakuten,
       cocolog: BlogProviderCocolog,
-      yaplog: BlogProviderYaplog
+      yaplog: BlogProviderYaplog,
+      jugem: BlogProviderJugem
     };
   }
 

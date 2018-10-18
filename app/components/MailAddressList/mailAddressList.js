@@ -295,14 +295,14 @@ class MailAddressList extends React.Component<Props, State> {
                     lastLogin: moment(account.lastLogin).valueOf()
                   };
                   // 削除処理
-                   this.handleDeleteMailAccount(target);
+                  this.handleDeleteMailAccount(target);
                   // const mailacc = {};
                   // mailacc.accountId = account.accountId;
                   // mailacc.mailAddress = account.mailAddress;
                   // mailacc.password = account.password;
-                  // mailacc.sender = 'noreply@id.fc2.com';
+                  // mailacc.sender = 'oshirase@shinobi.jp';
                   // mailacc.provider = account.provider;
-                  // mailacc.blogProvider = 'fc2';
+                  // mailacc.blogProvider = 'ninjya';
                   // console.log('---mail criteria---');
                   // console.log(mailacc);
                   // const result = getValidationLink(mailacc);

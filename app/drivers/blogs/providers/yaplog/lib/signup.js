@@ -170,7 +170,7 @@ const signup = async (blogInfo, opts) => {
       if (result) {
         log.info(`本登録URL:${result[0]}`);
         // 本登録URLへアクセス プロフィールの入力ページ
-        validationUrl = result[0];
+        [validationUrl] = result;
       } else {
         throw new Error('registration link not found')
       }
