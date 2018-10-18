@@ -26,9 +26,7 @@ const open = async (blogInfo, opts) => {
 
   log.info('create: browser page');
   try {
-    // Fc2 login/signup page
-    // await page.goto(blogInfo.url, { waitUntil: 'load' });
-    await page.goto('https://www.ninja.co.jp/register/input/hash/1114e567fa1c79f49ca07752be4e5ab0f331ba9a', { waitUntil: 'load'});
+    await page.goto(blogInfo.url, { waitUntil: 'load'});
     log.info(`access: ${blogInfo.url}`);
 
     await page.addScriptTag({ path: notyJsPath });
@@ -38,57 +36,11 @@ const open = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'忍者ブログ トップページアクセス完了' 
+        text:'忍者ブログ トップページアクセス完了' ,
+        timeout: 2000
       }).show();
     `);
 
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'利用規約に同意を選択開始' 
-      }).show();
-    `);
-      await page.click('#registerInputRule');
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'利用規約に同意を選択完了' 
-      }).show();
-    `);
-
-      log.info('click: 利用規約に同意')
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'個人情報の取扱に同意を選択開始' 
-      }).show();
-    `);
-
-      await page.click('#registerInputPrivacy');
-      await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'個人情報の取扱に同意を選択完了' 
-      }).show();
-    `);
-
-      log.info('click: 個人情報の取扱に同意')
-
-    await page.evaluate(`Noty.closeAll();`);
-
-     await page.focus('#registerInputSend > input');
-     await delay(3000);
-    // button
-    const submit = await page.$('#registerInputSend > input');
-    const {x, y, width, height} = await submit.boundingBox();
-    console.log(`x:${x}, y:${y}, w:${width}, h:${height}`);
-    // await submit.click();
-    await page.mouse.click(x+10, y+10);
-    console.log('click');
   } catch (error) {
     log.error(`error:${error.toString()}`);
     await page.addStyleTag({ path: swa2Css });
@@ -96,7 +48,7 @@ const open = async (blogInfo, opts) => {
 
     await page.evaluate(`swal({
       title: 'エラー発生',
-      text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
+      text: 'エラーが発生しました。お手数ですが、手作業で続けてください。',
       showCancelButton: false,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',

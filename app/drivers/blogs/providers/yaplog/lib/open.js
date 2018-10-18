@@ -38,7 +38,8 @@ const open = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ トップページアクセス完了' 
+        text:'Yaplog トップページアクセス完了',
+        timeout: 2000
       }).show();
     `);
   } catch (error) {
@@ -48,7 +49,7 @@ const open = async (blogInfo, opts) => {
 
     await page.evaluate(`swal({
       title: 'エラー発生',
-      text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
+      text: 'エラーが発生しました。お手数ですが、手作業で続けてください。',
       showCancelButton: false,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',

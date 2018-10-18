@@ -543,7 +543,11 @@ class BlogWizard extends React.Component<Props, State> {
         url += `${userFields.subdomain}.webnode.jp`;
         break;
       case 'livedoor':
-        url += `${blogInfo.accountId}.${userFields.domainValue}`;
+        if ((userFields.useDomainValue) && (userFields.domainValue.length > 0)) {
+          url = `http://${blogInfo.accountId}.${userFields.domainValue}`;
+        } else {
+          url =  `http://blog.livedoor.jp/${blogInfo.accountId}/`
+        }
         testPass = true;
         break;
       case 'seesaa':

@@ -60,7 +60,7 @@ class StepLivedoor extends React.Component<Props, State> {
       descriptionState: '',
       remark: '',
       useDomain: false,
-      domain: 'livedoor.jp',
+      domain: '',
       tags: [],
       errorMessage: '',
       openErrorSnackbar: false
