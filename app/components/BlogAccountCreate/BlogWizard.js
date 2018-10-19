@@ -546,7 +546,7 @@ class BlogWizard extends React.Component<Props, State> {
         if ((userFields.useDomainValue) && (userFields.domainValue.length > 0)) {
           url = `http://${blogInfo.accountId}.${userFields.domainValue}`;
         } else {
-          url =  `http://blog.livedoor.jp/${blogInfo.accountId}/`
+          url =  `http://${blogInfo.accountId}.livedoor.blog/`
         }
         testPass = true;
         break;
