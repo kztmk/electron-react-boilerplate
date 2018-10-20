@@ -3,7 +3,10 @@ import delay from 'delay';
 import log from 'electron-log';
 import jaconv from 'jaconv';
 import clickByText from '../../../utils';
-import getValidationLink from '../../../../emails/imap';
+
+const waitRandom = () => {
+  return Math.floor(Math.random() * 501);
+}
 
 const signup = async (blogInfo, opts) => {
   const { browser } = opts;
@@ -90,7 +93,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
     await delay(1000);
-    await page.type('input[name="email"]', blogInfo.mailAddress, { delay: 80 });
+    await page.type('input[name="email"]', blogInfo.mailAddress, { delay: waitRandom()});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -108,7 +111,7 @@ const signup = async (blogInfo, opts) => {
         text:'メールアドレス(確認)入力開始' 
       }).show();
     `);
-    await page.type('input[name="email2"]', blogInfo.mailAddress);
+    await page.type('input[name="email2"]', blogInfo.mailAddress, { delay: waitRandom()});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -126,7 +129,7 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-    await page.type('#p_id', blogInfo.password);
+    await page.type('#p_id', blogInfo.password, { delay: waitRandom()});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -144,7 +147,7 @@ const signup = async (blogInfo, opts) => {
       text:'姓の入力開始'
     }).show();
     `);
-    await page.type('input[name="lname"]', blogInfo.lastName);
+    await page.type('input[name="lname"]', blogInfo.lastName, { delay: waitRandom()});
     await page.evaluate(`
     new Noty({
       type: 'success',
@@ -161,7 +164,7 @@ const signup = async (blogInfo, opts) => {
         text:'名の入力開始' 
       }).show();
     `);
-    await page.type('input[name="fname"]', blogInfo.firstName);
+    await page.type('input[name="fname"]', blogInfo.firstName, { delay: waitRandom()});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -179,7 +182,7 @@ const signup = async (blogInfo, opts) => {
       text:'姓(フリガナ)の入力開始'
     }).show();
     `);
-    await page.type('input[name="lname_kana"]', jaconv.toKatakana(blogInfo.lastNameKana));
+    await page.type('input[name="lname_kana"]', jaconv.toKatakana(blogInfo.lastNameKana), { delay: waitRandom()});
     await page.evaluate(`
     new Noty({
       type: 'success',
@@ -196,7 +199,7 @@ const signup = async (blogInfo, opts) => {
         text:'名(フリガナ)の入力開始' 
       }).show();
     `);
-    await page.type('input[name="fname_kana"]', jaconv.toKatakana(blogInfo.firstNameKana));
+    await page.type('input[name="fname_kana"]', jaconv.toKatakana(blogInfo.firstNameKana), { delay: waitRandom()});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -216,6 +219,7 @@ const signup = async (blogInfo, opts) => {
         text: '誕生日-年-を選択開始'
       }).show();
     `);
+    await delay(1000 + waitRandom());
     await page.select('select[name="by"]', birthdayParts[0]);
     await page.evaluate(`
       new Noty({
@@ -234,6 +238,7 @@ const signup = async (blogInfo, opts) => {
         text: '誕生日-月-を選択開始'
       }).show();
     `);
+    await delay(1000 + waitRandom());
     await page.select('select[name="bm"]', numberOfMonth);
     await page.evaluate(`
       new Noty({
@@ -252,6 +257,7 @@ const signup = async (blogInfo, opts) => {
         text: '誕生日-日-を選択開始'
       }).show();
     `);
+    await delay(1000 + waitRandom());
     await page.select('select[name="bd"]', numberOfDay);
     await page.evaluate(`
       new Noty({
@@ -263,6 +269,7 @@ const signup = async (blogInfo, opts) => {
     log.info(`select birth year: ${numberOfDay}`);
 
     // 性別
+    await delay(500 + waitRandom());
     if (blogInfo.gender) {
       await page.click('input[name="sex"][value="F"]');
       log.info('click gender: female');
@@ -280,7 +287,7 @@ const signup = async (blogInfo, opts) => {
     }).show();
     `);
     // await page.type('input[name="nickname"]', `ffffff`);
-    await page.type('input[name="nickname"]', `${blogInfo.accountId}${birthdayParts[0]}${birthdayParts[1]}${birthdayParts[2]}`);
+    await page.type('input[name="nickname"]', `${blogInfo.accountId}${birthdayParts[0]}${birthdayParts[1]}${birthdayParts[2]}`, { delay: waitRandom()});
     await page.evaluate(`
     new Noty({
       type: 'success',
@@ -299,6 +306,7 @@ const signup = async (blogInfo, opts) => {
       text:'同意して次へボタンをクリック'
     }).show();
     `);
+    await delay(waitRandom());
     await page.click('input[name="execMethod"]');
     log.info('click: 同意して次へ');
 
@@ -353,11 +361,12 @@ const signup = async (blogInfo, opts) => {
         text:'[続けてサービスを利用する]ボタンをクリック' 
       }).show();
     `);
+        await delay(500 + waitRandom());
         await page.click('p.submit > input')
         await page.waitFor('#myplaza_regist_base_url');
 
 
-        await page.type('#myplaza_regist_base_url', blogInfo.accountId, { delay: 240 });
+        await page.type('#myplaza_regist_base_url', blogInfo.accountId, { delay: waitRandom() });
 
         // captcha
         await page.addStyleTag({ path: swa2Css });

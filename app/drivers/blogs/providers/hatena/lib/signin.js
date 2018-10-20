@@ -1,7 +1,9 @@
+/* eslint-disable no-await-in-loop */
 import delay from 'delay';
 import log from 'electron-log';
+import clickByText from "../../../utils";
 
-const signin = async (user, opts) => {
+const signin = async (blogInfo, opts) => {
   const { browser } = opts;
 
   let scriptDir = './app';
@@ -16,17 +18,20 @@ const signin = async (user, opts) => {
   const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
   const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
-  log.info('--------->login yahoo mail account--------->');
+  log.info('--------->login to  hatena blog account--------->');
   log.info('-----------user----------');
-  log.info(user);
+  log.info(blogInfo);
   log.info('-------------------------');
-
   const page = await browser.newPage();
   await page.setViewport({ width: 1024, height: 748 });
 
+  log.info('create: browser page');
   try {
-    await page.goto('https://www.yahoo.co.jp/');
-    await page.waitFor('#srchtxtBg', { visible: true });
+    // Hatena login/signup page
+    await page.goto(`https://www.hatena.ne.jp/`, { waitUntil: 'load' });
+
+    log.info('access: https://www.hatena.ne.jp/');
+
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -34,10 +39,9 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo Japan トップページアクセス完了' 
+        text:'Hatenaブログ トップページアクセス完了' 
       }).show();
     `);
-    log.info('load: https://www.yahoo.co.jp');
 
     await page.evaluate(`
     new Noty({
@@ -46,11 +50,10 @@ const signin = async (user, opts) => {
         text:'ログインリンクをクリック' 
       }).show();
     `);
-    log.info('load: https://www.yahoo.co.jp');
+    await clickByText(page, 'ログイン');
+    await page.waitFor('#login-name');
 
-    // ログインリンク
-    await page.click('#pbhello > span > a');
-    await page.waitFor('#unm');
+    // login page
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -58,42 +61,18 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo ログインページへアクセス完了' 
+        text:'はてなID入力開始' 
       }).show();
     `);
-    log.info('access: login page');
+    await page.type('#login-name', blogInfo.accountId);
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo ID入力開始' 
+        text:'はてなID入力完了' 
       }).show();
     `);
-
-    await page.type('#username', user.username, {delay: 120});
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'Yahoo ID入力完了' 
-      }).show();
-    `);
-    log.info('input: yahoo ID');
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'次へボタンをクリック' 
-      }).show();
-    `);
-    await delay(500);
-    await page.click('#btnNext');
-    log.info('click: next button');
-    await page.waitFor('#passwd', { visible: true, timeout: 5000 });
-    const errorMsg = await page.$('#errMsg > p', el => el.textContent);
-    if (errorMsg.length > 0) {
-      throw new Error('Yahoo IDを確認してください。');
-    }
+    log.info(`HatenaId:${blogInfo.accountId}入力完了`);
 
     await page.evaluate(`
     new Noty({
@@ -102,9 +81,7 @@ const signin = async (user, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-    await delay(500);
-    await page.type('#passwd', user.password, {delay:90});
-    log.info('input password');
+    await page.type('input[name="password"]', blogInfo.password);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -112,52 +89,22 @@ const signin = async (user, opts) => {
         text:'パスワード入力完了' 
       }).show();
     `);
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ログインボタンをクリック' 
-      }).show();
-    `);
-    await delay(800);
-    await page.click('#btnSubmit');
-    log.info('click login button');
+    log.info(`password:${blogInfo.password}入力完了`);
 
-    await page.waitFor('#srchtxtBg', { visible: true });
-    log.info('login yahoo');
+    await page.click('input[type="submit"]');
+    await page.waitFor('#profile-image-profile');
+
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
     await page.evaluate(`
     new Noty({
+        timeout:3000,
         type: 'success',
         layout: 'topLeft',
-        text:'Yahooログイン完了' 
+        text:'はてなブログ ログイン完了' 
       }).show();
     `);
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'メールリンクをクリック' 
-      }).show();
-    `);
-    await page.click('#mhi6th > a');
-    log.info('click mail link');
-
-    await page.waitFor('#ygmhlog');
-    await page.addScriptTag({ path: notyJsPath });
-    await page.addStyleTag({ path: notyCssPath });
-    await page.addStyleTag({ path: notyThemePath });
-    await page.evaluate(`
-    new Noty({
-        timeout: 3000,
-        type: 'success',
-        layout: 'topLeft',
-        text:'Yahoomメールログイン完了' 
-      }).show();
-    `);
-    log.info('-----------yahoo mail login done------>');
   } catch (error) {
     log.error(`error:${error.toString()}`);
     await page.addStyleTag({ path: swa2Css });
@@ -165,7 +112,7 @@ const signin = async (user, opts) => {
 
     await page.evaluate(`swal({
       title: 'エラー発生',
-      text: 'エラーが発生しました。アカウントが削除されていないかを確認してください。',
+      text: 'エラーが発生しました。お手数ですが、手作業で続けてください。',
       showCancelButton: false,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',
@@ -174,8 +121,6 @@ const signin = async (user, opts) => {
       reverseButtons: true
     })`);
   }
-
-  return browser;
 };
 
 export default signin;

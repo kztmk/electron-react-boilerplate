@@ -32,6 +32,15 @@ class PuppeteerBlog {
       case 'jugem':
         this.client = new BlogDriver('jugem');
         break;
+      case 'hatena':
+        this.client = new BlogDriver('hatena');
+        break;
+      case 'webryblog':
+        this.client = new BlogDriver('webryblog');
+        break;
+      case 'goo':
+        this.client = new BlogDriver('goo');
+        break;
       default:
     }
   }

@@ -181,7 +181,7 @@ async function getValidationLink(mailCriteria) {
         messageUids = await searchMessages(boxes.junk, sender);
         console.log('---in junk');
         console.log(messageUids);
-        if (!messageUids) {
+        if (messageUids.length === 0) {
           throw new Error('mail not found inbox/junk');
         }
         targetBox = boxes.junk;
@@ -220,83 +220,6 @@ async function getValidationLink(mailCriteria) {
       const regxLink = new RegExp(confirmInfo.regx, 'gm');
       validationLink = contentMsg.match(regxLink);
 
-      /*
-      if (message !== undefined) {
-        const mailparser = new MailParser();
-        await mailparser.end(message['body[]']);
-        await mailparser.on('end', mail => {
-          if (!mail.hasOwnProperty('html')) {
-            if (mail.hasOwnProperty('text')) {
-              console.log('----mail text');
-              mailBody = text2Html(mail.text);
-            }
-          } else {
-            mailBody = mail.html;
-            console.log('----mail html');
-            // inlineでのcontentIdをhtml内から取得する。
-            const reg = /src="cid:(.*?)"/gi;
-            let result;
-
-            const inlineFiles = [];
-            // 上記正規表現でnullが返るまで繰り返し
-            // eslint-disable-next-line no-cond-assign
-            while ((result = reg.exec(mailBody)) !== null) {
-              // 取得したcid
-              let fileName = result[0];
-              // contentId名に整形
-              if (fileName.endsWith('"')) {
-                fileName = fileName.slice(0, -1);
-                fileName = fileName.replace('src="cid:', '');
-              }
-
-              // attachment.contentId名で、該当コンテンツを取得
-              const attachment = mail.attachments.find(attach => attach.contentId === fileName);
-              // コンテンツが見つかった場合
-              if (attachment) {
-                // コンテンツの位置がinline
-                if (attachment.contentDisposition === 'inline') {
-                  // base64で復号化
-                  const base64 = attachment.content.toString('base64');
-                  const type = attachment.contentType;
-                  // 正規表現キャプチャで元htmlが消えているため、key: contentID, value: 置き換えコンテンツを作成
-                  inlineFiles[`src="cid:${fileName}"`] = `src="data:${type};base64,${base64}" `;
-                }
-              }
-            }
-            // 置換用オブジェクトで元htmlのsrc="cid:xxx"を置換
-            // eslint-disable-next-line guard-for-in,no-restricted-syntax
-            for (const key in inlineFiles) {
-              console.log(`replace:${key}`);
-              mailBody = mailBody.replace(key, inlineFiles[key]);
-            }
-          }
-          console.log('=body=');
-          console.log(mailBody);
-          const domParser = new DOMParser();
-          const doc = domParser.parseFromString(mailBody, 'text/html');
-          const aTags = doc.getElementsByTagName('a');
-          console.log('---aTags---');
-          console.log(aTags);
-
-          for (const elm of aTags) {
-            if (elm.href.indexOf('https://secure.id.fc2.com/signup.php') > -1) {
-              validationLink.push(elm.href);
-            }
-          }
-
-          if (validationLink) {
-            console.log('vlink-------');
-            console.log(validationLink);
-          } else {
-            console.log('can not find link');
-          }
-          console.log('---done---');
-          imapClient.close().then(() => {
-            console.log('---------imap server disconnected.------');
-          });
-        });
-      }
-      */
       console.log('---done---');
       imapClient.close().then(() => {
         console.log('---------imap server disconnected.------');

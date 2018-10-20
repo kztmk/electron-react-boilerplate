@@ -40,6 +40,24 @@ const confirmMails = [
     sender: 'upport@yaplog.jp',
     link: 'https://www.yaplog.jp/userRegistration/JoinCheck.blog?id',
     regx: 'https:\\/\\/www\\.yaplog\\.jp\\/userRegistration\\/JoinCheck.*$'
+  },
+  {
+    provider: 'hatena',
+    sender: 'register@hatena.ne.jp',
+    link: 'http://www.hatena.ne.jp/r?k=',
+    regx: 'http:\\/\\/www\\.hatena\\.ne\\.jp\\/r\\?k=.*$'
+  },
+  {
+    provider: 'webryblog',
+    sender: 'blog@bcs.biglobe.ne.jp',
+    link: 'https://bblog.sso.biglobe.ne.jp/ap/tool/invite.do',
+    regx: 'https:\\/\\/bblog\\.sso\\.biglobe\\.ne\\.jp\\/ap\\/tool\\/invite\\.do.*$'
+  },
+  {
+    provider: 'goo',
+    sender: 'info@goo.ne.jp',
+    link: 'https://login.mail.goo.ne.jp/id/portal/RegUserProfile?MailKey',
+    regx: 'https:\\/\\/login\\.mail\\.goo\\.ne\\.jp\\/id\\/portal\\/RegUserProfile\\?MailKey.*$'
   }
 ];
 

@@ -7,6 +7,9 @@ import BlogProviderRakuten from './rakuten';
 import BlogProviderCocolog from './cocolog';
 import BlogProviderYaplog from './yaplog';
 import BlogProviderJugem from './jugem';
+import BlogProviderHatena from './hatena';
+import BlogProviderWebryBlog from './webryBlog';
+import BlogProviderGoo from './goo';
 
 class BlogProviderManager {
   constructor() {
@@ -19,7 +22,10 @@ class BlogProviderManager {
       rakuten: BlogProviderRakuten,
       cocolog: BlogProviderCocolog,
       yaplog: BlogProviderYaplog,
-      jugem: BlogProviderJugem
+      jugem: BlogProviderJugem,
+      hatena: BlogProviderHatena,
+      webryblog: BlogProviderWebryBlog,
+      goo: BlogProviderGoo
     };
   }
 

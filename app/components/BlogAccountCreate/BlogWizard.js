@@ -575,16 +575,19 @@ class BlogWizard extends React.Component<Props, State> {
         testPass = true;
         break;
       case 'hatena':
-        url += ``;
+        testPass = true;
+        url = `http://${blogInfo.accountId}.${userFields.domainValue}`;
         break;
       case 'webryblog':
-        url += ``;
+        testPass = true;
+        url = `http://${blogInfo.accountId}.at.webry.info/`;
         break;
       case 'wpcom':
         url += ``;
         break;
       case 'goo':
-        url += ``;
+        testPass = true;
+        url += `blog.goo.ne.jp/${blogInfo.accountId}`;
         break;
       default:
     }
