@@ -13,6 +13,7 @@ const mapStateToProps = (state: State) => ({
   imapErrorMessage: state.MailAccount.errorMessage,
   imapSelectMailBoxPath: state.MailAccount.selectMailBoxPath,
   imapMailCount: state.MailAccount.mailCount,
+  blogAccounts: state.BlogList.blogAccounts
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({

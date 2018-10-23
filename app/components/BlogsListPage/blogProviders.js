@@ -14,36 +14,20 @@ import Wpcom from '../../assets/img/blogs/wpcom.png';
 import Goo from '../../assets/img/blogs/goo.png';
 
 const BlogProviders = [
-  { name: 'fc2', image: 'Fc2', label: 'FC2' },
-  { name: 'webnode', image: 'Webnode', label: 'webnode' },
-  { name: 'livedoor', image: 'Livedoor', label: 'Livedoor' },
-  { name: 'seesaa', image: 'Seesaa', label: 'Seesaa' },
-  { name: 'ameba', image: 'Ameba', label: 'アメーバ' },
-  { name: 'rakuten', image: 'Rakuten', label: '楽天' },
-  { name: 'kokolog', image: 'Kokolog', label: 'ココログ' },
-  { name: 'yaplog', image: 'Yaplog', label: 'Yaplog' },
-  { name: 'jugem', image: 'Jugem', label: 'Jugem' },
-  { name: 'ninjya', image: 'Ninjya', label: '忍者' },
-  { name: 'hatena', image: 'Hatena', label: 'はてな' },
-  { name: 'webryblog', image: 'Webryblog', label: 'ウェブリブログ' },
-  { name: 'wpcom', image: 'Wpcom', label: 'WordPress.com' },
-  { name: 'goo', image: 'Goo', label: 'gooブログ' }
+  { name: 'fc2', image: Fc2, label: 'FC2' },
+  { name: 'webnode', image: Webnode, label: 'webnode' },
+  { name: 'livedoor', image: Livedoor, label: 'Livedoor' },
+  { name: 'seesaa', image: Seesaa, label: 'Seesaa' },
+  { name: 'ameba', image: Ameba, label: 'アメーバ' },
+  { name: 'rakuten', image: Rakuten, label: '楽天' },
+  { name: 'kokolog', image: Kokolog, label: 'ココログ' },
+  { name: 'yaplog', image: Yaplog, label: 'Yaplog' },
+  { name: 'jugem', image: Jugem, label: 'Jugem' },
+  { name: 'ninjya', image: Ninjya, label: '忍者' },
+  { name: 'hatena', image: Hatena, label: 'はてな' },
+  { name: 'webryblog', image: Webryblog, label: 'ウェブリブログ' },
+  { name: 'wpcom', image: Wpcom, label: 'WordPress.com' },
+  { name: 'goo', image: Goo, label: 'gooブログ' }
 ];
 
-export {
-  Fc2,
-  Webnode,
-  Livedoor,
-  Seesaa,
-  Ameba,
-  Rakuten,
-  Kokolog,
-  Yaplog,
-  Jugem,
-  Ninjya,
-  Hatena,
-  Webryblog,
-  Wpcom,
-  Goo,
-  BlogProviders
-};
+export default BlogProviders;

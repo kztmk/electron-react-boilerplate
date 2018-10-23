@@ -24,6 +24,7 @@ const signup = async (blogInfo, opts) => {
   log.info('-------------------------');
   const page = await browser.newPage();
   await page.setViewport({ width: 1024, height: 748 });
+  await page.setDefaultNavigationTimeout(60000);
 
   log.info('create: browser page');
   try {

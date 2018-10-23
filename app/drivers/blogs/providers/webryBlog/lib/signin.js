@@ -17,7 +17,7 @@ const signin = async (blogInfo, opts) => {
   const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
   const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
-  log.info('--------->login to  fc2 blog account--------->');
+  log.info('--------->login to  webryblog blog account--------->');
   log.info('-----------user----------');
   log.info(blogInfo);
   log.info('-------------------------');
@@ -26,11 +26,34 @@ const signin = async (blogInfo, opts) => {
 
   log.info('create: browser page');
   try {
-    // Fc2 login/signup page
-    await page.goto(`https://fc2.com/login.php?ref=blog`, { waitUntil: 'load' });
+    // Webryblog login/signup page
+    await page.goto(`https://login.sso.biglobe.ne.jp/scpf_op/auth.php`, { waitUntil: 'load' });
 
-    log.info('access: https://fc2.com/login.php?ref=blog');
+    log.info('access: https://login.sso.biglobe.ne.jp/scpf_op/auth.php');
 
+    // await page.addScriptTag({ path: notyJsPath });
+    // await page.addStyleTag({ path: notyCssPath });
+    // await page.addStyleTag({ path: notyThemePath });
+    // await page.evaluate(`
+    // new Noty({
+    //     type: 'success',
+    //     layout: 'topLeft',
+    //     text:'ウェブリブログ トップページアクセス完了'
+    //   }).show();
+    // `);
+    // await delay(1000);
+    // await page.evaluate(`
+    // new Noty({
+    //     type: 'success',
+    //     layout: 'topLeft',
+    //     text:'[ログイン]ボタンをクリック'
+    //   }).show();
+    // `);
+    // await page.click('img[src^="/common/img/menu_btn_login.jpg"]');
+    // log.info('click login button');
+    // await page.waitFor('#FLD_ID');
+
+    // login page
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -38,10 +61,9 @@ const signin = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ ログインページアクセス完了' 
+        text:'ウェブリブログ ログインページアクセス完了' 
       }).show();
     `);
-
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -49,7 +71,7 @@ const signin = async (blogInfo, opts) => {
         text:'メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('#id', blogInfo.mailAddress);
+    await page.type('#loginid', blogInfo.mailAddress, {delay: 80});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -59,6 +81,7 @@ const signin = async (blogInfo, opts) => {
     `);
     log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
 
+    await delay(500);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -66,7 +89,7 @@ const signin = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-    await page.type('#pass', blogInfo.password);
+    await page.type('#biglobe_pw', blogInfo.password, {delay:120});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -75,9 +98,38 @@ const signin = async (blogInfo, opts) => {
       }).show();
     `);
     log.info(`password:${blogInfo.password}入力完了`);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[ログイン]ボタンをクリック' 
+      }).show();
+    `);
+    const selector = 'input[src^="/scpf_op/img/button_03.gif"]';
+    await page.evaluate((selector) => document.querySelector(selector).click(), selector);
+    log.info('click login button');
+    await page.waitFor('#pf-bx');
 
-    await page.click('input[value=ログイン]');
+    // login
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
 
+    await delay(2000);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[マイページ]ボタンをクリック' 
+      }).show();
+    `);
+
+    const frame = await page.frames().find(f => f.url().includes('https://api.sso.biglobe.ne.jp/pf/def3/top_index.html'));
+    const myPageButton = await frame.$('#hd-icn-member');
+    await myPageButton.click();
+    await page.waitFor('img[src^="/images/common/icon/icon_logout.png"]');
+
+    // my page
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -86,7 +138,7 @@ const signin = async (blogInfo, opts) => {
         timeout:3000,
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ ログイン完了' 
+        text:'Webryblogブログ ログイン完了' 
       }).show();
     `);
   } catch (error) {
@@ -96,7 +148,7 @@ const signin = async (blogInfo, opts) => {
 
     await page.evaluate(`swal({
       title: 'エラー発生',
-      text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
+      text: 'エラーが発生しました。お手数ですが、手作業で続けてください。',
       showCancelButton: false,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',

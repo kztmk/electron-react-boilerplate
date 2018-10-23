@@ -233,6 +233,7 @@ function* updateBlogAccount(action) {
   try {
     // firebaseをアップデート
     yield call(firebaseDbUpdate, `/users/${userAuth.userId}/blogAccount/${action.payload.key}`, {
+      accountId: action.payload.accountId,
       password: action.payload.password,
       mailAddress: action.payload.mailAddress,
       title: action.payload.title,

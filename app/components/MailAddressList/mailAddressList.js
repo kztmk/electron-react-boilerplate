@@ -867,16 +867,6 @@ class MailAddressList extends React.Component<Props, State> {
               keepMounted
               onClose={() => this.handleCloseFormBlogNew()}
             >
-              <Button
-                justIcon
-                className={classes.modalCloseButton}
-                key="close"
-                aria-label="Close"
-                color="transparent"
-                onClick={() => this.handleCloseFormBlogNew()}
-              >
-                <Close className={classes.modalClose} />
-              </Button>
               <DialogContent
                 id="formMailAddressNewBody"
                 className={`${classes.modalBody} ${classes.modalSmallBody}`}

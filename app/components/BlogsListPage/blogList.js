@@ -250,22 +250,7 @@ class BlogList extends React.Component<Props, State> {
                     groupTags: restoredTags,
                     createDate: moment(account.createDate).valueOf()
                   };
-                  if (
-                    target.provider === 'fc2' ||
-                    target.provider === 'livedoor' ||
-                    target.provider === 'seesaa' ||
-                    target.provider === 'ameba' ||
-                    target.provider === 'rakuten' ||
-                    target.provider === 'kokolog' ||
-                    target.provider === 'ninjya' ||
-                    target.provider === 'yaplog' ||
-                    target.provider === 'jugem' ||
-                    target.provider === 'hatena'
-                  ) {
                     this.loginBlog(target);
-                  } else {
-                    alert('fc2、Livedoor、Seesaa、アメブロ以外はテスト中です。');
-                  }
                 } else {
                   alert('ログイン対象のブログアカウントの取得に失敗しました。');
                 }

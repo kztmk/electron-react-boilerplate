@@ -242,14 +242,18 @@ class BlogWizard extends React.Component<Props, State> {
           isValidate = true;
           // next to step1
           key = 1;
-          const mailAccount = this[this.props.steps[0].stepId].sendState();
+          const mailTestState = this[this.props.steps[0].stepId].sendState();
+          console.log('wizard------')
+          console.log(mailTestState.creatableBlogs);
+          this[this.props.steps[1].stepId].setCreatableBlogs(mailTestState.creatableBlogs);
+
           this.setState({
             currentStep: key,
             cancelButton: false,
             nextButton: true,
             previousButton: true,
             finishButton: false,
-            mailAccount
+            mailAccount: mailTestState.mailAccount
           });
         }
         break;
@@ -420,7 +424,7 @@ class BlogWizard extends React.Component<Props, State> {
           cancelBtnText="キャンセル"
           showCancel
         >
-          <p>以下の情報でメールアカウントの作成を開始します。 </p>
+          <p>以下の情報でブログの作成を開始します。 </p>
           {this.getDialogMessage(dialogInfo)}
           <p>
             ブログ一覧への登録を最初に行います。

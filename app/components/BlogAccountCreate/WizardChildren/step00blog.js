@@ -31,38 +31,10 @@ import Snackbar from '../../../ui/Snackbar/Snackbar';
 
 import formAddStyle from '../../../assets/jss/material-dashboard-pro-react/views/formAddStyle';
 
-import Fc2 from '../../../assets/img/blogs/fc2.png';
-import Webnode from '../../../assets/img/blogs/webnode.png';
-import Livedoor from '../../../assets/img/blogs/livedoor.png';
-import Seesaa from '../../../assets/img/blogs/seesaa.png';
-import Ameba from '../../../assets/img/blogs/ameba.png';
-import Rakuten from '../../../assets/img/blogs/rakuten.png';
-import Kokolog from '../../../assets/img/blogs/kokolog.png';
-import Yaplog from '../../../assets/img/blogs/yaplog.png';
-import Ninjya from '../../../assets/img/blogs/ninja.png';
-import Hatena from '../../../assets/img/blogs/hatena.png';
-import Webryblog from '../../../assets/img/blogs/webryblog.png';
-import Wpcom from '../../../assets/img/blogs/wpcom.png';
-import Goo from '../../../assets/img/blogs/goo.png';
 import prefectures from '../../Commons/prefecture';
 import type MailAccountType from '../../../types/mailAccount';
+import type BlogProviderType from "../../../types/blogProvider";
 
-
-// TODO
-// fc2 -------->comp
-// webnode
-// livedoor---->comp
-// seesaa------>comp
-// ameba------->comp
-// rakuten----->comp
-// kokolog
-// yaplog
-// ninjya-----
-// hatena
-// webryblog
-// wpcom
-// goo
-//
 const stepContent = {
   padding: '5px'
 };
@@ -127,7 +99,8 @@ type State = {
   successMessage: string,
   openSuccessSnackbar: boolean,
   init: boolean,
-  mailAccount: MailAccountType
+  mailAccount: MailAccountType,
+  creatableBlogs: Array<BlogProviderType>
 };
 
 /**
@@ -164,7 +137,8 @@ class Steps00blog extends React.Component<Props, State> {
       forceUseDefault: false,
       forceUseRandom: false,
       init: true,
-      mailAccount: {}
+      mailAccount: {},
+      creatableBlogs: null
     };
   }
 
@@ -288,9 +262,18 @@ class Steps00blog extends React.Component<Props, State> {
       openErrorSnackbar: false,
       forceUseDefault: false,
       forceUseRandom: false,
-      init: true
+      init: true,
+      creatableBlogs: null
     });
   };
+
+  setCreatableBlogs = creatableBlogs => {
+    console.log('-------------set state careatable blogs');
+    // this.setState({ creatableBlogs });
+    console.log(creatableBlogs);
+    this.setState({ creatableBlogs });
+    this.selectBlogProviderItems(creatableBlogs);
+  }
 
   /**
    * 性別switch変更時
@@ -676,6 +659,31 @@ class Steps00blog extends React.Component<Props, State> {
     this.setState({ openSuccessSnackbar: false})
  }
 
+  /**
+   * 作成先ブログ選択用select itemsを作成
+   * @returns {any[]}
+   */
+  selectBlogProviderItems = () => {
+   const { classes } = this.props;
+   if (this.state.creatableBlogs) {
+     return this.state.creatableBlogs.map((b, key) => (
+       <MenuItem
+         classes={{
+           root: classes.selectMenuItem,
+           selected: classes.selectMenuItemSelected
+         }}
+         key={key}
+         value={b.name}
+       >
+         <div style={selectAvatarStyle}>
+           <Avatar src={b.image} className={classes.avatar}/>
+           {b.label}
+         </div>
+       </MenuItem>
+     ))
+   }
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -713,162 +721,7 @@ class Steps00blog extends React.Component<Props, State> {
                     >
                       ブログ提供元
                     </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="fc2"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="FC2" src={Fc2} className={classes.avatar} />
-                        FC2
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="webnode"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="webnode" src={Webnode} className={classes.avatar} />
-                        webnode
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="livedoor"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="Livedoor" src={Livedoor} className={classes.avatar} />
-                        Livedoor
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="seesaa"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="Seesaa" src={Seesaa} className={classes.avatar} />
-                        Seesaa
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="ameba"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="アメーバ" src={Ameba} className={classes.avatar} />
-                        アメーバー
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="rakuten"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="楽天" src={Rakuten} className={classes.avatar} />
-                        楽天
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="kokolog"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="ココログ" src={Kokolog} className={classes.avatar} />
-                        ココログ
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="yaplog"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="Yaplog" src={Yaplog} className={classes.avatar} />
-                        Yaplog
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="ninjya"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="忍者" src={Ninjya} className={classes.avatar} />
-                        忍者
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="hatena"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="はてな" src={Hatena} className={classes.avatar} />
-                        はてな
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="webryblog"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="ウェブリブログ" src={Webryblog} className={classes.avatar} />
-                        ウェブリブログ
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="wpcom"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="WordPress.com" src={Wpcom} className={classes.avatar} />
-                        WordPress.com
-                      </div>
-                    </MenuItem>
-                    <MenuItem
-                      classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                      }}
-                      value="goo"
-                    >
-                      <div style={selectAvatarStyle}>
-                        <Avatar alt="gooブログ" src={Goo} className={classes.avatar} />
-                        gooブログ
-                      </div>
-                    </MenuItem>
+                    {this.selectBlogProviderItems()}
                   </Select>
                 </FormControl>
               </GridItem>

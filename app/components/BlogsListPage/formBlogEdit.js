@@ -437,7 +437,6 @@ class FormBlogEdit extends Component<Props, State> {
                           lessSpace
                           inputProps={{
                             type: 'text',
-                            disabled: true,
                             value: this.state.accountId,
                             onChange: event => this.handleChangeAccountId(event)
                           }}
