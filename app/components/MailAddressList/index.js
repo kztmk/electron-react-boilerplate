@@ -59,6 +59,7 @@ type Props = {
   startSavePersonalInfoForBlog: () => void,
   startCreateBlogAccount: (blogAccount: BlogAccountType) => void,
   startUpdateLastLogin: (mailAccount: MailAccountType) => void,
+  startSetPageSize: (pageSize: number) => void,
   mailAccounts: Array<MailAccountType>,
   isGetting: boolean,
   isCreating: boolean,
@@ -67,7 +68,8 @@ type Props = {
   isImporting: boolean,
   isFailure: boolean,
   metaMessage: string,
-  transAccounts: Array<MailAccountType>
+  transAccounts: Array<MailAccountType>,
+  pageSize: number
 };
 
 const convertProviderName = provider => {
@@ -497,6 +499,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                   isFailure={this.props.isFailure}
                   errorMessage={this.props.metaMessage}
                   mailAccounts={this.props.mailAccounts}
+                  pageSize={this.props.pageSize}
                   deleteAccount={this.props.startDeleteMailAccount}
                   editAccount={this.props.startUpdateMailAccount}
                   closeEditForm={this.handleCloseEditForm}
@@ -504,6 +507,7 @@ class MailAddressListPage extends React.Component<Props, State> {
                   createBlogAccount={this.props.startCreateBlogAccount}
                   savePersonalInfoForBlog={this.props.startSavePersonalInfoForBlog}
                   updateLastLogin={this.props.startUpdateLastLogin}
+                  setPageSize={this.props.startSetPageSize}
                 />
               </CardBody>
             </Card>

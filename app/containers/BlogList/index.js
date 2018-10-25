@@ -7,8 +7,8 @@ import {
   createBlogRequest,
   updateBlogRequest,
   deleteBlogRequest,
-  getBlogsRequest
-} from './actions';
+  getBlogsRequest, setPageSizeRequest
+} from "./actions";
 
 import BlogListPage from '../../components/BlogsListPage';
 
@@ -21,7 +21,8 @@ const mapStateToProps = (state: State) => ({
   isImporting: state.BlogList.isImporting,
   isFailure: state.BlogList.isFailure,
   metaMessage: state.BlogList.metaMessage,
-  transAccounts: state.BlogList.transAccounts
+  transAccounts: state.BlogList.transAccounts,
+  pageSize: state.BlogList.pageSize
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
@@ -39,6 +40,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startDeleteBlogAccount(blogAccount) {
     dispatch(deleteBlogRequest(blogAccount));
+  },
+  startSetPageSize(pageSize) {
+    dispatch(setPageSizeRequest(pageSize));
   }
 });
 

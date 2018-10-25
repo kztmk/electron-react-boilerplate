@@ -185,6 +185,10 @@ class StepSeesaa extends React.Component<Props, State> {
     });
   };
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   /**
    * 職業選択
    *

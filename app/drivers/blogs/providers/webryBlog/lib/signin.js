@@ -124,9 +124,13 @@ const signin = async (blogInfo, opts) => {
       }).show();
     `);
 
-    const frame = await page.frames().find(f => f.url().includes('https://api.sso.biglobe.ne.jp/pf/def3/top_index.html'));
-    const myPageButton = await frame.$('#hd-icn-member');
-    await myPageButton.click();
+    const frame = await page.frames().find(f => {
+      console.log(`frameName:${f.name()}`);
+      return f.name() === 'mbframe';
+    });
+
+    await frame.click('#hd-icn-member');
+    log.info('マイページアイコンをクリック')
     await page.waitFor('img[src^="/images/common/icon/icon_logout.png"]');
 
     // my page

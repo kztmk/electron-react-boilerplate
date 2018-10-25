@@ -124,6 +124,10 @@ class StepKokolog extends React.Component<Props, State> {
     });
   };
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   /**
    * ココログ作成時の秘密の質問
    *

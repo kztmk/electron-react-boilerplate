@@ -1,7 +1,10 @@
 /* eslint-disable indent */
 // @flow
-import { app, Menu, shell, BrowserWindow } from 'electron';
-// import openAboutWindow from 'about-window';
+import { app, Menu, shell } from 'electron';
+import fs from 'fs';
+import findLogPath from 'electron-log/lib/transports/file/find-log-path';
+import openAboutWindow from 'electron-about-window';
+import { join } from 'path';
 
 function setAppMenu() {
   /*
@@ -55,20 +58,32 @@ function buildDarwinTemplate() {
   const subMenuAbout = {
     label: 'Yoriki-v5',
     submenu: [
-      { label: '寄騎v5について', selector: 'orderFrontStandardAboutPanel:' },
+      {
+        label: '寄騎v5について',
+        click: () => {
+          console.log(`__dirname:${__dirname}`);
+          openAboutWindow({
+            icon_path: join(__dirname, '../resources/icons', '1024x1024.png'),
+            description: 'アフィリエイト最強兵器',
+            use_version_info: false,
+            copyright: 'Copyright (c) 2018 TMK Solutions, Inc.',
+            package_json_dir: __dirname
+          })
+        }
+      },
       { type: 'separator' },
       { label: 'Services', submenu: [] },
       { type: 'separator' },
-      { label: 'Hide Yoriki-v5', accelerator: 'Command+H', selector: 'hide:' },
+      { label: '寄騎version5を隠す', accelerator: 'Command+H', selector: 'hide:' },
       {
-        label: 'Hide Others',
+        label: '他を隠す',
         accelerator: 'Command+Shift+H',
         selector: 'hideOtherApplications:'
       },
-      { label: 'Show All', selector: 'unhideAllApplications:' },
+      { label: 'すべてを表示', selector: 'unhideAllApplications:' },
       { type: 'separator' },
       {
-        label: 'Quit',
+        label: '寄騎version5を終了',
         accelerator: 'Command+Q',
         click: () => {
           app.quit();
@@ -76,20 +91,26 @@ function buildDarwinTemplate() {
       }
     ]
   };
-  const subMenuEdit = {
-    label: 'Edit',
+  const subMenuFile = {
+    label: 'ファイル',
     submenu: [
-      { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-      { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-      { type: 'separator' },
-      { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-      { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-      { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
-      { label: 'Select All', accelerator: 'Command+A', selector: 'selectAll:' }
+      {
+        label: 'エクスポート',
+        submenu:[
+          {
+            label: 'メールアドレスデータを書出す',
+            click: () => alert('coming soon')
+          },
+          {
+            label: 'ブログデータを書出す',
+            click: () => alert('coming soon')
+          }
+        ]
+      }
     ]
   };
   const subMenuViewDev = {
-    label: 'View',
+    label: '表示',
     submenu: [
       {
         label: 'Reloadx',
@@ -111,57 +132,46 @@ function buildDarwinTemplate() {
         click: () => {
           this.mainWindow.toggleDevTools();
         }
+      },
+      {
+        label: 'ログファイルを表示',
+        click: () => {
+          console.log(`__dirname:${__dirname}`);
+          const myLogFilePath = `${app.getPath('documents')}/yoriki-v5/log.txt`;
+          console.log(`dist dir:${myLogFilePath}`)
+          console.log(`log file path:${findLogPath()}`);
+          fs.copyFileSync(findLogPath(), myLogFilePath);
+          shell.openItem(myLogFilePath);
+        }
       }
     ]
   };
   const subMenuViewProd = {
-    label: 'View',
+    label: '表示',
     submenu: [
       {
-        label: 'Toggle Full Screen',
-        accelerator: 'Ctrl+Command+F',
+        label: 'ログファイルを表示',
         click: () => {
-          this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          const myLogFilePath = `${app.getPath('documents')}/yoriki-v5/log.txt`;
+          console.log(`dist dir:${myLogFilePath}`)
+          console.log(`log file path:${findLogPath()}`);
+          fs.copyFileSync(findLogPath(), myLogFilePath);
+          shell.openItem(myLogFilePath);
         }
       }
     ]
   };
-  const subMenuWindow = {
-    label: 'Window',
-    submenu: [
-      {
-        label: 'Minimize',
-        accelerator: 'Command+M',
-        selector: 'performMiniaturize:'
-      },
-      { label: 'Close', accelerator: 'Command+W', selector: 'performClose:' },
-      { type: 'separator' },
-      { label: 'Bring All to Front', selector: 'arrangeInFront:' }
-    ]
-  };
   const subMenuHelp = {
-    label: 'Help',
+    label: 'ヘルプ',
     submenu: [
       {
-        label: 'Learn More',
+        label: 'サポートサイトを開く',
         click() {
           shell.openExternal('#');
         }
       },
       {
-        label: 'Documentation',
-        click() {
-          shell.openExternal('#');
-        }
-      },
-      {
-        label: 'Search Issues',
-        click() {
-          shell.openExternal('#');
-        }
-      },
-      {
-        label: '寄騎5について',
+        label: 'オンライン・マニュアルを開く',
         click() {
           shell.openExternal('#');
         }
@@ -171,20 +181,29 @@ function buildDarwinTemplate() {
   const subMenuView =
     process.env.NODE_ENV === 'development' ? subMenuViewDev : subMenuViewProd;
 
-  return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+  return [subMenuAbout, subMenuFile, subMenuView, subMenuHelp];
 }
 
 function buildDefaultTemplate() {
   return [
     {
-      label: '&File',
+      label: 'ファイル(&F)',
       submenu: [
         {
-          label: '&Open',
-          accelerator: 'Ctrl+O'
+          label: 'エクスポート',
+          submenu:[
+            {
+              label: 'メールアドレスデータを書出す',
+              click: () => alert('coming soon')
+            },
+            {
+              label: 'ブログデータを書出す',
+              click: () => alert('coming soon')
+            }
+          ]
         },
         {
-          label: '&Close',
+          label: '閉じる(&X)',
           accelerator: 'Ctrl+W',
           click: () => {
             this.mainWindow.close();
@@ -193,7 +212,7 @@ function buildDefaultTemplate() {
       ]
     },
     {
-      label: '&View',
+      label: '表示(&V)',
       submenu:
         process.env.NODE_ENV === 'development'
           ? [
@@ -223,40 +242,36 @@ function buildDefaultTemplate() {
             ]
           : [
               {
-                label: 'Toggle &Full Screen',
-                accelerator: 'F11',
-                click: () => {
-                  this.mainWindow.setFullScreen(
-                    !this.mainWindow.isFullScreen()
-                  );
+                label: 'ログを表示',
+                  click: () => {
+                    const myLogFilePath = `${app.getPath('documents')}/yoriki-v5/log.txt`;
+                    console.log(`dist dir:${myLogFilePath}`)
+                    console.log(`log file path:${findLogPath()}`);
+                    fs.copyFileSync(findLogPath(), myLogFilePath);
+                    shell.openItem(myLogFilePath);
                 }
               }
             ]
     },
     {
-      label: 'Help',
+      label: 'ヘルプ',
       submenu: [
         {
-          label: 'Learn More',
+          label: 'サポートサイトを開く',
           click() {
             shell.openExternal('#');
           }
         },
         {
-          label: 'Documentation',
+          label: 'オンライン・マニュアルを開く',
           click() {
             shell.openExternal('#');
-          }
-        },
-        {
-          label: 'Search Issues',
-          click() {
-            shell.openExternal('');
           }
         }
       ]
     }
   ];
 }
+
 
 export default setAppMenu;

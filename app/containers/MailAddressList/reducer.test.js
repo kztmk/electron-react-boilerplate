@@ -228,3 +228,48 @@ test('handle UPDATE_LAST_LOGIN_FAILURE', () => {
     transAccounts: []
   });
 });
+
+test('handle SET_PAGE_SIZE_REQUEST', () => {
+  expect(reducer(initialState, actions.setPageSizeRequest())).toEqual({
+    mailAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: [],
+    pageSize: 10
+  });
+});
+
+test('handle SET_PAGE_SIZE_SUCCESS', () => {
+  expect(reducer(initialState, actions.setPageSizeSuccess())).toEqual({
+    mailAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: [],
+    pageSize: 10
+  });
+});
+
+test('handle SET_PAGE_SIZE_FAILURE', () => {
+  expect(reducer(initialState, actions.setPageSizeFailure())).toEqual({
+    mailAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: [],
+    pageSize: 10
+  });
+});

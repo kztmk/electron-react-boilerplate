@@ -162,6 +162,10 @@ class StepMailConnectionTest extends Component<Props, State> {
     })
   }
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   isValidated = () => {
     if (this.state.isValidate) {
       return true

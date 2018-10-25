@@ -11,7 +11,9 @@
  */
 import { app, ipcMain, Menu } from 'electron';
 // import { autoUpdater } from 'electron-updater';
+import fs from 'fs';
 import log from 'electron-log';
+
 import createMainWindow from './createMainWindow';
 // import MenuBuilder from './menu';
 import createFileManager from './utils/fileManager/createFileManager';
@@ -40,6 +42,13 @@ if (shouldQuit) {
 // autoUpdater.logger.transports.file.level = 'info';
 log.transports.file.level = 'info';
 log.transports.file.maxSize = 1 * 1024 * 1024;
+const documentsPath = app.getPath('documents');
+if (!fs.existsSync(`${documentsPath}/yoriki-v5`)) {
+  fs.mkdirSync(`${documentsPath}/yoriki-v5`);
+}
+
+// log.transports.file.file = `${__dirname} /log.txt`;
+
 log.info('Yoriki-v5 starting...');
 
 process.on('unhandledRejection', (reason, p) => {

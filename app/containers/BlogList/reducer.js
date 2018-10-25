@@ -23,7 +23,8 @@ export type State = {
   isImporting: boolean,
   isFailure: boolean,
   metaMessage: string,
-  transAccounts: Array<BlogAccountType>
+  transAccounts: Array<BlogAccountType>,
+  pageSize: number
 };
 
 /**
@@ -45,7 +46,8 @@ export const initialState: State = {
   isImporting: false,
   isFailure: false,
   metaMessage: '',
-  transAccounts: []
+  transAccounts: [],
+  pageSize: 10
 };
 
 /**
@@ -93,6 +95,23 @@ export const initialBlogAccount: BlogAccountType = {
 // eslint-disable-next-line space-before-function-paren
 export default function(state: State = initialState, action: Action): State {
   switch (action.type) {
+    case Actions.SET_PAGE_SIZE_REQUEST:
+      return {
+        ...state
+      };
+
+    case Actions.SET_PAGE_SIZE_SUCCESS:
+      return {
+        ...state,
+        pageSize: action.payload
+      };
+
+    case Actions.SET_PAGE_SIZE_FAILURE:
+      return {
+        ...state,
+        metaMessage: action.payload
+      };
+
     /**
      * blogAccount全件取得
      */

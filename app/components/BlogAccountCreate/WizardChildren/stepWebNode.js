@@ -97,6 +97,10 @@ class StepWebNode extends React.Component<Props, State> {
     });
   };
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   /**
    * 入力完了時(フォーム移動時)に全入力項目をチェック
    * @returns {boolean}

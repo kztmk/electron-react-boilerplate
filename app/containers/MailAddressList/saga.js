@@ -14,7 +14,9 @@ import {
   updateLastLoginFailure,
   updateLastLoginSuccess,
   updateMailAddressFailure,
-  updateMailAddressSuccess
+  updateMailAddressSuccess,
+  setPageSizeSuccess,
+  setPageSizeFailure
 } from './actions';
 import { Actions } from './actionTypes';
 
@@ -315,6 +317,14 @@ function* updateLastLogin(action) {
   }
 }
 
+function* setPageSize(action) {
+  try {
+    yield put(setPageSizeSuccess(action.payload));
+  } catch (error) {
+    yield put(setPageSizeFailure({ errorMessage: error.toString() }));
+  }
+}
+
 function* rootSaga(): Saga {
   yield takeEvery(Actions.IMPORT_MAIL_ADDRESS_REQUEST, importMailAccounts);
   yield takeEvery(Actions.CREATE_MAIL_ADDRESS_REQUEST, createMailAccount);
@@ -322,6 +332,7 @@ function* rootSaga(): Saga {
   yield takeEvery(Actions.UPDATE_MAIL_ADDRESS_REQUEST, updateMailAccount);
   yield takeEvery(Actions.DELETE_MAIL_ADDRESS_REQUEST, deleteMailAccount);
   yield takeEvery(Actions.UPDATE_LAST_LOGIN_REQUEST, updateLastLogin);
+  yield takeEvery(Actions.SET_PAGE_SIZE_REQUEST, setPageSize);
 }
 
 export default rootSaga;

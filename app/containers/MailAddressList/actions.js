@@ -20,7 +20,10 @@ import {
   CLEAR_MAIL_ADDRESS,
   UPDATE_LAST_LOGIN_REQUEST,
   UPDATE_LAST_LOGIN_SUCCESS,
-  UPDATE_LAST_LOGIN_FAILURE
+  UPDATE_LAST_LOGIN_FAILURE,
+  SET_PAGE_SIZE_REQUEST,
+  SET_PAGE_SIZE_SUCCESS,
+  SET_PAGE_SIZE_FAILURE
 } from './actionTypes';
 import type {
   GetMailAddressRequest,
@@ -41,7 +44,10 @@ import type {
   ClearMailAddress,
   UpdateLastLoginRequest,
   UpdateLastLoginSuccess,
-  UpdateLastLoginFailure
+  UpdateLastLoginFailure,
+  SetPageSizeRequest,
+  SetPageSizeSuccess,
+  SetPageSizeFailure
 } from './actionTypes';
 
 export function getMailAddressRequest(): GetMailAddressRequest {
@@ -49,7 +55,9 @@ export function getMailAddressRequest(): GetMailAddressRequest {
     type: GET_MAIL_ADDRESS_REQUEST
   };
 }
-export function getMailAddressSuccess(payload: Array<MailAccountType>): GetMailAddressSuccess {
+export function getMailAddressSuccess(
+  payload: Array<MailAccountType>
+): GetMailAddressSuccess {
   return {
     type: GET_MAIL_ADDRESS_SUCCESS,
     payload
@@ -61,7 +69,9 @@ export function getMailAddressFailure(payload: string): GetMailAddressFailure {
     payload
   };
 }
-export function createMailAddressRequest(payload: MailAccountType): CreateMailAddressRequest {
+export function createMailAddressRequest(
+  payload: MailAccountType
+): CreateMailAddressRequest {
   return {
     type: CREATE_MAIL_ADDRESS_REQUEST,
     payload
@@ -75,13 +85,17 @@ export function createMailAddressSuccess(
     payload
   };
 }
-export function createMailAddressFailure(payload: string): CreateMailAddressFailure {
+export function createMailAddressFailure(
+  payload: string
+): CreateMailAddressFailure {
   return {
     type: CREATE_MAIL_ADDRESS_FAILURE,
     payload
   };
 }
-export function updateMailAddressRequest(payload: MailAccountType): UpdateMailAddressRequest {
+export function updateMailAddressRequest(
+  payload: MailAccountType
+): UpdateMailAddressRequest {
   return {
     type: UPDATE_MAIL_ADDRESS_REQUEST,
     payload
@@ -95,13 +109,17 @@ export function updateMailAddressSuccess(
     payload
   };
 }
-export function updateMailAddressFailure(payload: string): UpdateMailAddressFailure {
+export function updateMailAddressFailure(
+  payload: string
+): UpdateMailAddressFailure {
   return {
     type: UPDATE_MAIL_ADDRESS_FAILURE,
     payload
   };
 }
-export function deleteMailAddressRequest(payload: MailAccountType): DeleteMailAddressRequest {
+export function deleteMailAddressRequest(
+  payload: MailAccountType
+): DeleteMailAddressRequest {
   return {
     type: DELETE_MAIL_ADDRESS_REQUEST,
     payload
@@ -115,7 +133,9 @@ export function deleteMailAddressSuccess(
     payload
   };
 }
-export function deleteMailAddressFailure(payload: string): DeleteMailAddressFailure {
+export function deleteMailAddressFailure(
+  payload: string
+): DeleteMailAddressFailure {
   return {
     type: DELETE_MAIL_ADDRESS_FAILURE,
     payload
@@ -144,7 +164,9 @@ export function importMailAddressSuccess(
     meta
   };
 }
-export function importMailAddressFailure(payload: string): ImportMailAddressFailure {
+export function importMailAddressFailure(
+  payload: string
+): ImportMailAddressFailure {
   return {
     type: IMPORT_MAIL_ADDRESS_FAILURE,
     payload
@@ -155,21 +177,47 @@ export function clearMailAddress(): ClearMailAddress {
     type: CLEAR_MAIL_ADDRESS
   };
 }
-export function updateLastLoginRequest(payload: MailAccountType): UpdateLastLoginRequest {
+export function updateLastLoginRequest(
+  payload: MailAccountType
+): UpdateLastLoginRequest {
   return {
     type: UPDATE_LAST_LOGIN_REQUEST,
     payload
   };
 }
-export function updateLastLoginSuccess(payload: Array<MailAccountType>): UpdateLastLoginSuccess {
+export function updateLastLoginSuccess(
+  payload: Array<MailAccountType>
+): UpdateLastLoginSuccess {
   return {
     type: UPDATE_LAST_LOGIN_SUCCESS,
     payload
   };
 }
-export function updateLastLoginFailure(meta: { errorMessage: string }): UpdateLastLoginFailure {
+export function updateLastLoginFailure(meta: {
+  errorMessage: string
+}): UpdateLastLoginFailure {
   return {
     type: UPDATE_LAST_LOGIN_FAILURE,
+    meta
+  };
+}
+export function setPageSizeRequest(payload: number): SetPageSizeRequest {
+  return {
+    type: SET_PAGE_SIZE_REQUEST,
+    payload
+  };
+}
+export function setPageSizeSuccess(payload: number): SetPageSizeSuccess {
+  return {
+    type: SET_PAGE_SIZE_SUCCESS,
+    payload
+  };
+}
+export function setPageSizeFailure(meta: {
+  errorMessage: string
+}): SetPageSizeFailure {
+  return {
+    type: SET_PAGE_SIZE_FAILURE,
     meta
   };
 }

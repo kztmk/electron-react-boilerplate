@@ -106,10 +106,10 @@ type State = {
   movingTabStyle: Object,
   accountInfo: Object,
   sweetAlert: Object,
-  mailAccount: MailAccountType
+  mailAccount: MailAccountType,
+  isFirstBlog: boolean
 };
 
-// TODO: when select provider, check allow multi site
 // TODO: livedoor blog 2つめは強制的にサブドメイン使用をONーメールアドレスでLivedoorをチェック
 
 class BlogWizard extends React.Component<Props, State> {
@@ -129,7 +129,8 @@ class BlogWizard extends React.Component<Props, State> {
       },
       accountInfo: {},
       sweetAlert: '',
-      mailAccount: {}
+      mailAccount: {},
+      isFirstBlog: true
     };
   }
 
@@ -206,7 +207,8 @@ class BlogWizard extends React.Component<Props, State> {
       previousButton: false,
       finishButton: this.props.steps.length === 1,
       accountInfo: {},
-      sweetAlert: ''
+      sweetAlert: '',
+      isFirstBlog: true
     });
     // steps0-13
     this[this.props.steps[0].stepId].initState();
@@ -265,6 +267,7 @@ class BlogWizard extends React.Component<Props, State> {
           const selectedProvider = this[this.props.steps[1].stepId].getProvider();
           const nextStep = convertProviderToStep(selectedProvider);
           const steps00State = this[this.props.steps[1].stepId].sendState();
+          this[this.props.steps[nextStep].stepId].setFirstBlog(steps00State.isFirstBlog);
           this.setState({
             cancelButton: false,
             currentStep: nextStep,
@@ -285,7 +288,8 @@ class BlogWizard extends React.Component<Props, State> {
               postalCode: steps00State.postalCode,
               prefecture: steps00State.prefecture,
               mailAccount: steps00State.mailAccount
-            }
+            },
+            isFirstBlog: steps00State.isFirstBlog
           });
         }
         break;

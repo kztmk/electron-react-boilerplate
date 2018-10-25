@@ -10,10 +10,10 @@ import {
   getBlogsFailure,
   getBlogsSuccess,
   importBlogsFailure,
-  importBlogsSuccess,
+  importBlogsSuccess, setPageSizeFailure, setPageSizeSuccess,
   updateBlogFailure,
   updateBlogSuccess
-} from './actions';
+} from "./actions";
 import { Actions } from './actionTypes';
 
 import {
@@ -281,12 +281,21 @@ function* deleteBlogAccount(action) {
   }
 }
 
+function * setPageSize(action) {
+  try {
+    yield put(setPageSizeSuccess(action.payload));
+  } catch (error) {
+    yield put(setPageSizeFailure({ errorMessage: error.toString() }));
+  }
+}
+
 function* rootSaga(): Saga {
   yield takeEvery(Actions.IMPORT_BLOGS_REQUEST, importBlogAccounts);
   yield takeEvery(Actions.CREATE_BLOG_REQUEST, createBlogAccount);
   yield takeEvery(Actions.GET_BLOGS_REQUEST, getBlogAccounts);
   yield takeEvery(Actions.UPDATE_BLOG_REQUEST, updateBlogAccount);
   yield takeEvery(Actions.DELETE_BLOG_REQUEST, deleteBlogAccount);
+  yield takeEvery(Actions.SET_PAGE_SIZE_REQUEST, setPageSize);
 }
 
 export default rootSaga;

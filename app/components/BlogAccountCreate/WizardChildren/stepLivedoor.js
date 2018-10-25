@@ -100,6 +100,10 @@ class StepLivedoor extends React.Component<Props, State> {
     });
   };
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   /**
    * ドメイン選択枝作成
    *

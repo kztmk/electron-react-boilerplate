@@ -118,6 +118,10 @@ class StepRakuten extends React.Component<Props, State> {
     });
   };
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   /**
    * カテゴリ選択枝の作成
    *

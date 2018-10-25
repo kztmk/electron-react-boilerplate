@@ -8,8 +8,8 @@ import {
   updateMailAddressRequest,
   deleteMailAddressRequest,
   getMailAddressRequest,
-  updateLastLoginRequest
-} from './actions';
+  updateLastLoginRequest, setPageSizeRequest
+} from "./actions";
 
 import MailAddressListPage from '../../components/MailAddressList';
 import { closeConnectionRequest } from '../MailAccount/actions';
@@ -28,7 +28,8 @@ const mapStateToProps = (state: State) => ({
   isImporting: state.MailAddressList.isImporting,
   isFailure: state.MailAddressList.isFailure,
   metaMessage: state.MailAddressList.metaMessage,
-  transAccounts: state.MailAddressList.transAccounts
+  transAccounts: state.MailAddressList.transAccounts,
+  pageSize: state.MailAddressList.pageSize
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
@@ -61,6 +62,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startUpdateLastLogin(mailAccount) {
     dispatch(updateLastLoginRequest(mailAccount));
+  },
+  startSetPageSize(pageSize) {
+    dispatch(setPageSizeRequest(pageSize));
   }
 });
 

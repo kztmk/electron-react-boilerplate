@@ -34,6 +34,7 @@ import formAddStyle from '../../../assets/jss/material-dashboard-pro-react/views
 import prefectures from '../../Commons/prefecture';
 import type MailAccountType from '../../../types/mailAccount';
 import type BlogProviderType from "../../../types/blogProvider";
+import type BlogAccountType from "../../../types/blogAccount";
 
 const stepContent = {
   padding: '5px'
@@ -71,10 +72,12 @@ type Props = {
   personalInfo: PersonalInfoType,
   randomPersonalInfo: PersonalInfoType,
   startGetRandomPersonalInfo: () => void,
-  startClearPersonalInfo: () => void
+  startClearPersonalInfo: () => void,
+  blogAccounts: Array<BlogAccountType>
 };
 
 type State = {
+  isFirstBlog: boolean,
   isLoading: boolean,
   provider: string,
   mailAddress: string,
@@ -111,6 +114,7 @@ class Steps00blog extends React.Component<Props, State> {
     super(props);
 
     this.state = {
+      isFirstBlog: true,
       isLoading: false,
       provider: '',
       mailAddress: '',
@@ -239,6 +243,7 @@ class Steps00blog extends React.Component<Props, State> {
   initState = () => {
     this.props.startClearPersonalInfo();
     this.setState({
+      isFirstBlog: true,
       isLoading: false,
       mailAddress: '',
       provider: '',
@@ -290,7 +295,25 @@ class Steps00blog extends React.Component<Props, State> {
    * @param event
    */
   handleSelectProvider = event => {
-    this.setState({ provider: event.target.value });
+    const existBlog = this.props.blogAccounts.find(b => (
+      b.mailAddress === this.props.randomPersonalInfo.mailAccount.mailAddress &&
+      b.provider === event.target.value
+    ));
+    const accountId = this.handleGenerateAccountId();
+    if (existBlog) {
+      this.setState({
+        isFirstBlog: false,
+        accountId,
+        password: existBlog.password,
+        passwordState: 'success',
+        provider: event.target.value
+      });
+    } else {
+      this.setState({
+        isFirstBlog: true,
+        provider: event.target.value
+      });
+    }
   };
 
   isInteger = digits => {
@@ -666,13 +689,13 @@ class Steps00blog extends React.Component<Props, State> {
   selectBlogProviderItems = () => {
    const { classes } = this.props;
    if (this.state.creatableBlogs) {
-     return this.state.creatableBlogs.map((b, key) => (
+     return this.state.creatableBlogs.map(b => (
        <MenuItem
          classes={{
            root: classes.selectMenuItem,
            selected: classes.selectMenuItemSelected
          }}
-         key={key}
+         key={b.name}
          value={b.name}
        >
          <div style={selectAvatarStyle}>
@@ -741,6 +764,7 @@ class Steps00blog extends React.Component<Props, State> {
                           <Button
                             size="sm"
                             color="primary"
+                            disabled={!this.state.isFirstBlog}
                             onClick={() => this.handleGenerateAccountId()}
                           >
                             <Refresh />
@@ -748,6 +772,7 @@ class Steps00blog extends React.Component<Props, State> {
                         </Tooltip>
                       </InputAdornment>
                     ),
+                    disabled: !this.state.isFirstBlog,
                     value: this.state.accountId,
                     onChange: event => this.formFieldChange(event, 'accountId'),
                     type: 'text'

@@ -16,7 +16,10 @@ import {
   DELETE_BLOG_FAILURE,
   IMPORT_BLOGS_REQUEST,
   IMPORT_BLOGS_SUCCESS,
-  IMPORT_BLOGS_FAILURE
+  IMPORT_BLOGS_FAILURE,
+  SET_PAGE_SIZE_REQUEST,
+  SET_PAGE_SIZE_SUCCESS,
+  SET_PAGE_SIZE_FAILURE
 } from './actionTypes';
 import type {
   GetBlogsRequest,
@@ -33,7 +36,10 @@ import type {
   DeleteBlogFailure,
   ImportBlogsRequest,
   ImportBlogsSuccess,
-  ImportBlogsFailure
+  ImportBlogsFailure,
+  SetPageSizeRequest,
+  SetPageSizeSuccess,
+  SetPageSizeFailure
 } from './actionTypes';
 
 export function getBlogsRequest(): GetBlogsRequest {
@@ -142,5 +148,25 @@ export function importBlogsFailure(payload: string): ImportBlogsFailure {
   return {
     type: IMPORT_BLOGS_FAILURE,
     payload
+  };
+}
+export function setPageSizeRequest(payload: number): SetPageSizeRequest {
+  return {
+    type: SET_PAGE_SIZE_REQUEST,
+    payload
+  };
+}
+export function setPageSizeSuccess(payload: number): SetPageSizeSuccess {
+  return {
+    type: SET_PAGE_SIZE_SUCCESS,
+    payload
+  };
+}
+export function setPageSizeFailure(meta: {
+  errorMessage: string
+}): SetPageSizeFailure {
+  return {
+    type: SET_PAGE_SIZE_FAILURE,
+    meta
   };
 }

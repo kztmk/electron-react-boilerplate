@@ -31,6 +31,12 @@ export const IMPORT_BLOGS_SUCCESS: 'BlogList/IMPORT_BLOGS_SUCCESS' =
   'BlogList/IMPORT_BLOGS_SUCCESS';
 export const IMPORT_BLOGS_FAILURE: 'BlogList/IMPORT_BLOGS_FAILURE' =
   'BlogList/IMPORT_BLOGS_FAILURE';
+export const SET_PAGE_SIZE_REQUEST: 'BlogList/SET_PAGE_SIZE_REQUEST' =
+  'BlogList/SET_PAGE_SIZE_REQUEST';
+export const SET_PAGE_SIZE_SUCCESS: 'BlogList/SET_PAGE_SIZE_SUCCESS' =
+  'BlogList/SET_PAGE_SIZE_SUCCESS';
+export const SET_PAGE_SIZE_FAILURE: 'BlogList/SET_PAGE_SIZE_FAILURE' =
+  'BlogList/SET_PAGE_SIZE_FAILURE';
 
 export const Actions = {
   GET_BLOGS_REQUEST,
@@ -47,7 +53,10 @@ export const Actions = {
   DELETE_BLOG_FAILURE,
   IMPORT_BLOGS_REQUEST,
   IMPORT_BLOGS_SUCCESS,
-  IMPORT_BLOGS_FAILURE
+  IMPORT_BLOGS_FAILURE,
+  SET_PAGE_SIZE_REQUEST,
+  SET_PAGE_SIZE_SUCCESS,
+  SET_PAGE_SIZE_FAILURE
 };
 
 export type GetBlogsRequest = {
@@ -116,6 +125,19 @@ export type ImportBlogsFailure = {
   payload: string
 };
 
+export type SetPageSizeRequest = {
+  type: typeof SET_PAGE_SIZE_REQUEST,
+  payload: number
+};
+export type SetPageSizeSuccess = {
+  type: typeof SET_PAGE_SIZE_SUCCESS,
+  payload: number
+};
+export type SetPageSizeFailure = {
+  type: typeof SET_PAGE_SIZE_FAILURE,
+  meta: { errorMessage: string }
+};
+
 export type Action =
   | GetBlogsRequest
   | GetBlogsSuccess
@@ -131,4 +153,7 @@ export type Action =
   | DeleteBlogFailure
   | ImportBlogsRequest
   | ImportBlogsSuccess
-  | ImportBlogsFailure;
+  | ImportBlogsFailure
+  | SetPageSizeRequest
+  | SetPageSizeSuccess
+  | SetPageSizeFailure;

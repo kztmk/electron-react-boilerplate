@@ -324,7 +324,7 @@ const signup = async (blogInfo, opts) => {
 
     await page.evaluate(`swal({
       title: '手順',
-      text: '「私は、ロボットではありません。」にチェックを入れて、[ブログを作成]ボタンをクリックしてください。5分(300秒)を超えるとエラーになります。',
+      text: '「私は、ロボットではありません。」にチェックを入れて、[ブログを作成]ボタンをクリックしてください。時間制限はありません。',
       showCancelButton: false,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',
@@ -333,7 +333,14 @@ const signup = async (blogInfo, opts) => {
       reverseButtons: true
     })`);
     log.info('Google captcha start');
+    await page.waitFor('.register-done-heading, #welcome-message');
+    const message = await page.$('.register-done-heading');
 
+    if (message) {
+      await clickByText(page, '\n' +
+        '        無料でブログをはじめる\n' +
+        '      ');
+    }
 
     await page.waitFor('#welcome-message', {timeout: 0});
     log.info('--------->はてなブログ作成完了');
@@ -349,6 +356,13 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+    // #globalheader #current-blog > span > a
+    const frame = await page.frames().find(f => f.name() === '#globalheader');
+    if (!frame) {
+      log.warn('ブログヘッダが見つかりません。');
+      throw new Error('ブログヘッダが見つかりません。');
+    }
+
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -356,7 +370,7 @@ const signup = async (blogInfo, opts) => {
         text:'ブログタイトルをクリック' 
       }).show();
     `);
-    await page.click('.current-blog-title');
+    await frame.click('.current-blog-title');
     log.info('click current blog title');
     await delay(2000);
 
@@ -367,7 +381,7 @@ const signup = async (blogInfo, opts) => {
         text:'設定をクリック' 
       }).show();
     `);
-    await clickByText(page, '設定');
+    await clickByText(frame, '設定');
     log.info('click settings');
     await page.waitFor('#name');
 

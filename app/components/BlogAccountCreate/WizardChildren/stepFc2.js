@@ -132,6 +132,10 @@ class StepFc2 extends React.Component<Props, State> {
     });
   };
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   /**
    * FC2作成時の秘密の質問の選択枝を作成
    *

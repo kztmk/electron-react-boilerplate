@@ -69,13 +69,15 @@ type Props = {
   mode: string,
   isFailure: boolean,
   errorMessage: string,
+  pageSize: number,
   deleteAccount: () => void,
   editAccount: () => void,
   closeConnection: () => void,
   closeEditForm: () => void,
   createBlogAccount: (blogAccout: BlogAccountType) => void,
   savePersonalInfoForBlog: (personalInfo: PersonalInfoType) => void,
-  updateLastLogin: (mailAccount: MailAccountType) => void
+  updateLastLogin: (mailAccount: MailAccountType) => void,
+  setPageSize: (pageSize: number) => void
 };
 
 const initialMailAccount = {
@@ -765,7 +767,7 @@ class MailAddressList extends React.Component<Props, State> {
                   filterable: false
                 }
               ]}
-              defaultPageSize={10}
+              defaultPageSize={this.props.pageSize}
               showPaginationTop
               showPaginationBottom={false}
               className="-striped -highlight"
@@ -776,6 +778,7 @@ class MailAddressList extends React.Component<Props, State> {
               pageText=""
               ofText="/"
               rowsText="行"
+              onPageSizeChange={pageSize => this.props.setPageSize(pageSize)}
             />
             {this.state.sweetAlert}
             <Dialog

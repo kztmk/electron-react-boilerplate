@@ -317,7 +317,7 @@ const signup = async (blogInfo, opts) => {
 
       log.info(`${page.url()}へアクセス完了`);
 
-      if (page.url() === 'https://www.ameba.jp/') {
+      if (page.url() === 'https://www.ameba.jp/home') {
         await page.addScriptTag({ path: notyJsPath });
         await page.addStyleTag({ path: notyCssPath });
         await page.addStyleTag({ path: notyThemePath });

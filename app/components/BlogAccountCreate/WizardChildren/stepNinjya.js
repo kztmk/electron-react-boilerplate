@@ -95,6 +95,10 @@ class StepNinjya extends React.Component<Props, State> {
     });
   };
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   /**
    * 忍者ドメイン選択枝の作成
    *

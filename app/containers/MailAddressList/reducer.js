@@ -24,7 +24,8 @@ export type State = {
   isImporting: boolean,
   isFailure: boolean,
   metaMessage: string,
-  transAccounts: Array<MailAccountType>
+  transAccounts: Array<MailAccountType>,
+  pageSize: number
 };
 
 /**
@@ -49,12 +50,30 @@ export const initialState: State = {
   isImporting: false,
   isFailure: false,
   metaMessage: '',
-  transAccounts: []
+  transAccounts: [],
+  pageSize: 10
 };
 
 // eslint-disable-next-line space-before-function-paren
 export default function(state: State = initialState, action: Action): State {
   switch (action.type) {
+    case Actions.SET_PAGE_SIZE_REQUEST:
+      return {
+        ...state
+      };
+
+    case Actions.SET_PAGE_SIZE_SUCCESS:
+      return {
+        ...state,
+        pageSize: action.payload
+      };
+
+    case Actions.SET_PAGE_SIZE_FAILURE:
+      return {
+        ...state,
+        metaMessage: action.payload
+      };
+
     case Actions.UPDATE_LAST_LOGIN_REQUEST:
       return {
         ...state,

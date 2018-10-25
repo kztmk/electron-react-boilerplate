@@ -105,7 +105,9 @@ type Props = {
   isFailure: boolean,
   errorMessage: string,
   deleteAccount: () => void,
-  editAccount: () => void
+  editAccount: () => void,
+  pageSize: number,
+  setPageSize: () => void
 };
 
 const modalCloseButtonStyle = {
@@ -589,7 +591,7 @@ class BlogList extends React.Component<Props, State> {
                   filterable: false
                 }
               ]}
-              defaultPageSize={10}
+              defaultPageSize={this.props.pageSize}
               showPaginationTop
               showPaginationBottom={false}
               className="-striped -highlight"
@@ -600,6 +602,7 @@ class BlogList extends React.Component<Props, State> {
               pageText=""
               ofText="/"
               rowsText="行"
+              onPageSizeChange={pageSize => this.props.setPageSize(pageSize)}
             />
             {this.state.sweetAlert}
             <Dialog

@@ -39,6 +39,12 @@ export const UPDATE_LAST_LOGIN_SUCCESS: 'MailAddressList/UPDATE_LAST_LOGIN_SUCCE
   'MailAddressList/UPDATE_LAST_LOGIN_SUCCESS';
 export const UPDATE_LAST_LOGIN_FAILURE: 'MailAddressList/UPDATE_LAST_LOGIN_FAILURE' =
   'MailAddressList/UPDATE_LAST_LOGIN_FAILURE';
+export const SET_PAGE_SIZE_REQUEST: 'MailAddressList/SET_PAGE_SIZE_REQUEST' =
+  'MailAddressList/SET_PAGE_SIZE_REQUEST';
+export const SET_PAGE_SIZE_SUCCESS: 'MailAddressList/SET_PAGE_SIZE_SUCCESS' =
+  'MailAddressList/SET_PAGE_SIZE_SUCCESS';
+export const SET_PAGE_SIZE_FAILURE: 'MailAddressList/SET_PAGE_SIZE_FAILURE' =
+  'MailAddressList/SET_PAGE_SIZE_FAILURE';
 
 export const Actions = {
   GET_MAIL_ADDRESS_REQUEST,
@@ -59,7 +65,10 @@ export const Actions = {
   CLEAR_MAIL_ADDRESS,
   UPDATE_LAST_LOGIN_REQUEST,
   UPDATE_LAST_LOGIN_SUCCESS,
-  UPDATE_LAST_LOGIN_FAILURE
+  UPDATE_LAST_LOGIN_FAILURE,
+  SET_PAGE_SIZE_REQUEST,
+  SET_PAGE_SIZE_SUCCESS,
+  SET_PAGE_SIZE_FAILURE
 };
 
 export type GetMailAddressRequest = {
@@ -148,6 +157,19 @@ export type UpdateLastLoginFailure = {
   }
 };
 
+export type SetPageSizeRequest = {
+  type: typeof SET_PAGE_SIZE_REQUEST,
+  payload: number
+};
+export type SetPageSizeSuccess = {
+  type: typeof SET_PAGE_SIZE_SUCCESS,
+  payload: number
+};
+export type SetPageSizeFailure = {
+  type: typeof SET_PAGE_SIZE_FAILURE,
+  meta: { errorMessage: string }
+};
+
 export type Action =
   | GetMailAddressRequest
   | GetMailAddressSuccess
@@ -167,4 +189,7 @@ export type Action =
   | ClearMailAddress
   | UpdateLastLoginRequest
   | UpdateLastLoginSuccess
-  | UpdateLastLoginFailure;
+  | UpdateLastLoginFailure
+  | SetPageSizeRequest
+  | SetPageSizeSuccess
+  | SetPageSizeFailure;

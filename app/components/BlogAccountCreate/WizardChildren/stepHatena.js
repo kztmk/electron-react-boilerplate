@@ -95,6 +95,10 @@ class StepHatena extends React.Component<Props, State> {
     });
   };
 
+  setFirstBlog = () => {
+    // nothing to do
+  }
+
   /**
    * はてなドメイン
    *
