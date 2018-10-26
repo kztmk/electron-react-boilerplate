@@ -8,18 +8,18 @@ import signout from './lib/signout';
 import open from './lib/open';
 
 /**
- * blog provider for [FC2](https://fc2.com).
+ * blog provider for [Webryblog](https://webryblog.com).
  *
  * @extends BlogProvider
  */
-class BlogProviderFc2 extends BlogProvider {
+class BlogProviderWebryblog extends BlogProvider {
   /**
    * Blog provider to automate.
    *
    * @member {BlogProvider}
    */
   get name() {
-    return 'fc2';
+    return 'webryblog';
   }
 
   /**
@@ -82,7 +82,7 @@ class BlogProviderFc2 extends BlogProvider {
     if (!blogInfo.password) throw new Error('パスワードは必須です。');
     if (!blogInfo.mailAddress) throw new Error('メールアドレスは必須です。');
 
-    console.log('--signin to fc2');
+    console.log('--signin to webryblog');
 
     await signin(blogInfo, opts);
 
@@ -117,7 +117,7 @@ class BlogProviderFc2 extends BlogProvider {
     if (!blogInfo) throw new Error('ブログ情報は必須です。');
     if (!blogInfo.url) throw new Error('URLは必須です。');
 
-    console.log('--signin to fc2');
+    console.log('--signin to webryblog');
 
     await open(blogInfo, opts);
 
@@ -134,4 +134,4 @@ class BlogProviderFc2 extends BlogProvider {
   }
 }
 
-export default BlogProviderFc2;
+export default BlogProviderWebryblog;

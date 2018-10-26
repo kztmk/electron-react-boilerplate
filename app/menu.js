@@ -1,12 +1,13 @@
 /* eslint-disable indent */
 // @flow
-import { app, Menu, shell } from 'electron';
+import { app, ipcRenderer, Menu, shell } from "electron";
 import fs from 'fs';
 import findLogPath from 'electron-log/lib/transports/file/find-log-path';
 import openAboutWindow from 'electron-about-window';
 import { join } from 'path';
 
-function setAppMenu() {
+
+function setAppMenu(options) {
   /*
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -25,9 +26,9 @@ export default class MenuBuilder {
 */
   let template = '';
   if (process.platform === 'darwin') {
-    template = buildDarwinTemplate();
+    template = buildDarwinTemplate(options);
   } else {
-    template = buildDefaultTemplate();
+    template = buildDefaultTemplate(options);
   }
 
   const menu = Menu.buildFromTemplate(template);
@@ -54,7 +55,7 @@ export default class MenuBuilder {
   }
   */
 
-function buildDarwinTemplate() {
+function buildDarwinTemplate(options) {
   const subMenuAbout = {
     label: 'Yoriki-v5',
     submenu: [
@@ -99,11 +100,11 @@ function buildDarwinTemplate() {
         submenu:[
           {
             label: 'メールアドレスデータを書出す',
-            click: () => alert('coming soon')
+            click: () => options.saveAsNewFileToExportMailAccount()
           },
           {
             label: 'ブログデータを書出す',
-            click: () => alert('coming soon')
+            click: () => options.saveAsNewFileToExportBlogAccount()
           }
         ]
       }
@@ -116,21 +117,21 @@ function buildDarwinTemplate() {
         label: 'Reloadx',
         accelerator: 'Command+R',
         click: () => {
-          this.mainWindow.webContents.reload();
+          mainWindow.webContents.reload();
         }
       },
       {
         label: 'Toggle Full Screen',
         accelerator: 'Ctrl+Command+F',
         click: () => {
-          this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen());
+          mainWindow.setFullScreen(!mainWindow.isFullScreen());
         }
       },
       {
         label: 'Toggle Developer Tools',
         accelerator: 'Alt+Command+I',
         click: () => {
-          this.mainWindow.toggleDevTools();
+          mainWindow.toggleDevTools();
         }
       },
       {
@@ -184,7 +185,7 @@ function buildDarwinTemplate() {
   return [subMenuAbout, subMenuFile, subMenuView, subMenuHelp];
 }
 
-function buildDefaultTemplate() {
+function buildDefaultTemplate(options) {
   return [
     {
       label: 'ファイル(&F)',
@@ -194,11 +195,11 @@ function buildDefaultTemplate() {
           submenu:[
             {
               label: 'メールアドレスデータを書出す',
-              click: () => alert('coming soon')
+              click: () => options.saveAsNewFileToExportMailAccount()
             },
             {
               label: 'ブログデータを書出す',
-              click: () => alert('coming soon')
+              click: () => options.saveAsNewFileToExportBlogAccount()
             }
           ]
         },
@@ -206,7 +207,7 @@ function buildDefaultTemplate() {
           label: '閉じる(&X)',
           accelerator: 'Ctrl+W',
           click: () => {
-            this.mainWindow.close();
+            app.quit();
           }
         }
       ]
@@ -220,15 +221,15 @@ function buildDefaultTemplate() {
                 label: '&Reloadxx',
                 accelerator: 'Ctrl+R',
                 click: () => {
-                  this.mainWindow.webContents.reload();
+                  mainWindow.webContents.reload();
                 }
               },
               {
                 label: 'Toggle &Full Screen',
                 accelerator: 'F11',
                 click: () => {
-                  this.mainWindow.setFullScreen(
-                    !this.mainWindow.isFullScreen()
+                  mainWindow.setFullScreen(
+                    !mainWindow.isFullScreen()
                   );
                 }
               },
@@ -236,7 +237,7 @@ function buildDefaultTemplate() {
                 label: 'Toggle &Developer Tools',
                 accelerator: 'Alt+Ctrl+I',
                 click: () => {
-                  this.mainWindow.toggleDevTools();
+                  mainWindow.toggleDevTools();
                 }
               }
             ]

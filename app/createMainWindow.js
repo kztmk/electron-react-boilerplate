@@ -37,6 +37,17 @@ class MainWindow {
   }
 
   /**
+   * renderWindowへテキスト受け取り用意完了の通知と受け取り
+   * @returns {Promise<any>}
+   */
+  requestExportMailJsonFile() {
+    return new Promise(resolve => {
+      this.window.webContents.send('REQUEST_EXPORT_MAIL_ACCOUNT_JSON');
+      ipcMain.once('REPLY_EXPORT_MAIL_ACCOUNT_JSON', (_e, text) => resolve(text));
+    })
+  }
+
+  /**
    * rendererWindowへテキスト受け取り用意完了の通知と受取り
    * @returns {Promise<any>}
    */
@@ -56,6 +67,13 @@ class MainWindow {
     // text内のspace、改行を削除
     const jsonFile = text.replace(/\s/, '');
     this.window.webContents.send('SEND_IMPORTED_MAIL_ACCOUNT', jsonFile);
+  }
+
+  requestExportBlogJsonFile() {
+    return new Promise(resolve => {
+      this.window.webContents.send('REQUEST_EXPORT_BLOG_ACCOUNT_JSON');
+      ipcMain.once('REPLY_EXPORT_BLOG_ACCOUNT_JSON', (_e, text) => resolve(text));
+    });
   }
 
   /**

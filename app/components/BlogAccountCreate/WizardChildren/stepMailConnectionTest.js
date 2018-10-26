@@ -275,6 +275,7 @@ class StepMailConnectionTest extends Component<Props, State> {
     // +(プラス入りのエイリアスは忍者はNG)
     if (this.props.randomPersonalInfo.mailAccount.mailAddress.indexOf('+') !== -1) {
       creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'ninjya');
+      creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'webnode');
     }
 
     // goo

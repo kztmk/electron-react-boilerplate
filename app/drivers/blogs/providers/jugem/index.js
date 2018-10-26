@@ -8,18 +8,18 @@ import signout from './lib/signout';
 import open from "./lib/open";
 
 /**
- * blog provider for [ameba](https://www.ameba.jp).
+ * blog provider for [jugem](https://www.jugem.jp).
  *
  * @extends BlogProvider
  */
-class BlogProviderAmeba extends BlogProvider {
+class BlogProviderJugem extends BlogProvider {
   /**
    * Blog provider to automate.
    *
    * @member {BlogProvider}
    */
   get name() {
-    return 'ameba';
+    return 'jugem';
   }
 
   /**
@@ -82,7 +82,7 @@ class BlogProviderAmeba extends BlogProvider {
     if (!blogInfo.password) throw new Error('パスワードは必須です。');
     if (!blogInfo.mailAddress) throw new Error('メールアドレスは必須です。');
 
-    console.log('--signin to ameba');
+    console.log('--signin to jugem');
 
     await signin(blogInfo, opts);
 
@@ -133,4 +133,4 @@ class BlogProviderAmeba extends BlogProvider {
   }
 }
 
-export default BlogProviderAmeba;
+export default BlogProviderJugem;

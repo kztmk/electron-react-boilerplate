@@ -97,8 +97,10 @@ const saveAsNewFileToErrorMailAccount = () =>
   Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorMailJsonFile()])
     .then(([filePath, text]) => fileManager.saveFile(filePath, text))
     .catch(error => {
+      log.warn(`error--write import error mail accounts:${error.toString()}`)
       console.log(error);
     });
+
 
 /**
  * FileOpenDialogの表示
@@ -118,6 +120,26 @@ const openImportBlogAccountFile = () => {
  */
 const saveAsNewFileToErrorBlogAccount = () =>
   Promise.all([showSaveAsNewFileDialog(), mainWindow.requestErrorBlogJsonFile()])
+    .then(([filePath, text]) => fileManager.saveFile(filePath, text))
+    .catch(error => {
+      console.log(error);
+    });
+
+/**
+ * saveFileDialogを表示し、mailAccountsをexportする
+ * @returns {Promise<*[] | never>}
+ */
+const saveAsNewFileToExportMailAccount = () =>
+  Promise.all([showSaveAsNewFileDialog(), mainWindow.requestExportMailJsonFile()])
+    .then(([filePath, text]) => fileManager.saveFile(filePath, text))
+    .catch(error => {
+      log.warn(`error-on exportMailAccount:${error.toString()}`);
+      console.log(error);
+    });
+
+
+const saveAsNewFileToExportBlogAccount = () =>
+  Promise.all([showSaveAsNewFileDialog(), mainWindow.requestExportBlogJsonFile()])
     .then(([filePath, text]) => fileManager.saveFile(filePath, text))
     .catch(error => {
       console.log(error);
@@ -145,7 +167,7 @@ app.on('ready', async () => {
   fileManager = createFileManager();
   // const menuBuilder = new MenuBuilder(mainWindow);
   // menuBuilder.buildMenu();
-  setAppMenu();
+  setAppMenu({saveAsNewFileToExportMailAccount, saveAsNewFileToExportBlogAccount});
 
   /**
    * rendererWindowsから呼ばれるリスナ

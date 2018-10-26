@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import appRoutes from '../routes/app';
 import VerticalNavi from '../components/VerticalNav';
-import Footer from '../components/Footer';
+import Footer from './Footer';
 import appStyle from '../assets/jss/material-dashboard-pro-react/layouts/dashboardStyle';
 
 import logo from '../assets/img/yoriki5.png';

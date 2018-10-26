@@ -10,6 +10,7 @@ import BlogProviderJugem from './jugem';
 import BlogProviderHatena from './hatena';
 import BlogProviderWebryBlog from './webryBlog';
 import BlogProviderGoo from './goo';
+import BlogProviderWebnode from './webnode';
 
 class BlogProviderManager {
   constructor() {
@@ -25,7 +26,8 @@ class BlogProviderManager {
       jugem: BlogProviderJugem,
       hatena: BlogProviderHatena,
       webryblog: BlogProviderWebryBlog,
-      goo: BlogProviderGoo
+      goo: BlogProviderGoo,
+      webnode: BlogProviderWebnode
     };
   }
 

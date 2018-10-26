@@ -8,18 +8,18 @@ import signout from './lib/signout';
 import open from './lib/open';
 
 /**
- * blog provider for [Hatena](http://www.hatena.ne.jp/).
+ * blog provider for [Webnode](https://www.webnode.jp/).
  *
  * @extends BlogProvider
  */
-class BlogProviderHatena extends BlogProvider {
+class BlogProviderWebnode extends BlogProvider {
   /**
    * Blog provider to automate.
    *
    * @member {BlogProvider}
    */
   get name() {
-    return 'fc2';
+    return 'webnode';
   }
 
   /**
@@ -29,7 +29,7 @@ class BlogProviderHatena extends BlogProvider {
    * mailaddress
    * @param {object} blogInfo - User info for the account to create
    * @param {string} blogInfo.mailAddress - mailAddress for validation
-   * @param {string} blogInfo.accountId - Username for Hatena ID
+   * @param {string} blogInfo.accountId - Username for Yahoo! Japan ID
    * @param {string} blogInfo.password - Password
    * @param {string} blogInfo.title - User's family name
    * @param {string} blogInfo.description - blog description
@@ -82,7 +82,7 @@ class BlogProviderHatena extends BlogProvider {
     if (!blogInfo.password) throw new Error('パスワードは必須です。');
     if (!blogInfo.mailAddress) throw new Error('メールアドレスは必須です。');
 
-    console.log('--signin to hatena');
+    console.log('--signin to Webnode');
 
     await signin(blogInfo, opts);
 
@@ -117,7 +117,7 @@ class BlogProviderHatena extends BlogProvider {
     if (!blogInfo) throw new Error('ブログ情報は必須です。');
     if (!blogInfo.url) throw new Error('URLは必須です。');
 
-    console.log('--signin to hatena');
+    console.log('--signin to Webnode');
 
     await open(blogInfo, opts);
 
@@ -134,4 +134,4 @@ class BlogProviderHatena extends BlogProvider {
   }
 }
 
-export default BlogProviderHatena;
+export default BlogProviderWebnode;
