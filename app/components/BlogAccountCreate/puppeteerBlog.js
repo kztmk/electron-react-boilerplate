@@ -41,6 +41,9 @@ class PuppeteerBlog {
       case 'goo':
         this.client = new BlogDriver('goo');
         break;
+      case 'webnode':
+        this.client = new BlogDriver('webnode');
+        break;
       default:
     }
   }

@@ -3,6 +3,8 @@ import React from 'react';
 import ReactTable from 'react-table';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Loadable from 'react-loading-overlay';
+import Datetime from "react-datetime";
+
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
 import Slide from '@material-ui/core/Slide';
@@ -50,6 +52,7 @@ import SweetAlertTitle from '../SweetAlertTitle';
 
 import PuppeteerBlog from '../BlogAccountCreate/puppeteerBlog';
 import GavelPopup from "../Utils/gavel";
+import type MailAccountType from "../../types/mailAccount";
 
 function Transition(props) {
   return <Slide direction="down" {...props} />;
@@ -107,7 +110,9 @@ type Props = {
   deleteAccount: () => void,
   editAccount: () => void,
   pageSize: number,
-  setPageSize: () => void
+  setPageSize: () => void,
+  updateMailLastLogin: (mailAccount: MailAccountType) => void,
+  mailAccounts: Array<MailAccountType>
 };
 
 const modalCloseButtonStyle = {
@@ -237,7 +242,12 @@ class BlogList extends React.Component<Props, State> {
       actions: (
         <div className="actions-right">
           <Tooltip title="ID、パスワードのコピーなど便利ツール" placement="top-end">
-            <GavelPopup account={prop} mode="blog"/>
+            <GavelPopup
+              account={prop}
+              mode="blog"
+              updateMailLastLogin={this.props.updateMailLastLogin}
+              mailAccounts={this.props.mailAccounts}
+            />
           </Tooltip>
           <Tooltip title="ブログへログイン" placement="top-end">
             <Button
@@ -563,25 +573,57 @@ class BlogList extends React.Component<Props, State> {
                   }
                 },
                 {
-                  Header: () => <span style={{ fontSize: 12 }}>作成日</span>,
+                  Header: () => <Tooltip title='検索日付の最後に、半角記号を追加することで、<で以降、＝で当日に絞り込めます。何も付けない場合には、以前になります。' placement='top'><span style={{ fontSize: 12 }}>作成日</span></Tooltip>,
                   accessor: 'createDate',
-                  width: 120,
+                  width: 100,
                   filterable: true,
                   sortable: true,
+                  Cell: row => (
+                    <Tooltip title={`作成日:${row.original.createDate}`} placement='bottom'>
+                      <div>{moment(row.original.createDate).format('YYYY/MM/DD')}</div>
+                    </Tooltip>
+                  ),
                   Filter: ({ filter, onChange }) => (
-                    <input
-                      type="text"
-                      placeholder="YYYY/MM/DDより前"
+                    <Datetime
+                      className={classes.inputMyDatePickerControl}
+                      dateFormat="YYYY/MM/DD"
+                      timeFormat={false}
+                      // eslint-disable-next-line react/jsx-boolean-value
+                      closeOnSelect={true}
+                      inputProps={{ placeholder: 'YYYY/MM/DD' }}
+                      direction="down"
+                      locale="ja"
+                      onChange={value =>
+                        onChange(value)
+                      }
                       value={filter ? filter.value : ''}
-                      onChange={event => onChange(event.target.value)}
-                      style={{ fontSize: 12 }}
                     />
                   ),
                   filterMethod: (filter, row) => {
                     if (row[filter.id].length === 0) {
                       return row[filter.id];
                     }
-                    if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                    if (typeof filter.value === 'string') {
+                      if (filter.value.length > 2) {
+                        const compare = filter.value.slice(-1);
+                        const datePart = filter.value.substr(0, filter.value.length - 1);
+                        switch (compare) {
+                          case  '>':
+                            if (moment(row[filter.id]) > moment(datePart)) return row[filter.id];
+                            break;
+                          case '=':
+                            if (compare === '=' && /\d{4}\/\d{2}\/\d{2}/.test(datePart)) {
+                              if ((moment(row[filter.id]) <= moment(`${datePart} 23:59:59`)) && (moment(row[filter.id]) >= moment(`${datePart} 00:00:00`))) return row[filter.id];
+                            }
+                            break;
+                          case '<':
+                            if (moment(row[filter.id]) < moment(datePart)) return row[filter.id];
+                            break;
+                          default:
+                            if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                        }
+                      }
+                    } else if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
                   }
                 },
                 {
@@ -603,6 +645,7 @@ class BlogList extends React.Component<Props, State> {
               ofText="/"
               rowsText="行"
               onPageSizeChange={pageSize => this.props.setPageSize(pageSize)}
+              getTheadFilterThProps={() => { return { style: { position: "inherit", overflow: "inherit" } } }}
             />
             {this.state.sweetAlert}
             <Dialog

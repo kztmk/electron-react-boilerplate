@@ -222,3 +222,48 @@ test('handle SET_PAGE_SIZE_FAILURE', () => {
     pageSize: 10
   });
 });
+
+test('handle GET_FEED_REQUEST', () => {
+  expect(reducer(initialState, actions.getFeedRequest())).toEqual({
+    blogAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: [],
+    pageSize: 10
+  });
+});
+
+test('handle GET_FEED_SUCCESS', () => {
+  expect(reducer(initialState, actions.getFeedSuccess())).toEqual({
+    blogAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: [],
+    pageSize: 10
+  });
+});
+
+test('handle GET_FEED_FAILURE', () => {
+  expect(reducer(initialState, actions.getFeedFailure())).toEqual({
+    blogAccounts: [],
+    isGetting: false,
+    isCreating: false,
+    isUpdating: false,
+    isDeleting: false,
+    isImporting: false,
+    isFailure: false,
+    metaMessage: '',
+    transAccounts: [],
+    pageSize: 10
+  });
+});

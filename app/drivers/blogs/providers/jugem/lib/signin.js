@@ -80,7 +80,7 @@ const signin = async (blogInfo, opts) => {
     await page.click('input[value=ログイン]');
     await page.waitFor('a[href="./?mode=logout"]');
 
-    log.info('Jugemログイン完了')
+    log.info('Jugemログイン完了');
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });

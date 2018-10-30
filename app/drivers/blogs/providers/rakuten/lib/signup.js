@@ -2,11 +2,11 @@
 import delay from 'delay';
 import log from 'electron-log';
 import jaconv from 'jaconv';
+import AntiCaptcha from "anticaptcha";
 import clickByText from '../../../utils';
+import antiCaptchaKey from "../../../../../database/antiCaptcha";
 
-const waitRandom = () => {
-  return Math.floor(Math.random() * 501);
-}
+const waitRandom = () => Math.floor(Math.random() * 501)
 
 const signup = async (blogInfo, opts) => {
   const { browser } = opts;
@@ -361,9 +361,7 @@ const signup = async (blogInfo, opts) => {
     log.info('click: 同意して次へ');
 
     await page.waitFor('#contents > h2');
-    let title = await page.$eval('#contents > h2', item => {
-      return item.textContent
-    });
+    let title = await page.$eval('#contents > h2', item => item.textContent);
     console.log(`title:${title}`);
 
     if (title === "入力内容の確認") {
@@ -377,6 +375,7 @@ const signup = async (blogInfo, opts) => {
         text:'入力内容確認ページにアクセス完了' 
       }).show();
     `);
+      log.info('access 入力内容の確認')
       // #regist3Form > p:nth-child(6) > input[type="submit"]
       await page.evaluate(`
     new Noty({
@@ -387,10 +386,9 @@ const signup = async (blogInfo, opts) => {
     `);
       await delay(1000);
       await page.click('p.submit > input');
+      log.info('click [登録する]ボタン')
 
-      title = await page.$eval('#contents > h2', item => {
-        return item.textContent
-      });
+      title = await page.$eval('#contents > h2', item => item.textContent);
 
       if (title === '会員登録の完了') {
         await page.addScriptTag({ path: notyJsPath });
@@ -403,6 +401,7 @@ const signup = async (blogInfo, opts) => {
         text:'会員登録完了ページにアクセス完了' 
       }).show();
     `);
+        log.info('会員登録完了')
         // #regist3Form > p:nth-child(6) > input[type="submit"]
         await page.evaluate(`
     new Noty({
@@ -413,27 +412,106 @@ const signup = async (blogInfo, opts) => {
     `);
         await delay(500 + waitRandom());
         await page.click('p.submit > input')
+        log.info('click [続けてサービスを利用する]ボタン');
         await page.waitFor('#myplaza_regist_base_url');
 
         //
+        log.info('access 新規日記の登録')
+        await page.addScriptTag({ path: notyJsPath });
+        await page.addStyleTag({ path: notyCssPath });
+        await page.addStyleTag({ path: notyThemePath });
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[新規日記の登録]ページにアクセス完了' 
+      }).show();
+    `);
+
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'日記のURLの入力開始' 
+      }).show();
+    `);
         await page.click('#myplaza_regist_base_url');
         await delay(waitRandom());
         await page.type('#myplaza_regist_base_url', blogInfo.accountId, { delay: waitRandom() });
-
+        await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'日記のURLの入力完了' 
+      }).show();
+    `);
         // captcha
-        await page.addStyleTag({ path: swa2Css });
-        await page.addScriptTag({ path: swa2Js });
+        try {
+          await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'warning',
+        layout: 'topLeft',
+        text:'「私は、ロボットではありません。」を解決中...' 
+      }).show();
+    `);
+          const AntiCaptchaAPI = new AntiCaptcha(antiCaptchaKey);
 
-        await page.evaluate(`swal({
-      title: '手順',
-      text: '「私は、ロボットではありません。」にチェックを入れて、[規約に同意して確認画面へ]ボタンをクリックしてください。5分(300秒)を超えるとエラーになります。',
-      showCancelButton: false,
-      confirmButtonColor: '#4caf50',
-      cancelButtonColor: '#f44336',
-      confirmButtonText: '閉じる',
-      cancelButtonText: 'ブラウザは、このまま',
-      reverseButtons: true
-    })`);
+          const pageUrl = await page.url();
+          const siteKey = await page.$eval('.g-recaptcha', (el, attribute) => el.getAttribute(attribute), 'data-sitekey');
+          log.info('google reCaptcha found');
+
+          console.log(`pageUrl:${pageUrl}`);
+          console.log(`siteKay:${siteKey}`);
+          if (!pageUrl || !siteKey) {
+            throw new Error('can not get page url or siteKey');
+          }
+          log.info('start to resolve google reCaptcha');
+          const taskId = await AntiCaptchaAPI.createTask(pageUrl, siteKey);
+          const response = await AntiCaptchaAPI.getTaskResult(taskId);
+
+          log.info('done resolver');
+          console.log(response);
+
+          await page.evaluate('Noty.closeAll()');
+          if ('errorId' in response) {
+              if (response.errorId === 0) {
+                // set resolver to textarea
+                const frame = await page.frames().find(f => f.url().indexOf('https://www.google.com/recaptcha/api2/'));
+
+                if (!frame) {
+                  log.warn('google reCaptcha frame has not found.')
+                  throw new Error('google reCaptcha frame has not found.')
+                }
+                log.info('found response frame.');
+                log.info(`response:${response.solution.gRecaptchaResponse}`);
+                // #g-recaptcha-response
+                await frame.$eval('#g-recaptcha-response', (el, value) => (el.value = value), response.solution.gRecaptchaResponse);
+              }
+          } else {
+            log.warn('antiCaptcha has no result.')
+            throw new Error('antiCaptcha has no result.');
+          }
+
+          await page.click('#myplaza_regist_foreside');
+          log.info('click [規約に同意して確認画面へ]')
+
+        } catch (error) {
+
+              await page.addStyleTag({ path: swa2Css });
+              await page.addScriptTag({ path: swa2Js });
+
+              await page.evaluate(`swal({
+            title: '手順',
+            text: '「私は、ロボットではありません。」にチェックを入れて、[規約に同意して確認画面へ]ボタンをクリックしてください。5分(300秒)を超えるとエラーになります。',
+            showCancelButton: false,
+            confirmButtonColor: '#4caf50',
+            cancelButtonColor: '#f44336',
+            confirmButtonText: '閉じる',
+            cancelButtonText: 'ブラウザは、このまま',
+            reverseButtons: true
+          })`);
+        }
 
         await page.waitFor('#myplaza_regist_confirm_complete', { timeout: 300000 })
 
@@ -487,6 +565,10 @@ const signup = async (blogInfo, opts) => {
         log.info('click: すぐにブログを始める');
         await page.waitFor('.introjs-helperLayer');
 
+        // ブログ設定画面
+        await page.addScriptTag({ path: notyJsPath });
+        await page.addStyleTag({ path: notyCssPath });
+        await page.addStyleTag({ path: notyThemePath });
         await page.evaluate(`
     new Noty({
         type: 'success',

@@ -1,7 +1,10 @@
 /* eslint-disable no-await-in-loop */
 import delay from 'delay';
 import log from 'electron-log';
+import AntiCaptcha from "anticaptcha";
 import getValidationLink from '../../../../emails/imap';
+import antiCaptchaKey from "../../../../../database/antiCaptcha";
+
 
 const prefectures = [
   {val:"1", prefecture:"北海道"},
@@ -400,24 +403,84 @@ const signup = async (blogInfo, opts) => {
       log.info('click:登録ボタン');
       await page.waitFor('h1.step02');
 
-      // YaplogID登録完了ページ
+      // Yaplog登録完了ページ
+    log.info('access Yaplog登録完了ページ')
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
     // captcha
-    await page.addStyleTag({ path: swa2Css });
-    await page.addScriptTag({ path: swa2Js });
+    try {
+      await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'warning',
+        layout: 'topLeft',
+        text:'「私は、ロボットではありません。」を解決中...' 
+      }).show();
+    `);
+      const AntiCaptchaAPI = new AntiCaptcha(antiCaptchaKey);
 
-    await page.evaluate(`swal({
-      title: '手順',
-      text: '「私は、ロボットではありません。」にチェックを入れて、[上記の内容で登録]ボタンをクリックしてください。5分(300秒)を超えるとエラーになります。',
-      showCancelButton: false,
-      confirmButtonColor: '#4caf50',
-      cancelButtonColor: '#f44336',
-      confirmButtonText: '閉じる',
-      cancelButtonText: 'ブラウザは、このまま',
-      reverseButtons: true
-    })`);
+      const pageUrl = await page.url();
+      const precheck = await page.$('.g-recaptcha')
+      if (!precheck) {
+        await delay(1000);
+      }
+      const siteKey = await page.$eval('.g-recaptcha', (el, attribute) => el.getAttribute(attribute), 'data-sitekey');
+      log.info('google reCaptcha found');
 
+      console.log(`pageUrl:${pageUrl}`);
+      console.log(`siteKay:${siteKey}`);
+      if (!pageUrl || !siteKey) {
+        throw new Error('can not get page url or siteKey');
+      }
+      log.info('start to resolve google reCaptcha');
+      const taskId = await AntiCaptchaAPI.createTask(pageUrl, siteKey);
+      const response = await AntiCaptchaAPI.getTaskResult(taskId);
 
+      log.info('done resolver');
+      console.log(response);
 
+      await page.evaluate('Noty.closeAll()');
+      if ('errorId' in response) {
+        if (response.errorId === 0) {
+          // set resolver to textarea
+          const frame = await page.frames().find(f => f.url().indexOf('https://www.google.com/recaptcha/api2/'));
+
+          if (!frame) {
+            log.warn('google reCaptcha frame has not found.')
+            throw new Error('google reCaptcha frame has not found.')
+          }
+          log.info('found response frame.');
+          log.info(`response:${response.solution.gRecaptchaResponse}`);
+          // #g-recaptcha-response
+          await frame.$eval('#g-recaptcha-response', (el, value) => (el.value = value), response.solution.gRecaptchaResponse);
+        }
+      } else {
+        log.warn('antiCaptcha has no result.')
+        throw new Error('antiCaptcha has no result.');
+      }
+
+      // input image src='/img/common/spacer.gif'
+      const selector = 'input[src^="/img/common/spacer.gif"]';
+      await page.evaluate((selector) => document.querySelector(selector).click(), selector);
+      log.info('click [上記の内容で登録]')
+
+    } catch (error) {
+
+      await page.addStyleTag({ path: swa2Css });
+      await page.addScriptTag({ path: swa2Js });
+
+      await page.evaluate(`swal({
+        title: '手順',
+        text: '「私は、ロボットではありません。」にチェックを入れて、[上記の内容で登録]ボタンをクリックしてください。5分(300秒)を超えるとエラーになります。',
+        showCancelButton: false,
+        confirmButtonColor: '#4caf50',
+        cancelButtonColor: '#f44336',
+        confirmButtonText: '閉じる',
+        cancelButtonText: 'ブラウザは、このまま',
+        reverseButtons: true
+      })`);
+    }
 
       await page.waitFor('h1.step03', {timeout: 300000});
       log.info('ブログ登録完了');

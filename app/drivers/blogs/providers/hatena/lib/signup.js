@@ -2,7 +2,9 @@
 import delay from 'delay';
 import log from 'electron-log';
 import getValidationLink from '../../../../emails/imap';
-import clickByText from "../../../utils";
+import clickByText from '../../../utils';
+import antiCaptchaKey from '../../../../../database/antiCaptcha';
+import { AntiCaptcha } from 'anticaptcha';
 
 const waitRandom = () => Math.floor(Math.random() * 501);
 
@@ -61,6 +63,7 @@ const signup = async (blogInfo, opts) => {
     await page.addStyleTag({ path: notyThemePath });
 
     // はてなID
+    await delay(waitRandom());
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -68,7 +71,11 @@ const signup = async (blogInfo, opts) => {
         text:'はてなID入力開始' 
       }).show();
     `);
-    await page.type('#username-input', blogInfo.accountId, {delay: waitRandom()});
+    await page.click('#username-input');
+    await delay(waitRandom());
+    await page.type('#username-input', blogInfo.accountId, {
+      delay: waitRandom()
+    });
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -77,7 +84,9 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
     log.info(`hatenaId:${blogInfo.accountId}入力完了`);
+
     // password
+    await delay(waitRandom());
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -85,7 +94,11 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-    await page.type('#password-input', blogInfo.password, {delay: waitRandom()});
+    await page.click('#password-input');
+    await delay(waitRandom());
+    await page.type('#password-input', blogInfo.password, {
+      delay: waitRandom()
+    });
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -93,8 +106,10 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード入力完了' 
       }).show();
     `);
-    log.info(`password:${blogInfo.password}入力完了`,);
+    log.info(`password:${blogInfo.password}入力完了`);
+
     // mailAddress
+    await delay(waitRandom());
     await page.evaluate(`
     new Noty({
         killer: true,
@@ -103,7 +118,11 @@ const signup = async (blogInfo, opts) => {
         text:'メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('#mail-input', blogInfo.mailAddress, {delay: waitRandom()});
+    await page.click('#mail-input');
+    await delay(waitRandom());
+    await page.type('#mail-input', blogInfo.mailAddress, {
+      delay: waitRandom()
+    });
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -114,12 +133,75 @@ const signup = async (blogInfo, opts) => {
     log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
     await page.evaluate(`Noty.closeAll();`);
 
-    // google captcha
     // captcha
-    await page.addStyleTag({ path: swa2Css });
-    await page.addScriptTag({ path: swa2Js });
+    try {
+      await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'warning',
+        layout: 'topLeft',
+        text:'「私は、ロボットではありません。」を解決中...' 
+      }).show();
+    `);
+      const AntiCaptchaAPI = new AntiCaptcha(antiCaptchaKey);
 
-    await page.evaluate(`swal({
+      const pageUrl = await page.url();
+      const siteKey = await page.$eval(
+        '.g-recaptcha',
+        (el, attribute) => el.getAttribute(attribute),
+        'data-sitekey'
+      );
+      log.info('google reCaptcha found');
+
+      console.log(`pageUrl:${pageUrl}`);
+      console.log(`siteKay:${siteKey}`);
+      if (!pageUrl || !siteKey) {
+        throw new Error('can not get page url or siteKey');
+      }
+      log.info('start to resolve google reCaptcha');
+      const taskId = await AntiCaptchaAPI.createTask(pageUrl, siteKey);
+      const response = await AntiCaptchaAPI.getTaskResult(taskId);
+
+      log.info('done resolver');
+      console.log(response);
+
+      await page.evaluate('Noty.closeAll()');
+      if ('errorId' in response) {
+        if (response.errorId === 0) {
+          // set resolver to textarea
+          const frame = await page
+            .frames()
+            .find(f =>
+              f.url().indexOf('https://www.google.com/recaptcha/api2/')
+            );
+
+          if (!frame) {
+            log.warn('google reCaptcha frame has not found.');
+            throw new Error('google reCaptcha frame has not found.');
+          }
+          log.info('found response frame.');
+          log.info(`response:${response.solution.gRecaptchaResponse}`);
+          // #g-recaptcha-response
+          await frame.$eval(
+            '#g-recaptcha-response',
+            (el, value) => (el.value = value),
+            response.solution.gRecaptchaResponse
+          );
+        }
+      } else {
+        log.warn('antiCaptcha has no result.');
+        throw new Error('antiCaptcha has no result.');
+      }
+
+      await page.click('#submit-button');
+      log.info('click [入力内容を確認]');
+    } catch (error) {
+      // google captcha
+      // captcha
+      await page.addStyleTag({ path: swa2Css });
+      await page.addScriptTag({ path: swa2Js });
+
+      await page.evaluate(`swal({
       title: '手順',
       text: '「私は、ロボットではありません。」にチェックを入れて、[入力内容を確認]ボタンをクリックしてください。5分(300秒)を超えるとエラーになります。',
       showCancelButton: false,
@@ -129,9 +211,9 @@ const signup = async (blogInfo, opts) => {
       cancelButtonText: 'ブラウザは、このまま',
       reverseButtons: true
     })`);
-
-    await page.waitForSelector('#agreed_with_rules', {timeout: 300000});
-    log.info('はてな登録確認ページへアクセス')
+    }
+    await page.waitForSelector('#agreed_with_rules', { timeout: 300000 });
+    log.info('はてな登録確認ページへアクセス');
 
     // confirmation page
     await page.addScriptTag({ path: notyJsPath });
@@ -147,7 +229,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
     await page.click('#agreed_with_rules');
-    log.info('check on: 規約に同意')
+    log.info('check on: 規約に同意');
     await delay(500);
 
     await page.evaluate(`
@@ -160,7 +242,7 @@ const signup = async (blogInfo, opts) => {
     `);
     await page.click('#is_adult_or_parents_approved');
     log.info('check on: 親権者に同意');
-    await delay(800+ waitRandom());
+    await delay(800 + waitRandom());
 
     await page.evaluate(`
     new Noty({
@@ -211,14 +293,16 @@ const signup = async (blogInfo, opts) => {
         // 本登録URLへアクセス プロフィールの入力ページ
         [validationUrl] = result;
       } else {
-        log.warn('本登録用リンクが見つかりません。')
-        throw new Error('registration link not found')
+        log.warn('本登録用リンクが見つかりません。');
+        throw new Error('registration link not found');
       }
     } catch (error) {
-      log.warn('本登録用リンク取得中にエラーが発生しました。')
+      log.warn('本登録用リンク取得中にエラーが発生しました。');
       log.warn(error.toString());
 
-      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
+      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', {
+        waitUntil: 'load'
+      });
 
       const { value: url } = await page.evaluate(`
         swal({
@@ -243,17 +327,17 @@ const signup = async (blogInfo, opts) => {
       }
     }
 
-      log.info(`本登録URL:${validationUrl}`);
+    log.info(`本登録URL:${validationUrl}`);
 
-      // 本登録URLへアクセス プロフィールの入力ページ
-      await page.goto(validationUrl);
-      await page.waitForSelector('#container > h1');
-      log.info('本登録URLへアクセス完了');
+    // 本登録URLへアクセス プロフィールの入力ページ
+    await page.goto(validationUrl);
+    await page.waitForSelector('#container > h1');
+    log.info('本登録URLへアクセス完了');
 
-      await page.addScriptTag({ path: notyJsPath });
-      await page.addStyleTag({ path: notyCssPath });
-      await page.addStyleTag({ path: notyThemePath });
-      await page.evaluate(`
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
@@ -268,11 +352,11 @@ const signup = async (blogInfo, opts) => {
         text:'はてなブログをクリック' 
       }).show();
     `);
-     await page.click('a[href^="http://blog.hatena.ne.jp/guide"]')
+    await page.click('a[href^="http://blog.hatena.ne.jp/guide"]');
     log.info('click はてなブログ');
-    await page.waitFor('.guide-header-btn-wrapper')
+    await page.waitFor('.guide-header-btn-wrapper');
 
-     // はてなブログトップ
+    // はてなブログトップ
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -284,9 +368,8 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
     await page.click('.guide-header-btn-wrapper > a');
-    log.info('[無料でブログを始める]をクリック')
-    await page.waitFor('input[name="id"]')
-
+    log.info('[無料でブログを始める]をクリック');
+    await page.waitFor('input[name="id"]');
 
     // はてなブログ作成ページ
     await page.addScriptTag({ path: notyJsPath });
@@ -301,17 +384,17 @@ const signup = async (blogInfo, opts) => {
     `);
 
     log.info('簡単ブログ作成ページへアクセス');
-      // select domain
-      await page.evaluate(`
+    // select domain
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
         text:'ドメインを選択開始' 
       }).show();
     `);
-      await page.select(`select#domain`, blogInfo.detailInfo.domainValue);
-      log.info(`ドメインを選択:${blogInfo.detailInfo.domainValue}`);
-      await page.evaluate(`
+    await page.select(`select#domain`, blogInfo.detailInfo.domainValue);
+    log.info(`ドメインを選択:${blogInfo.detailInfo.domainValue}`);
+    await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
@@ -319,10 +402,73 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
-    await page.addStyleTag({ path: swa2Css });
-    await page.addScriptTag({ path: swa2Js });
+    try {
+      await page.evaluate(`
+    new Noty({
+        killer: true,
+        type: 'warning',
+        layout: 'topLeft',
+        text:'「私は、ロボットではありません。」を解決中...' 
+      }).show();
+    `);
+      const AntiCaptchaAPI = new AntiCaptcha(antiCaptchaKey);
 
-    await page.evaluate(`swal({
+      const pageUrl = await page.url();
+      const siteKey = await page.$eval(
+        '.g-recaptcha',
+        (el, attribute) => el.getAttribute(attribute),
+        'data-sitekey'
+      );
+      log.info('google reCaptcha found');
+
+      console.log(`pageUrl:${pageUrl}`);
+      console.log(`siteKay:${siteKey}`);
+      if (!pageUrl || !siteKey) {
+        throw new Error('can not get page url or siteKey');
+      }
+      log.info('start to resolve google reCaptcha');
+      const taskId = await AntiCaptchaAPI.createTask(pageUrl, siteKey);
+      const response = await AntiCaptchaAPI.getTaskResult(taskId);
+
+      log.info('done resolver');
+      console.log(response);
+
+      await page.evaluate('Noty.closeAll()');
+      if ('errorId' in response) {
+        if (response.errorId === 0) {
+          // set resolver to textarea
+          const frame = await page
+            .frames()
+            .find(f =>
+              f.url().indexOf('https://www.google.com/recaptcha/api2/')
+            );
+
+          if (!frame) {
+            log.warn('google reCaptcha frame has not found.');
+            throw new Error('google reCaptcha frame has not found.');
+          }
+          log.info('found response frame.');
+          log.info(`response:${response.solution.gRecaptchaResponse}`);
+          // #g-recaptcha-response
+          await frame.$eval(
+            '#g-recaptcha-response',
+            (el, value) => (el.value = value),
+            response.solution.gRecaptchaResponse
+          );
+        }
+      } else {
+        log.warn('antiCaptcha has no result.');
+        throw new Error('antiCaptcha has no result.');
+      }
+
+      // input image src='/img/common/spacer.gif'
+      await page.click('input[type="submit"]');
+      log.info('click [上記の内容で登録]');
+    } catch (error) {
+      await page.addStyleTag({ path: swa2Css });
+      await page.addScriptTag({ path: swa2Js });
+
+      await page.evaluate(`swal({
       title: '手順',
       text: '「私は、ロボットではありません。」にチェックを入れて、[ブログを作成]ボタンをクリックしてください。時間制限はありません。',
       showCancelButton: false,
@@ -332,17 +478,21 @@ const signup = async (blogInfo, opts) => {
       cancelButtonText: 'ブラウザは、このまま',
       reverseButtons: true
     })`);
-    log.info('Google captcha start');
-    await page.waitFor('.register-done-heading, #welcome-message');
+      log.info('Google captcha start');
+    }
+    await page.waitFor('.register-done-heading, #welcome-message', {
+      timeout: 300000
+    });
     const message = await page.$('.register-done-heading');
 
     if (message) {
-      await clickByText(page, '\n' +
-        '        無料でブログをはじめる\n' +
-        '      ');
+      await clickByText(
+        page,
+        '\n' + '        無料でブログをはじめる\n' + '      '
+      );
     }
 
-    await page.waitFor('#welcome-message', {timeout: 0});
+    await page.waitFor('#welcome-message', { timeout: 0 });
     log.info('--------->はてなブログ作成完了');
 
     await page.addScriptTag({ path: notyJsPath });
@@ -407,7 +557,7 @@ const signup = async (blogInfo, opts) => {
     await page.$eval('#name', (el, value) => (el.value = value), '');
     await delay(1000);
     await page.type('#name', blogInfo.title);
-    log.info('input blog title')
+    log.info('input blog title');
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -446,16 +596,16 @@ const signup = async (blogInfo, opts) => {
     await page.click('input[type="submit"]');
     log.info('click save button');
 
-          log.info('ブログ登録完了');
-          // await page.click('#goto_admin > a');
-          // log.info('click:管理ページへ');
-          // await page.waitFor('#entry_title');
-          // log.info('記事ページ');
+    log.info('ブログ登録完了');
+    // await page.click('#goto_admin > a');
+    // log.info('click:管理ページへ');
+    // await page.waitFor('#entry_title');
+    // log.info('記事ページ');
 
-          await page.addStyleTag({ path: swa2Css });
-          await page.addScriptTag({ path: swa2Js });
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
 
-          const closeConfirm = await page.evaluate(`swal({
+    const closeConfirm = await page.evaluate(`swal({
       title: 'Hatenaブログの作成が完了しました。',
       text: 'ブラウザを閉じてもよろしいですか？',
       showCancelButton: true,
@@ -466,9 +616,9 @@ const signup = async (blogInfo, opts) => {
       reverseButtons: true
     })`);
 
-          if (closeConfirm.value) {
-            await page.close();
-          }
+    if (closeConfirm.value) {
+      await page.close();
+    }
   } catch (error) {
     log.error(`error:${error.toString()}`);
     await page.addStyleTag({ path: swa2Css });

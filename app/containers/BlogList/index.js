@@ -2,15 +2,18 @@
 import { connect } from 'react-redux';
 import type { DispatchType } from '../../types';
 import type { State } from '../../types/state';
+
 import {
   importBlogsRequest,
   createBlogRequest,
   updateBlogRequest,
   deleteBlogRequest,
-  getBlogsRequest, setPageSizeRequest
-} from "./actions";
+  getBlogsRequest,
+  setPageSizeRequest
+} from './actions';
 
 import BlogListPage from '../../components/BlogsListPage';
+import { updateLastLoginRequest } from '../MailAddressList/actions';
 
 const mapStateToProps = (state: State) => ({
   blogAccounts: state.BlogList.blogAccounts,
@@ -22,7 +25,8 @@ const mapStateToProps = (state: State) => ({
   isFailure: state.BlogList.isFailure,
   metaMessage: state.BlogList.metaMessage,
   transAccounts: state.BlogList.transAccounts,
-  pageSize: state.BlogList.pageSize
+  pageSize: state.BlogList.pageSize,
+  mailAccounts: state.MailAddressList.mailAccounts
 });
 
 const mapDispatchToProps = (dispatch: DispatchType) => ({
@@ -43,6 +47,9 @@ const mapDispatchToProps = (dispatch: DispatchType) => ({
   },
   startSetPageSize(pageSize) {
     dispatch(setPageSizeRequest(pageSize));
+  },
+  startUpdateMailLastLogin(mailAccount) {
+    dispatch(updateLastLoginRequest(mailAccount));
   }
 });
 

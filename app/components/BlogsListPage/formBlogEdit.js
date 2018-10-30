@@ -4,6 +4,9 @@ import TagsInput from 'react-tagsinput';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import Loadable from 'react-loading-overlay';
+import { shell } from 'electron';
+import isUrl from 'is-url';
+
 // material-ui
 import { withStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
@@ -26,6 +29,7 @@ import { SaveAltIcon } from '../../assets/icons';
 
 import { getBlogProviderImage } from './blogList';
 
+
 export type Props = {
   classes: Object,
   mode: string,
@@ -37,10 +41,21 @@ export type Props = {
 };
 
 type State = {
+  accountId: string,
   password: string,
-  tags: Array<string>,
-  data: Array<Array<string>>,
-  sweetAlert: ?Object,
+  passwordState: string,
+  mailAddress: string,
+  mailAddressState: string,
+  title: string,
+  titleState: string,
+  description: string,
+  descriptionState: string,
+  url: string,
+  urlState: string,
+  remark: string,
+  groupTags: Array<Array<string>>,
+  data: React.NODE,
+  sweetAlert: React.NODE,
   isUpdated: boolean,
   readyToClose: boolean
 };
@@ -72,9 +87,15 @@ class FormBlogEdit extends Component<Props, State> {
     this.state = {
       accountId: this.props.targetAccount.accountId,
       password: this.props.targetAccount.password,
+      passwordState: '',
       mailAddress: this.props.targetAccount.mailAddress,
+      mailAddressState: '',
       title: this.props.targetAccount.title,
+      titleState: '',
       description: this.props.targetAccount.description,
+      descriptionState: '',
+      url: this.props.targetAccount.url,
+      urlState: '',
       remark: this.props.targetAccount.remark,
       groupTags: tagArray,
       data: this.convertTableData(this.props.targetAccount.detailInfo),
@@ -134,6 +155,7 @@ class FormBlogEdit extends Component<Props, State> {
             title: this.props.targetAccount.title,
             description: this.props.targetAccount.description,
             remark: this.props.targetAccount.remark,
+            url: this.props.targetAccount.url,
             groupTags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
             sweetAlert: null
@@ -148,6 +170,7 @@ class FormBlogEdit extends Component<Props, State> {
             title: this.props.targetAccount.title,
             description: this.props.targetAccount.description,
             remark: this.props.targetAccount.remark,
+            url: this.props.targetAccount.url,
             groupTags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
             readyToClose: true,
@@ -174,6 +197,7 @@ class FormBlogEdit extends Component<Props, State> {
             title: this.props.targetAccount.title,
             description: this.props.targetAccount.description,
             remark: this.props.targetAccount.remark,
+            url: this.props.targetAccount.url,
             groupTags: tagArray,
             data: this.convertTableData(nextProps.targetAccount.detailInfo),
             sweetAlert: (
@@ -206,6 +230,7 @@ class FormBlogEdit extends Component<Props, State> {
         title: this.props.targetAccount.title,
         description: this.props.targetAccount.description,
         remark: this.props.targetAccount.remark,
+        url: this.props.targetAccount.url,
         groupTags: tagArray,
         data: this.convertTableData(nextProps.targetAccount.detailInfo),
         sweetAlert: null
@@ -228,44 +253,70 @@ class FormBlogEdit extends Component<Props, State> {
     return tableData;
   };
 
-  /**
-   * ブログ名の変更
-   * @param event
-   */
-  handleChangeTitle = event => {
-    this.setState({
-      title: event.target.value
-    });
-  };
+  requiredField = value => value.length > 3;
 
-  /**
-   * ブログの説明の変更
-   * @param event
-   */
-  handleChangeDescription = event => {
-    this.setState({
-      description: event.target.value
-    });
-  };
-
-  /**
-   * アカウントIDの変更
-   * @param event
-   */
-  handleChangeAccountId = event => {
-    this.setState({
-      accountId: event.target.value
-    });
-  };
-
-  /**
-   * パスワードの変更
-   * @param event
-   */
-  handleChangePassword = event => {
-    this.setState({
-      password: event.target.value
-    });
+  inputFormChange = (event, type) => {
+    switch (type) {
+      case 'email':
+        if (this.verifyEmail(event.target.value)) {
+          this.setState({
+            mailAddress: event.target.value,
+            mailAddressState: 'success'
+          });
+        } else {
+          this.setState({
+            mailAddress: event.target.value,
+            mailAddressState: 'error'
+          });
+        }
+        break;
+      case 'password':
+        if (this.requiredField(event.target.value)) {
+          this.setState({
+            password: event.target.value,
+            passwordState: 'success'
+          });
+        } else {
+          this.setState({
+            password: event.target.value,
+            passwordState: 'error'
+          });
+        }
+        break;
+      case 'title':
+        if (this.requiredField(event.target.value)) {
+          this.setState({
+            title: event.target.value,
+            titleState: 'success'
+          });
+        } else {
+          this.setState({
+            title: event.target.value,
+            titleState: 'eroor'
+          });
+        }
+        break;
+      case 'url':
+        if (isUrl(event.target.value)) {
+          this.setState({
+            url: event.target.value,
+            urlState: 'success'
+          });
+        } else {
+          this.setState({
+            url: event.target.value,
+            urlState: 'error'
+          });
+        }
+        break;
+      case 'description':
+        this.setState({ description: event.target.value });
+        break;
+      case 'remark':
+        this.setState({ remark: event.target.value });
+        break;
+      default:
+    }
   };
 
   /**
@@ -278,15 +329,6 @@ class FormBlogEdit extends Component<Props, State> {
     });
   }
 
-  /**
-   * 備考欄の変更
-   * @param event
-   */
-  handleChangeRemark = event => {
-    this.setState({
-      remark: event.target.value
-    });
-  };
 
   /**
    * ブログ情報を更新するメソッド
@@ -298,6 +340,7 @@ class FormBlogEdit extends Component<Props, State> {
       password: this.state.password,
       mailAddress: this.state.mailAddress,
       title: this.state.title,
+      url: this.state.url,
       description: this.state.description,
       remark: this.state.remark,
       groupTags: this.state.groupTags.join(',')
@@ -323,6 +366,11 @@ class FormBlogEdit extends Component<Props, State> {
       this.props.closeModal();
     }
   };
+
+  openBrowser = event => {
+    shell.openExternal(this.props.targetAccount.url);
+    event.preventDefault();
+  }
 
   render() {
     const { classes } = this.props;
@@ -368,9 +416,20 @@ class FormBlogEdit extends Component<Props, State> {
                         </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={9}>
-                        <FormLabel className={classes.labelHorizontalLessUpperSpaceLeft}>
-                          {this.state.mailAddress}
-                        </FormLabel>
+                          <CustomInput
+                            success={this.state.mailAddressState === 'success'}
+                            error={this.state.mailAddressState === 'error'}
+                            id="mailAddress"
+                            formControlProps={{
+                              fullWidth: true
+                            }}
+                            lessSpace
+                            inputProps={{
+                              type: 'text',
+                              value: this.state.mailAddress,
+                              onChange: event => this.inputFormChange(event, 'mailAddress')
+                            }}
+                          />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
@@ -381,6 +440,8 @@ class FormBlogEdit extends Component<Props, State> {
                       </GridItem>
                       <GridItem xs={12} sm={8}>
                         <CustomInput
+                          success={this.state.titleState === 'success'}
+                          error={this.state.titleState === 'error'}
                           id="title"
                           formControlProps={{
                             fullWidth: true
@@ -389,7 +450,7 @@ class FormBlogEdit extends Component<Props, State> {
                           inputProps={{
                             type: 'text',
                             value: this.state.title,
-                            onChange: event => this.handleChangeTitle(event)
+                            onChange: event => this.inputFormChange(event, 'title')
                           }}
                         />
                       </GridItem>
@@ -409,6 +470,8 @@ class FormBlogEdit extends Component<Props, State> {
                       </GridItem>
                       <GridItem xs={12} sm={8}>
                         <CustomInput
+                          success={this.state.descriptionState === 'success'}
+                          error={this.state.descriptionState === 'error'}
                           id="description"
                           formControlProps={{
                             fullWidth: true
@@ -417,7 +480,7 @@ class FormBlogEdit extends Component<Props, State> {
                           inputProps={{
                             type: 'text',
                             value: this.state.description,
-                            onChange: event => this.handleChangeDescription(event)
+                            onChange: event => this.inputFormChange(event, 'description')
                           }}
                         />
                       </GridItem>
@@ -430,6 +493,8 @@ class FormBlogEdit extends Component<Props, State> {
                       </GridItem>
                       <GridItem xs={12} sm={3}>
                         <CustomInput
+                          success={this.state.accountIdState === 'success'}
+                          error={this.state.accountIdState === 'error'}
                           id="accountId"
                           formControlProps={{
                             fullWidth: true
@@ -438,7 +503,7 @@ class FormBlogEdit extends Component<Props, State> {
                           inputProps={{
                             type: 'text',
                             value: this.state.accountId,
-                            onChange: event => this.handleChangeAccountId(event)
+                            onChange: event => this.inputFormChange(event, 'accountId')
                           }}
                         />
                       </GridItem>
@@ -449,6 +514,8 @@ class FormBlogEdit extends Component<Props, State> {
                       </GridItem>
                       <GridItem xs={12} sm={3}>
                         <CustomInput
+                          success={this.state.passwordState === 'success'}
+                          error={this.state.passwordState === 'error'}
                           id="pass"
                           formControlProps={{
                             fullWidth: true
@@ -457,7 +524,7 @@ class FormBlogEdit extends Component<Props, State> {
                           inputProps={{
                             type: 'text',
                             value: this.state.password,
-                            onChange: event => this.handleChangePassword(event)
+                            onChange: event => this.inputFormChange(event, 'password')
                           }}
                         />
                       </GridItem>
@@ -470,7 +537,7 @@ class FormBlogEdit extends Component<Props, State> {
                       </GridItem>
                       <GridItem xs={12} sm={3}>
                         <CustomInput
-                          id="disabled"
+                          id="createDate"
                           formControlProps={{
                             fullWidth: true
                           }}
@@ -492,15 +559,21 @@ class FormBlogEdit extends Component<Props, State> {
                         </FormLabel>
                       </GridItem>
                       <GridItem xs={12} sm={5}>
-                        <div style={urlSpaceAdjust}>
-                          <a
-                            href={this.props.targetAccount.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {this.props.targetAccount.url}
-                          </a>
-                        </div>
+                        <CustomInput
+                          success={this.state.urlState === 'success'}
+                          error={this.state.urlState === 'error'}
+                          id="url"
+                          formControlProps={{
+                            fullWidth: true
+                          }}
+                          inputProps={{
+                            value: this.state.url,
+                            type: 'text',
+                            placeholder: 'URL',
+                            onChange: event =>
+                              this.inputFormChange(event, 'url')
+                          }}
+                        />
                       </GridItem>
                     </GridContainer>
                     <GridContainer>
@@ -511,7 +584,7 @@ class FormBlogEdit extends Component<Props, State> {
                       </GridItem>
                       <GridItem xs={12} sm={9}>
                         <CustomInput
-                          id="pass"
+                          id="remark"
                           formControlProps={{
                             fullWidth: true
                           }}
@@ -519,7 +592,7 @@ class FormBlogEdit extends Component<Props, State> {
                           inputProps={{
                             type: 'text',
                             value: this.state.remark,
-                            onChange: event => this.handleChangeRemark(event)
+                            onChange: event => this.inputFormChange(event, 'remark')
                           }}
                         />
                       </GridItem>

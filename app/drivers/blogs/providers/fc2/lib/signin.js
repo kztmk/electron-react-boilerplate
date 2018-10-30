@@ -61,6 +61,7 @@ const signin = async (blogInfo, opts) => {
 
     await page.evaluate(`
     new Noty({
+        killer: true,
         type: 'success',
         layout: 'topLeft',
         text:'パスワード入力開始' 
@@ -77,7 +78,9 @@ const signin = async (blogInfo, opts) => {
     log.info(`password:${blogInfo.password}入力完了`);
 
     await page.click('input[value=ログイン]');
+    await page.waitFor('.gtm-hm_logout');
 
+    log.info('found logout link--lonin done');
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });

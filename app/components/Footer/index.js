@@ -2,6 +2,7 @@
 import React from 'react';
 import { ipcRenderer } from "electron";
 import moment from "moment";
+
 import { withStyles } from '@material-ui/core/styles';
 import footerStyle from '../../assets/jss/material-dashboard-pro-react/components/footerStyle';
 
@@ -14,7 +15,7 @@ type Props = {
   blogAccounts: Array<BlogAccountType>
 };
 
-class Footer extends React.Component<Props>{
+class Footer extends React.Component<Props, State>{
 
   componentDidMount() {
     ipcRenderer.on('REQUEST_EXPORT_MAIL_ACCOUNT_JSON', () => {
@@ -60,9 +61,6 @@ class Footer extends React.Component<Props>{
     ipcRenderer.removeAllListeners('REQUEST_EXPORT_MAIL_ACCOUNT_JSON');
     ipcRenderer.removeAllListeners('REQUEST_EXPORT_BLOG_ACCOUNT_JSON');
   }
-
-
-
 
   render() {
     const { classes } = this.props;

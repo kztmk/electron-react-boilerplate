@@ -8,6 +8,7 @@ import moment from 'moment';
 import TagsInput from 'react-tagsinput';
 import matchSorter from 'match-sorter';
 import generatePassword from 'password-generator';
+import Datetime from 'react-datetime';
 
 import { withStyles } from '@material-ui/core/styles';
 import Slide from '@material-ui/core/Slide';
@@ -45,7 +46,7 @@ import type BlogAccountType from '../../types/blogAccount';
 import type PersonalInfoType from '../../types/personalInfo';
 import PuppeteerEmail from '../MailAccountCreate/puppeteerEmail';
 
-import getValidationLink from '../../drivers/emails/imap';
+// import getValidationLink from '../../drivers/emails/imap';
 import GavelPopup from '../Utils/gavel';
 
 function Transition(props) {
@@ -652,7 +653,7 @@ class MailAddressList extends React.Component<Props, State> {
                   filterAll: true
                 },
                 {
-                  Header: () => <span style={{ fontSize: 12 }}>メールアドレス</span>,
+                  Header: () => <Tooltip title="=(半角イコール)だけで、+付きのエイリアスアドレス抜きの結果を表示します。"><span style={{ fontSize: 12 }}>メールアドレス</span></Tooltip>,
                   Cell: row => (
                     <Tooltip
                       id={row.original.id}
@@ -663,8 +664,8 @@ class MailAddressList extends React.Component<Props, State> {
                     </Tooltip>
                   ),
                   accessor: 'accountId',
-                  width: 215,
-                  maxWidth: 215,
+                  width: 210,
+                  maxWidth: 210,
                   filterable: true,
                   sortable: true,
                   Filter: ({ filter, onChange }) => (
@@ -675,8 +676,12 @@ class MailAddressList extends React.Component<Props, State> {
                       onChange={event => onChange(event.target.value)}
                     />
                   ),
-                  filterMethod: (filter, rows) =>
-                    matchSorter(rows, filter.value, { keys: ['accountId'] }),
+                  filterMethod: (filter, rows) => {
+                    if (filter.value === '=') {
+                      return rows.filter(row => row.accountId.indexOf('+') === -1)
+                    }
+                      return matchSorter(rows, filter.value, { keys: ['accountId'] })
+                  },
                   filterAll: true
                 },
                 {
@@ -716,51 +721,115 @@ class MailAddressList extends React.Component<Props, State> {
                   }
                 },
                 {
-                  Header: () => <span style={{ fontSize: 12 }}>最終ログイン</span>,
+                  Header: () => <Tooltip title='検索日付の最後に、半角記号を追加することで、<で以降、＝で当日に絞り込めます。何も付けない場合には、以前になります。' placement='top'><span style={{ fontSize: 12 }}>最終ログイン</span></Tooltip>,
                   accessor: 'lastLogin',
-                  width: 120,
+                  width: 100,
                   filterable: true,
                   sortable: true,
+                  Cell: row => (
+                    <Tooltip title={`最終ログイン:${row.original.lastLogin}`} placement='bottom'>
+                      <div>{row.original.lastLogin.length > 0 ? moment(row.original.lastLogin).format('YYYY/MM/DD') : ''}</div>
+                    </Tooltip>
+                  ),
                   Filter: ({ filter, onChange }) => (
-                    <input
-                      type="text"
-                      placeholder="YYYY/MM/DDより前"
-                      value={filter ? filter.value : ''}
-                      onChange={event => onChange(event.target.value)}
-                      style={{ fontSize: 12 }}
-                    />
+                      <Datetime
+                        className={classes.inputMyDatePickerControl}
+                        dateFormat="YYYY/MM/DD"
+                        timeFormat={false}
+                        // eslint-disable-next-line react/jsx-boolean-value
+                        closeOnSelect={true}
+                        inputProps={{ placeholder: 'YYYY/MM/DD', className: 'inputMyDateStyle' }}
+                        direction="down"
+                        locale="ja"
+                        onChange={value =>
+                          onChange(value)
+                        }
+                        value={filter ? filter.value : ''}
+                      />
                   ),
                   filterMethod: (filter, row) => {
                     if (row[filter.id].length === 0) {
                       return row[filter.id];
                     }
-                    if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                    if (typeof filter.value === 'string') {
+                      if (filter.value.length > 2) {
+                        const compare = filter.value.slice(-1);
+                        const datePart = filter.value.substr(0, filter.value.length - 1);
+                        switch (compare) {
+                          case  '>':
+                            if (moment(row[filter.id]) > moment(datePart)) return row[filter.id];
+                            break;
+                          case '=':
+                            if (compare === '=' && /\d{4}\/\d{2}\/\d{2}/.test(datePart)) {
+                              if ((moment(row[filter.id]) <= moment(`${datePart} 23:59:59`)) && (moment(row[filter.id]) >= moment(`${datePart} 00:00:00`))) return row[filter.id];
+                            }
+                            break;
+                          case '<':
+                            if (moment(row[filter.id]) < moment(datePart)) return row[filter.id];
+                            break;
+                          default:
+                            if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                        }
+                      }
+                    } else if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
                   }
                 },
                 {
-                  Header: () => <span style={{ fontSize: 12 }}>作成日</span>,
+                  Header: () => <Tooltip title='検索日付の最後に、半角記号を追加することで、<で以降、＝で当日に絞り込めます。何も付けない場合には、以前になります。' placement='top'><span style={{ fontSize: 12 }}>作成日</span></Tooltip>,
                   accessor: 'createDate',
-                  width: 120,
+                  width: 100,
                   filterable: true,
                   sortable: true,
+                  Cell: row => (
+                    <Tooltip title={`作成日:${row.original.createDate}`} placement='bottom'>
+                      <div>{moment(row.original.createDate).format('YYYY/MM/DD')}</div>
+                    </Tooltip>
+                  ),
                   Filter: ({ filter, onChange }) => (
-                    <input
-                      type="text"
-                      placeholder="YYYY/MM/DDより前"
-                      value={filter ? filter.value : ''}
-                      onChange={event => onChange(event.target.value)}
-                      style={{ fontSize: 12 }}
-                    />
+                      <Datetime
+                        className={classes.inputMyDatePickerControl}
+                        dateFormat="YYYY/MM/DD"
+                        timeFormat={false}
+                        // eslint-disable-next-line react/jsx-boolean-value
+                        closeOnSelect={true}
+                        inputProps={{ placeholder: 'YYYY/MM/DD' }}
+                        direction="down"
+                        locale="ja"
+                        onChange={value =>
+                          onChange(value)
+                        }
+                        value={filter ? filter.value : ''}
+                      />
                   ),
                   filterMethod: (filter, row) => {
                     if (row[filter.id].length === 0) {
                       return row[filter.id];
                     }
-                    if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                    if (typeof filter.value === 'string') {
+                      if (filter.value.length > 2) {
+                        const compare = filter.value.slice(-1);
+                        const datePart = filter.value.substr(0, filter.value.length - 1);
+                        switch (compare) {
+                          case  '>':
+                            if (moment(row[filter.id]) > moment(datePart)) return row[filter.id];
+                            break;
+                          case '=':
+                            if (compare === '=' && /\d{4}\/\d{2}\/\d{2}/.test(datePart)) {
+                              if ((moment(row[filter.id]) <= moment(`${datePart} 23:59:59`)) && (moment(row[filter.id]) >= moment(`${datePart} 00:00:00`))) return row[filter.id];
+                            }
+                            break;
+                          case '<':
+                            if (moment(row[filter.id]) < moment(datePart)) return row[filter.id];
+                            break;
+                          default:
+                            if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
+                        }
+                      }
+                    } else if (moment(row[filter.id]) < moment(filter.value)) return row[filter.id];
                   }
                 },
                 {
-                  width: 170,
+                  width: 180,
                   Header: '',
                   accessor: 'actions',
                   sortable: false,
@@ -779,6 +848,7 @@ class MailAddressList extends React.Component<Props, State> {
               ofText="/"
               rowsText="行"
               onPageSizeChange={pageSize => this.props.setPageSize(pageSize)}
+              getTheadFilterThProps={() => { return { style: { position: "inherit", overflow: "inherit" } } }}
             />
             {this.state.sweetAlert}
             <Dialog

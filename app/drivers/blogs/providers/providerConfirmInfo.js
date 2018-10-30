@@ -58,6 +58,12 @@ const confirmMails = [
     sender: 'info@goo.ne.jp',
     link: 'https://login.mail.goo.ne.jp/id/portal/RegUserProfile?MailKey',
     regx: 'https:\\/\\/login\\.mail\\.goo\\.ne\\.jp\\/id\\/portal\\/RegUserProfile\\?MailKey.*$'
+  },
+  {
+    provider: 'webnode',
+    sender: 'no-reply@webnode.com',
+    link: 'https://www.webnode.com/ver/?h=',
+    regx: 'https:\\/\\/www\\.webnode\\.com\\/ver\\/\\?h=.*$'
   }
 ];
 

@@ -146,6 +146,14 @@ export function AtmarkIcon(props) {
     </SvgIcon>
   );
 }
+
+export function ContactMail(props) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M21,8V7L18,9L15,7V8L18,10M22,3H2A2,2 0 0,0 0,5V19A2,2 0 0,0 2,21H22A2,2 0 0,0 24,19V5A2,2 0 0,0 22,3M8,6A3,3 0 0,1 11,9A3,3 0 0,1 8,12A3,3 0 0,1 5,9A3,3 0 0,1 8,6M14,18H2V17C2,15 6,13.9 8,13.9C10,13.9 14,15 14,17M22,12H14V6H22" />
+    </SvgIcon>
+  );
+}
 // <path fill="#000000" d="M23.5,17L18.5,22L15,18.5L16.5,17L18.5,19L22,15.5L23.5,17M1,6V18A2,2 0 0,0 3,20H13V18H3V8.37L11,13.36L19,8.37V13H21V6A2,2 0 0,0 19,4H3C1.89,4 1,4.89 1,6M3,6H19L11,11L3,6Z" />
 /*
 export function TemplateIcon(props) {

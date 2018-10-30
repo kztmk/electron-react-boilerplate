@@ -53,6 +53,7 @@ type Props = {
   startUpdateBlogAccount: (blogAccount: BlogAccountType) => void,
   startDeleteBlogAccount: (blogAccount: BlogAccountType) => void,
   startSetPageSize: (pageSize: number) => void,
+  startUpdateMailLastLogin: (mailAccount: MailAccountType) => void,
   blogAccounts: Array<BlogAccountType>,
   isGetting: boolean,
   isCreating: boolean,
@@ -62,7 +63,8 @@ type Props = {
   isFailure: boolean,
   metaMessage: string,
   transAccounts: Array<BlogAccountType>,
-  pageSize: number
+  pageSize: number,
+  mailAccounts: Array<MailAccountType>
 };
 
 const Transition = props => <Slide direction="down" {...props} />;
@@ -483,6 +485,8 @@ class BlogListPage extends React.Component<Props, State> {
                     deleteAccount={this.props.startDeleteBlogAccount}
                     editAccount={this.props.startUpdateBlogAccount}
                     setPageSize={this.props.startSetPageSize}
+                    updateMailLastLogin = {this.props.startUpdateMailLastLogin}
+                    mailAccounts = {this.props.mailAccounts}
                   />
                 </div>
               </CardBody>

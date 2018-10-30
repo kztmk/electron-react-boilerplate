@@ -1,5 +1,6 @@
 // @flow
 import type { BlogAccountType } from '../../types/blogAccount';
+import type FeedType from '../../types/feed';
 
 export const GET_BLOGS_REQUEST: 'BlogList/GET_BLOGS_REQUEST' =
   'BlogList/GET_BLOGS_REQUEST';

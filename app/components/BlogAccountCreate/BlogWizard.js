@@ -343,6 +343,7 @@ class BlogWizard extends React.Component<Props, State> {
       const blogInfo = {};
 
       // 共通のデータ
+      blogInfo.isFirstBlog = this.state.isFirstBlog;
       blogInfo.accountId = this.state.accountInfo.accountId;
       blogInfo.password = this.state.accountInfo.password;
       blogInfo.mailAddress = this.state.accountInfo.mailAddress;
@@ -538,17 +539,18 @@ class BlogWizard extends React.Component<Props, State> {
   };
 
   createBlogAccount = (blogInfo, dbFields, userFields) => {
-    let testPass = false;
-
     // save to database
     let url = 'https://';
     switch (blogInfo.provider) {
       case 'fc2':
         url += `${blogInfo.accountId}.blog.fc2.com/`;
-        testPass = true;
         break;
       case 'webnode':
-        url += `${userFields.subdomain}.webnode.jp`;
+        if (blogInfo.isFirstBlog) {
+          url += `${blogInfo.accountId}.webnode.jp`
+        } else {
+          url += `${userFields.subdomain}.webnode.jp`;
+        }
         break;
       case 'livedoor':
         if ((userFields.useDomainValue) && (userFields.domainValue.length > 0)) {
@@ -556,67 +558,40 @@ class BlogWizard extends React.Component<Props, State> {
         } else {
           url =  `http://${blogInfo.accountId}.livedoor.blog/`
         }
-        testPass = true;
         break;
       case 'seesaa':
         url = `http://${blogInfo.accountId}.seesaa.net`;
-        testPass = true;
         break;
       case 'ameba':
         url = `http://ameblo.jp/${blogInfo.accountId}/`;
-        testPass = true;
         break;
       case 'rakuten':
-        testPass = true;
         url += `plaza.rakuten.co.jp/${blogInfo.accountId}/`;
         break;
       case 'kokolog':
-        testPass = true;
         url = `http://${blogInfo.accountId}.cocolog-nifty.com/`;
         break;
       case 'yaplog':
-        testPass = true;
         url += `yaplog.jp/${blogInfo.accountId}`;
         break;
       case 'ninjya':
         url = `http://${blogInfo.accountId}.${userFields.domainValue}`;
-        testPass = true;
         break;
       case 'hatena':
-        testPass = true;
         url = `http://${blogInfo.accountId}.${userFields.domainValue}`;
         break;
       case 'webryblog':
-        testPass = true;
         url = `http://${blogInfo.accountId}.at.webry.info/`;
         break;
       case 'wpcom':
         url += ``;
         break;
       case 'goo':
-        testPass = true;
         url += `blog.goo.ne.jp/${blogInfo.accountId}`;
         break;
       default:
     }
 
-    console.log(`test pass:${testPass}`);
-    if (!testPass) {
-      this.setState({
-        sweetAlert: (
-          <SweetAlert
-            style={{ display: 'block', marginTop: '-100px' }}
-            title="テスト中"
-            onConfirm={() => this.hideAlert()}
-            onCancel={() => this.hideAlert()}
-            confirmBtnCssClass={`${this.props.classes.button} ${this.props.classes.info}`}
-          >
-            {blogInfo.provider}は、現在テスト中です。
-          </SweetAlert>
-        )
-      });
-      return;
-    }
     const newAccount = {
       key: '',
       accountId: blogInfo.accountId,
