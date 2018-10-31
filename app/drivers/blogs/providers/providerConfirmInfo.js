@@ -64,6 +64,12 @@ const confirmMails = [
     sender: 'no-reply@webnode.com',
     link: 'https://www.webnode.com/ver/?h=',
     regx: 'https:\\/\\/www\\.webnode\\.com\\/ver\\/\\?h=.*$'
+  },
+  {
+    provider: 'wpcom',
+    sender: 'donotreply@wordpress.com',
+    link: 'https://public-api.wordpress.com/bar/?stat=groovemails-events&bin=wpcom_email_click',
+    regx: 'https:\\/\\/public-api\\.wordpress\\.com\\/bar\\/\\?stat=groovemails-events&bin=wpcom_email_click.*$'
   }
 ];
 

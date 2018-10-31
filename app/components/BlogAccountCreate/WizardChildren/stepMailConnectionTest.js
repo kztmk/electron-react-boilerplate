@@ -279,7 +279,7 @@ class StepMailConnectionTest extends Component<Props, State> {
     }
 
     // goo
-    // creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'goo');
+    creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'goo');
     // fc2
     if (createdBlogs.find(b => b.provider === 'fc2')) {
       creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'fc2');

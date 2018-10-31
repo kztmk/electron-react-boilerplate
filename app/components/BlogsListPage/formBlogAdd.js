@@ -238,7 +238,7 @@ class FormBlogAdd extends Component<Props, State> {
         } else {
           this.setState({
             title: event.target.value,
-            titleState: 'eroor'
+            titleState: 'error'
           });
         }
         break;
@@ -404,7 +404,7 @@ class FormBlogAdd extends Component<Props, State> {
                         onClick={this.props.closeForm}
                       >
                         <Cancel style={iconStyle} />
-                        キャンセル
+                        閉じる
                       </Button>
                       <Button
                         color="primary"
@@ -886,7 +886,7 @@ class FormBlogAdd extends Component<Props, State> {
               icon={AddAlert}
               message={this.state.errorMessage}
               open={this.state.openErrorDialog}
-              action={() => this.setState({ openErrorDialog: false })}
+              closeNotification={() => this.setState({ openErrorDialog: false, errorMessage: '' })}
               close
             />
             <Snackbar
@@ -895,7 +895,7 @@ class FormBlogAdd extends Component<Props, State> {
               icon={AddAlert}
               message={this.state.errorMessage}
               open={this.state.openSuccessDialog}
-              action={() => this.addAccountSuccess()}
+              closeNotification={() => this.addAccountSuccess()}
               close
             />
           </GridItem>

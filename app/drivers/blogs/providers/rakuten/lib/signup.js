@@ -438,6 +438,7 @@ const signup = async (blogInfo, opts) => {
         await page.click('#myplaza_regist_base_url');
         await delay(waitRandom());
         await page.type('#myplaza_regist_base_url', blogInfo.accountId, { delay: waitRandom() });
+        log.info(`input url:${blogInfo.accountId}`);
         await page.evaluate(`
     new Noty({
         type: 'success',
@@ -458,6 +459,16 @@ const signup = async (blogInfo, opts) => {
           const AntiCaptchaAPI = new AntiCaptcha(antiCaptchaKey);
 
           const pageUrl = await page.url();
+
+          let counter = 0;
+          let precheck ;
+          do {
+            await delay(500);
+            counter += 1;
+            console.log(`counter:${counter}`);
+            precheck = await page.$('.g-recaptcha');
+          } while (precheck === null || counter  < 4);
+
           const siteKey = await page.$eval('.g-recaptcha', (el, attribute) => el.getAttribute(attribute), 'data-sitekey');
           log.info('google reCaptcha found');
 

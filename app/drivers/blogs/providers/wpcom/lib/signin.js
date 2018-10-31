@@ -17,7 +17,7 @@ const signin = async (blogInfo, opts) => {
   const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
   const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
-  log.info('--------->login to  goo blog account--------->');
+  log.info('--------->login to  fc2 blog account--------->');
   log.info('-----------user----------');
   log.info(blogInfo);
   log.info('-------------------------');
@@ -26,10 +26,10 @@ const signin = async (blogInfo, opts) => {
 
   log.info('create: browser page');
   try {
-    // Goo login/signup page
-    await page.goto(`https://blog.goo.ne.jp/`, { waitUntil: 'load' });
+    // Fc2 login/signup page
+    await page.goto(`https://fc2.com/login.php?ref=blog`, { waitUntil: 'load' });
 
-    log.info('access: https://blog.goo.ne.jp/');
+    log.info('access: https://fc2.com/login.php?ref=blog');
 
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
@@ -38,27 +38,10 @@ const signin = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'gooブログ ログインページアクセス完了' 
+        text:'FC2ブログ ログインページアクセス完了' 
       }).show();
     `);
 
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ログインボタンをクリック' 
-      }).show();
-    `);
-    await page.click(
-      'img[src="https://blogimg.goo.ne.jp/img/static/global/cmm/button/login.gif"]'
-    );
-    log.info('click login button');
-    await page.waitFor('#uname');
-
-    // login page
-    await page.addScriptTag({ path: notyJsPath });
-    await page.addStyleTag({ path: notyCssPath });
-    await page.addStyleTag({ path: notyThemePath });
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -66,7 +49,7 @@ const signin = async (blogInfo, opts) => {
         text:'メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('#uname', blogInfo.accountId);
+    await page.type('#id', blogInfo.mailAddress);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -74,10 +57,11 @@ const signin = async (blogInfo, opts) => {
         text:'メールアドレス入力完了' 
       }).show();
     `);
-    log.info(`mailAddress:${blogInfo.accountId}入力完了`);
+    log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
 
     await page.evaluate(`
     new Noty({
+        killer: true,
         type: 'success',
         layout: 'topLeft',
         text:'パスワード入力開始' 
@@ -93,17 +77,10 @@ const signin = async (blogInfo, opts) => {
     `);
     log.info(`password:${blogInfo.password}入力完了`);
 
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ログインボタンをクリック' 
-      }).show();
-    `);
-    await delay(800);
-    await page.click('#gooid_login');
-    await page.waitFor('input[value="ログアウト"]');
+    await page.click('input[value=ログイン]');
+    await page.waitFor('.gtm-hm_logout');
 
+    log.info('found logout link--lonin done');
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -112,7 +89,7 @@ const signin = async (blogInfo, opts) => {
         timeout:3000,
         type: 'success',
         layout: 'topLeft',
-        text:'Gooブログ ログイン完了' 
+        text:'FC2ブログ ログイン完了' 
       }).show();
     `);
   } catch (error) {

@@ -52,7 +52,9 @@ const signup = async (user, opts) => {
         text:'Yahooメールリンクをクリックしました。' 
       }).show();
     `);
-    await page.click('.Personalbox__noticeItem--mail > .Personalbox__noticeLink');
+    await page.click(
+      '.Personalbox__noticeItem--mail > .Personalbox__noticeLink'
+    );
     await page.waitForSelector('.button--main');
 
     log.info('click:[Yahoo!メール]');
@@ -174,7 +176,11 @@ const signup = async (user, opts) => {
         delay: 33
       }
     ); // birthdate YYYYMMDD
-    log.info(`input:[生年月日]-${user.birthday.year}/${user.birthday.month}/${user.birthday.day}`);
+    log.info(
+      `input:[生年月日]-${user.birthday.year}/${user.birthday.month}/${
+        user.birthday.day
+      }`
+    );
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -374,6 +380,7 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
 
+    await page.click('#nonexistence');
     await page.evaluate(`
     new Noty({
         type: 'success',

@@ -205,7 +205,10 @@ async function getValidationLink(mailCriteria) {
       console.log(message['body[]']);
 
       let contentMsg = message['body[]'];
-      if (mailCriteria.blogProvider === 'yaplog') {
+      if (
+        mailCriteria.blogProvider === 'yaplog' ||
+        mailCriteria.blogProvider === 'wpcom'
+      ) {
         const myMimeNodes = parse(message['body[]']);
         console.log('-----------body parse-----------');
         console.log(myMimeNodes);

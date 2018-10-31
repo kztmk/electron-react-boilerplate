@@ -5,6 +5,7 @@ import AntiCaptcha from "anticaptcha";
 import getValidationLink from '../../../../emails/imap';
 import antiCaptchaKey from "../../../../../database/antiCaptcha";
 
+const waitRandom = () => Math.floor(Math.random() * 501)
 
 const prefectures = [
   {val:"1", prefecture:"北海道"},
@@ -85,7 +86,7 @@ const signup = async (blogInfo, opts) => {
     await page.goto(`https://www.yaplog.jp/`, { waitUntil: 'load' });
 
     log.info('access: https://www.yaplog.jp/');
-
+    await delay(waitRandom());
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -108,6 +109,7 @@ const signup = async (blogInfo, opts) => {
     await page.waitForSelector('input[name="email"]');
 
     // mailAddress input & captcha
+    await delay(waitRandom());
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -118,7 +120,8 @@ const signup = async (blogInfo, opts) => {
         text:'メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('input[name="email"]', blogInfo.mailAddress);
+    await page.click('input[name="email"]');
+    await page.type('input[name="email"]', blogInfo.mailAddress, {delay: waitRandom()});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -128,6 +131,7 @@ const signup = async (blogInfo, opts) => {
     `);
     log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
 
+    await delay(waitRandom());
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -209,6 +213,7 @@ const signup = async (blogInfo, opts) => {
       await page.waitForSelector('input[name="basePassword"]');
 
       log.info('本登録URLへアクセス完了');
+      await delay(waitRandom());
       await page.addScriptTag({ path: notyJsPath });
       await page.addStyleTag({ path: notyCssPath });
       await page.addStyleTag({ path: notyThemePath });
@@ -226,7 +231,10 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-      await page.type('input[name="basePassword"]', blogInfo.password);
+      await delay(waitRandom());
+      await page.click('input[name="basePassword"]');
+      await delay(waitRandom());
+      await page.type('input[name="basePassword"]', blogInfo.password, {delay: waitRandom()});
       log.info(`input password:${blogInfo.password}`);
       await page.evaluate(`
     new Noty({
@@ -235,6 +243,8 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード入力完了' 
       }).show();
     `);
+
+      await delay(waitRandom());
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -242,7 +252,10 @@ const signup = async (blogInfo, opts) => {
         text:'パスワード(確認)入力開始' 
       }).show();
     `);
-      await page.type('input[name="basePasswordConfirm"]', blogInfo.password);
+      await delay(waitRandom());
+      await page.click('input[name="basePasswordConfirm"]');
+      await delay(waitRandom());
+      await page.type('input[name="basePasswordConfirm"]', blogInfo.password, {delay: waitRandom()});
       log.info(`input password confirm`);
       await page.evaluate(`
     new Noty({
@@ -253,14 +266,18 @@ const signup = async (blogInfo, opts) => {
     `);
 
       // yaplogID
+    await delay(waitRandom());
     await page.evaluate(`
     new Noty({
+        killer: true,
         type: 'success',
         layout: 'topLeft',
         text:'ヤプログ！ID入力開始' 
       }).show();
     `);
-    await page.type('input[name="memberId"]', blogInfo.accountId);
+    await page.click('input[name="memberId"]');
+    await delay(waitRandom());
+    await page.type('input[name="memberId"]', blogInfo.accountId, {delay: waitRandom()});
     log.info(`input: blogID:${blogInfo.accountId}`);
     await page.evaluate(`
     new Noty({
@@ -271,6 +288,7 @@ const signup = async (blogInfo, opts) => {
     `);
 
     // title
+    await delay(waitRandom());
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -278,7 +296,9 @@ const signup = async (blogInfo, opts) => {
         text:'ブログタイトル入力開始' 
       }).show();
     `);
-    await page.type('input[name="blogName"]', blogInfo.title);
+    await page.click('input[name="blogName"]');
+    await delay(waitRandom());
+    await page.type('input[name="blogName"]', blogInfo.title, {delay: waitRandom()});
     log.info(`input blog title:${blogInfo.title}`);
     await page.evaluate(`
     new Noty({
@@ -288,6 +308,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+     await delay(waitRandom() + 540);
       await page.evaluate(`
     new Noty({
         killer: true,
@@ -319,6 +340,7 @@ const signup = async (blogInfo, opts) => {
       }
 
       // birth date
+    await delay(waitRandom());
       const birthDateParts = blogInfo.birthDate.split('/');
     await page.evaluate(`
     new Noty({
@@ -328,6 +350,8 @@ const signup = async (blogInfo, opts) => {
         text:'生年月日-[年]-選択開始' 
       }).show();
     `);
+    await page.click(`select[name="birthYear"]`);
+    await delay(waitRandom());
     await page.select(`select[name="birthYear"]`, birthDateParts[0]);
     log.info(`input birth year:${birthDateParts[0]}`);
     await page.evaluate(`
@@ -338,6 +362,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+    await delay(waitRandom());
       await page.evaluate(`
     new Noty({
         killer: true,
@@ -346,6 +371,8 @@ const signup = async (blogInfo, opts) => {
         text:'生年月日-[月]-選択開始' 
       }).show();
     `);
+      await page.click(`select[name="birthMonth"]`);
+      await delay(waitRandom());
       await page.select(`select[name="birthMonth"]`, birthDateParts[1]);
       log.info(`input birth month:${birthDateParts[1]}`);
       await page.evaluate(`
@@ -355,13 +382,18 @@ const signup = async (blogInfo, opts) => {
         text:'生年月日-[月]-選択完了' 
       }).show();
     `);
+
+      await delay(waitRandom());
       await page.evaluate(`
     new Noty({
+        killer: true,
         type: 'success',
         layout: 'topLeft',
         text:'生年月日-[日]-選択開始' 
       }).show();
     `);
+      await page.click(`select[name="birthDay"]`);
+      await delay(waitRandom());
       await page.select(`select[name="birthDay"]`, birthDateParts[2]);
       log.info(`input birth date:${birthDateParts[2]}`);
       await page.evaluate(`
@@ -372,6 +404,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+      await delay(waitRandom());
       // prefecture
     const prefecture = prefectures.find(p => p.prefecture === blogInfo.prefecture);
       await page.evaluate(`
@@ -382,6 +415,8 @@ const signup = async (blogInfo, opts) => {
         text:'都道府県選択開始' 
       }).show();
     `);
+      await page.click(`select[name="prefecture_code"]`);
+      await delay(waitRandom());
       await page.select(`select[name="prefecture_code"]`, prefecture.val);
       log.info(`input prefecture:${prefecture.val}-${prefecture.prefecture}`);
       await page.evaluate(`
@@ -392,6 +427,7 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+      await delay(waitRandom());
       await page.evaluate(`
     new Noty({
         type: 'success',
@@ -404,6 +440,7 @@ const signup = async (blogInfo, opts) => {
       await page.waitFor('h1.step02');
 
       // Yaplog登録完了ページ
+    await delay(waitRandom()+620);
     log.info('access Yaplog登録完了ページ')
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
@@ -419,12 +456,19 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
       const AntiCaptchaAPI = new AntiCaptcha(antiCaptchaKey);
-
+      console.log('start anti captcha');
       const pageUrl = await page.url();
-      const precheck = await page.$('.g-recaptcha')
-      if (!precheck) {
-        await delay(1000);
-      }
+      console.log(`page url:${pageUrl}`);
+
+      let counter = 0;
+      let precheck ;
+      do {
+        await delay(500);
+        counter += 1;
+        console.log(`counter:${counter}`);
+        precheck = await page.$('.g-recaptcha');
+      } while (precheck === null || counter  < 4);
+
       const siteKey = await page.$eval('.g-recaptcha', (el, attribute) => el.getAttribute(attribute), 'data-sitekey');
       log.info('google reCaptcha found');
 

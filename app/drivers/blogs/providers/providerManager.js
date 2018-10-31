@@ -10,7 +10,8 @@ import BlogProviderJugem from './jugem';
 import BlogProviderHatena from './hatena';
 import BlogProviderWebryBlog from './webryBlog';
 import BlogProviderGoo from './goo';
-import BlogProviderWebnode from './webnode';
+import BlogProviderWebnode from './webNode';
+import BlogProviderWpcom from './wpcom';
 
 class BlogProviderManager {
   constructor() {
@@ -27,7 +28,8 @@ class BlogProviderManager {
       hatena: BlogProviderHatena,
       webryblog: BlogProviderWebryBlog,
       goo: BlogProviderGoo,
-      webnode: BlogProviderWebnode
+      webnode: BlogProviderWebnode,
+      wpcom: BlogProviderWpcom
     };
   }
 

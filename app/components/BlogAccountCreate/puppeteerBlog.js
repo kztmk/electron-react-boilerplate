@@ -44,6 +44,9 @@ class PuppeteerBlog {
       case 'webnode':
         this.client = new BlogDriver('webnode');
         break;
+      case 'wpcom':
+        this.client = new BlogDriver('wpcom');
+        break;
       default:
     }
   }

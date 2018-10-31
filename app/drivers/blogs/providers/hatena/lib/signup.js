@@ -507,7 +507,7 @@ const signup = async (blogInfo, opts) => {
     `);
 
     // #globalheader #current-blog > span > a
-    const frame = await page.frames().find(f => f.name() === '#globalheader');
+    const frame = await page.frames().find(f => f.name() === 'globalheader');
     if (!frame) {
       log.warn('ブログヘッダが見つかりません。');
       throw new Error('ブログヘッダが見つかりません。');
