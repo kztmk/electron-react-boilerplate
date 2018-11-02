@@ -120,10 +120,12 @@ const signup = async (blogInfo, opts) => {
         text:'[続ける]ボタンをクリック' 
       }).show();
     `);
-    await page.click('button.button.signup-form__submit.form-button.is-primary')
+    await page.click(
+      'button.button.signup-form__submit.form-button.is-primary'
+    );
     log.info('click continue');
     await page.evaluate(`Noty.closeAll();`);
-    await page.waitForSelector('#siteTitle', {visible: true});
+    await page.waitForSelector('#siteTitle', { visible: true });
 
     // step2
     // user name
@@ -186,7 +188,7 @@ const signup = async (blogInfo, opts) => {
     const segmentedControls = await page.$$('.segmented-control__link');
     if (segmentedControls.length > 0) {
       await segmentedControls[1].click();
-      log.info('click サイト作成の自信： 2')
+      log.info('click サイト作成の自信： 2');
     }
     await page.evaluate(`
     new Noty({
@@ -201,7 +203,7 @@ const signup = async (blogInfo, opts) => {
     // #primary > div > div.signup__steps > div > div > div > div.about__wrapper > div.about__form-wrapper > form > div.about__submit-wrapper > button
     await page.click('div.about__submit-wrapper > button');
     log.info('click continue');
-    await page.waitFor('#search-component-17');
+    await page.waitFor('input[type="search"]');
 
     await delay(1000);
 
@@ -212,7 +214,7 @@ const signup = async (blogInfo, opts) => {
         text:'サイトアドレス入力開始' 
       }).show();
     `);
-    await page.type('#search-component-17', blogInfo.accountId);
+    await page.type('input[type="search"]', blogInfo.accountId);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -220,16 +222,20 @@ const signup = async (blogInfo, opts) => {
         text:'サイトアドレス入力完了' 
       }).show();
     `);
-    log.info(`description:${blogInfo.accountId}入力完了`);
-    await page.waitForSelector('.domain-search-results', {visible: true});
+    log.info(`site url:${blogInfo.accountId}入力完了`);
+    await page.waitForSelector('div.domain-search-results', { visible: true });
+    await delay(5000);
 
     // div.domain-suggestion.card.is-compact.is-clickable
-    const suggestions = await page.$$('div.domain-suggestion.card.is-compact.is-clickable');
-
+    const suggestions = await page.$$(
+      'div.domain-suggestion.card.is-compact.is-clickable'
+    );
     console.log(`suggestions:${suggestions.length}`);
     let foundSuggestionFree = false;
-    for (let i = 0; i < suggestions.length; i = +1) {
-      const textContent = await (await suggestions[i].getProperty('textContent')).jsonValue();
+    for (let i = 0; i < suggestions.length; i += 1) {
+      const textContent = await (await suggestions[i].getProperty(
+        'textContent'
+      )).jsonValue();
       console.log('----text content--');
       console.log(textContent);
 
@@ -242,21 +248,47 @@ const signup = async (blogInfo, opts) => {
     }
 
     if (!foundSuggestionFree) {
-      throw new Error('無料のドメインが見つかりません。');
+      const freeCard = await page.$$eval(
+        'div.domain-suggestion.card.is-compact.is-clickable',
+        items => {
+          items.find(item => {
+            console.log(`textContent:${item.textContent}`);
+            return item.textContent.indexOf('無料') > -1;
+          });
+        }
+      );
+      if (freeCard) {
+        await freeCard.click();
+        foundSuggestionFree = true;
+        log.info('click free plan');
+      }
+      if (!foundSuggestionFree) {
+        throw new Error('無料のドメインが見つかりません。');
+      }
     }
 
-    await page.waitForSelector('.plan-features__actions', {visible: true});
-    await delay(1000);
+    // signup__step is-plans signup__step-enter-done
+    await page.waitFor(() => !!document.querySelector('.signup__step.is-plans.signup__step-enter-done'));
+    log.info('access step4');
+    await delay(1500);
 
-    await page.click('button.button.plan-features__actions-button.is-free-plan');
-    await page.waitForSelector('button.button.email-confirmation__button.is-primary');
+    await page.click(
+      'button.button.plan-features__actions-button.is-free-plan'
+    );
+    log.info('click start free button');
+    await page.waitForSelector(
+      'button.button.email-confirmation__button.is-primary'
+    );
 
     await delay(1000);
     await page.click('button.button.email-confirmation__button.is-primary');
 
     await page.waitForSelector('header.formatted-header');
 
-    const title = await page.$eval('header.formatted-header', item => item.textContent);
+    const title = await page.$eval(
+      'header.formatted-header',
+      item => item.textContent
+    );
     if (title && title.indexOf('サイトが巻き戻されました') > -1) {
       log.info('WordPress.com作成完了');
     }
@@ -284,14 +316,16 @@ const signup = async (blogInfo, opts) => {
         // 本登録URLへアクセス プロフィールの入力ページ
         [validationUrl] = result;
       } else {
-        log.warn('本登録用リンクが見つかりません。')
-        throw new Error('registration link not found')
+        log.warn('本登録用リンクが見つかりません。');
+        throw new Error('registration link not found');
       }
     } catch (error) {
-      log.warn('本登録用リンク取得中にエラーが発生しました。')
+      log.warn('本登録用リンク取得中にエラーが発生しました。');
       log.warn(error.toString());
 
-      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', { waitUntil: 'load' });
+      await page.goto('https://tools.yoriki.cloud/enter_url/index.html', {
+        waitUntil: 'load'
+      });
 
       const { value: url } = await page.evaluate(`
         swal({
@@ -316,17 +350,17 @@ const signup = async (blogInfo, opts) => {
       }
     }
 
-      log.info(`本登録URL:${validationUrl}`);
+    log.info(`本登録URL:${validationUrl}`);
 
-      // 本登録URLへアクセス プロフィールの入力ページ
-      await page.goto(validationUrl);
-      await page.waitForSelector('header.formatted-header__title');
-      log.info('本登録URLへアクセス完了');
+    // 本登録URLへアクセス プロフィールの入力ページ
+    await page.goto(validationUrl);
+    await page.waitForSelector('header.formatted-header__title');
+    log.info('本登録URLへアクセス完了');
 
-          await page.addStyleTag({ path: swa2Css });
-          await page.addScriptTag({ path: swa2Js });
+    await page.addStyleTag({ path: swa2Css });
+    await page.addScriptTag({ path: swa2Js });
 
-          const closeConfirm = await page.evaluate(`swal({
+    const closeConfirm = await page.evaluate(`swal({
       title: 'Wpcomブログの作成が完了しました。',
       text: 'ブラウザを閉じてもよろしいですか？',
       showCancelButton: true,
@@ -337,9 +371,9 @@ const signup = async (blogInfo, opts) => {
       reverseButtons: true
     })`);
 
-          if (closeConfirm.value) {
-            await page.close();
-          }
+    if (closeConfirm.value) {
+      await page.close();
+    }
   } catch (error) {
     log.error(`error:${error.toString()}`);
     await page.addStyleTag({ path: swa2Css });

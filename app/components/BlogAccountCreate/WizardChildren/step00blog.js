@@ -299,11 +299,10 @@ class Steps00blog extends React.Component<Props, State> {
       b.mailAddress === this.props.randomPersonalInfo.mailAccount.mailAddress &&
       b.provider === event.target.value
     ));
-    const accountId = this.handleGenerateAccountId();
+    this.handleGenerateAccountId();
     if (existBlog) {
       this.setState({
         isFirstBlog: false,
-        accountId,
         password: existBlog.password,
         passwordState: 'success',
         provider: event.target.value
@@ -764,7 +763,6 @@ class Steps00blog extends React.Component<Props, State> {
                           <Button
                             size="sm"
                             color="primary"
-                            disabled={!this.state.isFirstBlog}
                             onClick={() => this.handleGenerateAccountId()}
                           >
                             <Refresh />
@@ -772,7 +770,6 @@ class Steps00blog extends React.Component<Props, State> {
                         </Tooltip>
                       </InputAdornment>
                     ),
-                    disabled: !this.state.isFirstBlog,
                     value: this.state.accountId,
                     onChange: event => this.formFieldChange(event, 'accountId'),
                     type: 'text'
@@ -795,6 +792,7 @@ class Steps00blog extends React.Component<Props, State> {
                           <Button
                             size="sm"
                             color="primary"
+                            disabled={!this.state.isFirstBlog}
                             onClick={() => this.handleGeneratePassword()}
                           >
                             <Refresh />
@@ -802,6 +800,7 @@ class Steps00blog extends React.Component<Props, State> {
                         </Tooltip>
                       </InputAdornment>
                     ),
+                    disabled: !this.state.isFirstBlog,
                     value: this.state.password,
                     onChange: event => this.formFieldChange(event, 'password')
                   }}

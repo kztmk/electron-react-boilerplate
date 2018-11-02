@@ -17,7 +17,7 @@ const signin = async (blogInfo, opts) => {
   const swa2Js = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.all.min.js`;
   const swa2Css = `${scriptDir}/node_modules/sweetalert2/dist/sweetalert2.min.css`;
 
-  log.info('--------->login to  fc2 blog account--------->');
+  log.info('--------->login to  WordPress.com account--------->');
   log.info('-----------user----------');
   log.info(blogInfo);
   log.info('-------------------------');
@@ -26,10 +26,10 @@ const signin = async (blogInfo, opts) => {
 
   log.info('create: browser page');
   try {
-    // Fc2 login/signup page
-    await page.goto(`https://fc2.com/login.php?ref=blog`, { waitUntil: 'load' });
+    // Wpcom login/signup page
+    await page.goto(`https://ja.wordpress.com/`, { waitUntil: 'load' });
 
-    log.info('access: https://fc2.com/login.php?ref=blog');
+    log.info('access: https://ja.wordpress.com/');
 
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
@@ -38,7 +38,7 @@ const signin = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ ログインページアクセス完了' 
+        text:'WordPress.comトップページアクセス完了' 
       }).show();
     `);
 
@@ -46,10 +46,24 @@ const signin = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
+        text:'[ログイン]ボタンをクリック' 
+      }).show();
+    `);
+    await page.click('a[href^="https://ja.wordpress.com/wp-login.php"]');
+    await page.waitFor('#usernameOrEmail');
+
+    // login page
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
         text:'メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('#id', blogInfo.mailAddress);
+    await page.type('#usernameOrEmail', blogInfo.mailAddress);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -58,7 +72,19 @@ const signin = async (blogInfo, opts) => {
       }).show();
     `);
     log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
+    await delay(1000)
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[続ける]ボタンをクリック' 
+      }).show();
+    `);
+    log.info('click continue');
+    await page.click('button[type="submit"]');
+    await page.waitForSelector('#password', { visible: true });
 
+    await delay(1000);
     await page.evaluate(`
     new Noty({
         killer: true,
@@ -67,7 +93,7 @@ const signin = async (blogInfo, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
-    await page.type('#pass', blogInfo.password);
+    await page.type('#password', blogInfo.password);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -77,8 +103,17 @@ const signin = async (blogInfo, opts) => {
     `);
     log.info(`password:${blogInfo.password}入力完了`);
 
-    await page.click('input[value=ログイン]');
-    await page.waitFor('.gtm-hm_logout');
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[ログイン]ボタンをクリック' 
+      }).show();
+    `);
+    await page.click('button[type="submit"]');
+    log.info('click login button');
+
+    await page.waitFor('.masterbar__item-content');
 
     log.info('found logout link--lonin done');
     await page.addScriptTag({ path: notyJsPath });
@@ -89,7 +124,7 @@ const signin = async (blogInfo, opts) => {
         timeout:3000,
         type: 'success',
         layout: 'topLeft',
-        text:'FC2ブログ ログイン完了' 
+        text:'WordPress.com ログイン完了' 
       }).show();
     `);
   } catch (error) {

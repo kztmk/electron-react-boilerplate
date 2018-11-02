@@ -1,5 +1,6 @@
 import delay from 'delay';
 import log from 'electron-log';
+import clickByText from "../../../../blogs/utils";
 
 const signin = async (user, opts) => {
   const { browser } = opts;
@@ -123,7 +124,15 @@ const signin = async (user, opts) => {
     await page.click('#btnSubmit');
     log.info('click login button');
 
-    await page.waitFor('#srchtxtBg', { visible: true });
+    await page.waitFor('#srchtxtBg, #em', { visible: true });
+
+    const contactMail = await page.$('#em');
+    if (contactMail) {
+      await clickByText(page, 'あとで');
+      log.info('click 「あとで」連絡用メール');
+      await page.waitFor('#srchtxtBg', { visible: true })
+    }
+
     log.info('login yahoo');
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });

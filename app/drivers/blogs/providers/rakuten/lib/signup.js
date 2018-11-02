@@ -446,6 +446,8 @@ const signup = async (blogInfo, opts) => {
         text:'日記のURLの入力完了' 
       }).show();
     `);
+
+        await delay(1000);
         // captcha
         try {
           await page.evaluate(`
@@ -457,9 +459,9 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
           const AntiCaptchaAPI = new AntiCaptcha(antiCaptchaKey);
-
+          console.log('AntiCaptchaAPI instance created')
           const pageUrl = await page.url();
-
+          console.log('page url get');
           let counter = 0;
           let precheck ;
           do {
@@ -508,7 +510,7 @@ const signup = async (blogInfo, opts) => {
           log.info('click [規約に同意して確認画面へ]')
 
         } catch (error) {
-
+              console.log(error.toString());
               await page.addStyleTag({ path: swa2Css });
               await page.addScriptTag({ path: swa2Js });
 

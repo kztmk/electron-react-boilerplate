@@ -329,11 +329,14 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+        await page.goto('https://blog.ameba.jp/ucs/blog/bloginfoinput.do', {until: 'load'});
+
+/*
         await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'[ログインする]ボタンをクリック' 
+        text:'[ログインする]ボタンをクリック'
       }).show();
     `);
         // click login button
@@ -350,7 +353,7 @@ const signup = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'マイページへアクセス完了' 
+        text:'マイページへアクセス完了'
       }).show();
     `);
 
@@ -360,7 +363,7 @@ const signup = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'ブログ管理ボタンをクリック' 
+        text:'ブログ管理ボタンをクリック'
       }).show();
     `);
         // await clickByText(page, 'ブログ管理');
@@ -377,7 +380,7 @@ const signup = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'管理トップへアクセス完了' 
+        text:'管理トップへアクセス完了'
       }).show();
     `);
         log.info('access: admin page');
@@ -385,13 +388,14 @@ const signup = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'設定リンクをクリック' 
+        text:'設定リンクをクリック'
       }).show();
     `);
         // await clickByText(page, '設定');
         await page.click('a[href="https://blog.ameba.jp/ucs/blog/bloginfoinput.do"]');
         log.info('click: settings');
         await page.waitFor('input[name="blog_title"]');
+*/
 
         // input title
         await page.addScriptTag({ path: notyJsPath });

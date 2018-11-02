@@ -227,7 +227,12 @@ class MailAddressList extends React.Component<Props, State> {
       actions: (
         <div className="actions-right">
           <Tooltip title="ID、パスワードのコピーなど便利ツール" placement="top-end">
-            <GavelPopup account={prop} mode="mail"/>
+            <GavelPopup
+              account={prop}
+              mode="mail"
+              updateMailLastLogin={this.props.updateLastLogin}
+              mailAccounts={this.props.mailAccounts}
+            />
           </Tooltip>
           <Tooltip title="メールアカウントへログイン" placement="top-end">
             <Button

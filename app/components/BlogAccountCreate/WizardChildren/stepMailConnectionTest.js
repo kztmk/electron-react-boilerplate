@@ -278,6 +278,17 @@ class StepMailConnectionTest extends Component<Props, State> {
       creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'webnode');
     }
 
+    // TODO: 1 mail account can create multiple blogs(livedoor, seesaa, ninjya)
+    if (createdBlogs.find(b => b.provider === 'livedoor')) {
+      creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'livedoor');
+    }
+    if (createdBlogs.find(b => b.provider === 'seesaa')) {
+      creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'seesaa');
+    }
+    if (createdBlogs.find(b => b.provider === 'ninjya')) {
+      creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'ninjya');
+    }
+
     // goo
     creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'goo');
     // fc2
@@ -303,6 +314,16 @@ class StepMailConnectionTest extends Component<Props, State> {
     // weybry
     if (createdBlogs.find(b => b.provider === 'webryblog')) {
       creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'webryblog');
+    }
+    if (createdBlogs.find(b => b.provider === 'wpcom')) {
+      creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'wpcom');
+    }
+    // weybry
+    if (createdBlogs.find(b => b.provider === 'webnode')) {
+      creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'webnode');
+    }
+    if (createdBlogs.find(b => b.provider === 'hatena')) {
+      creatableBlogs = creatableBlogs.filter(blog => blog.name !== 'hatena');
     }
 
     return creatableBlogs;

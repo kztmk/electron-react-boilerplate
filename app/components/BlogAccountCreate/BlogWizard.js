@@ -584,7 +584,7 @@ class BlogWizard extends React.Component<Props, State> {
         url = `http://${blogInfo.accountId}.at.webry.info/`;
         break;
       case 'wpcom':
-        url += ``;
+        url += `${blogInfo.accountId}.wordpress.com`;
         break;
       case 'goo':
         url += `blog.goo.ne.jp/${blogInfo.accountId}`;

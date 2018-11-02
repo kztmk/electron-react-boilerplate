@@ -506,6 +506,12 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+    const configUrl = `https://blog.hatena.ne.jp/${blogInfo.accountId}/${blogInfo.accountId}.${blogInfo.detailInfo.domainValue}/config`;
+    await delay(1000);
+
+    await page.goto(configUrl, {until: 'load'});
+
+/*
     // #globalheader #current-blog > span > a
     const frame = await page.frames().find(f => f.name() === 'globalheader');
     if (!frame) {
@@ -517,23 +523,32 @@ const signup = async (blogInfo, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'ブログタイトルをクリック' 
+        text:'ブログタイトルをクリック'
       }).show();
     `);
-    await frame.click('.current-blog-title');
-    log.info('click current blog title');
-    await delay(2000);
+    const myBlogLink = frame.$eval(
+      '.current-blog-title',
+      (el, attribute) => el.getAttribute(attribute),
+      'href'
+    );
+    if (!myBlogLink) {
+      log.warn('設定へのリンクが取得できません。');
+      throw new Error('設定へのリンクが取得できません。');
+    }
+    await delay(1000);
 
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'設定をクリック' 
+        text:'設定をクリック'
       }).show();
     `);
-    await clickByText(frame, '設定');
+    await page.goto()
     log.info('click settings');
     await page.waitFor('#name');
+
+*/
 
     // 設定ページ
     await page.addScriptTag({ path: notyJsPath });

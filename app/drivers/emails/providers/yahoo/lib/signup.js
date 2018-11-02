@@ -381,6 +381,8 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: notyThemePath });
 
     await page.click('#nonexistence');
+    log.info('T-point card持っていないをクリック');
+    await delay(500);
     await page.evaluate(`
     new Noty({
         type: 'success',

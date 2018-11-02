@@ -161,22 +161,31 @@ const signup = async (blogInfo, opts) => {
         const buttonX = Math.round(x) + Math.round(width) -30;
         const buttonY = Math.round(y) + Math.round(height) -30
         console.log(`x:${x},y:${y},width:${width},height:${height}`);
-        console.log(`buttonX:${buttonX}--buttonY:${buttonY}`);
+        log.info(`テンプレート選択-buttonX:${buttonX}--buttonY:${buttonY}`);
         await page.mouse.move(buttonX, buttonY);
         await delay(800);
         await page.mouse.click(buttonX, buttonY);
       } else {
+        log.warn('テンプレートが表示されません。');
         await page.evaluate(
           'alert("寄騎 Version5--テンプレートの選択に失敗しました。お手数ですが、手動でテンプレートを選択してください。")'
         );
+        throw new Error('テンプレートが表示されません。');
       }
     } catch (error) {
+      log.warn('テンプレートが表示されません。');
       await page.evaluate(
         'alert("寄騎 Version5--テンプレートの選択に失敗しました。お手数ですが、手動でテンプレートを選択してください。")'
       );
+      throw new Error('テンプレートが表示されません。');
     }
-
-    await page.waitFor('.wnd-welcome', { timeout: 180000 });
+    log.info('アカウント作成中');
+    try {
+      await page.waitFor('.wnd-welcome', { timeout: 90000 });
+    } catch (error) {
+        log.info('wait 90 sec, page reload');
+        await page.reload();
+    }
     log.info('home page create done');
 
     // admin page
