@@ -75,6 +75,7 @@ class BlogDriver {
         args: [`--window-size=${width},${height}`]
       }));
 
+
     return this.blogProvider.signup(blogInfo, {
       browser,
       ...opts

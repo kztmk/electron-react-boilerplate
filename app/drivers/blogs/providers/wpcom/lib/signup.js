@@ -268,9 +268,10 @@ const signup = async (blogInfo, opts) => {
     }
 
     // signup__step is-plans signup__step-enter-done
-    await page.waitFor(() => !!document.querySelector('.signup__step.is-plans.signup__step-enter-done'));
+    // await page.waitFor(() => !!document.querySelector('.signup__step.is-plans.signup__step-enter-done'));
+    await delay(5000);
     log.info('access step4');
-    await delay(1500);
+    // await delay(1500);
 
     await page.click(
       'button.button.plan-features__actions-button.is-free-plan'

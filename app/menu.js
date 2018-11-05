@@ -62,10 +62,10 @@ function buildDarwinTemplate(options) {
       {
         label: '寄騎v5について',
         click: () => {
-          console.log(`__dirname:${__dirname}`);
           openAboutWindow({
-            icon_path: join(__dirname, '../resources/icons', '1024x1024.png'),
-            description: 'アフィリエイト最強兵器',
+            icon_path: join(__dirname, '1024x1024.png'),
+            product_name: '寄騎-',
+            description: `アフィリエイト最強兵器`,
             use_version_info: false,
             copyright: 'Copyright (c) 2018 TMK Solutions, Inc.',
             package_json_dir: __dirname
@@ -168,13 +168,13 @@ function buildDarwinTemplate(options) {
       {
         label: 'サポートサイトを開く',
         click() {
-          shell.openExternal('#');
+          shell.openExternal('https://support.yoriki.cloud/');
         }
       },
       {
         label: 'オンライン・マニュアルを開く',
         click() {
-          shell.openExternal('#');
+          shell.openExternal('https://manual.yoriki.cloud/');
         }
       }
     ]
@@ -267,6 +267,19 @@ function buildDefaultTemplate(options) {
           label: 'オンライン・マニュアルを開く',
           click() {
             shell.openExternal('#');
+          }
+        },
+        {
+          label: '寄騎v5について',
+          click: () => {
+            console.log(`__dirname:${__dirname}`);
+            openAboutWindow({
+              icon_path: join(__dirname, '../resources/icons', '1024x1024.png'),
+              description: 'アフィリエイト最強兵器',
+              use_version_info: false,
+              copyright: 'Copyright (c) 2018 TMK Solutions, Inc.',
+              package_json_dir: __dirname
+            })
           }
         }
       ]

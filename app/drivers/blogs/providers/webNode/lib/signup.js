@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import delay from 'delay';
 import log from 'electron-log';
-import getValidationLink from '../../../../emails/imap';
 
 const signup = async (blogInfo, opts) => {
   const { browser } = opts;
@@ -181,7 +180,7 @@ const signup = async (blogInfo, opts) => {
     }
     log.info('アカウント作成中');
     try {
-      await page.waitFor('.wnd-welcome', { timeout: 90000 });
+      await page.waitFor('.wnd-welcome', { timeout: 60000 });
     } catch (error) {
         log.info('wait 90 sec, page reload');
         await page.reload();

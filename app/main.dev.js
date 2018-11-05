@@ -9,8 +9,8 @@
  *
  * @flow
  */
-import { app, ipcMain, Menu } from 'electron';
-// import { autoUpdater } from 'electron-updater';
+import { app, ipcMain, dialog } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import fs from 'fs';
 import log from 'electron-log';
 
@@ -47,7 +47,8 @@ if (!fs.existsSync(`${documentsPath}/yoriki-v5`)) {
   fs.mkdirSync(`${documentsPath}/yoriki-v5`);
 }
 
-// log.transports.file.file = `${__dirname} /log.txt`;
+let updater = {};
+updater.enabled = false;
 
 log.info('Yoriki-v5 starting...');
 
@@ -190,43 +191,55 @@ app.on('ready', async () => {
     saveAsNewFileToErrorBlogAccount();
   });
 
-  // autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdatesAndNotify();
 });
 
 process.env.NODE_APPPATH = app.getAppPath();
 
-function sendStatusToWindow(text) {
-  log.info(text);
-  mainWindow.webContents.send('message', text);
-}
+autoUpdater.on('error', (error) => {
+  dialog.showErrorBox('Error: ', error == null ? "アップデート中の不明なエラー" : (error.stack || error).toString())
+})
+
+autoUpdater.on('update-available', (info) => {
+  let message = '';
+  if (info.releaseNotes) {
+    const splitNotes = info.releaseNotes.split(/[^\r]\n/);
+    message += '\n\nリリースノート:\n';
+    splitNotes.forEach(notes => {
+      message += `${notes} \n\n`;
+    });
+  }
+
+  dialog.showMessageBox({
+    type: 'info',
+    title: 'アップデート',
+    message: 'アップデートが見つかりました。直ちにアップデートをダウンロード、インストールしますか?\n\n[はい]をクリックすると、ダウンロードを開始し、インストールの用意が出来ましたら、再度、お知らせします。\n\nしばらくお待ちください。',
+    detail: message,
+    buttons: ['はい', 'いいえ']
+  }, (buttonIndex) => {
+    if (buttonIndex === 0) {
+      autoUpdater.downloadUpdate()
+    }
+    else {
+      updater.enabled = true
+      updater = null
+    }
+  })
+})
 
 /*
-autoUpdater.on('checking-for-update', () => {
-  sendStatusToWindow('Checking for update...');
-});
+* quitAndInstall gets error.
+* Erro: No update available, can't qit and install #3269 on 22 Aug
+*/
+autoUpdater.on('update-downloaded', () => {
+  dialog.showMessageBox({
+    title: 'インストールの用意が出来ました。',
+    message: 'アップデートのダウンロードが完了しました。インストールするために、寄騎を再起動します。'
+  }, () => {
+    setImmediate(() => autoUpdater.quitAndInstall())
+  })
+})
 
-autoUpdater.on('update-available', info => {
-  sendStatusToWindow('Update available.');
-});
-
-autoUpdater.on('update-not-available', info => {
-  sendStatusToWindow('Update not available.');
-});
-
-autoUpdater.on('error', err => {
-  sendStatusToWindow(`Error in auto-updater.  ${err}`);
-});
-
-autoUpdater.on('download-progress', progressObj => {
-  let logMessage = `Download speed: ${progressObj.bytesPerSecond}`;
-  logMessage = `${logMessage}  - Downloaded  ${progressObj.percent}%`;
-  logMessage = `${logMessage}  (${progressObj.transferred}/${progressObj.total})`;
-  sendStatusToWindow(logMessage);
-});
-
-autoUpdater.on('update-downloaded', info => {
-  sendStatusToWindow('Update downloaded');
-});
 
 /**
  *   ここまでが追加したリスナ

@@ -59,6 +59,7 @@ const signin = async (blogInfo, opts) => {
     `);
     log.info(`mailAddress:${blogInfo.mailAddress}入力完了`);
 
+    await delay(1000);
     await page.evaluate(`
     new Noty({
         type: 'success',
