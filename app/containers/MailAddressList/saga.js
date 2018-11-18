@@ -242,6 +242,8 @@ function* getMailAccounts() {
  */
 function* updateMailAccount(action) {
   const userAuth = yield select(state => state.Login);
+  console.log('----update to-');
+  console.log(action.payload);
   try {
     // firebaseをアップデート
     yield call(firebaseDbUpdate, `/users/${userAuth.userId}/mailAccount/${action.payload.key}`, {

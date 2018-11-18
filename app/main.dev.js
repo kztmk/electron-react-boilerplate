@@ -51,7 +51,6 @@ let updater = {};
 updater.enabled = false;
 
 log.info('Yoriki-v5 starting...');
-
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 });
@@ -191,6 +190,7 @@ app.on('ready', async () => {
     saveAsNewFileToErrorBlogAccount();
   });
 
+  log.info(app.getPath('userData'));
   autoUpdater.checkForUpdatesAndNotify();
 });
 
