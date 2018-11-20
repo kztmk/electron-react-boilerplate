@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "5.0.3",
+  "version": "5.0.5",
   "description": "Affiliate super tool The Yoriki version5",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -91,8 +91,15 @@
         "nsis"
       ],
       "publish": [
-        "github"
+        {
+          "provider": "generic",
+          "url": "https://v5install.yoriki.cloud/update/${os}/${arch}",
+          "channel": "latest"
+        }
       ]
+    },
+    "nsis": {
+      "artifactName": "${productName}-setup-${os}-x64-${version}.${ext}"
     },
     "linux": {
       "target": [
@@ -249,7 +256,7 @@
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.14",
     "electron-store": "^2.0.0",
-    "electron-updater": "^3.1.6",
+    "electron-updater": "3.2.3",
     "email-validator": "^2.0.4",
     "emailjs-imap-client": "^3.0.7",
     "emailjs-mime-parser": "^2.0.5",

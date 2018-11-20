@@ -38,8 +38,9 @@ if (shouldQuit) {
   app.quit();
 }
 
-// autoUpdater.logger = log;
-// autoUpdater.logger.transports.file.level = 'info';
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+autoUpdater.autoDownload = false;
 log.transports.file.level = 'info';
 log.transports.file.maxSize = 1 * 1024 * 1024;
 const documentsPath = app.getPath('documents');
