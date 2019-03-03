@@ -2,6 +2,7 @@
 import { combineReducers } from 'redux';
 import AliasMailInfo from './containers/AliasMailInfo/reducer';
 import BlogList from './containers/BlogList/reducer';
+import Cpanel from './containers/Cpanel/reducer';
 import Login from './containers/Login/reducer';
 import MailAccount from './containers/MailAccount/reducer';
 import MailAddressList from './containers/MailAddressList/reducer';
@@ -13,6 +14,7 @@ import Sequence from './containers/Sequence/reducer';
 export default combineReducers({
   AliasMailInfo,
   BlogList,
+  Cpanel,
   Login,
   MailAccount,
   MailAddressList,

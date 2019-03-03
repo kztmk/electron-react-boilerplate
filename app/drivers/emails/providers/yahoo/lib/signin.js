@@ -50,7 +50,8 @@ const signin = async (user, opts) => {
     log.info('load: https://www.yahoo.co.jp');
 
     // ログインリンク
-    await page.click('#pbhello > span > a');
+    await clickByText(page, 'ログイン');
+    // await page.click('#pbhello > span > a');
     await page.waitFor('#unm');
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });

@@ -52,6 +52,8 @@ const signin = async (user, opts) => {
     log.info('click: login link');
     await page.waitForSelector('input[name=login]');
 
+    await delay(500);
+
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -74,7 +76,8 @@ const signin = async (user, opts) => {
     // +以降と@の間を削除
     let yandexBase = user.username.replace(/@.*$/, '');
     yandexBase = yandexBase.replace(/\+.*$/, '');
-    await page.type('input[name=login]', yandexBase, { delay: 40 });
+
+    await page.type('input[name=login]', user.username, { delay: 40 });
     delay(500);
     await page.evaluate(`
     new Noty({
@@ -84,6 +87,9 @@ const signin = async (user, opts) => {
       }).show();
     `);
     log.info(`input: yandex mail address--${yandexBase}`);
+    await page.click('.button2__text');
+
+    await page.waitForSelector('input[name=passwd]', {visible: true});
 
     await page.evaluate(`
     new Noty({
@@ -92,6 +98,7 @@ const signin = async (user, opts) => {
         text:'パスワード入力開始' 
       }).show();
     `);
+
 
     await page.focus('input[name=passwd]');
     await page.type('input[name=passwd]', user.password, {delay: 120});
@@ -105,23 +112,23 @@ const signin = async (user, opts) => {
     `);
     log.info(`input: yandex password--${user.password}`);
 
-    const buttons = await page.$$('.passport-Button-Text');
-    let didClickButton = false;
-    for (let i = 0; i < buttons.length; i++) {
-      const buttonText = await (await buttons[i].getProperty('textContent')).jsonValue();
-      console.log(`button text:${buttonText}`);
+    await page.click('.button2__text');
 
-      if (buttonText === 'Sign in') {
-        log.info('click:[Sign in]ボタン');
-        buttons[i].click();
-        didClickButton = true;
-        break;
-      }
-    }
+    // const buttons = await page.$$('.passport-Button-Text');
+    // let didClickButton = false;
+    // for (let i = 0; i < buttons.length; i++) {
+    //   const buttonText = await (await buttons[i].getProperty('textContent')).jsonValue();
+    //   console.log(`button text:${buttonText}`);
+    //
+    //   if (buttonText === 'Sign in') {
+    //     log.info('click:[Sign in]ボタン');
+    //     buttons[i].click();
+    //     didClickButton = true;
+    //     break;
+    //   }
+    // }
 
-    if (!didClickButton) {
-      throw new Error('can not find Sign in button');
-    }
+
     await page.evaluate(`
     new Noty({
         type: 'success',

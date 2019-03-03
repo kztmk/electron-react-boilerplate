@@ -9,6 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 
 import Person from '@material-ui/icons/Person';
 import Close from '@material-ui/icons/Close';
+import CloudCircle from '@material-ui/icons/CloudCircle';
 
 import PreferencesPage from '../../containers/PersonalInfo';
 import GmailBaseSettings from '../../containers/AliasMailInfo/gmailBase';
@@ -24,6 +25,8 @@ import type MailAccountType from '../../types/mailAccount';
 import { initialMailAccount } from '../../containers/PersonalInfo/reducer';
 
 import accountListPageStyle from '../../assets/jss/material-dashboard-pro-react/views/accountListPageStyle';
+
+import Cpanels from "../../containers/Cpanel";
 
 const adjTopMarginStyle = {
   marginTop: '-90px'
@@ -146,6 +149,13 @@ class SettingsPage extends React.Component<Props, State> {
                   yandexBase={this.state.yandexBase}
                   openImapMail={this.handleOpenImapMailAccount}
                 />
+              )
+            },
+            {
+              tabName: 'メール用ドメイン',
+              tabIcon: CloudCircle,
+              tabContent: (
+                <Cpanels />
               )
             }
           ]}
