@@ -20,9 +20,12 @@ class MainWindow {
       this.window.show();
       this.window.focus();
     });
-    // if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
+    if (
+      process.env.NODE_ENV === 'development' ||
+      process.env.DEBUG_PROD === 'true'
+    ) {
       this.window.webContents.openDevTools();
-    // }
+    }
   }
 
   /**
@@ -32,7 +35,9 @@ class MainWindow {
   requestErrorMailJsonFile() {
     return new Promise(resolve => {
       this.window.webContents.send('REQUEST_ERROR_MAIL_ACCOUNT_JSON');
-      ipcMain.once('REPLY_ERROR_MAIL_ACCOUNT_JSON', (_e, text) => resolve(text));
+      ipcMain.once('REPLY_ERROR_MAIL_ACCOUNT_JSON', (_e, text) =>
+        resolve(text)
+      );
     });
   }
 
@@ -43,8 +48,10 @@ class MainWindow {
   requestExportMailJsonFile() {
     return new Promise(resolve => {
       this.window.webContents.send('REQUEST_EXPORT_MAIL_ACCOUNT_JSON');
-      ipcMain.once('REPLY_EXPORT_MAIL_ACCOUNT_JSON', (_e, text) => resolve(text));
-    })
+      ipcMain.once('REPLY_EXPORT_MAIL_ACCOUNT_JSON', (_e, text) =>
+        resolve(text)
+      );
+    });
   }
 
   /**
@@ -54,7 +61,9 @@ class MainWindow {
   requestErrorBlogJsonFile() {
     return new Promise(resolve => {
       this.window.webContents.send('REQUEST_ERROR_BLOG_ACCOUNT_JSON');
-      ipcMain.once('REPLY_ERROR_BLOG_ACCOUNT_JSON', (_e, text) => resolve(text));
+      ipcMain.once('REPLY_ERROR_BLOG_ACCOUNT_JSON', (_e, text) =>
+        resolve(text)
+      );
     });
   }
 
@@ -72,7 +81,9 @@ class MainWindow {
   requestExportBlogJsonFile() {
     return new Promise(resolve => {
       this.window.webContents.send('REQUEST_EXPORT_BLOG_ACCOUNT_JSON');
-      ipcMain.once('REPLY_EXPORT_BLOG_ACCOUNT_JSON', (_e, text) => resolve(text));
+      ipcMain.once('REPLY_EXPORT_BLOG_ACCOUNT_JSON', (_e, text) =>
+        resolve(text)
+      );
     });
   }
 
