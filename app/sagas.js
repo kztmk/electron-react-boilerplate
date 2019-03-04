@@ -9,6 +9,7 @@ import MailAccount from './containers/MailAccount/saga';
 import PersonalInfo from './containers/PersonalInfo/saga';
 import AliasMailInfo from './containers/AliasMailInfo/saga';
 import Sequence from './containers/Sequence/saga';
+import Cpanel from './containers/Cpanel/saga';
 
 function* root(): Generator<*, void, void> {
   yield all([
@@ -20,7 +21,8 @@ function* root(): Generator<*, void, void> {
     fork(MailAccount),
     fork(PersonalInfo),
     fork(AliasMailInfo),
-    fork(Sequence)
+    fork(Sequence),
+    fork(Cpanel)
   ]);
 }
 

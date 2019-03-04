@@ -1,7 +1,7 @@
 // @flow
 import type { Action } from './actionTypes';
 import { Actions } from './actionTypes';
-import type CpanelType from "../../types/CpanelType";
+import type CpanelType from "../../types/cpanelType";
 
 export type State = {
   isLoading: boolean,
@@ -20,7 +20,7 @@ export const initialState: State = {
 export default function(
   state: State = initialState,
   action: Action
-): Exact<State> {
+): State {
   switch (action.type) {
     case Actions.GET_CPANELS_REQUEST:
       return {

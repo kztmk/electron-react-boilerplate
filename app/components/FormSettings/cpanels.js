@@ -24,7 +24,7 @@ import Snackbar from "../../ui/Snackbar/Snackbar";
 import GridContainer from "../../ui/Grid/GridContainer";
 import GridItem from "../../ui/Grid/GridItem";
 import CustomInput from "../../ui/CustomInput/CustomInput";
-import type CpanelType from "../../types/CpanelType";
+import type CpanelType from "../../types/cpanelType";
 
 import { SaveAltIcon, LoginIcon } from "../../assets/icons";
 import Button from "../../ui/CustomButtons/Button";
@@ -253,7 +253,7 @@ class Cpanels extends Component <Props, State> {
                           <IconButton
                             aria-label="Login"
                             className={classes.tableActionButton}
-                            onClick={() => this.loginToCpanel(task.key)}
+                            onClick={() => this.editSequence(task.key)}
                           >
                             <LoginIcon className={`${classes.tableActionButtonIcon} ${classes.edit}`} />
                           </IconButton>

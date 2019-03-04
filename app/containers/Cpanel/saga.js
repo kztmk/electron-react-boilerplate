@@ -13,7 +13,7 @@ import {
 } from "./actions";
 import {Actions} from './actionTypes';
 import { firebaseDbDelete, firebaseDbInsert, firebaseDbRead, firebaseDbUpdate } from "../../database/db";
-import type CpanelType from "../../types/CpanelType";
+import type CpanelType from "../../types/cpanelType";
 
 const cpanelSort = (a: CpanelType, b: CpanelType) =>{
   if (a.domain > b.domain) return 1;

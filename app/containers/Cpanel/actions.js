@@ -1,5 +1,5 @@
 // @flow
-import CpanelType from '../../types/CpanelType';
+import CpanelType from '../../types/cpanelType';
 
 import {
   GET_CPANELS_REQUEST,

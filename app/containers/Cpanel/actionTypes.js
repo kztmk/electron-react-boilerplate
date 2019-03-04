@@ -1,5 +1,5 @@
 // @flow
-import CpanelType from '../../types/CpanelType';
+import CpanelType from '../../types/cpanelType';
 
 export const GET_CPANELS_REQUEST: 'Cpanel/GET_CPANELS_REQUEST' =
   'Cpanel/GET_CPANELS_REQUEST';
