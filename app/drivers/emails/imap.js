@@ -244,4 +244,125 @@ async function getValidationLink(mailCriteria) {
   }
 }
 
+export async function getYahooAuthCode(mailCriteria) {
+  try {
+    console.log('--recieved mail info---');
+    console.log(mailCriteria);
+    // get imap server config from mailaddress
+    const config = getImapConfig(mailCriteria.provider);
+
+    console.log('---imap config---');
+    console.log(config);
+    let { accountId } = mailCriteria;
+    if (mailCriteria.provider === 'Outlook') {
+      accountId = mailCriteria.mailAddress;
+    }
+
+    if (mailCriteria.provider === 'Gmail') {
+      accountId = mailCriteria.mailAddress.replace(/\+.*@/, '@');
+    }
+
+    if (mailCriteria.provider === 'Yandex') {
+      accountId = mailCriteria.mailAddress.replace(/@.*$/, '');
+      accountId = accountId.replace(/\+.*$/, '');
+    }
+
+    console.log(`accountId:${accountId}`);
+    // connect to imap server use by accountId, password
+    imapClient = new ImapClient(config.host, config.port, {
+      auth: {
+        user: accountId,
+        pass: mailCriteria.password
+      },
+      useSecureTransport: true
+    });
+
+    let yahooAuthCode;
+    await imapClient.connect();
+    const boxes = await getPathToInbox(imapClient);
+
+    // check boxex
+    if (boxes.inbox) {
+      let targetBox = boxes.inbox;
+      console.log(`get messages from:${boxes.inbox}`);
+
+      // Yahoo!Japanからの確認メール
+      const confirmInfo =   {
+        provider: 'yahoo',
+        sender: 'reg-master@mail.yahoo.co.jp',
+        link: '6 digit number',
+        regx: '\^\\d\{6\}\$'
+      }
+
+      const { sender } = confirmInfo;
+      const mailLink = confirmInfo.link;
+
+      console.log(`sender:${sender}`);
+      console.log(`link:${mailLink}`);
+
+      console.log(`===sender==${sender}`);
+      let messageUids = await searchMessages(boxes.inbox, sender);
+      console.log('--search result----');
+      console.log(messageUids);
+      console.log('--search result----');
+      console.log('--get messages--');
+
+      // message check
+      if (!messageUids || messageUids.length === 0) {
+        console.log('---search in junk---');
+        messageUids = await searchMessages(boxes.junk, sender);
+        console.log('---in junk');
+        console.log(messageUids);
+        if (messageUids.length === 0) {
+          throw new Error('mail not found inbox/junk');
+        }
+        targetBox = boxes.junk;
+      }
+
+      const messages = await getMessages(targetBox, messageUids);
+      console.log('---got messages--');
+      console.log('---start sort---');
+      if (!messages) {
+        throw new Error('message not found.');
+      }
+      messages.sort(mailSortBySequence);
+      console.log('---after sort');
+      console.log(messages);
+      console.log(`mailCount:${messages.length}`);
+
+      // const bodies = [];
+      // messages.forEach(m => {
+      const message = messages[0];
+      console.log('-----------body-----------');
+      console.log(message['body[]']);
+
+      const contentMsg = message['body[]'];
+
+      console.log('---confirmInfo regx----');
+      console.log(confirmInfo.regx);
+      const regxLink = new RegExp(confirmInfo.regx, 'gm');
+      yahooAuthCode = contentMsg.match(regxLink);
+
+      console.log(`----yahoo auth code: ${yahooAuthCode}---`);
+      console.log('---done---');
+      imapClient.close().then(() => {
+        console.log('---------imap server disconnected.------');
+      });
+
+      return yahooAuthCode;
+    } else {
+      console.log('---done else---');
+      imapClient.close().then(() => {
+        console.log('---------imap server disconnected.------');
+      });
+      return [];
+    }
+  } catch (error) {
+    imapClient.close().then(() => {
+      console.log('---------error occured imap server disconnected.------');
+    });
+    throw new Error(error.toString());
+  }
+}
+
 export default getValidationLink;

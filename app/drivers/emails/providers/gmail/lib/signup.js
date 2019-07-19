@@ -153,7 +153,7 @@ const signup = async (user, opts) => {
         killer: true,
         type: 'success',
         layout: 'topLeft',
-        text:'次へボタンをクリック' 
+        text:'次へボタンをクリック'
       }).show();
     `);
     await page.click('#accountDetailsNext');
@@ -187,7 +187,7 @@ const signup = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'再設定用メールアドレス入力完了' 
+        text:'再設定用メールアドレス入力完了'
       }).show();
     `);
     }
@@ -207,7 +207,7 @@ const signup = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'生年月日(年)入力完了' 
+        text:'生年月日(年)入力完了'
       }).show();
     `);
 
@@ -226,7 +226,7 @@ const signup = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'生年月日(月)入力完了' 
+        text:'生年月日(月)入力完了'
       }).show();
     `);
 
@@ -245,7 +245,7 @@ const signup = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'生年月日(日)入力完了' 
+        text:'生年月日(日)入力完了'
       }).show();
     `);
 
@@ -269,7 +269,7 @@ const signup = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'性別入力完了' 
+        text:'性別入力完了'
       }).show();
     `);
 
@@ -277,7 +277,7 @@ const signup = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'秘密の質問の答え入力開始' 
+        text:'秘密の質問の答え入力開始'
       }).show();
     `);
     await page.click('#personalDetailsNext');
@@ -294,7 +294,7 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    await page.evaluate(`swal({
+    await page.evaluate(`Swal.fire({
       title: '以降は、手動で続けてください。',
       text: 'これ以降を自動で進めますと電話番号認証が必要になります。Gmail情報は保存してあります。',
       showCancelButton: false,
@@ -307,7 +307,7 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    await page.evaluate(`swal({
+    await page.evaluate(`Swal.fire({
       title: 'エラー発生',
       text: 'エラーが発生しました。お手数ですが、手作業で続けてください。',
       showCancelButton: false,

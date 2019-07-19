@@ -37,6 +37,7 @@ import Yandex from '../../../assets/img/providerImage/yandex64.png';
 
 import prefectures from '../../Commons/prefecture';
 import type AliasMailType from '../../../types/aliasMailInfo';
+import type MailAccountType from "../../../types/mailAccount";
 
 const stepContent = {
   padding: '5px'
@@ -92,7 +93,11 @@ type State = {
   errorMessage: string,
   openErrorSnackbar: false,
   forceUseDefault: boolean,
-  forceUseRandom: boolean
+  forceUseRandom: boolean,
+  yahooContactAliasNumber: number,
+  yahooContactAliasAccountId: string,
+  yahooContactAliasDomain: string,
+  contactMailAccount: MailAccountType
 };
 
 /**
@@ -123,7 +128,11 @@ class Steps00 extends React.Component<Props, State> {
       errorMessage: '',
       openErrorSnackbar: false,
       forceUseDefault: false,
-      forceUseRandom: false
+      forceUseRandom: false,
+      yahooContactAliasNumber: 0,
+      yahooContactAliasAccountId: '',
+      yahooContactAliasDomain: '',
+      contactMailAccount: null
     };
   }
 
@@ -199,7 +208,11 @@ class Steps00 extends React.Component<Props, State> {
       errorMessage: '',
       openErrorSnackbar: false,
       forceUseDefault: false,
-      forceUseRandom: false
+      forceUseRandom: false,
+      yahooContactAliasNumber: 0,
+      yahooContactAliasAccountId: '',
+      yahooContactAliasDomain: '',
+      contactMailAccount: null
     });
   };
 
@@ -266,6 +279,34 @@ class Steps00 extends React.Component<Props, State> {
         }
         break;
       default:
+        // yahoo!メールの連絡先メールとしてGmailを使用するため、Gmailアカウントをチェック
+        gmailInfo = this.props.aliasInfo.find(alias => alias.provider === 'gmail');
+        if (gmailInfo && gmailInfo.accountId.length > 0) {
+           const yahooContactMailAddress = {
+             key: '',
+             accountId: gmailInfo.accountId,
+             password: gmailInfo.password,
+             mailAddress: `${gmailInfo.accountId}@${gmailInfo.domain}`,
+             provider: 'Gmail',
+             createDate: 0,
+             lastLogin: 0,
+             tags: null,
+             detailInfo: []
+           }
+
+            this.setState({
+              yahooContactAliasNumber: gmailInfo.sequenceCounter +1,
+              yahooContactAliasAccountId: gmailInfo.accountId.trim(),
+              yahooContactAliasDomain: gmailInfo.domain.trim(),
+              contactMailAccount: yahooContactMailAddress
+            })
+        } else {
+          // not have gmail account
+          this.setState({
+            errorMessage: 'Yahoo!メール作成に必要な連絡先メールアドレスとして使用するGmailアカウントを作成してください。',
+            openErrorSnackbar: true
+          });
+        }
         this.setState({ provider: event.target.value });
     }
   };
@@ -286,7 +327,6 @@ class Steps00 extends React.Component<Props, State> {
           }
         }
       } else {
-
         this.setState({
           errorMessage: '指定出来る桁数は、32以下です。',
           openErrorSnackbar: true
@@ -488,6 +528,12 @@ class Steps00 extends React.Component<Props, State> {
     let errorMsg = '';
     if (this.state.provider.length === 0) {
       errorMsg += 'メール提供元を選択してください。\n';
+    }
+
+    if (this.state.provider === 'Yahoo') {
+      if (this.state.yahooContactAliasNumber === 0) {
+        errorMsg += 'Yahoo!メール作成には、連絡先メールアドレスが必要です。Gmailを使用しますので、まずはGmailを作成してください。\n';
+      }
     }
 
     if (this.state.provider !== 'Gmail') {

@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "5.0.7",
+  "version": "5.0.8",
   "description": "Affiliate super tool",
   "main": "./main.prod.js",
   "author": {
@@ -20,8 +20,8 @@
     "iconv": "^2.3.0",
     "mailparser-mit": "^0.6.2",
     "noty": "^3.2.0-beta",
-    "puppeteer": "^1.10.0",
+    "puppeteer": "^1.18.1",
     "react-contextmenu": "^2.9.3",
-    "sweetalert2": "^7.25.6"
+    "sweetalert2": "^8.13.4"
   }
 }

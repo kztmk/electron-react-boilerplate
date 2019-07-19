@@ -18,7 +18,8 @@ export const initialAliasBase: AliasMailType = {
   postalCode: '',
   prefecture: '',
   secretQuestion: '',
-  secretAnswer: ''
+  secretAnswer: '',
+  sequenceCounter: 0
 }
 
 export const initialGmailBase = {

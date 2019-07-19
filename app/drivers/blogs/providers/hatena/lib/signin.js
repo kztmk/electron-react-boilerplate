@@ -110,7 +110,7 @@ const signin = async (blogInfo, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    await page.evaluate(`swal({
+    await page.evaluate(`Swal.fire({
       title: 'エラー発生',
       text: 'エラーが発生しました。お手数ですが、手作業で続けてください。',
       showCancelButton: false,

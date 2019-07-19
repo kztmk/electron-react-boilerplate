@@ -514,7 +514,7 @@ const signup = async (blogInfo, opts) => {
               await page.addStyleTag({ path: swa2Css });
               await page.addScriptTag({ path: swa2Js });
 
-              await page.evaluate(`swal({
+              await page.evaluate(`Swal.fire({
             title: '手順',
             text: '「私は、ロボットではありません。」にチェックを入れて、[規約に同意して確認画面へ]ボタンをクリックしてください。5分(300秒)を超えるとエラーになります。',
             showCancelButton: false,
@@ -695,7 +695,7 @@ const signup = async (blogInfo, opts) => {
         await page.addStyleTag({ path: swa2Css });
         await page.addScriptTag({ path: swa2Js });
 
-        const closeConfirm = await page.evaluate(`swal({
+        const closeConfirm = await page.evaluate(`Swal.fire({
       title: '楽天ブログの作成が完了しました。',
       text: 'ブラウザを閉じてもよろしいですか？',
       showCancelButton: true,
@@ -724,7 +724,7 @@ const signup = async (blogInfo, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    await page.evaluate(`swal({
+    await page.evaluate(`Swal.fire({
       title: 'エラー発生',
       text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
       showCancelButton: false,

@@ -199,7 +199,7 @@ const signup = async (blogInfo, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    const closeConfirm = await page.evaluate(`swal({
+    const closeConfirm = await page.evaluate(`Swal.fire({
       title: 'Webnodeブログの作成が完了しました。',
       text: 'ブラウザを閉じてもよろしいですか？',
       showCancelButton: true,
@@ -218,7 +218,7 @@ const signup = async (blogInfo, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    await page.evaluate(`swal({
+    await page.evaluate(`Swal.fire({
       title: 'エラー発生',
       text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
       showCancelButton: false,

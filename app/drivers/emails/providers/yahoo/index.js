@@ -39,9 +39,7 @@ class EmailProviderYahoo extends EmailProvider {
    * @param {string} user.birthday.month - User's birthday month
    * @param {string} user.birthday.day - User's birthday day
    * @param {string} user.birthday.year -User's birthday year
-   * @param {string} user.secret - User's password recovery Q&A
-   * @param {string} user.secret.question - User's selected secret question
-   * @param {string} user.secret.answer - User's password recovery answer
+   * @param {string} user.contactMailAddress - contact mailAddress for password recovery
    *
    * @param {object} opts - Options
    * @param {object} opts.browser - Puppeteer browser instance to use
@@ -59,9 +57,7 @@ class EmailProviderYahoo extends EmailProvider {
     if (!user.birthday.year) throw new Error('生年月日の年がありません。');
     if (!user.birthday.month) throw new Error('生年月日の月がありません。');
     if (!user.birthday.day) throw new Error('生年月日の日がありません。');
-    if (!user.secret) throw new Error('秘密の質問・答えは必須です。');
-    if (!user.secret.question) throw new Error('秘密の質問は必須です。');
-    if (!user.secret.answer) throw new Error('秘密の答えは必須です。');
+    if (!user.contactMailAddress) throw new Error('連絡先メールアドレスは必須です。');
 
     await signup(user, opts);
 

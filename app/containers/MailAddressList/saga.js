@@ -29,6 +29,7 @@ import {
 import type MailAccountType from '../../types/mailAccount';
 import type { AuthType } from '../../types/auth';
 import { updateSequenceRequest } from '../Sequence/actions';
+import { saveAliasMailRequest} from "../AliasMailInfo/actions";
 
 /**
  * メールアカウントソート 第1優先：最終ログイン、第2優先：提供元
@@ -191,6 +192,25 @@ function* createMailAccount(action) {
             sequence: selectedSequence.sequence + 1
           })
         );
+      }
+
+      // Yahoo!メールの場合、gmailアカウントのsequenceをカウントアップ
+      if (newAccount.provider === 'Yahoo') {
+        console.log('--provider: Yahoo')
+        const aliasInfos = yield select(state => state.AliasMailInfo.aliasMailInfo);
+        const gmailInfo = aliasInfos.find(infos => infos.provider === 'gmail');
+        console.log('--got gmailInfo');
+        console.log(gmailInfo);
+        if (!gmailInfo) {
+          yield put(createMailAddressFailure('GmailにおいてYahoo!メール連絡先メールアドレス作成用カウンターの更新に失敗しました。'));
+        }
+        const updatedSequenceCounter = gmailInfo.sequenceCounter ? gmailInfo.sequenceCounter : 0;
+        console.log(`--update sequenceCounter${updatedSequenceCounter}`);
+        yield put(saveAliasMailRequest({
+          ...gmailInfo,
+          sequenceCounter: updatedSequenceCounter +1
+        }));
+        console.log('update gmail sequenceCounter');
       }
 
       const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, newAccount);

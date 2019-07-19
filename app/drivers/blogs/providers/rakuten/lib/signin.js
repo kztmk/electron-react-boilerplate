@@ -134,7 +134,7 @@ const signin = async (blogInfo, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    await page.evaluate(`swal({
+    await page.evaluate(`Swal.fire({
       title: 'エラー発生',
       text: 'エラーが発生しました。タイムアウト、又は、アカウント削除を確認してください。',
       showCancelButton: false,

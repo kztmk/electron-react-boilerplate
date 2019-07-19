@@ -268,6 +268,13 @@ class MailWizard extends React.Component<Props, State> {
       }
       this[this.props.steps[nextStep].stepId].setData();
       const steps00State = this[this.props.steps[0].stepId].sendState();
+      if (nextStep === 1) {
+        this.yahoo.setContactMailAddress({
+          yahooContactAliasNumber: steps00State.yahooContactAliasNumber,
+          yahooContactAliasAccountId: steps00State.yahooContactAliasAccountId,
+          yahooContactAliasDomain: steps00State.yahooContactAliasDomain
+        })
+      }
       console.log(steps00State);
       this.setState({
         cancelButton: false,
@@ -286,7 +293,8 @@ class MailWizard extends React.Component<Props, State> {
           gender: steps00State.gender,
           birthDate: steps00State.birthDate,
           postalCode: steps00State.postalCode,
-          prefecture: steps00State.prefecture
+          prefecture: steps00State.prefecture,
+          contactMailInfo: steps00State.contactMailAccount
         }
       });
       this.refreshAnimation(nextStep);
@@ -329,8 +337,7 @@ class MailWizard extends React.Component<Props, State> {
                 '郵便番号:',
                 user.postalCode
               ],
-              ['秘密の質問:', user.secret.question],
-              ['秘密の質問の答え:', user.secret.answer]
+              ['連絡先メールアドレス:', user.contactMailAddress]
             ]}
           />
         );
@@ -557,13 +564,10 @@ class MailWizard extends React.Component<Props, State> {
           accId = user.username;
           user.gender = this.state.accountInfo.gender;
           user.email = `${this.state.accountInfo.accountId}@yahoo.co.jp`;
+          user.contactMailAddress = additionalInfo.contactMailAddress;
+          user.contactMailAccount = this.state.accountInfo.contactMailInfo;
           mailAddress = user.email;
-          detailInfo.push(`秘密の質問:${additionalInfo.Question}`);
-          detailInfo.push(`秘密の答え:${additionalInfo.answer}`);
-
-          user.secret = {};
-          user.secret.question = additionalInfo.Question;
-          user.secret.answer = additionalInfo.answer;
+          detailInfo.push(`連絡先メールアドレス:${additionalInfo.contactMailAddress}`);
 
           break;
         case 'Outlook':

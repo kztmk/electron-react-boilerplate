@@ -201,7 +201,7 @@ const signup = async (blogInfo, opts) => {
       await page.addStyleTag({ path: swa2Css });
       await page.addScriptTag({ path: swa2Js });
 
-      await page.evaluate(`swal({
+      await page.evaluate(`Swal.fire({
       title: '手順',
       text: '「私は、ロボットではありません。」にチェックを入れて、[入力内容を確認]ボタンをクリックしてください。5分(300秒)を超えるとエラーになります。',
       showCancelButton: false,
@@ -305,7 +305,7 @@ const signup = async (blogInfo, opts) => {
       });
 
       const { value: url } = await page.evaluate(`
-        swal({
+        Swal.fire({
           title: '本登録用リンクURLを貼付け',
           html: '<p>使用したメールアドレスにログインしてください。<span style="color: red;font-weight: bold;">本登録URLをコピー</span>して、以下のボックスへ貼りつけます。<b>OK</b>をクリックすると自動作成を続けます。</p><p><span style="color: red;font-weight: bold;">未入力でOK</span>をクリックすると<span style="color: red;font-weight: bold;">中止します。</span></p>',
           input: 'text',
@@ -318,7 +318,7 @@ const signup = async (blogInfo, opts) => {
         log.info(`set url: ${validationUrl}`);
       } else {
         await page.evaluate(`
-        swal({
+        Swal.fire({
           title: '中止しました。',
           html: '<p>ブログの作成を中止しました。</p><p>ブログ一覧に登録されているデータを削除してください。</p>',
          })`);
@@ -468,7 +468,7 @@ const signup = async (blogInfo, opts) => {
       await page.addStyleTag({ path: swa2Css });
       await page.addScriptTag({ path: swa2Js });
 
-      await page.evaluate(`swal({
+      await page.evaluate(`Swal.fire({
       title: '手順',
       text: '「私は、ロボットではありません。」にチェックを入れて、[ブログを作成]ボタンをクリックしてください。時間制限はありません。',
       showCancelButton: false,
@@ -620,7 +620,7 @@ const signup = async (blogInfo, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    const closeConfirm = await page.evaluate(`swal({
+    const closeConfirm = await page.evaluate(`Swal.fire({
       title: 'Hatenaブログの作成が完了しました。',
       text: 'ブラウザを閉じてもよろしいですか？',
       showCancelButton: true,
@@ -639,7 +639,7 @@ const signup = async (blogInfo, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    await page.evaluate(`swal({
+    await page.evaluate(`Swal.fire({
       title: 'エラー発生',
       text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
       showCancelButton: false,

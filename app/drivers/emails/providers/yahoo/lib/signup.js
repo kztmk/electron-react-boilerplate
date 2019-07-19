@@ -1,6 +1,81 @@
 /* eslint-disable no-await-in-loop */
 import delay from 'delay';
 import log from 'electron-log';
+import { getYahooAuthCode } from '../../../imap';
+
+const notyYahooStyle = `
+#noty_layout__dialogCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width:460px;
+  transform: translateY(-50%) translateX(-50%);
+}
+
+.mainWrapper {
+}
+
+.loadContainer { height: 35px;
+  width: 35px;
+  float: left; }
+
+.wraperContainer { height: 235px;
+  width: 460px;background: #36c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+span {
+  font-size: 35px;
+  font-style: oblique;
+  color: #DDD;
+  padding-left: 16px;
+  text-shadow: 0px 0px 4px #9CF;
+  animation: loadingText .4s ease-in-out infinite alternate;
+}
+
+.loader2 {
+  border-top: 3px solid #ddd;
+  border-bottom: 3px solid #ddd;
+  border-radius: 50%;
+  height: 14px;
+  width: 15px;
+  margin: 10px;
+  position: absolute;
+  animation: loading 1.2s infinite linear; }
+
+.loader3 {
+  border-left: 3px solid #ccc;
+  border-right: 3px solid #ccc;
+  border-radius: 50%;
+  height: 24px;
+  width: 25px;
+  margin: 8px 2px;
+  position: absolute;
+  animation: loading 1s infinite linear; }
+
+.loader4 {
+  border-top: 3px solid #bbb;
+  border-bottom: 3px solid #bbb;
+  border-radius: 50%;
+  height: 34px;
+  width: 35px;
+  position: absolute;
+  animation: loading .8s infinite linear; }
+
+@keyframes loading {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(359deg); } }
+
+@keyframes loadingText {
+  to {text-shadow:
+    0 0 2px #9CF,
+    0 0 3px #9CF,
+    0 0 4px #69C,
+    0 0 5px #69C; } }
+
+`;
 
 const signup = async (user, opts) => {
   const { browser } = opts;
@@ -73,20 +148,6 @@ const signup = async (user, opts) => {
     await page.waitForSelector('#yid');
 
     log.info('click:[今すぐメールアドレスを作る]');
-    // [メールアドレスなしで登録する]をクリック
-    await page.addScriptTag({ path: notyJsPath });
-    await page.addStyleTag({ path: notyCssPath });
-    await page.addStyleTag({ path: notyThemePath });
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[メールアドレスなしで登録する]をクリック' 
-      }).show();
-    `);
-    await page.click('#linkChangeRegMode > a'); // click create without contact mail address
-
-    log.info('click:[メールアドレスなしで登録する]');
 
     // YahooID
     // -------
@@ -99,34 +160,20 @@ const signup = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo ID入力開始' 
+        text:'連絡先メールアドレス入力開始' 
       }).show();
     `);
-    await page.type('#yid', user.username, { delay: 9 }); // yahoo ID
+    log.info(`連絡先メールアドレス:${user.contactMailAddress}を入力開始`);
+    await page.type('#mail', user.contactMailAddress, { delay: 9 }); // 連絡用メールアドレス
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo ID入力完了' 
+        text:'連絡用メールアドレス入力完了' 
       }).show();
     `);
+    log.info(`連絡先メールアドレス:${user.contactMailAddress}を入力完了`);
     await delay(250);
-
-    log.info(`input:[Yahoo ID]-${user.username}`);
-
-    error = await page.$eval('#tipTxt', el => el.className);
-    if (error.indexOf('chkYidNG') > -1) {
-      const errMsg = '入力されたYahooIDは、既に使われています。';
-      await page.evaluate(`
-    new Noty({
-        type: 'error',
-        layout: 'topLeft',
-        text: ${errMsg}
-      }).show();
-    `);
-      log.warn(errMsg);
-      throw new Error(errMsg);
-    }
 
     await page.evaluate(`
     new Noty({
@@ -229,39 +276,48 @@ const signup = async (user, opts) => {
         text:'性別入力完了' 
       }).show();
     `);
+
+    // 連絡用メールアドレスを入力すると、@の後1文字入力で
+    // 連絡用メールアドレスのID部分に(_MMDD)でYahooIDが自動で作成される。
+    await page.waitForFunction('document.querySelector("#yid").value.length > 0');
+
+    // 勝手に作成されたYahooIDをクリア
+    await page.evaluate( () => document.getElementById("yid").value = "");
+
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'秘密の質問入力開始',
-        killer: true
+        text:'Yahoo ID入力開始' 
       }).show();
     `);
-    await page.select('select#pw_q', user.secret.question); // password recovery question
-    log.info(`input:[秘密の質問]-${user.secret.question}`);
+    await page.type('#yid', user.username, { delay: 9 }); // yahoo ID
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'秘密の質問入力完了' 
+        text:'Yahoo ID入力完了' 
       }).show();
     `);
-    await page.evaluate(`
+    await delay(250);
+
+    log.info(`input:[Yahoo ID]-${user.username}`);
+
+    error = await page.$eval('#tipTxt', el => el.className);
+    if (error.indexOf('chkYidNG') > -1) {
+      const errMsg = '入力されたYahooIDは、既に使われています。';
+      await page.evaluate(`
     new Noty({
-        type: 'success',
+        type: 'error',
         layout: 'topLeft',
-        text:'秘密の質問の答え入力開始' 
+        text: ${errMsg}
       }).show();
     `);
-    await page.type('#pw_a', user.secret.answer, { delay: 30 }); // password recovery answer
-    log.info(`input:[秘密の答え]-${user.secret.answer}`);
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'秘密の質問の答え入力完了' 
-      }).show();
-    `);
+      log.warn(errMsg);
+      throw new Error(errMsg);
+    }
+
+
     // captcha
     // -------
     await delay(1500);
@@ -311,7 +367,7 @@ const signup = async (user, opts) => {
       });
       await page.addScriptTag({ path: swa2Js });
       await page.evaluate('Noty.closeAll();');
-      captchaValue = await page.evaluate(`swal({
+      captchaValue = await page.evaluate(`Swal.fire({
       title: '画像認証',
       text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
       input: 'text',
@@ -382,6 +438,7 @@ const signup = async (user, opts) => {
 
     await page.click('#nonexistence');
     log.info('T-point card持っていないをクリック');
+
     await delay(500);
     await page.evaluate(`
     new Noty({
@@ -394,6 +451,78 @@ const signup = async (user, opts) => {
     log.info('click:[同意して登録する]');
     await page.waitFor('.msgComplete');
     await page.$('#msgComplete');
+
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+    await page.addStyleTag({ path: './app/assets/notyDialog/notyYahoo.css'});
+    await page.evaluate(`
+        new Noty({
+          type: 'none',
+          layout: 'dialogCenter',
+          closeWith: [],
+          killer: true,
+          text:'<div class="mainWrapper"><div class="wrapperContainer"><div class="loadContainer"><div class="loader2"></div><div class="loader3"></div><div class="loader4"></div></div><div class="loadingTitle">確認コード取得中...</div></div></div>'
+        }).show();
+    `)
+
+
+    await delay(20000);
+
+    // メールアカウントへのログイン情報
+    const mailacc = {};
+    mailacc.accountId = user.contactMailAccount.accountId;
+    mailacc.mailAddress = user.contactMailAccount.mailAddress;
+    mailacc.password = user.contactMailAccount.password;
+    mailacc.provider = user.contactMailAccount.provider;
+    log.info('Yahoo!メール確認コードを取得開始');
+
+    // メールアカウントへログインし、本登録URLを取得
+    let authCode = '';
+
+    const result = await getYahooAuthCode(mailacc);
+
+    if  (result) {
+      [authCode] = result;
+      log.info(`確認コード：${authCode}`)
+    } else {
+      log.warn('Yahoo!メール確認コードが見つかりません。');
+      throw new Error('Yahoo!メール確認コードが見つかりません。');
+    }
+
+    await page.addScriptTag({ path: notyJsPath });
+    await page.addStyleTag({ path: notyCssPath });
+    await page.addStyleTag({ path: notyThemePath });
+
+    // Yahoo!メール確認コード
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'Yahoo!メール確認コード入力開始',
+        killer: true
+      }).show();
+    `);
+    await page.type('input[name="iptPasscode"]', authCode);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'Yahoo!メール確認コード入力完了' 
+      }).show();
+    `);
+
+    await delay(500);
+    await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'[次へ]をクリック' 
+      }).show();
+    `);
+    await page.click('#btnSubmit');
+    log.info('click:[次へ]');
+    await page.waitFor('.msgComplete');
 
     // a ご利用中のサービスに戻るをクリック
     await page.addScriptTag({ path: notyJsPath });
@@ -411,11 +540,14 @@ const signup = async (user, opts) => {
     log.info('click:[ご利用中のサービスに戻る]');
     await page.waitFor('#masthead');
 
+    await page.waitForSelector('.start');
+    await delay(500);
     // 「さっそく使ってみよう」をクリック
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
 
+    console.log('--addTag done--');
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -423,6 +555,7 @@ const signup = async (user, opts) => {
         text:'[さっそく使ってみよう]をクリック' 
       }).show();
     `);
+    console.log('--addTag done--');
     await page.click('.start');
     log.info(`click:[さっそく使ってみよう]`);
     await page.waitFor('#tabinbox');
@@ -431,9 +564,10 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    const closeConfirm = await page.evaluate(`swal({
+    const closeConfirm = await page.evaluate(`Swal.fire({
       title: 'Yahoo！メールアカウントの作成が完了しました。',
       text: 'ブラウザを閉じてもよろしいですか？',
+      killer: true,
       showCancelButton: true,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',
@@ -450,9 +584,10 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
 
-    await page.evaluate(`swal({
+    await page.evaluate(`Swal.fire({
       title: 'エラー発生',
       text: 'エラーが発生しました。お手数ですが、手作業で続けていただくか、登録済みのアカウントを削除してください。',
+      killer: true,
       showCancelButton: false,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',

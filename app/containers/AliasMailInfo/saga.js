@@ -21,7 +21,6 @@ import type AliasMailType from '../../types/aliasMailInfo';
 import {
   createMailAddressRequest,
   getMailAddressRequest,
-  updateMailAddressRequest
 } from '../MailAddressList/actions';
 
 function* saveAliasMail(action) {
@@ -45,7 +44,8 @@ function* saveAliasMail(action) {
       postalCode: alias.postalCode,
       prefecture: alias.prefecture,
       secretQuestion: alias.secretQuestion,
-      secretAnswer: alias.secretAnswer
+      secretAnswer: alias.secretAnswer,
+      sequenceCounter: alias.sequenceCounter
     });
 
     console.log('---db complete--');
@@ -163,6 +163,7 @@ function* getAliasMails() {
       );
 
       if (gmailSnapshot.child('accountId').val() !== null) {
+        console.log(gmailSnapshot.child('sequenceCounter').exists());
         const gmailAlias: AliasMailType = {
           provider: 'gmail',
           accountId: gmailSnapshot.child('accountId').val(),
@@ -178,7 +179,8 @@ function* getAliasMails() {
           postalCode: gmailSnapshot.child('postalCode').val(),
           prefecture: gmailSnapshot.child('prefecture').val(),
           secretQuestion: gmailSnapshot.child('secretQuestion').val(),
-          secretAnswer: gmailSnapshot.child('secretAnswer').val()
+          secretAnswer: gmailSnapshot.child('secretAnswer').val(),
+          sequenceCounter: gmailSnapshot.child('sequenceCounter').exists() ? gmailSnapshot.child('sequenceCounter').val() : 0
         };
         aliases.push(gmailAlias);
       }
@@ -203,7 +205,8 @@ function* getAliasMails() {
           postalCode: yandexSnapshot.child('postalCode').val(),
           prefecture: yandexSnapshot.child('prefecture').val(),
           secretQuestion: yandexSnapshot.child('secretQuestion').val(),
-          secretAnswer: yandexSnapshot.child('secretAnswer').val()
+          secretAnswer: yandexSnapshot.child('secretAnswer').val(),
+          sequenceCounter: yandexSnapshot.child('sequenceCounter').exists() ? yandexSnapshot.child('sequenceCounter').val() : 0
         };
         aliases.push(yandexAlias);
       }

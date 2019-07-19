@@ -14,7 +14,8 @@ type AliasMailType = {
   postalCode: string,
   prefecture: string,
   secretQuestion: string,
-  secretAnswer: string
+  secretAnswer: string,
+  sequenceCounter: number
 };
 
 export default AliasMailType
