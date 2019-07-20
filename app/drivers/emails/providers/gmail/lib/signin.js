@@ -71,7 +71,7 @@ const signin = async (user, opts) => {
       }).show();
     `);
 
-    await page.click('#identifierNext > content > span');
+    await page.click('#identifierNext > span');
     log.info('click: next button');
     await page.waitFor('#password > div.aCsJod.oJeWuf > div > div.Xb9hP > input', {
       visible: true,
@@ -107,7 +107,8 @@ const signin = async (user, opts) => {
       }).show();
     `);
 
-    await page.click('#passwordNext > content > span');
+    // //*[@id="passwordNext"]/span
+    await page.click('#passwordNext > span');
     log.info('click next button');
 
     await page.waitFor('a[href^="#inbox"]');
