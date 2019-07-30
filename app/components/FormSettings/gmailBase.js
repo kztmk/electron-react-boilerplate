@@ -107,6 +107,7 @@ type State = {
   postalCodeState: string,
   prefecture: string,
   prefectureState: string,
+  sequenceCounter: number,
   errorMessage: string,
   openErrorSnackbar: false,
   forceUseDefault: boolean,
@@ -146,6 +147,7 @@ class GmailBaseSettings extends React.Component<Props, State> {
       postalCodeState: '',
       prefecture: this.props.gmailBase.prefecture,
       prefectureState: '',
+      sequenceCounter: this.props.gmailBase.sequenceCounter,
       errorMessage: '',
       openErrorSnackbar: false,
       forceUseDefault: false,
@@ -171,7 +173,8 @@ class GmailBaseSettings extends React.Component<Props, State> {
           birthDate: nextProps.gmailBase.birthDate,
           contactMail: nextProps.gmailBase.contactMail,
           postalCode: nextProps.gmailBase.postalCode,
-          prefecture: nextProps.gmailBase.prefecture
+          prefecture: nextProps.gmailBase.prefecture,
+          sequenceCounter: nextProps.gmailBase.sequenceCounter
         });
 
         if (this.state.mode === 'gmail-save') {
@@ -679,7 +682,8 @@ class GmailBaseSettings extends React.Component<Props, State> {
         secretQuestion: '',
         secretAnswer: '',
         postalCode: this.state.postalCode,
-        prefecture: this.state.prefecture
+        prefecture: this.state.prefecture,
+        sequenceCounter: this.state.sequenceCounter
       };
 
       this.props.startSaveAlias(gmailAlias);
@@ -724,7 +728,8 @@ class GmailBaseSettings extends React.Component<Props, State> {
       secretQuestion: '',
       secretAnswer: '',
       postalCode: this.state.postalCode,
-      prefecture: this.state.prefecture
+      prefecture: this.state.prefecture,
+      sequenceCounter: this.state.sequenceCounter
     };
 
     this.props.startDeleteAlias(gmailAlias);

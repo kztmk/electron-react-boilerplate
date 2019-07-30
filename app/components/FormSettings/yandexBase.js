@@ -123,6 +123,7 @@ type State = {
   questionJp: string,
   questionSelect: string,
   answer: string,
+  sequenceCounter: number,
   answerState: string,
   errorMessage: string,
   openErrorSnackbar: false,
@@ -168,6 +169,7 @@ class YandexBaseSettings extends React.Component<Props, State> {
       questionSelect: this.props.yandexBase.secretQuestion,
       answer: this.props.yandexBase.secretAnswer,
       answerState: '',
+      sequenceCounter: this.props.yandexBase.sequenceCounter,
       errorMessage: '',
       openErrorSnackbar: false,
       forceUseDefault: false,
@@ -199,7 +201,8 @@ class YandexBaseSettings extends React.Component<Props, State> {
           postalCode: nextProps.yandexBase.postalCode,
           prefecture: nextProps.yandexBase.prefecture,
           questionSelect: nextProps.yandexBase.secretQuestion,
-          answer: nextProps.yandexBase.secretAnswer
+          answer: nextProps.yandexBase.secretAnswer,
+          sequenceCounter: nextProps.yandexBase.sequenceCounter
         });
 
         if (this.state.mode === 'yandex-save') {
@@ -737,7 +740,8 @@ class YandexBaseSettings extends React.Component<Props, State> {
         secretQuestion: this.state.questionSelect,
         secretAnswer: this.state.answer,
         postalCode: this.state.postalCode,
-        prefecture: this.state.prefecture
+        prefecture: this.state.prefecture,
+        sequenceCounter: this.state.sequenceCounter
       };
 
       this.props.startSaveAlias(yandexAlias);
@@ -782,7 +786,8 @@ class YandexBaseSettings extends React.Component<Props, State> {
       secretQuestion: '',
       secretAnswer: '',
       postalCode: this.state.postalCode,
-      prefecture: this.state.prefecture
+      prefecture: this.state.prefecture,
+      sequenceCounter: this.state.sequenceCounter
     };
 
     this.props.startDeleteAlias(yandexAlias);
