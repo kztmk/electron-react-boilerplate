@@ -483,10 +483,12 @@ const signup = async (user, opts) => {
       [authCode] = result;
       log.info(`確認コード：${authCode}`)
     } else {
+      await page.evaluate(`Noty.closeAll();`);
       log.warn('Yahoo!メール確認コードが見つかりません。');
       throw new Error('Yahoo!メール確認コードが見つかりません。');
     }
 
+    await page.evaluate(`Noty.closeAll();`);
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -500,7 +502,7 @@ const signup = async (user, opts) => {
         killer: true
       }).show();
     `);
-    await page.type('input[name="iptPasscode"]', authCode);
+    await page.type('input[name="iptPasscode"]', authCode, {delay: 500});
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -509,7 +511,7 @@ const signup = async (user, opts) => {
       }).show();
     `);
 
-    await delay(500);
+    await delay(1000);
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -580,6 +582,9 @@ const signup = async (user, opts) => {
     log.error(`error:${error.toString()}`);
     await page.addStyleTag({ path: swa2Css });
     await page.addScriptTag({ path: swa2Js });
+
+    await page.evaluate(`Noty.closeAll();`);
+
 
     await page.evaluate(`Swal.fire({
       title: 'エラー発生',

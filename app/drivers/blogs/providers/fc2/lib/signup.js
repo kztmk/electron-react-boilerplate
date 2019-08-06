@@ -472,23 +472,6 @@ const signup = async (blogInfo, opts) => {
     `);
           log.info('ブログ-ユーザ情報入力ページ');
 
-          // accountId
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ブログID入力開始' 
-      }).show();
-    `);
-          await page.type('#id', blogInfo.accountId);
-          log.info(`input: blogID:${blogInfo.accountId}`);
-          await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'ブログID入力完了' 
-      }).show();
-    `);
           // title
           await page.evaluate(`
     new Noty({
@@ -545,6 +528,47 @@ const signup = async (blogInfo, opts) => {
       }).show();
     `);
 
+          // blog URL
+          await delay(1000);
+
+          await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'ブログURL選択開始' 
+      }).show();
+    `);
+          await page.click('#domain_standard');
+          log.info('select sub junre');
+          await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'ブログURL選択完了' 
+      }).show();
+    `);
+          log.info('blog URL check for blogID')
+          // accountId
+          // accountId clear
+          await page.evaluate( () => document.getElementById("id").value = "");
+          await delay(1000);
+          await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'ブログID入力開始' 
+      }).show();
+    `);
+          await page.type('#id', blogInfo.accountId);
+          log.info(`input: blogID:${blogInfo.accountId}`);
+          await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'ブログID入力完了' 
+      }).show();
+    `);
+
           await page.evaluate(`Noty.closeAll();`);
           let captchaError = true;
 
@@ -559,7 +583,17 @@ const signup = async (blogInfo, opts) => {
 
             await page.addStyleTag({ path: swa2Css });
             await page.addScriptTag({ path: swa2Js });
+            await page.addStyleTag({ content: `
+                .swal2-content {
+                font-size:0.8em;
+              }
 
+              .swal2-actions {
+                 margin: 0 auto;
+               }
+            `});
+
+            await page.evaluate(`Noty.closeAll();`);
             captchaValue = await page.evaluate(`Swal.fire({
           title: '画像認証',
           text: '画像に文字・数字が正常に表示されない場合、空欄で認証ボタンをクリックしてください。',
@@ -593,16 +627,36 @@ const signup = async (blogInfo, opts) => {
           text: '[利用規約に同意して登録する]ボタンをクリック'
         }).show();
       `);
-            await page.click('#submit');
+            await page.click('#send');
             log.info('click:[利用規約に同意して登録する]');
             // --loop
 
-            await page.waitFor('#thankyou, .style_error');
-            const checkSuccess = await page.$('#thankyou');
+            // TODO: success  document.querySelector('#topicpath > .topicpath_inner > .now').innerText == テンプレート選択
+            // fail -->
+            await page.waitForNavigation();
+
+            const checkSuccess = await page.$eval('#topicpath >.topicpath_inner > .now', e => e.innerText) === 'テンプレート選択';
             if (checkSuccess) {
               captchaError = false;
             }
           } while (captchaError);
+
+          await page.addScriptTag({ path: notyJsPath });
+          await page.addStyleTag({ path: notyCssPath });
+          await page.addStyleTag({ path: notyThemePath });
+          log.info('テンプレート選択開始')
+          await page.evaluate(`
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text: '[次へ進む]ボタンをクリック'
+        }).show();
+      `);
+
+          await delay(1000);
+          await page.click('button[type="submit"]');
+
+         await delay(1000);
 
           log.info('ブログ登録完了');
           // await page.click('#goto_admin > a');
