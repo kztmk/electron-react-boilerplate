@@ -174,7 +174,7 @@ function buildDarwinTemplate(options) {
       {
         label: 'オンライン・マニュアルを開く',
         click() {
-          shell.openExternal('https://manual.yoriki.cloud/');
+          shell.openExternal('https://manuals.yoriki.cloud/');
         }
       }
     ]
@@ -260,13 +260,13 @@ function buildDefaultTemplate(options) {
         {
           label: 'サポートサイトを開く',
           click() {
-            shell.openExternal('#');
+            shell.openExternal('https://support.yoriki.cloud/');
           }
         },
         {
           label: 'オンライン・マニュアルを開く',
           click() {
-            shell.openExternal('#');
+            shell.openExternal('https://manuals.yoriki.cloud');
           }
         },
         {

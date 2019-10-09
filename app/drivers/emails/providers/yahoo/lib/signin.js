@@ -1,6 +1,6 @@
 import delay from 'delay';
 import log from 'electron-log';
-import clickByText from "../../../../blogs/utils";
+import clickByText, { clickByTextInTagName } from "../../../../blogs/utils";
 
 const signin = async (user, opts) => {
   const { browser } = opts;
@@ -27,7 +27,7 @@ const signin = async (user, opts) => {
 
   try {
     await page.goto('https://www.yahoo.co.jp/');
-    await page.waitFor('#srchtxtBg', { visible: true });
+    await page.waitFor('#Login', { visible: true });
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
     await page.addStyleTag({ path: notyThemePath });
@@ -50,7 +50,8 @@ const signin = async (user, opts) => {
     log.info('load: https://www.yahoo.co.jp');
 
     // ログインリンク
-    await clickByText(page, 'ログイン');
+    // await clickByText(page, 'ログイン');
+    await clickByTextInTagName(page, 'ログイン', 'span');
     // await page.click('#pbhello > span > a');
     await page.waitFor('#unm');
     await page.addScriptTag({ path: notyJsPath });
@@ -125,13 +126,13 @@ const signin = async (user, opts) => {
     await page.click('#btnSubmit');
     log.info('click login button');
 
-    await page.waitFor('#srchtxtBg, #em', { visible: true });
+    await page.waitFor('#Masthead', { visible: true });
 
     const contactMail = await page.$('#em');
     if (contactMail) {
       await clickByText(page, 'あとで');
       log.info('click 「あとで」連絡用メール');
-      await page.waitFor('#srchtxtBg', { visible: true })
+      await page.waitFor('#Masthead', { visible: true })
     }
 
     log.info('login yahoo');
@@ -152,7 +153,8 @@ const signin = async (user, opts) => {
         text:'メールリンクをクリック' 
       }).show();
     `);
-    await page.click('#mhi6th > a');
+    // await page.click('#mhi6th > a');
+    await clickByTextInTagName(page, 'メール', 'span' )
     log.info('click mail link');
 
     await page.waitFor('#ygmhlog');
