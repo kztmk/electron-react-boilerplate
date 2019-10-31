@@ -151,7 +151,6 @@ function* createMailAccount(action) {
   console.log('call create account');
   const userAuth = yield select(state => state.Login);
   const newAccount = {
-    key: action.payload.key,
     accountId: action.payload.accountId,
     password: action.payload.password,
     mailAddress: action.payload.mailAddress,
@@ -199,7 +198,7 @@ function* createMailAccount(action) {
       if (newAccount.provider === 'Yahoo') {
         console.log('--provider: Yahoo')
         // key='ignore'の場合には作成をスキップ
-        if (newAccount.key !== 'ignore') {
+        if (action.payload.key !== 'ignore') {
           const aliasInfos = yield select(state => state.AliasMailInfo.aliasMailInfo);
           const gmailInfo = aliasInfos.find(infos => infos.provider === 'gmail');
           console.log('--got gmailInfo');
@@ -218,7 +217,7 @@ function* createMailAccount(action) {
       }
 
       console.log(`start to save db:${newAccount.key}`)
-      if (newAccount.key !== 'ignore') {
+      if (action.payload.key !== 'ignore') {
         const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, newAccount);
         const addAccount = { ...newAccount, key: ref.key };
         currentAccounts.unshift(addAccount);
