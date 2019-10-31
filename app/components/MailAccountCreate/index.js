@@ -51,7 +51,7 @@ class WizardViewMail extends React.Component<Props> {
             previousButtonText="戻る"
             nextButtonText="次へ"
             finishButtonText="メールアドレス取得"
-            finishButtonClick={this.props.createMailAccount}
+            finishButtonClick={ this.props.createMailAccount}
             mailAccounts={this.props.mailAccounts}
           />
         </GridItem>

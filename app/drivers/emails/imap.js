@@ -289,7 +289,7 @@ export async function getYahooAuthCode(mailCriteria) {
       // Yahoo!Japanからの確認メール
       const confirmInfo =   {
         provider: 'yahoo',
-        sender: 'reg-master@mail.yahoo.co.jp',
+        sender: 'login-master@mail.yahoo.co.jp',
         link: '6 digit number',
         regx: '\^\\d\{6\}\$'
       }

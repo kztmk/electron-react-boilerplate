@@ -488,6 +488,7 @@ class MailWizard extends React.Component<Props, State> {
     // save to database
     console.log('save to db');
     this.setState({ sweetAlert: null });
+
     this.props.finishButtonClick(newMailAccount);
     if (user.provider !== 'gmail') {
       // close dialog and create form
@@ -526,6 +527,8 @@ class MailWizard extends React.Component<Props, State> {
       );
       user.lastName = this.state.accountInfo.lastName;
       user.firstName = this.state.accountInfo.firstName;
+      user.lastNameKana = this.state.accountInfo.lastNameKana;
+      user.firstNameKana = this.state.accountInfo.firstNameKana;
 
       detailInfo.push(
         `しめい(ふりがな):${this.state.accountInfo.lastNameKana} ${
@@ -541,6 +544,7 @@ class MailWizard extends React.Component<Props, State> {
       }
       detailInfo.push(`性別:${gender}`);
       detailInfo.push(`都道府県:${this.state.accountInfo.prefecture}`);
+      user.prefecture = this.state.accountInfo.prefecture;
 
       let accId = '';
       let mailAddress = '';
@@ -559,6 +563,8 @@ class MailWizard extends React.Component<Props, State> {
 
       switch (this.state.accountInfo.provider) {
         case 'Yahoo':
+          // Yahoo!メールの場合には、puppeteerからDBへ保存のためuserKey='ignore'を指定
+          userKey ='ignore';
           user.provider = 'yahoo';
           user.postalCode = this.state.accountInfo.postalCode;
           accId = user.username;

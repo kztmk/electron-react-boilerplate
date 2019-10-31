@@ -151,6 +151,7 @@ function* createMailAccount(action) {
   console.log('call create account');
   const userAuth = yield select(state => state.Login);
   const newAccount = {
+    key: action.payload.key,
     accountId: action.payload.accountId,
     password: action.payload.password,
     mailAddress: action.payload.mailAddress,
@@ -197,25 +198,31 @@ function* createMailAccount(action) {
       // Yahoo!メールの場合、gmailアカウントのsequenceをカウントアップ
       if (newAccount.provider === 'Yahoo') {
         console.log('--provider: Yahoo')
-        const aliasInfos = yield select(state => state.AliasMailInfo.aliasMailInfo);
-        const gmailInfo = aliasInfos.find(infos => infos.provider === 'gmail');
-        console.log('--got gmailInfo');
-        console.log(gmailInfo);
-        if (!gmailInfo) {
-          yield put(createMailAddressFailure('GmailにおいてYahoo!メール連絡先メールアドレス作成用カウンターの更新に失敗しました。'));
+        // key='ignore'の場合には作成をスキップ
+        if (newAccount.key !== 'ignore') {
+          const aliasInfos = yield select(state => state.AliasMailInfo.aliasMailInfo);
+          const gmailInfo = aliasInfos.find(infos => infos.provider === 'gmail');
+          console.log('--got gmailInfo');
+          console.log(gmailInfo);
+          if (!gmailInfo) {
+            yield put(createMailAddressFailure('GmailにおいてYahoo!メール連絡先メールアドレス作成用カウンターの更新に失敗しました。'));
+          }
+          const updatedSequenceCounter = gmailInfo.sequenceCounter ? gmailInfo.sequenceCounter : 0;
+          console.log(`--update sequenceCounter${updatedSequenceCounter}`);
+          yield put(saveAliasMailRequest({
+            ...gmailInfo,
+            sequenceCounter: updatedSequenceCounter + 1
+          }));
+          console.log('update gmail sequenceCounter');
         }
-        const updatedSequenceCounter = gmailInfo.sequenceCounter ? gmailInfo.sequenceCounter : 0;
-        console.log(`--update sequenceCounter${updatedSequenceCounter}`);
-        yield put(saveAliasMailRequest({
-          ...gmailInfo,
-          sequenceCounter: updatedSequenceCounter +1
-        }));
-        console.log('update gmail sequenceCounter');
       }
 
-      const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, newAccount);
-      const addAccount = { ...newAccount, key: ref.key };
-      currentAccounts.push(addAccount);
+      console.log(`start to save db:${newAccount.key}`)
+      if (newAccount.key !== 'ignore') {
+        const ref = yield call(firebaseDbInsert, `/users/${userAuth.userId}/mailAccount`, newAccount);
+        const addAccount = { ...newAccount, key: ref.key };
+        currentAccounts.unshift(addAccount);
+      }
 
       yield put(createMailAddressSuccess(currentAccounts));
     } else {

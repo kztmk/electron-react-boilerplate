@@ -364,9 +364,11 @@ function* openImapConnection(action) {
       imapProperty = null;
     };
 
+    console.log('--start connect to imap');
     // imap serverへ接続
     const imapConnect = client => client.connect();
     yield call(imapConnect, imapClient);
+    console.log('--connect to imap');
 
     // 最終ログイン時刻を更新
     const userAuth = yield select(state => state.Login);

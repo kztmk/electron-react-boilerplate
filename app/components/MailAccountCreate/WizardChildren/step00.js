@@ -295,6 +295,7 @@ class Steps00 extends React.Component<Props, State> {
            }
 
             this.setState({
+              accountId: 'Yahoo!から提供されます。',
               yahooContactAliasNumber: gmailInfo.sequenceCounter +1,
               yahooContactAliasAccountId: gmailInfo.accountId.trim(),
               yahooContactAliasDomain: gmailInfo.domain.trim(),
@@ -428,6 +429,15 @@ class Steps00 extends React.Component<Props, State> {
             accountIdState: 'success'
           });
         } else {
+          if (this.state.provider === 'Yahoo') {
+            if(event.target.value === 'Yahoo!から提供されます。') {
+              this.setState({
+                accountId: event.target.value,
+                accountIdState: 'success'
+              })
+              break;
+            }
+          }
           this.setState({
             accountId: event.target.value,
             accountIdState: 'error'
