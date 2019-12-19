@@ -349,13 +349,17 @@ const signup = async (user, opts) => {
         killer: true
       }).show();
     `);
+    let genderSelect = '';
     if (user.gender) {
-      await page.click('input[name="gender"][value="f"]', { delay: 20 });
+      // await page.click('input[name="gender"][value="f"]', { delay: 20 });
+      genderSelect = `input[name="gender"][value="f"]`;
       log.info('input:[性別]-女');
     } else {
-      await page.click('input[name="gender"][value="m"]', { delay: 25 });
+      // await page.click('input[name="gender"][value="m"]', { delay: 25 });
+      genderSelect = `input[name="gender"][value="m"]`;
       log.info('input:[性別]-男');
     }
+    await page.evaluate(s => (document.querySelector(s).checked = true), genderSelect );
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -494,7 +498,7 @@ const signup = async (user, opts) => {
         userDetailInfo.push(`郵便番号:${user.postalCode}`);
         userDetailInfo.push(`都道府県:${user.prefecture}`);
         userDetailInfo.push(`性別:${userGender}`);
-        userDetailInfo.push(`連絡先メールアドレス:${user.contactMailAccount.mailAddress}`);
+        userDetailInfo.push(`連絡先メールアドレス:${user.contactMailAddress}`);
         userDetailInfo.push(`連絡先メールアドレスパスワード:${user.contactMailAccount.password}`);
 
 

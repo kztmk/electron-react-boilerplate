@@ -207,20 +207,21 @@ function* createMailAccount(action) {
             yield put(createMailAddressFailure('GmailにおいてYahoo!メール連絡先メールアドレス作成用カウンターの更新に失敗しました。'));
           }
           // "連絡先メールアドレス:"をdetailInfoから取得
-          const yahooContactMailAddress = action.payload.detailInfo.find(d => d.contains('連絡先メールアドレス:'));
+          const yahooContactMailAddress = action.payload.detailInfo.find(d => d.includes('連絡先メールアドレス:'));
           // 取得出来た場合
           if (yahooContactMailAddress) {
             // SequenceCounter値を取得
             let sq = yahooContactMailAddress.replace('連絡先メールアドレス:', '');
             sq = sq.replace(/@.*$/, '');
             console.log(`delete at to end:${sq}`);
-            sq = sq.replace(/^,*\+y/, '');
+            sq = sq.replace(/^.*\+y/, '');
             console.log(`delete top to +y:${sq}`);
             // 取得部分がnumberかをチェック
-            if (parseInt(sq, 10) != NaN) {
+            if (!isNaN(sq)) {
+              sq = parseInt(sq);
               yield put(saveAliasMailRequest({
                 ...gmailInfo,
-                sequenceCounter: sq + 1
+                sequenceCounter: sq
               }));
               console.log('update gmail sequenceCounter');
             }
