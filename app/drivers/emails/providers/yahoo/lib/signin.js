@@ -35,7 +35,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo Japan トップページアクセス完了' 
+        text:'Yahoo Japan トップページアクセス完了'
       }).show();
     `);
     log.info('load: https://www.yahoo.co.jp');
@@ -44,14 +44,14 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'ログインリンクをクリック' 
+        text:'ログインリンクをクリック'
       }).show();
     `);
     log.info('load: https://www.yahoo.co.jp');
 
     // ログインリンク
     // await clickByText(page, 'ログイン');
-    await clickByTextInTagName(page, 'ログイン', 'span');
+    await clickByText(page, 'ログイン');
     // await page.click('#pbhello > span > a');
     await page.waitFor('#unm');
     await page.addScriptTag({ path: notyJsPath });
@@ -61,7 +61,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo ログインページへアクセス完了' 
+        text:'Yahoo ログインページへアクセス完了'
       }).show();
     `);
     log.info('access: login page');
@@ -69,7 +69,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo ID入力開始' 
+        text:'Yahoo ID入力開始'
       }).show();
     `);
 
@@ -78,7 +78,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoo ID入力完了' 
+        text:'Yahoo ID入力完了'
       }).show();
     `);
     log.info('input: yahoo ID');
@@ -86,7 +86,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'次へボタンをクリック' 
+        text:'次へボタンをクリック'
       }).show();
     `);
     await delay(500);
@@ -102,7 +102,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'パスワード入力開始' 
+        text:'パスワード入力開始'
       }).show();
     `);
     await delay(500);
@@ -112,21 +112,39 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'パスワード入力完了' 
+        text:'パスワード入力完了'
       }).show();
     `);
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'ログインボタンをクリック' 
+        text:'ログインボタンをクリック'
       }).show();
     `);
     await delay(800);
     await page.click('#btnSubmit');
     log.info('click login button');
 
-    await page.waitFor('#Masthead', { visible: true });
+    await page.waitFor('#Masthead, #ppskip', { visible: true });
+
+    const paypaySetting = await page.$('#ppskip');
+    if (paypaySetting) {
+      await page.addScriptTag({ path: notyJsPath });
+      await page.addStyleTag({ path: notyCssPath });
+      await page.addStyleTag({ path: notyThemePath });
+      await page.evaluate(`
+    new Noty({
+        type: 'success',
+        layout: 'topLeft',
+        text:'Paypayとの連携は、あとでをクリック'
+      }).show();
+    `);
+      log.info('click paypay skip');
+      await delay(1000);
+      await page.click('#ppskip');
+      await page.waitFor('#Masthead');
+    }
 
     const contactMail = await page.$('#em');
     if (contactMail) {
@@ -143,14 +161,14 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yahooログイン完了' 
+        text:'Yahooログイン完了'
       }).show();
     `);
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'メールリンクをクリック' 
+        text:'メールリンクをクリック'
       }).show();
     `);
     // await page.click('#mhi6th > a');
@@ -166,7 +184,7 @@ const signin = async (user, opts) => {
         timeout: 3000,
         type: 'success',
         layout: 'topLeft',
-        text:'Yahoomメールログイン完了' 
+        text:'Yahoomメールログイン完了'
       }).show();
     `);
     log.info('-----------yahoo mail login done------>');

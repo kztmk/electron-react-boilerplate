@@ -37,7 +37,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'Yandex Mail  トップページアクセス完了' 
+        text:'Yandex Mail  トップページアクセス完了'
       }).show();
     `);
 
@@ -45,7 +45,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'ログインボタンをクリック' 
+        text:'ログインボタンをクリック'
       }).show();
     `);
     await page.click('a[href^="https://passport.yandex.com/auth?"]');
@@ -62,32 +62,37 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'ログインページへアクセス完了' 
+        text:'ログインページへアクセス完了'
       }).show();
     `);
 
+    await page.addScriptTag({url: 'https://code.jquery.com/jquery-3.2.1.min.js'});
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'メールアドレス入力開始' 
+        text:'メールアドレス入力開始'
       }).show();
     `);
     // +以降と@の間を削除
-    let yandexBase = user.username.replace(/@.*$/, '');
+    let yandexBase = user.username.split('@')[0];
     yandexBase = yandexBase.replace(/\+.*$/, '');
 
-    await page.type('input[name=login]', user.username, { delay: 40 });
+    await page.type('input[name=login]', yandexBase, { delay: 40 });
     delay(500);
     await page.evaluate(`
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'メールアドレス入力完了' 
+        text:'メールアドレス入力完了'
       }).show();
     `);
     log.info(`input: yandex mail address--${yandexBase}`);
-    await page.click('.button2__text');
+    await page.waitForSelector('button[type="submit"]', {visible: true});
+
+    await delay(1000);
+    console.log("try find login button");
+    await page.click('.passp-sign-in-button');
 
     await page.waitForSelector('input[name=passwd]', {visible: true});
 
@@ -95,7 +100,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'パスワード入力開始' 
+        text:'パスワード入力開始'
       }).show();
     `);
 
@@ -107,7 +112,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'パスワード入力完了' 
+        text:'パスワード入力完了'
       }).show();
     `);
     log.info(`input: yandex password--${user.password}`);
@@ -133,7 +138,7 @@ const signin = async (user, opts) => {
     new Noty({
         type: 'success',
         layout: 'topLeft',
-        text:'[Sign in]ボタンをクリック' 
+        text:'[Sign in]ボタンをクリック'
       }).show();
     `);
 
@@ -148,7 +153,7 @@ const signin = async (user, opts) => {
         timeout:3000,
         type: 'success',
         layout: 'topLeft',
-        text:'Yandexログイン完了' 
+        text:'Yandexログイン完了'
       }).show();
     `);
 
@@ -162,7 +167,7 @@ const signin = async (user, opts) => {
     await page.evaluate(`Swal.fire({
       title: 'エラー発生',
       text: 'エラーが発生しました。アカウントが削除されていないかを確認してください。',
-      showCancelButton: false,
+      showCancelButton: true,
       confirmButtonColor: '#4caf50',
       cancelButtonColor: '#f44336',
       confirmButtonText: '閉じる',
