@@ -334,6 +334,7 @@ const signup = async (user, opts) => {
     `);
     await page.click('#btnSubmit');
     log.info('click:[次へ]');
+    await delay(2000);
     await page.waitForFunction(`document.querySelector('#stepNav03').className.includes('is-current')`);
 
 
@@ -785,6 +786,7 @@ const signup = async (user, opts) => {
     `);
     log.info('click[追加して次へ]');
     await page.click('#commit');
+    await delay(1000);
     await page.waitForFunction('document.querySelector("body").innerText.includes("ログインとセキュリティ")');
 
     log.info('<--------- done set password yahoo account<---------');
