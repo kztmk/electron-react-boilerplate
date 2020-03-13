@@ -92,7 +92,7 @@ const signup = async (user, opts) => {
     // await page.click(
     // '.Personalbox__noticeItem--mail > .Personalbox__noticeLink'
     // );
-    await clickByText(page, 'ID新規取得');
+    await clickByTextInTagName(page, 'ID新規取得', 'span');
     await page.waitForSelector('#startLabel');
 
     // メールアドレスで登録可能かをチェック
@@ -111,12 +111,12 @@ const signup = async (user, opts) => {
         await page.addStyleTag({ path: notyCssPath });
         await page.addStyleTag({ path: notyThemePath });
         await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[携帯電話番号をお持ちでない場合]をクリック'
-      }).show();
-    `);
+          new Noty({
+              type: 'success',
+              layout: 'topLeft',
+              text:'[携帯電話番号をお持ちでない場合]をクリック'
+            }).show();
+        `);
         await page.click('.btnSwitchArea');
         await page.waitForSelector('#answer_solution');
 
@@ -142,40 +142,40 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'連絡先メールアドレス入力開始'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'連絡先メールアドレス入力開始'
+        }).show();
     `);
     log.info(`連絡先メールアドレス:${user.contactMailAddress}を入力開始`);
     await delay(300);
     await page.type('#mail', user.contactMailAddress, { delay: 90 }); // 連絡用メールアドレス
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'連絡用メールアドレス入力完了'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'連絡用メールアドレス入力完了'
+        }).show();
     `);
     log.info(`連絡先メールアドレス:${user.contactMailAddress}を入力完了`);
     await delay(250);
 
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'次へボタンをクリック'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'次へボタンをクリック'
+        }).show();
     `);
     log.info(`連絡先メールアドレス入力後、次へボタンをクリック開始`);
     await page.click('#btnSendCode');
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'次へボタンのクリック完了'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'次へボタンのクリック完了'
+        }).show();
     `);
     log.info(`連絡先メールアドレス入力後、次へボタンをクリック完了`);
 
@@ -183,7 +183,7 @@ const signup = async (user, opts) => {
     // メールアドレスでの登録が制限されているかをチェック
     const errTxt = await page.$eval('#sendErrMsg', item => {
       return item.textContent.trim();
-    })
+    });
     log.info(`sendErrTxt:${errTxt}`);
     console.log(errTxt);
     if (errTxt.length > 0) {
@@ -195,76 +195,76 @@ const signup = async (user, opts) => {
     // #code
     // button #btnSubmit
     await page.addStyleTag({ content: `
-    #noty_layout__dialogCenter {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width:460px;
-      transform: translateY(-50%) translateX(-50%);
-    }
+      #noty_layout__dialogCenter {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width:460px;
+        transform: translateY(-50%) translateX(-50%);
+      }
 
-    .mainWrapper {
-    }
+      .mainWrapper {
+      }
 
-    .loadContainer { height: 35px;
-      width: 35px;
-      float: left; }
+      .loadContainer { height: 35px;
+        width: 35px;
+        float: left; }
 
-    .wrapperContainer { height: 235px;
-      width: 460px;background: #36c;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+      .wrapperContainer { height: 235px;
+        width: 460px;background: #36c;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-    .loadingTitle {
-      font-size: 35px;
-      font-style: oblique;
-      color: #DDD;
-      padding-left: 16px;
-      text-shadow: 0 0 4px #9CF;
-      animation: loadingText .4s ease-in-out infinite alternate;
-    }
+      .loadingTitle {
+        font-size: 35px;
+        font-style: oblique;
+        color: #DDD;
+        padding-left: 16px;
+        text-shadow: 0 0 4px #9CF;
+        animation: loadingText .4s ease-in-out infinite alternate;
+      }
 
-    .loader2 {
-      border-top: 3px solid #ddd;
-      border-bottom: 3px solid #ddd;
-      border-radius: 50%;
-      height: 14px;
-      width: 15px;
-      margin: 10px;
-      position: absolute;
-      animation: loading 1.2s infinite linear; }
+      .loader2 {
+        border-top: 3px solid #ddd;
+        border-bottom: 3px solid #ddd;
+        border-radius: 50%;
+        height: 14px;
+        width: 15px;
+        margin: 10px;
+        position: absolute;
+        animation: loading 1.2s infinite linear; }
 
-    .loader3 {
-      border-left: 3px solid #ccc;
-      border-right: 3px solid #ccc;
-      border-radius: 50%;
-      height: 24px;
-      width: 25px;
-      margin: 8px 2px;
-      position: absolute;
-      animation: loading 1s infinite linear; }
+      .loader3 {
+        border-left: 3px solid #ccc;
+        border-right: 3px solid #ccc;
+        border-radius: 50%;
+        height: 24px;
+        width: 25px;
+        margin: 8px 2px;
+        position: absolute;
+        animation: loading 1s infinite linear; }
 
-    .loader4 {
-      border-top: 3px solid #bbb;
-      border-bottom: 3px solid #bbb;
-      border-radius: 50%;
-      height: 34px;
-      width: 35px;
-      position: absolute;
-      animation: loading .8s infinite linear; }
+      .loader4 {
+        border-top: 3px solid #bbb;
+        border-bottom: 3px solid #bbb;
+        border-radius: 50%;
+        height: 34px;
+        width: 35px;
+        position: absolute;
+        animation: loading .8s infinite linear; }
 
-    @keyframes loading {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(359deg); } }
+      @keyframes loading {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(359deg); } }
 
-    @keyframes loadingText {
-      to {text-shadow:
-        0 0 2px #9CF,
-        0 0 3px #9CF,
-        0 0 4px #69C,
-        0 0 5px #69C; } }
+      @keyframes loadingText {
+        to {text-shadow:
+          0 0 2px #9CF,
+          0 0 3px #9CF,
+          0 0 4px #69C,
+          0 0 5px #69C; } }
     `});
     await page.evaluate(`
         new Noty({
@@ -274,7 +274,7 @@ const signup = async (user, opts) => {
           killer: true,
           text:'<div class="mainWrapper"><div class="wrapperContainer"><div class="loadContainer"><div class="loader2"></div><div class="loader3"></div><div class="loader4"></div></div><div class="loadingTitle">確認コード取得中...</div></div></div>'
         }).show();
-    `)
+    `);
 
 
     await delay(20000);
@@ -292,7 +292,7 @@ const signup = async (user, opts) => {
 
     let result = await getYahooAuthCode(mailacc);
 
-    if  (result) {
+    if (result) {
       [authCode] = result;
       log.info(`確認コード：${authCode}`)
     } else {
@@ -306,49 +306,53 @@ const signup = async (user, opts) => {
 
     // Yahoo!メール確認コード
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'Yahoo!メール確認コード入力開始',
-        killer: true
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'Yahoo!メール確認コード入力開始',
+          killer: true
+        }).show();
     `);
     log.info('Yahoo!メール確認コード入力開始');
     await page.type('#code', authCode, {delay: 500});
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'Yahoo!メール確認コード入力完了'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'Yahoo!メール確認コード入力完了'
+        }).show();
     `);
     log.info('Yahoo!メール確認コード入力完了');
 
     await delay(1000);
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[次へ]をクリック'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'[次へ]をクリック'
+        }).show();
     `);
     await page.click('#btnSubmit');
     log.info('click:[次へ]');
     await delay(2000);
-    await page.waitForFunction(`document.querySelector('#stepNav03').className.includes('is-current')`);
+    try {
+      await page.waitForFunction(`document.querySelector('#stepNav03').className.includes('is-current')`);
+    } catch (e) {
+      throw new Error('ご覧になろうとしているページは現在表示できません');
+    }
 
 
     await page.addScriptTag({ path: notyJsPath });
     await page.addStyleTag({ path: notyCssPath });
-    await page.addStyleTag({ path: notyThemePath })
+    await page.addStyleTag({ path: notyThemePath });
     // 性別
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'性別入力開始',
-        killer: true
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'性別入力開始',
+          killer: true
+        }).show();
     `);
     let genderSelect = '';
     if (user.gender) {
@@ -362,21 +366,21 @@ const signup = async (user, opts) => {
     }
     await page.evaluate(s => (document.querySelector(s).checked = true), genderSelect );
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'性別入力完了'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'性別入力完了'
+        }).show();
     `);
 
   //生年月日
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'生年月日入力開始' ,
-        killer: true
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'生年月日入力開始' ,
+          killer: true
+        }).show();
     `);
     await page.type(
       '#birthday',
@@ -395,62 +399,62 @@ const signup = async (user, opts) => {
     await page.type('#birthdate', `${user.birthday.day}`);
     await delay(600);
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'生年月日入力完了'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'生年月日入力完了'
+        }).show();
     `);
 
     // 郵便番号
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'郵便番号入力開始'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'郵便番号入力開始'
+        }).show();
     `);
     await page.type('#postCode', user.postalCode, { delay: 45 }); // Japanese postal code(7digits)
     log.info(`input:[郵便番号]-${user.postalCode}`);
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'郵便番号入力完了'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'郵便番号入力完了'
+        }).show();
     `);
 
     // 名前
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'名前入力開始'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'名前入力開始'
+        }).show();
     `);
     await page.type('#dispname', `${user.lastName} ${user.firstName}`, {
       delay: 50
     }); // user lastName firstName
     log.info(`input:[名前]-${user.lastName} ${user.firstName}`);
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'名前入力完了'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'名前入力完了'
+        }).show();
     `);
 
     // 登録ボタン
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'次へをクリック'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'次へをクリック'
+        }).show();
     `);
 
     await page.click('#btnSubmit');
-    log.info(`click:[次へ]`)
+    log.info(`click:[次へ]`);
 
     // t-point
     await page.waitFor('input[name="card"][value="nonexistence"]');
@@ -468,11 +472,11 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[同意して登録する]をクリック'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'[同意して登録する]をクリック'
+        }).show();
     `);
     await delay(1000);
     page.click('#commit');
@@ -520,11 +524,11 @@ const signup = async (user, opts) => {
 
     await delay(1000);
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[次へ]をクリック'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'[次へ]をクリック'
+        }).show();
     `);
     await page.click('#btnSubmit');
     log.info('click:[次へ]');
@@ -536,11 +540,11 @@ const signup = async (user, opts) => {
     await page.addStyleTag({ path: notyThemePath });
 
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[メール]をクリック'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'[メール]をクリック'
+        }).show();
     `);
     await clickByTextInTagName(page, 'メール', 'span');
     log.info(`メールアイコンをクリック`);
@@ -554,11 +558,11 @@ const signup = async (user, opts) => {
 
     console.log('--addTag done--');
     await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[さっそく使ってみよう]をクリック'
-      }).show();
+      new Noty({
+          type: 'success',
+          layout: 'topLeft',
+          text:'[さっそく使ってみよう]をクリック'
+        }).show();
     `);
     console.log('--addTag done--');
     await page.click('.start');
@@ -574,7 +578,7 @@ const signup = async (user, opts) => {
 
     await page.goto('https://account.edit.yahoo.co.jp/change_pw');
 
-    // check toppage
+    // check top page
     const loginButton = await page.$('#btnSubmit');
     console.log(`btnSubmit:${loginButton}`);
     const inputCode = await page.$('#code');
@@ -592,77 +596,77 @@ const signup = async (user, opts) => {
       // button #btnSubmit
       await page.addStyleTag({
         content: `
-    #noty_layout__dialogCenter {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width:460px;
-      transform: translateY(-50%) translateX(-50%);
-    }
+          #noty_layout__dialogCenter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width:460px;
+            transform: translateY(-50%) translateX(-50%);
+          }
 
-    .mainWrapper {
-    }
+          .mainWrapper {
+          }
 
-    .loadContainer { height: 35px;
-      width: 35px;
-      float: left; }
+          .loadContainer { height: 35px;
+            width: 35px;
+            float: left; }
 
-    .wrapperContainer { height: 235px;
-      width: 460px;background: #36c;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+          .wrapperContainer { height: 235px;
+            width: 460px;background: #36c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
 
-    .loadingTitle {
-      font-size: 35px;
-      font-style: oblique;
-      color: #DDD;
-      padding-left: 16px;
-      text-shadow: 0 0 4px #9CF;
-      animation: loadingText .4s ease-in-out infinite alternate;
-    }
+          .loadingTitle {
+            font-size: 35px;
+            font-style: oblique;
+            color: #DDD;
+            padding-left: 16px;
+            text-shadow: 0 0 4px #9CF;
+            animation: loadingText .4s ease-in-out infinite alternate;
+          }
 
-    .loader2 {
-      border-top: 3px solid #ddd;
-      border-bottom: 3px solid #ddd;
-      border-radius: 50%;
-      height: 14px;
-      width: 15px;
-      margin: 10px;
-      position: absolute;
-      animation: loading 1.2s infinite linear; }
+          .loader2 {
+            border-top: 3px solid #ddd;
+            border-bottom: 3px solid #ddd;
+            border-radius: 50%;
+            height: 14px;
+            width: 15px;
+            margin: 10px;
+            position: absolute;
+            animation: loading 1.2s infinite linear; }
 
-    .loader3 {
-      border-left: 3px solid #ccc;
-      border-right: 3px solid #ccc;
-      border-radius: 50%;
-      height: 24px;
-      width: 25px;
-      margin: 8px 2px;
-      position: absolute;
-      animation: loading 1s infinite linear; }
+          .loader3 {
+            border-left: 3px solid #ccc;
+            border-right: 3px solid #ccc;
+            border-radius: 50%;
+            height: 24px;
+            width: 25px;
+            margin: 8px 2px;
+            position: absolute;
+            animation: loading 1s infinite linear; }
 
-    .loader4 {
-      border-top: 3px solid #bbb;
-      border-bottom: 3px solid #bbb;
-      border-radius: 50%;
-      height: 34px;
-      width: 35px;
-      position: absolute;
-      animation: loading .8s infinite linear; }
+          .loader4 {
+            border-top: 3px solid #bbb;
+            border-bottom: 3px solid #bbb;
+            border-radius: 50%;
+            height: 34px;
+            width: 35px;
+            position: absolute;
+            animation: loading .8s infinite linear; }
 
-    @keyframes loading {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(359deg); } }
+          @keyframes loading {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(359deg); } }
 
-    @keyframes loadingText {
-      to {text-shadow:
-        0 0 2px #9CF,
-        0 0 3px #9CF,
-        0 0 4px #69C,
-        0 0 5px #69C; } }
-    `
+          @keyframes loadingText {
+            to {text-shadow:
+              0 0 2px #9CF,
+              0 0 3px #9CF,
+              0 0 4px #69C,
+              0 0 5px #69C; } }
+          `
       });
       await page.evaluate(`
         new Noty({
@@ -672,7 +676,7 @@ const signup = async (user, opts) => {
           killer: true,
           text:'<div class="mainWrapper"><div class="wrapperContainer"><div class="loadContainer"><div class="loader2"></div><div class="loader3"></div><div class="loader4"></div></div><div class="loadingTitle">確認コード取得中...</div></div></div>'
         }).show();
-    `)
+      `);
 
 
       await delay(20000);
@@ -699,116 +703,102 @@ const signup = async (user, opts) => {
 
       // Yahoo!メール確認コード
       await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'Yahoo!メール確認コード入力開始',
-        killer: true
-      }).show();
-    `);
+        new Noty({
+            type: 'success',
+            layout: 'topLeft',
+            text:'Yahoo!メール確認コード入力開始',
+            killer: true
+          }).show();
+      `);
       log.info('Yahoo!メール確認コード入力開始');
       await page.type('#code', authCode, { delay: 500 });
       await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'Yahoo!メール確認コード入力完了'
-      }).show();
-    `);
+        new Noty({
+            type: 'success',
+            layout: 'topLeft',
+            text:'Yahoo!メール確認コード入力完了'
+          }).show();
+      `);
       log.info('Yahoo!メール確認コード入力完了');
 
       await delay(1000);
       await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'[ログイン]をクリック'
-      }).show();
-    `);
+        new Noty({
+            type: 'success',
+            layout: 'topLeft',
+            text:'[ログイン]をクリック'
+          }).show();
+      `);
       await page.click('#btnSubmit');
       log.info('click:[ログイン]');
       await page.waitForFunction(`document.querySelector('h1').innerText.includes('登録情報の追加')`);
-      }
-    //   await page.addScriptTag({ path: notyJsPath });
-    //   await page.addStyleTag({ path: notyCssPath });
-    //   await page.addStyleTag({ path: notyThemePath });
-    //   await page.evaluate(`
-    // new Noty({
-    //     type: 'success',
-    //     layout: 'topLeft',
-    //     text:'[登録情報]をクリック'
-    //   }).show();
-    // `);
-    //   await clickByText(page, '登録情報');
-    //   log.info(`click:[登録情報]`);
-    //   await page.waitForFunction('document.querySelector("body").innerText.includes("ログインとセキュリティ")');
-
-
-  // 登録情報追加ページ
-  // check page
-  const addPasswordPage = await page.$eval('h1', el => el.innerText === '登録情報の追加');
-
-  if (!addPasswordPage) {
-    throw new Error('パスワード設定ページが確認出来ません。');
-  }
-    // 登録情報ページ
-    log.info(`登録情報ページ確認`);
-    await page.addScriptTag({ path: notyJsPath });
-    await page.addStyleTag({ path: notyCssPath });
-    await page.addStyleTag({ path: notyThemePath });
-
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'パスワード入力開始',
-        killer: true
-      }).show();
-    `);
-    log.info('パスワード入力開始');
-    await page.type('#passwd', user.password, {delay: 500});
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'パスワード入力完了'
-      }).show();
-    `);
-    log.info('パスワード入力完了');
-
-    await page.evaluate(`
-    new Noty({
-        type: 'success',
-        layout: 'topLeft',
-        text:'追加して次へをクリック',
-        killer: true
-      }).show();
-    `);
-    log.info('click[追加して次へ]');
-    await page.click('#commit');
-    await delay(1000);
-    await page.waitForFunction('document.querySelector("body").innerText.includes("ログインとセキュリティ")');
-
-    log.info('<--------- done set password yahoo account<---------');
-    await page.goto('https://mail.yahoo.co.jp');
-    await page.addStyleTag({ path: swa2Css });
-    await page.addScriptTag({ path: swa2Js });
-
-    const closeConfirm = await page.evaluate(`Swal.fire({
-      title: 'Yahoo！メールアカウントの作成が完了しました。',
-      text: 'ブラウザを閉じてもよろしいですか？',
-      killer: true,
-      showCancelButton: true,
-      confirmButtonColor: '#4caf50',
-      cancelButtonColor: '#f44336',
-      confirmButtonText: '閉じる',
-      cancelButtonText: 'ブラウザは、このまま',
-      reverseButtons: true
-    })`);
-
-    if (closeConfirm.value) {
-      await page.close();
     }
+
+    // 登録情報追加ページ
+    // check page
+    const addPasswordPage = await page.$eval('h1', el => el.innerText === '登録情報の追加');
+
+    if (!addPasswordPage) {
+      throw new Error('パスワード設定ページが確認出来ません。');
+    }
+      // 登録情報ページ
+      log.info(`登録情報ページ確認`);
+      await page.addScriptTag({ path: notyJsPath });
+      await page.addStyleTag({ path: notyCssPath });
+      await page.addStyleTag({ path: notyThemePath });
+
+      await page.evaluate(`
+        new Noty({
+            type: 'success',
+            layout: 'topLeft',
+            text:'パスワード入力開始',
+            killer: true
+          }).show();
+      `);
+      log.info('パスワード入力開始');
+      await page.type('#passwd', user.password, {delay: 500});
+      await page.evaluate(`
+        new Noty({
+            type: 'success',
+            layout: 'topLeft',
+            text:'パスワード入力完了'
+          }).show();
+      `);
+      log.info('パスワード入力完了');
+
+      await page.evaluate(`
+        new Noty({
+            type: 'success',
+            layout: 'topLeft',
+            text:'追加して次へをクリック',
+            killer: true
+          }).show();
+      `);
+      log.info('click[追加して次へ]');
+      await page.click('#commit');
+      await delay(1000);
+      await page.waitForFunction('document.querySelector("body").innerText.includes("ログインとセキュリティ")');
+
+      log.info('<--------- done set password yahoo account<---------');
+      await page.goto('https://mail.yahoo.co.jp');
+      await page.addStyleTag({ path: swa2Css });
+      await page.addScriptTag({ path: swa2Js });
+
+      const closeConfirm = await page.evaluate(`Swal.fire({
+        title: 'Yahoo！メールアカウントの作成が完了しました。',
+        text: 'ブラウザを閉じてもよろしいですか？',
+        killer: true,
+        showCancelButton: true,
+        confirmButtonColor: '#4caf50',
+        cancelButtonColor: '#f44336',
+        confirmButtonText: '閉じる',
+        cancelButtonText: 'ブラウザは、このまま',
+        reverseButtons: true
+      })`);
+
+      if (closeConfirm.value) {
+        await page.close();
+      }
   } catch (error) {
     log.info(`error:${error.message}`);
     await page.addScriptTag({ path: notyJsPath });
