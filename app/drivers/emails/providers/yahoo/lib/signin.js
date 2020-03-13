@@ -1,6 +1,6 @@
 import delay from 'delay';
 import log from 'electron-log';
-import clickByText, { clickByTextInTagName } from "../../../../blogs/utils";
+import clickByText, { clickByTextInTagName } from '../../../../blogs/utils';
 
 const signin = async (user, opts) => {
   const { browser } = opts;
@@ -51,7 +51,7 @@ const signin = async (user, opts) => {
 
     // ログインリンク
     // await clickByText(page, 'ログイン');
-    await clickByText(page, 'ログイン');
+    await clickByTextInTagName(page, 'ログイン', 'span');
     // await page.click('#pbhello > span > a');
     await page.waitFor('#unm');
     await page.addScriptTag({ path: notyJsPath });
@@ -73,7 +73,7 @@ const signin = async (user, opts) => {
       }).show();
     `);
 
-    await page.type('#username', user.username, {delay: 120});
+    await page.type('#username', user.username, { delay: 120 });
     await page.evaluate(`
     new Noty({
         type: 'success',
@@ -106,7 +106,7 @@ const signin = async (user, opts) => {
       }).show();
     `);
     await delay(500);
-    await page.type('#passwd', user.password, {delay:90});
+    await page.type('#passwd', user.password, { delay: 90 });
     log.info('input password');
     await page.evaluate(`
     new Noty({
@@ -150,7 +150,7 @@ const signin = async (user, opts) => {
     if (contactMail) {
       await clickByText(page, 'あとで');
       log.info('click 「あとで」連絡用メール');
-      await page.waitFor('#Masthead', { visible: true })
+      await page.waitFor('#Masthead', { visible: true });
     }
 
     log.info('login yahoo');
@@ -172,7 +172,7 @@ const signin = async (user, opts) => {
       }).show();
     `);
     // await page.click('#mhi6th > a');
-    await clickByTextInTagName(page, 'メール', 'span' )
+    await clickByTextInTagName(page, 'メール', 'span');
     log.info('click mail link');
 
     await page.waitFor('#ygmhlog');
