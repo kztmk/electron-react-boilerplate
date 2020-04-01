@@ -291,7 +291,7 @@ export async function getYahooAuthCode(mailCriteria) {
         provider: 'yahoo',
         sender: 'login-master@mail.yahoo.co.jp',
         link: '6 digit number',
-        regx: '\^\\d\{6\}\$'
+        regx: '\^\\d\{4,8\}\$'
       }
 
       const { sender } = confirmInfo;

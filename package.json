@@ -1,7 +1,7 @@
 {
   "name": "yorikiversion5",
   "productName": "Yorikiv5",
-  "version": "5.0.16",
+  "version": "5.0.17",
   "description": "Affiliate super tool The Yoriki version5",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -189,7 +189,7 @@
     "css-loader": "^1.0.0",
     "detect-port": "^1.2.3",
     "electron": "^2.0.6",
-    "electron-builder": "^20.31.2",
+    "electron-builder": "^21.2.0",
     "electron-devtools-installer": "^2.2.4",
     "electron-rebuild": "^1.8.2",
     "enzyme": "^3.3.0",
