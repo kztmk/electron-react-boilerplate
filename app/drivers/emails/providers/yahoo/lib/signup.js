@@ -11,7 +11,7 @@ import clickByText, { clickByTextInTagName } from "../../../../blogs/utils";
 
 const saveYahooAccount =  async (yaccount) => {
   store.dispatch(createMailAddressRequest(yaccount));
-}
+};
 
 const nextClickOnStep1 = async(page) => {
    const startLabel = await page.$eval('#startLabel', (element) => {
@@ -58,7 +58,7 @@ const signup = async (user, opts) => {
   log.info('-----------user----------');
   log.info(user);
   log.info('-------------------------');
-  const page = await browser.newPage();
+  let page = await browser.newPage();
   await page.setViewport({ width: 1024, height: 748 });
 
   log.info('create: browser page');
@@ -118,13 +118,21 @@ const signup = async (user, opts) => {
             }).show();
         `);
         await page.click('.btnSwitchArea');
-        await page.waitForSelector('#answer_solution');
+        await page.waitForSelector('.answer_detail--title');
 
         // Yahoo! Help page
         await delay(1000);
 
+        // 専用の登録フォームリンクをクリックすると、newTabで開いてしまう
+        const pageTarget = page.target();
         await clickByText(page, '専用の登録フォーム');
-        await page.waitForSelector('#mail');
+        const newTarget = await browser.waitForTarget(target => target.opener() === pageTarget);
+        const newPage = await newTarget.page();
+
+        await delay(1000);
+        page = newPage;
+        await delay(300);
+
         break;
       // case 'メールアドレスで登録する':
       case 1:

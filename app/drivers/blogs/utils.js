@@ -23,4 +23,5 @@ export const clickByTextInTagName= async (page, text, tagName) => {
   }
 };
 
+
 export default clickByText;
